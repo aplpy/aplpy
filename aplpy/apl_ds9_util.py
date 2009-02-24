@@ -1,0 +1,118 @@
+import string
+from matplotlib.pyplot import *
+from apl_util import system
+
+def string_cleaner(String):
+	dirt = ('(',')','{','}','=','#',',')
+	tmp = range(len(String))
+
+	for i in range(len(String)):
+		tmp[i] =  String[i]
+
+	String = tmp[:]
+		 
+	for j in range(len(String)):
+		for k in dirt:
+			if String[j] is k:
+				String[j] = ' '
+			else: 
+				pass
+
+	String = string.join(String,'')
+	
+	String = String.replace('"','')
+	String = String.replace('    ',' ')
+	String = String.replace('   ',' ')
+	String = String.replace('  ',' ')	
+	String = String.split(' ')
+	return String
+
+"""
+def string_find(List, String):
+	ctmp = []
+	for k in range(len(List)):
+		if List[k] is String:
+			ctmp.append(k)
+	return ctmp
+"""
+
+def string_find(List, st):
+	ctmp = []
+	for k in range(len(List)):
+		if List[k] is st:
+			return k
+	
+def circle_patch(x,y,radius,**kwargs):
+	return Circle((x,y),radius=radius,alpha=0.80,fill=False,edgecolor=kwargs['edgecolor'],lw=kwargs['lw'],ls=kwargs['ls'])
+
+def ellipse_patch(x,y,width,height,angle,**kwargs):
+	return Ellipse((x,y),width,height,angle=angle,alpha=0.80,fill=False,edgecolor=kwargs['edgecolor'],lw=kwargs['lw'],ls=kwargs['ls'])
+	
+def box_patch(x,y,width,height,angle,**kwargs):
+	v = []
+	v.append(rotate((x-width/2.,y-height/2.),(x,y),angle))
+	v.append(rotate((x+width/2.,y-height/2.),(x,y),angle))
+	v.append(rotate((x+width/2.,y+height/2.),(x,y),angle))
+	v.append(rotate((x-width/2.,y+height/2.),(x,y),angle))
+	return Polygon(v,closed=True,alpha=0.80,fill=False,edgecolor=kwargs['edgecolor'],lw=kwargs['lw'],ls=kwargs['ls'])
+	
+def line_patch(x,y,**kwargs):
+	return Polygon([(x[0],y[0]),(x[1],y[1])],closed=False,alpha=0.80,fill=False,edgecolor=kwargs['edgecolor'],lw=kwargs['lw'],ls=kwargs['ls'])
+
+def rotate(position,position0,theta):
+	x = position[0]
+	y = position[1]
+	x0 = position0[0]
+	y0 = position0[1]
+	theta = radians(theta)
+	xnew = cos(theta)*(x-x0) - sin(theta)*(y-y0)+x0
+	ynew = sin(theta)*(x-x0) + cos(theta)*(y-y0)+y0
+	return xnew,ynew
+	
+def dict2pix(dict,wcs):
+		
+	xw = dict['x']
+	yw = dict['y']
+	
+	t = type(xw)
+	
+	if t==float:
+		xw = np.array([xw])
+		yw = np.array([yw])
+
+	if t==list:
+		xw = np.array(xw)
+		yw = np.array(yw)
+	
+	if dict['coord_sys']=='fk5':	
+		if system(wcs)=='fk5':
+			xpix,ypix = wcs.wcs_sky2pix_fits(xw,yw)
+		else:
+			sys.exit("Unimplemented")
+	else:
+		sys.exit("Unimplemented")
+		
+	if t==float:
+		dict['x'] = xpix[0]
+		dict['y'] = ypix[0]
+	elif t==list:
+		dict['x'] = xpix.tolist()
+		dict['y'] = ypix.tolist()
+				
+	wx1,wy1 = wcs.wcs_pix2sky_fits(xpix,ypix)
+	wx2,wy2 = wcs.wcs_pix2sky_fits(xpix+1.,ypix)
+	
+	arc2pix = 1. / abs(wx2[0] - wx1[0]) / 3600.
+	
+#	print arc2pix
+	
+	if dict.has_key('width'):
+		dict['width'] = dict['width'] * arc2pix
+	if dict.has_key('height'):
+		dict['height'] = dict['height'] * arc2pix
+	if dict.has_key('radius'):
+		dict['radius'] = dict['radius'] * arc2pix
+				
+	dict['coord_sys'] = 'pix'
+				
+	return dict
