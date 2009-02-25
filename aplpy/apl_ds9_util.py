@@ -86,7 +86,7 @@ def dict2pix(dict,wcs):
 	
 	if dict['coord_sys']=='fk5':	
 		if system(wcs)=='fk5':
-			xpix,ypix = wcs.wcs_sky2pix_fits(xw,yw)
+			xpix,ypix = wcs.wcs_sky2pix(xw,yw)
 		else:
 			sys.exit("Unimplemented")
 	else:
@@ -99,8 +99,8 @@ def dict2pix(dict,wcs):
 		dict['x'] = xpix.tolist()
 		dict['y'] = ypix.tolist()
 				
-	wx1,wy1 = wcs.wcs_pix2sky_fits(xpix,ypix)
-	wx2,wy2 = wcs.wcs_pix2sky_fits(xpix+1.,ypix)
+	wx1,wy1 = wcs.wcs_pix2sky(xpix,ypix)
+	wx2,wy2 = wcs.wcs_pix2sky(xpix+1.,ypix)
 	
 	arc2pix = 1. / abs(wx2[0] - wx1[0]) / 3600.
 	

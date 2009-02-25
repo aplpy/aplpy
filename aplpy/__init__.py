@@ -298,7 +298,7 @@ class FITSFigure(object):
 	# in degree format.
 		
 	def markers(self,wcsArray,alpha=1 ,color='r' ,marker='o' , edgecolor='red', size=30, linewidth=1,facecolors='none'):
-		wcsArray = self.wcs.wcs_sky2pix_fits(wcsArray)
+		wcsArray = self.wcs.wcs_sky2pix(wcsArray)
 		self.ax1.scatter(wcsArray[:,0], wcsArray[:,1],alpha=alpha, c=color,marker=marker, s=size,edgecolor=edgecolor,linewidth=linewidth, facecolors=facecolors)
 		self.refresh()
 		
@@ -307,25 +307,25 @@ class FITSFigure(object):
 		
 	def world2pix(self,x_world,y_world):
 		if type(x_world) == float:
-			x_pix,y_pix = self.wcs.wcs_sky2pix_fits(np.array([x_world]),np.array([y_world]))
+			x_pix,y_pix = self.wcs.wcs_sky2pix(np.array([x_world]),np.array([y_world]))
 			return x_pix[0],y_pix[0]
 		elif type(x_world) == list:
-			x_pix,y_pix = self.wcs.wcs_sky2pix_fits(np.array(x_world),np.array(y_world))
+			x_pix,y_pix = self.wcs.wcs_sky2pix(np.array(x_world),np.array(y_world))
 			return x_pix.tolist(),y_pix.tolist()
 		elif type(x_world) == np.ndarray:
-			return self.wcs.wcs_sky2pix_fits(x_world,y_world)
+			return self.wcs.wcs_sky2pix(x_world,y_world)
 		else:
 			print "[error] world2pix should be provided either with two floats, two lists, or two numpy arrays"
 			
 	def pix2world(self,x_pix,y_pix):
 		if type(x_pix) == float:
-			x_world,y_world = self.wcs.wcs_pix2sky_fits(np.array([x_pix]),np.array([y_pix]))
+			x_world,y_world = self.wcs.wcs_pix2sky(np.array([x_pix]),np.array([y_pix]))
 			return x_world[0],y_world[0]
 		elif type(x_pix) == list:
-			x_world,y_world = self.wcs.wcs_pix2sky_fits(np.array(x_pix),np.array(y_pix))
+			x_world,y_world = self.wcs.wcs_pix2sky(np.array(x_pix),np.array(y_pix))
 			return x_world.tolist(),y_world.tolist()
 		elif type(x_pix) == np.ndarray:
-			return self.wcs.wcs_pix2sky_fits(x_pix,y_pix)
+			return self.wcs.wcs_pix2sky(x_pix,y_pix)
 		else:
 			print "[error] pix2world should be provided either with two floats, two lists, or two numpy arrays"
 			

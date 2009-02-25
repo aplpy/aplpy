@@ -74,7 +74,7 @@ class WCSFormatter(Formatter):
 			y = x
 			x = xmin
 			
-		xw,yw = self.wcs.wcs_pix2sky_fits(np.array([x]),np.array([y]))
+		xw,yw = self.wcs.wcs_pix2sky(np.array([x]),np.array([y]))
 		
 		if self.axist=='x':
 			return dc.raer(xw[0],form=self.axis.apl_label_form)
@@ -179,7 +179,7 @@ def axis_positions(wcs,axis,farside,xmin=False,xmax=False,ymin=False,ymax=False)
 			x_pix = x_pix * xmin
 
 	# Convert these to world coordinates
-	(x_world,y_world) = wcs.wcs_pix2sky_fits(x_pix,y_pix)
+	(x_world,y_world) = wcs.wcs_pix2sky(x_pix,y_pix)
 
 	return x_pix,y_pix,x_world,y_world
 

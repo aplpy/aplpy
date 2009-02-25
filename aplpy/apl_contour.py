@@ -44,7 +44,7 @@ def draw_new_contours(ax,wcs_in,wcs_out):
 				xp_in = polygon.vertices[:,0]
 				yp_in = polygon.vertices[:,1]
 				
-				xw,yw = wcs_in.wcs_pix2sky_fits(xp_in,yp_in)
+				xw,yw = wcs_in.wcs_pix2sky(xp_in,yp_in)
 			
 				if gal2fk5:
 					for ic in range(len(xw)):
@@ -58,7 +58,7 @@ def draw_new_contours(ax,wcs_in,wcs_out):
 					xw = np.array(xw)
 					xy = np.array(yw)
 						
-				xp_out,yp_out = wcs_out.wcs_sky2pix_fits(xw,yw)
+				xp_out,yp_out = wcs_out.wcs_sky2pix(xw,yw)
 
 				polygons_out.append(zip(xp_out,yp_out))
 				
