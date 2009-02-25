@@ -222,9 +222,13 @@ class FITSFigure(object):
 		self.ax1 = plot_grid(self.ax1)
 		self.refresh()
 		
-	def contour(self,contourFile, levels=5, cmap = 'jet',filled=False,alpha=0.7):
-		# Draw the contours
-		g = cm.get_cmap(cmap,1000)
+	def contour(self,contourFile, levels=5, filled=False, **kwargs):
+		
+		if kwargs.has_key('cmap'):
+		 	kwargs['cmap'] = cm.get_cmap(kwargs['cmap'],1000)
+		elif not kwargs.has_key('colors'):
+			kwargs['cmap'] = cm.get_cmap('jet',1000)
+		 	
 		hdu_contour = pyfits.open(contourFile)[0]
 		hdu_contour.header  = check_header(hdu_contour.header)
 		wcs_contour = pywcs.WCS(hdu_contour.header)
@@ -232,10 +236,12 @@ class FITSFigure(object):
 		wcs_contour.nx = hdu_contour.header['NAXIS1']
 		wcs_contour.ny = hdu_contour.header['NAXIS2']
 		extent_contour = (0.5,wcs_contour.nx+0.5,0.5,wcs_contour.ny+0.5)
+
 		if filled:
-			self.ax1.contourf(image_contour,levels,cmap=g,alpha=alpha,extent=extent_contour)
+			self.ax1.contourf(image_contour,levels,extent=extent_contour,**kwargs)
 		else:
-			self.ax1.contour(image_contour,levels,cmap=g,alpha=alpha,extent=extent_contour)
+			self.ax1.contour(image_contour,levels,extent=extent_contour,**kwargs)
+
 		self.ax1 = draw_new_contours(self.ax1,wcs_contour,self.wcs)
 		self.refresh()
 
