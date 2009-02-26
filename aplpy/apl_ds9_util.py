@@ -1,6 +1,7 @@
 import string
 from matplotlib.pyplot import *
 from apl_util import system
+from numpy import array, radians, cos, sin
 
 def string_cleaner(String):
 	dirt = ('(',')','{','}','=','#',',')
@@ -77,12 +78,12 @@ def dict2pix(dict,wcs):
 	t = type(xw)
 	
 	if t==float:
-		xw = np.array([xw])
-		yw = np.array([yw])
+		xw = array([xw])
+		yw = array([yw])
 
 	if t==list:
-		xw = np.array(xw)
-		yw = np.array(yw)
+		xw = array(xw)
+		yw = array(yw)
 	
 	if dict['coord_sys']=='fk5':	
 		if system(wcs)=='fk5':
