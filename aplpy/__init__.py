@@ -2,7 +2,8 @@ from distutils import version as v
 
 import pyfits, pywcs
 
-from matplotlib.pyplot import figure,NullFormatter,cm
+from matplotlib.pyplot import figure,NullFormatter,cm, imread
+from numpy import flipud
 
 from apl_ticks import *
 from apl_grid import plot_grid
@@ -208,6 +209,7 @@ class FITSFigure(object):
 				
 	def rgb(self,filename):
 		pretty_image = imread(filename)
+		pretty_image = flipud(pretty_image)
 		self.ax1.imshow(pretty_image,extent=self.extent)
 		
 		self.ax1.set_xlabel('(R.A. J2000)')
