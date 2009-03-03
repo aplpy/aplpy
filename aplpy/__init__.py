@@ -332,7 +332,7 @@ class FITSFigure(object):
 			print "[error] pix2world should be provided either with two floats, two lists, or two numpy arrays"
 			
 	def save(self,saveName,dpi = 300,transparent=False):
-		self.fig.savefig(saveName,dpi=dpi,transparent=False)
+		self.fig.savefig(saveName,dpi=dpi,transparent=transparent)
 		
 	def ds9(self,regionfile):
 		reg = ds9Parser(regionfile,self.wcs)
