@@ -231,9 +231,12 @@ class FITSFigure(object):
 		
 	def contour(self,contourFile,replace=False,levels=5,filled=False, **kwargs):
 		
-		if replace and not self.layer_exists(replace):
-			print "[error] layer "+replace+" does not exist"
-			return
+		if replace:
+			if not self.layer_exists(replace):
+				print "[error] layer "+replace+" does not exist"
+				return
+			else:
+				self.remove(replace)
 		
 		if kwargs.has_key('cmap'):
 		 	kwargs['cmap'] = cm.get_cmap(kwargs['cmap'],1000)
@@ -248,29 +251,22 @@ class FITSFigure(object):
 		wcs_contour.ny = hdu_contour.header['NAXIS2']
 		extent_contour = (0.5,wcs_contour.nx+0.5,0.5,wcs_contour.ny+0.5)
 
-		if filled:
-			c = contourf(image_contour,levels,extent=extent_contour,**kwargs)
-		else:
-			c = contour(image_contour,levels,extent=extent_contour,**kwargs)
+		self.name_empty_layers('user')
 
-		c = draw_new_contours(c,wcs_contour,self.wcs)
+		if filled:
+			self.ax1.contourf(image_contour,levels,extent=extent_contour,**kwargs)
+		else:
+			self.ax1.contour(image_contour,levels,extent=extent_contour,**kwargs)
+
+		self.ax1 = draw_new_contours(self.ax1,wcs_contour,self.wcs)
 		
 		if replace:
-			self.remove(replace)
 			contour_set_name = replace
 		else:
 			self.contour_counter += 1
 			contour_set_name = 'contour_set_'+str(self.contour_counter)
 
-		self.layers_list.append({'name' : contour_set_name})
-
-		for i in range(len(c.collections)):
-
-			c.collections[i].aplpy_layer_name = contour_set_name
-			self.ax1.add_collection(c.collections[i])
-		
-		# The following is a hack - need to prevent contours from being appended to ax2
-		self.ax2.collections = []
+		self.name_empty_layers(contour_set_name)
 		
 		self.refresh()
 
@@ -328,27 +324,25 @@ class FITSFigure(object):
 		
 	def markers(self,wcsArray,replace=False,alpha=1 ,color='r' ,marker='o' , edgecolor='red', size=30, linewidth=1,facecolors='none'):
 
-		if replace and not self.layer_exists(replace):
-			print "[error] layer "+replace+" does not exist"
-			return
+		if replace:
+			if not self.layer_exists(replace):
+				print "[error] layer "+replace+" does not exist"
+				return
+			else:
+				self.remove(replace)
+
+		self.name_empty_layers('user')	
 
 		wcsArray = self.wcs.wcs_sky2pix(wcsArray)
-		s = scatter(wcsArray[:,0],wcsArray[:,1],alpha=alpha,c=color,marker=marker,s=size,edgecolor=edgecolor,linewidth=linewidth,facecolors=facecolors)
+		self.ax1.scatter(wcsArray[:,0],wcsArray[:,1],alpha=alpha,c=color,marker=marker,s=size,edgecolor=edgecolor,linewidth=linewidth,facecolors=facecolors)
 
 		if replace:
-			self.remove(replace)
 			scatter_set_name = replace
 		else:
 			self.scatter_counter += 1
 			scatter_set_name = 'scatter_set_'+str(self.scatter_counter)
 			
-		self.layers_list.append({'name' : scatter_set_name})
-		s.aplpy_layer_name = scatter_set_name
-		
-		# The following is a hack - need to prevent contours from being appended to ax2
-		self.ax2.collections = []
-		
-		self.ax1.add_collection(s)
+		self.name_empty_layers(scatter_set_name)
 		
 		self.refresh()
 		
@@ -370,6 +364,21 @@ class FITSFigure(object):
 				return True
 		return False
 	
+	def name_empty_layers(self,name):
+		
+		empty = []
+		for i in range(len(self.ax1.collections)):
+			try:
+				n = self.ax1.collections[i].aplpy_layer_name
+			except AttributeError:
+				empty.append(i)
+			
+		for i in empty:
+			self.ax1.collections[i].aplpy_layer_name = name
+			
+		if len(empty) > 0:
+			self.layers_list.append({'name' : name})
+			
 	def remove(self,layer):
 
 		if not self.layer_exists(layer):

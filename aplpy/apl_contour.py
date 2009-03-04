@@ -4,9 +4,10 @@ from time import time
 import sys
 import apl_coords as c
 
-def draw_new_contours(contourset,wcs_in,wcs_out):
+def draw_new_contours(ax,wcs_in,wcs_out):
 	print "Transforming contour coordinates..."
 	start = time()
+	print len(ax.collections)
 	
 	# Check that both files are in same coordinate system
 	
@@ -27,18 +28,18 @@ def draw_new_contours(contourset,wcs_in,wcs_out):
 	if gal2fk5: print "[warning] converting contours from galactic to equatorial"
 	if fk52gal: print "[warning] converting contours from equatorial to galactic"
 		
-	for i in range(len(contourset.collections)):
+	for i in range(len(ax.collections)):
 		
 		try:
-			process = not contourset.collections[i].apl_corrected
+			process = not ax.collections[i].apl_corrected
 		except AttributeError:
 			process = True
-			contourset.collections[i].apl_corrected = True
+			ax.collections[i].apl_corrected = True
 			
 		if process:
 						
 			polygons_out = []
-			for polygon in contourset.collections[i].get_paths():
+			for polygon in ax.collections[i].get_paths():
 			
 				xp_in = polygon.vertices[:,0]
 				yp_in = polygon.vertices[:,1]
@@ -61,9 +62,9 @@ def draw_new_contours(contourset,wcs_in,wcs_out):
 
 				polygons_out.append(zip(xp_out,yp_out))
 				
-			contourset.collections[i].set_verts(polygons_out)
-			contourset.collections[i].apl_converted = True
+			ax.collections[i].set_verts(polygons_out)
+			ax.collections[i].apl_converted = True
 			
 	total = round(time() - start,4)
 	print "Done in "+str(total)+" seconds"
-	return contourset
+	return ax
