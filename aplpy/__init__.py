@@ -2,7 +2,7 @@ from distutils import version as v
 
 import pyfits, pywcs
 
-from matplotlib.pyplot import figure,NullFormatter,cm, imread
+from matplotlib.pyplot import figure,NullFormatter,cm,imread,scatter,contour,contourf
 from numpy import flipud
 
 from apl_ticks import *
@@ -31,9 +31,14 @@ class FITSFigure(object):
 		#if v.LooseVersion(matplotlib.__version__) < v.LooseVersion('0.98.5.2'):
 		#	print "[error] matplotlib >= 0.98.5.2 is required"
 		#	return
-			
+		
 		# Open the figure
 		self.fig = figure(figsize=(xinch,yinch))
+		
+		# Initialize layers list
+		self.layers_list = []
+		self.contour_counter = 0
+		self.scatter_counter = 0
 		
 		### FITS FILE ###
 					
@@ -224,7 +229,11 @@ class FITSFigure(object):
 		self.ax1 = plot_grid(self.ax1)
 		self.refresh()
 		
-	def contour(self,contourFile, levels=5, filled=False, **kwargs):
+	def contour(self,contourFile,replace=False,levels=5,filled=False, **kwargs):
+		
+		if replace and not self.layer_exists(replace):
+			print "[error] layer "+replace+" does not exist"
+			return
 		
 		if kwargs.has_key('cmap'):
 		 	kwargs['cmap'] = cm.get_cmap(kwargs['cmap'],1000)
@@ -240,11 +249,29 @@ class FITSFigure(object):
 		extent_contour = (0.5,wcs_contour.nx+0.5,0.5,wcs_contour.ny+0.5)
 
 		if filled:
-			self.ax1.contourf(image_contour,levels,extent=extent_contour,**kwargs)
+			c = contourf(image_contour,levels,extent=extent_contour,**kwargs)
 		else:
-			self.ax1.contour(image_contour,levels,extent=extent_contour,**kwargs)
+			c = contour(image_contour,levels,extent=extent_contour,**kwargs)
 
-		self.ax1 = draw_new_contours(self.ax1,wcs_contour,self.wcs)
+		c = draw_new_contours(c,wcs_contour,self.wcs)
+		
+		if replace:
+			self.remove(replace)
+			contour_set_name = replace
+		else:
+			self.contour_counter += 1
+			contour_set_name = 'contour_set_'+str(self.contour_counter)
+
+		self.layers_list.append({'name' : contour_set_name})
+
+		for i in range(len(c.collections)):
+
+			c.collections[i].aplpy_layer_name = contour_set_name
+			self.ax1.add_collection(c.collections[i])
+		
+		# The following is a hack - need to prevent contours from being appended to ax2
+		self.ax2.collections = []
+		
 		self.refresh()
 
 	def frame(self,refresh=True,**kwargs):
@@ -263,7 +290,7 @@ class FITSFigure(object):
 			self.ax1.yaxis.apl_label_form = kwargs['yform']
 
 		if refresh: self.refresh()
-
+		
 	def ticks(self,refresh=True,**kwargs):
 
 		if kwargs.has_key('xspacing'):
@@ -299,11 +326,64 @@ class FITSFigure(object):
 	# This method plots markers. The input should be an Nx2 array with WCS coordinates
 	# in degree format.
 		
-	def markers(self,wcsArray,alpha=1 ,color='r' ,marker='o' , edgecolor='red', size=30, linewidth=1,facecolors='none'):
+	def markers(self,wcsArray,replace=False,alpha=1 ,color='r' ,marker='o' , edgecolor='red', size=30, linewidth=1,facecolors='none'):
+
+		if replace and not self.layer_exists(replace):
+			print "[error] layer "+replace+" does not exist"
+			return
+
 		wcsArray = self.wcs.wcs_sky2pix(wcsArray)
-		self.ax1.scatter(wcsArray[:,0], wcsArray[:,1],alpha=alpha, c=color,marker=marker, s=size,edgecolor=edgecolor,linewidth=linewidth, facecolors=facecolors)
+		s = scatter(wcsArray[:,0],wcsArray[:,1],alpha=alpha,c=color,marker=marker,s=size,edgecolor=edgecolor,linewidth=linewidth,facecolors=facecolors)
+
+		if replace:
+			self.remove(replace)
+			scatter_set_name = replace
+		else:
+			self.scatter_counter += 1
+			scatter_set_name = 'scatter_set_'+str(self.scatter_counter)
+			
+		self.layers_list.append({'name' : scatter_set_name})
+		s.aplpy_layer_name = scatter_set_name
+		
+		self.ax1.add_collection(s)
+		
 		self.refresh()
 		
+	def layers(self):
+		n_layers = len(self.layers_list)
+		if n_layers == 0:
+			print "\n  There are no layers in this figure"
+		else:
+			if n_layers==1:
+				print "\n  There is one layer in this figure: "+self.layers_list[0]['name']
+			else:
+				print "\n  There are "+str(n_layers)+" layers in this figure:\n"
+				for layer in self.layers_list:
+					print "   -> "+layer['name']
+	
+	def layer_exists(self,layer):
+		for l in self.layers_list:
+			if layer==l['name']:
+				return True
+		return False
+	
+	def remove(self,layer):
+
+		if not self.layer_exists(layer):
+			print "[error] layer "+layer+" does not exist"
+			return
+
+		if "contour_set_" in layer or "scatter_set_" in layer:
+			for i in range(len(self.ax1.collections)-1,-1,-1):
+				if(layer==self.ax1.collections[i].aplpy_layer_name):
+					self.ax1.collections.pop(i)
+
+		for i in range(len(self.layers_list)-1,-1,-1):
+			if self.layers_list[i]['name']==layer:
+				self.layers_list.pop(i)
+				
+		self.refresh()
+
 	def refresh(self):
 		self.fig.canvas.draw()
 		
@@ -339,4 +419,5 @@ class FITSFigure(object):
 		for p in reg.plot():
 			self.ax1.add_patch(p)
 		self.refresh()
+		
 		
