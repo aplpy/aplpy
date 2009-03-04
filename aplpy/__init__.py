@@ -345,6 +345,9 @@ class FITSFigure(object):
 		self.layers_list.append({'name' : scatter_set_name})
 		s.aplpy_layer_name = scatter_set_name
 		
+		# The following is a hack - need to prevent contours from being appended to ax2
+		self.ax2.collections = []
+		
 		self.ax1.add_collection(s)
 		
 		self.refresh()
