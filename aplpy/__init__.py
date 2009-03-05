@@ -356,8 +356,11 @@ class FITSFigure(object):
 			else:
 				print "\n  There are "+str(n_layers)+" layers in this figure:\n"
 				for layer in self.layers_list:
-					print "   -> "+layer['name']
-	
+					if layer['visible']:
+						print "   -> "+layer['name']
+					else:
+						print "   -> "+layer['name']+" (hidden)"
+						
 	def layer_exists(self,layer):
 		for l in self.layers_list:
 			if layer==l['name']:
@@ -377,7 +380,7 @@ class FITSFigure(object):
 			self.ax1.collections[i].aplpy_layer_name = name
 			
 		if len(empty) > 0:
-			self.layers_list.append({'name' : name})
+			self.layers_list.append({'name' : name,'visible' : True})
 			
 	def remove(self,layer):
 
@@ -395,6 +398,42 @@ class FITSFigure(object):
 				self.layers_list.pop(i)
 				
 		self.refresh()
+		
+	def hide(self,layer):
+		
+		if not self.layer_exists(layer):
+			print "[error] layer "+layer+" does not exist"
+			return
+
+		if "contour_set_" in layer or "scatter_set_" in layer:
+			for i in range(len(self.ax1.collections)-1,-1,-1):
+				if(layer==self.ax1.collections[i].aplpy_layer_name):
+					self.ax1.collections[i].set_visible(False)
+
+		for i in range(len(self.layers_list)-1,-1,-1):
+			if self.layers_list[i]['name']==layer:
+				self.layers_list[i]['visible']=False
+				
+		self.refresh()
+
+		
+	def show(self,layer):
+		
+		if not self.layer_exists(layer):
+			print "[error] layer "+layer+" does not exist"
+			return
+
+		if "contour_set_" in layer or "scatter_set_" in layer:
+			for i in range(len(self.ax1.collections)-1,-1,-1):
+				if(layer==self.ax1.collections[i].aplpy_layer_name):
+					self.ax1.collections[i].set_visible(True)
+
+		for i in range(len(self.layers_list)-1,-1,-1):
+			if self.layers_list[i]['name']==layer:
+				self.layers_list[i]['visible']=True
+				
+		self.refresh()
+
 
 	def refresh(self):
 		self.fig.canvas.draw()
