@@ -286,6 +286,17 @@ class FITSFigure(object):
 			self.ax1.yaxis.apl_label_form = kwargs['yform']
 
 		if refresh: self.refresh()
+	
+	def xylabels(self,refresh=True,family='serif',fontsize='12',fontstyle='normal'):
+		"""
+		family				[ 'serif' | 'sans-serif' | 'cursive' | 'fantasy' | 'monospace' ]
+      	size or fontsize	[ size in points | relative size eg 'smaller', 'x-large' ]
+  		style or fontstyle	[ 'normal' | 'italic' | 'oblique']
+		"""
+		self.ax1.set_xlabel('(R.A. J2000)',family=family,fontsize=fontsize,fontstyle=fontstyle)
+		self.ax1.set_ylabel('(Dec. J2000)',family=family,fontsize=fontsize,fontstyle=fontstyle)
+
+		if refresh: self.refresh()
 		
 	def ticks(self,refresh=True,**kwargs):
 
