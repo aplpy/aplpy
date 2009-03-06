@@ -333,7 +333,7 @@ class FITSFigure(object):
 	# This method plots markers. The input should be an Nx2 array with WCS coordinates
 	# in degree format.
 		
-	def markers(self,wcsArray,replace=False,alpha=1 ,color='r' ,marker='o' , edgecolor='red', size=30, linewidth=1,facecolors='none'):
+	def markers(self,xw,yw,replace=False,alpha=1 ,color='r' ,marker='o' , edgecolor='red', size=30, linewidth=1,facecolors='none'):
 
 		if replace:
 			if not self.layer_exists(replace):
@@ -344,8 +344,8 @@ class FITSFigure(object):
 
 		self.name_empty_layers('user')	
 
-		wcsArray = self.wcs.wcs_sky2pix(wcsArray)
-		self.ax1.scatter(wcsArray[:,0],wcsArray[:,1],alpha=alpha,c=color,marker=marker,s=size,edgecolor=edgecolor,linewidth=linewidth,facecolors=facecolors)
+		xp,yp = self.wcs.wcs_sky2pix(np.array(xw),np.array(yw))
+		self.ax1.scatter(xp,yp,alpha=alpha,c=color,marker=marker,s=size,edgecolor=edgecolor,linewidth=linewidth,facecolors=facecolors)
 
 		if replace:
 			scatter_set_name = replace
