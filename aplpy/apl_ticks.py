@@ -77,6 +77,7 @@ class WCSFormatter(Formatter):
 		xw,yw = self.wcs.wcs_pix2sky(np.array([x]),np.array([y]))
 		
 		if self.axist=='x':
+			if xw[0]==360.0: xw[0]=0.0
 			return dc.raer(xw[0],form=self.axis.apl_label_form)
 		else:
 			return dc.decer(yw[0],form=self.axis.apl_label_form)
@@ -119,8 +120,8 @@ def tick_positions(wcs,spacing,axis,coord,farside=False,xmin=False,xmax=False,ym
 	wy_out = []
 	
 	for w in np.arange(np.floor(min(wx)),np.ceil(max(wx)),1.):
-		for i in range(0,len(px)-1):
-			if (wx[i] < w and wx[i+1] > w) or (wx[i] > w and wx[i+1] < w):
+		for i in range(len(px)-1):
+			if (wx[i] <= w and wx[i+1] > w) or (wx[i] > w and wx[i+1] <= w):
 				px_out.append(px[i] + (px[i+1]-px[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
 				py_out.append(py[i] + (py[i+1]-py[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
 				wx_tick = w*spacing % 360.
