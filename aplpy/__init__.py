@@ -12,6 +12,8 @@ from apl_header import check_header
 from apl_util import *
 from apl_ds9 import ds9Parser
 
+import apl_montage as montage
+
 # Values stored inside the axes Instances:
 
 # ax.xaxis.apl_tick_spacing = x-axis tick spacing ('auto' or float)
@@ -25,7 +27,7 @@ from apl_ds9 import ds9Parser
 class FITSFigure(object):
 	"A class for plotting FITS files."
 	
-	def __init__(self,filename,xinch=10,yinch=10,hdu=0,downsample=False):
+	def __init__(self,filename,xinch=10,yinch=10,hdu=0,downsample=False,north=False):
 
 		# Check that matplotlib is recent enough
 		#if v.LooseVersion(matplotlib.__version__) < v.LooseVersion('0.98.5.2'):
@@ -45,6 +47,7 @@ class FITSFigure(object):
 		# Read in FITS file
 		try:
 			self.hdu        = pyfits.open(filename)[hdu]
+			if north: self.hdu = montage.reproject_north(self.hdu)
 			self.hdu.header = check_header(self.hdu.header)
 			self.wcs        = pywcs.WCS(self.hdu.header)
 			self.wcs.nx = self.hdu.header['NAXIS1']
@@ -54,7 +57,7 @@ class FITSFigure(object):
 			print "        check that the FITS file is valid using the online FITS"
 			print "        verifier at http://fits.gsfc.nasa.gov/fits_verify.html."
 			print "        If the FITS file is valid, please report this problem."
-			return
+			return		
 		
 		# Downsample if requested
 		if downsample:
