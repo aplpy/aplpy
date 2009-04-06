@@ -3,7 +3,7 @@ from distutils import version as v
 import pyfits, pywcs
 
 from matplotlib.pyplot import figure,NullFormatter,cm,imread,scatter,contour,contourf
-from numpy import flipud
+from numpy import flipud, float32, float64, float128
 
 from apl_ticks import *
 from apl_grid import plot_grid
@@ -459,7 +459,7 @@ class FITSFigure(object):
 		self.fig.canvas.draw()
 		
 	def world2pix(self,x_world,y_world):
-		if type(x_world) == float:
+		if type(x_world) == float or type(x_world) == float32 or type(x_world) == float64 or type(x_world) == float128:
 			x_pix,y_pix = self.wcs.wcs_sky2pix(np.array([x_world]),np.array([y_world]))
 			return x_pix[0],y_pix[0]
 		elif type(x_world) == list:
@@ -471,7 +471,7 @@ class FITSFigure(object):
 			print "[error] world2pix should be provided either with two floats, two lists, or two numpy arrays"
 			
 	def pix2world(self,x_pix,y_pix):
-		if type(x_pix) == float:
+		if type(x_pix) == float or type(x_pix) == float32 or type(x_pix) == float64 or type(x_pix) == float128:
 			x_world,y_world = self.wcs.wcs_pix2sky(np.array([x_pix]),np.array([y_pix]))
 			return x_world[0],y_world[0]
 		elif type(x_pix) == list:
