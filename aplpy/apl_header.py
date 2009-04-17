@@ -31,9 +31,9 @@ def check_header(header):
 	
 	if xproj == '-CAR':
 		if crpix1 < 0.5 or crpix1 > nx + 0.5 or crpix2 < 0.5 or crpix2 > ny + 0.5:
-			xcw,ycw = wcs.wcs_pix2sky(np.array([xcp]),np.array([ycp]))
-			header.update('CRVAL1',xcw[0])
-			header.update('CRVAL2',ycw[0])
+			xcw,ycw = pix2world(wcs,xcp,ycp)
+			header.update('CRVAL1',xcw)
+			header.update('CRVAL2',ycw)
 			header.update('CRPIX1',xcp)
 			header.update('CRPIX2',ycp)
 			if header.has_key('LONPOLE'):

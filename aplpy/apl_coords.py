@@ -1,5 +1,6 @@
 import numpy
 from math import pi,sin,cos,asin,acos
+import numpy as np
 
 ra_ngp=192.859508333333
 dec_ngp=27.1283361111111
@@ -9,6 +10,33 @@ ra_0=ra_ngp+90.
 dec_0=90.-dec_ngp
 
 deg2rad=pi/180.
+
+def arcperpix(wcs):
+    return np.sqrt(wcs.wcs.cd[0,0]**2 + wcs.wcs.cd[1,0]**2)*3600.
+
+def world2pix(wcs,x_world,y_world):
+	if type(x_world) == float or type(x_world) == np.float32 or type(x_world) == np.float64 or type(x_world) == np.float128:
+		x_pix,y_pix = wcs.wcs_sky2pix(np.array([x_world]),np.array([y_world]),1)
+		return x_pix[0],y_pix[0]
+	elif type(x_world) == list:
+		x_pix,y_pix = wcs.wcs_sky2pix(np.array(x_world),np.array(y_world),1)
+		return x_pix.tolist(),y_pix.tolist()
+	elif type(x_world) == np.ndarray:
+		return wcs.wcs_sky2pix(x_world,y_world,1)
+	else:
+		print "[error] world2pix should be provided either with two floats, two lists, or two numpy arrays"
+		
+def pix2world(wcs,x_pix,y_pix):
+	if type(x_pix) == float or type(x_pix) == np.float32 or type(x_pix) == np.float64 or type(x_pix) == np.float128:
+		x_world,y_world = wcs.wcs_pix2sky(np.array([x_pix]),np.array([y_pix]),1)
+		return x_world[0],y_world[0]
+	elif type(x_pix) == list:
+		x_world,y_world = wcs.wcs_pix2sky(np.array(x_pix),np.array(y_pix),1)
+		return x_world.tolist(),y_world.tolist()
+	elif type(x_pix) == np.ndarray:
+		return wcs.wcs_pix2sky(x_pix,y_pix,1)
+	else:
+		print "[error] pix2world should be provided either with two floats, two lists, or two numpy arrays"
 
 def gal2fk5(l,b):
 	

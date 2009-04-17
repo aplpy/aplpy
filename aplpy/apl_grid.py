@@ -50,7 +50,7 @@ def plot_grid(ax):
 
 		if np.size(lon_ni) > 0:
 		
-			xpix,ypix = wcs.wcs_sky2pix(lon_ni,lat_ni)
+			xpix,ypix = world2pix(wcs,lon_ni,lat_ni)
 
 			# Plot those lines
 	#		for i in range(0,np.size(lon_ni)):
@@ -75,7 +75,7 @@ def plot_grid(ax):
 
 		if np.size(lat_ni) > 0:
 		
-			xpix,ypix = wcs.wcs_sky2pix(lon_ni,lat_ni)
+			xpix,ypix = world2pix(wcs,lon_ni,lat_ni)
 
 			# Plot those lines
 	#		for i in range(0,np.size(lat_ni)):
@@ -130,7 +130,7 @@ def plot_latitude(wcs,lon,lat,lat0,alpha=0.5):
 	lines_out = []
 	
 	# Check if the point with coordinates (0,lat0) is inside the viewport
-	xpix,ypix = wcs.wcs_sky2pix(np.array([0.]),np.array([lat0]))
+	xpix,ypix = world2pix(wcs,0.,lat0)
 	
 	if in_plot(wcs,xpix,ypix):
 		lon_min = 0.
@@ -152,7 +152,7 @@ def plot_latitude(wcs,lon,lat,lat0,alpha=0.5):
 			lon_max = l
 			x_world = complete_range(lon_min,lon_max,360) # Plotting every degree, make more general
 			y_world = np.ones(len(x_world)) * lat0
-			x_pix,y_pix = wcs.wcs_sky2pix(x_world,y_world)
+			x_pix,y_pix = world2pix(wcs,x_world,y_world)
 			lines_out.append(zip(x_pix,y_pix))
 			inside = False
 		else:
@@ -164,7 +164,7 @@ def plot_latitude(wcs,lon,lat,lat0,alpha=0.5):
 		lon_max = 360.
 		x_world = complete_range(lon_min,lon_max,360)
 		y_world = np.ones(len(x_world)) * lat0
-		x_pix,y_pix = wcs.wcs_sky2pix(x_world,y_world)
+		x_pix,y_pix = world2pix(wcs,x_world,y_world)
 		lines_out.append(zip(x_pix,y_pix))
 		inside = False
 	
@@ -179,7 +179,7 @@ def plot_longitude(wcs,lon,lat,lon0,alpha=0.5):
 	lines_out = []
 
 	# Check if the point with coordinates (10.,-90.) is inside the viewport
-	xpix,ypix = wcs.wcs_sky2pix(np.array([10.]),np.array([-90.]))
+	xpix,ypix = world2pix(wcs,10.,-90.)
 	
 	if in_plot(wcs,xpix,ypix):
 		lat_min = -90.
@@ -198,7 +198,7 @@ def plot_longitude(wcs,lon,lat,lon0,alpha=0.5):
 			lat_max = l
 			y_world = complete_range(lat_min,lat_max,360)
 			x_world = np.ones(len(y_world)) * lon0
-			x_pix,y_pix = wcs.wcs_sky2pix(x_world,y_world)
+			x_pix,y_pix = world2pix(wcs,x_world,y_world)
 			lines_out.append(zip(x_pix,y_pix))
 			inside = False
 		else:
@@ -209,7 +209,7 @@ def plot_longitude(wcs,lon,lat,lon0,alpha=0.5):
 		lat_max = 90.
 		y_world = complete_range(lat_min,lat_max,360)
 		x_world = np.ones(len(y_world)) * lon0
-		x_pix,y_pix = wcs.wcs_sky2pix(x_world,y_world)
+		x_pix,y_pix = world2pix(wcs,x_world,y_world)
 		lines_out.append(zip(x_pix,y_pix))
 		inside = False
 		

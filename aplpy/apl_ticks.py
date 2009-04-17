@@ -4,6 +4,7 @@ import degConvert as dc
 from scipy.interpolate import UnivariateSpline
 import sys
 from apl_util import *
+from apl_coords import *
 
 class WCSLocator(Locator):
 	
@@ -74,13 +75,13 @@ class WCSFormatter(Formatter):
 			y = x
 			x = xmin
 			
-		xw,yw = self.wcs.wcs_pix2sky(np.array([x]),np.array([y]))
+		xw,yw = pix2world(self.wcs,x,y)
 		
 		if self.axist=='x':
-			if xw[0]==360.0: xw[0]=0.0
-			return dc.raer(xw[0],form=self.axis.apl_label_form)
+			if xw==360.0: xw=0.0
+			return dc.raer(xw,form=self.axis.apl_label_form)
 		else:
-			return dc.decer(yw[0],form=self.axis.apl_label_form)
+			return dc.decer(yw,form=self.axis.apl_label_form)
 
 ###############################################################
 # find_ticks:      Find positions of ticks along a given axis
@@ -180,7 +181,7 @@ def axis_positions(wcs,axis,farside,xmin=False,xmax=False,ymin=False,ymax=False)
 			x_pix = x_pix * xmin
 
 	# Convert these to world coordinates
-	(x_world,y_world) = wcs.wcs_pix2sky(x_pix,y_pix)
+	x_world,y_world = pix2world(wcs,x_pix,y_pix)
 
 	return x_pix,y_pix,x_world,y_world
 

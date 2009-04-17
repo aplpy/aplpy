@@ -3,7 +3,6 @@ from distutils import version as v
 import pyfits, pywcs
 
 from matplotlib.pyplot import figure,NullFormatter,cm,imread,scatter,contour,contourf
-from numpy import flipud, float32, float64, float128
 
 from apl_ticks import *
 from apl_grid import plot_grid
@@ -46,17 +45,17 @@ class FITSFigure(object):
 					
 		# Read in FITS file
 		try:
-			self.hdu        = pyfits.open(filename)[hdu]
+			self.hdu		= pyfits.open(filename)[hdu]
 			if north: self.hdu = montage.reproject_north(self.hdu)
 			self.hdu.header = check_header(self.hdu.header)
-			self.wcs        = pywcs.WCS(self.hdu.header)
+			self.wcs		= pywcs.WCS(self.hdu.header)
 			self.wcs.nx = self.hdu.header['NAXIS1']
 			self.wcs.ny = self.hdu.header['NAXIS2']
 		except:
 			print "[error] a problem occurred when reading the FITS file. Please "
-			print "        check that the FITS file is valid using the online FITS"
-			print "        verifier at http://fits.gsfc.nasa.gov/fits_verify.html."
-			print "        If the FITS file is valid, please report this problem."
+			print "		check that the FITS file is valid using the online FITS"
+			print "		verifier at http://fits.gsfc.nasa.gov/fits_verify.html."
+			print "		If the FITS file is valid, please report this problem."
 			return		
 		
 		# Downsample if requested
@@ -207,7 +206,7 @@ class FITSFigure(object):
 			
 		if type(vmax) is str:
 			vmax=vmax_auto
-			
+		
 		img = self.ax1.imshow(stretchedImg, cmap = g,vmin=vmin, vmax=vmax,interpolation=interpolation,origin='lower',extent=self.extent)
 		
 		self.ax1.set_xlabel('(R.A. J2000)')
@@ -293,7 +292,7 @@ class FITSFigure(object):
 	def xylabels(self,refresh=True,family='serif',fontsize='12',fontstyle='normal'):
 		"""
 		family				[ 'serif' | 'sans-serif' | 'cursive' | 'fantasy' | 'monospace' ]
-      	size or fontsize	[ size in points | relative size eg 'smaller', 'x-large' ]
+	  	size or fontsize	[ size in points | relative size eg 'smaller', 'x-large' ]
   		style or fontstyle	[ 'normal' | 'italic' | 'oblique']
 		"""
 		self.ax1.set_xlabel('(R.A. J2000)',family=family,fontsize=fontsize,fontstyle=fontstyle)
@@ -353,7 +352,7 @@ class FITSFigure(object):
 
 		self.name_empty_layers('user')	
 
-		xp,yp = self.wcs.wcs_sky2pix(np.array(xw),np.array(yw))
+		xp,yp = world2pix(wcs,xw,yw)
 		self.ax1.scatter(xp,yp,**kwargs)
 
 		if replace:
@@ -454,36 +453,18 @@ class FITSFigure(object):
 				
 		self.refresh()
 
-
 	def refresh(self):
 		self.fig.canvas.draw()
 		
-	def world2pix(self,x_world,y_world):
-		if type(x_world) == float or type(x_world) == float32 or type(x_world) == float64 or type(x_world) == float128:
-			x_pix,y_pix = self.wcs.wcs_sky2pix(np.array([x_world]),np.array([y_world]))
-			return x_pix[0],y_pix[0]
-		elif type(x_world) == list:
-			x_pix,y_pix = self.wcs.wcs_sky2pix(np.array(x_world),np.array(y_world))
-			return x_pix.tolist(),y_pix.tolist()
-		elif type(x_world) == np.ndarray:
-			return self.wcs.wcs_sky2pix(x_world,y_world)
-		else:
-			print "[error] world2pix should be provided either with two floats, two lists, or two numpy arrays"
-			
-	def pix2world(self,x_pix,y_pix):
-		if type(x_pix) == float or type(x_pix) == float32 or type(x_pix) == float64 or type(x_pix) == float128:
-			x_world,y_world = self.wcs.wcs_pix2sky(np.array([x_pix]),np.array([y_pix]))
-			return x_world[0],y_world[0]
-		elif type(x_pix) == list:
-			x_world,y_world = self.wcs.wcs_pix2sky(np.array(x_pix),np.array(y_pix))
-			return x_world.tolist(),y_world.tolist()
-		elif type(x_pix) == np.ndarray:
-			return self.wcs.wcs_pix2sky(x_pix,y_pix)
-		else:
-			print "[error] pix2world should be provided either with two floats, two lists, or two numpy arrays"
-			
 	def save(self,saveName,dpi=None,transparent=False):
-		self.fig.savefig(saveName,dpi=dpi,transparent=transparent)
+		
+		if dpi == None:
+			width = self.ax1.get_position().width * self.fig.get_figwidth()
+			interval = self.ax1.xaxis.get_view_interval()
+			nx = interval[1] - interval[0]
+			dpi = nx / width
+			print "Auto-setting resolution to ",dpi," dpi"
+			self.fig.savefig(saveName,dpi=dpi,transparent=transparent)
 		
 	def ds9(self,regionfile):
 		reg = ds9Parser(regionfile,self.wcs)
