@@ -1,4 +1,5 @@
 from distutils import version as v
+import os
 
 import pyfits, pywcs
 
@@ -458,7 +459,7 @@ class FITSFigure(object):
 		
 	def save(self,saveName,dpi=None,transparent=False):
 		
-		if dpi == None:
+		if dpi == None and os.path.splitext(saveName)[1] in ['.EPS','.eps','.ps','.PS','.Eps','.Ps']:
 			width = self.ax1.get_position().width * self.fig.get_figwidth()
 			interval = self.ax1.xaxis.get_view_interval()
 			nx = interval[1] - interval[0]
