@@ -153,7 +153,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     def show_contour(self,contour_file,layer=None,levels=5,filled=False, **kwargs):
         
         if layer:
-            self.remove_layer(layer)
+            self.remove_layer(layer,raise_exception=False)
         
         if kwargs.has_key('cmap'):
             kwargs['cmap'] = mpl.cm.get_cmap(kwargs['cmap'],1000)
@@ -197,7 +197,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         kwargs.setdefault('s',30)
         
         if layer:
-            self.remove(layer)
+            self.remove_layer(layer,raise_exception=False)
         
         self._name_empty_layers('user')
         

@@ -30,10 +30,16 @@ class Grid(object):
         self._ax1.callbacks.connect('xlim_changed',generate_grid)
         self._ax1.callbacks.connect('ylim_changed',generate_grid)
     
-    def set_grid_spacing(self,xspacing='auto',yspacing='auto'):
+    def set_grid_xspacing(self,xspacing='auto'):
         self._ax1.xaxis.apl_grid_spacing = xspacing
-        self._ax1.yaxis.apl_grid_spacing = yspacing
-    
+        self._ax1 = generate_grid(self._ax1)
+        self.refresh()
+            
+    def set_grid_yspacing(self,yspacing='auto'):
+        self._ax1.yaxis.apl_grid_spacing = yspacing    
+        self._ax1 = generate_grid(self._ax1)
+        self.refresh()
+        
     def set_grid_color(self,color):
         self._ax1.apl_grid_color = color
         self._ax1 = generate_grid(self._ax1)
