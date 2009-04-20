@@ -159,21 +159,51 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *contour_file*:
               The filename of the FITS file to plot the contours of
               
-        Optional Arguments:
+        Optional Keyword Arguments:
         
-            *layer*:
+            *layer*: [ string ]
               The name of the contour layer. This is useful for giving
               custom names to layers (instead of contour_set_n) and for
               replacing existing layers.
               
-            *levels*:
+            *levels*: [ int | list ]
               This can either be the number of contour levels to compute
               (if an integer is provided) or the actual list of contours
               to show (if a list of floats is provided) 
               
-            *filled*
+            *filled*: [ True | False ]
               Whether to show filled or line contours
-                
+              
+            Any additional keyword arguments will be passed on directly to
+            matplotlib's contour or contourf methods. For example, the
+            contour color can be specified using *either*:
+            
+            *colors*: [ string | tuple of strings ]
+              If a string, like 'r' or 'red', all levels will be plotted in this
+              color.
+
+              If a tuple of strings, different levels will be plotted in
+              different colors in the order specified.
+
+            or
+
+            *cmap*: [ string ]
+              The colormap to use
+              
+            Examples of other parameters include
+
+            *alpha*: float
+              The alpha blending value (i.e. transparency)
+
+              *linewidths*: [ number | tuple of numbers ]
+                If a number, all levels will be plotted with this linewidth.
+
+                If a tuple, different levels will be plotted with different
+                linewidths in the order specified
+
+              *linestyles*: ['solid' | 'dashed' | 'dashdot' | 'dotted' ]
+                The line style for the contours
+                              
         '''
         if layer:
             self.remove_layer(layer,raise_exception=False)
