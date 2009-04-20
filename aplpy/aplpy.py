@@ -151,7 +151,30 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self.refresh()
     
     def show_contour(self,contour_file,layer=None,levels=5,filled=False, **kwargs):
+        '''
+        Overlay contours on the current plot
         
+        Required Arguments:
+        
+            *contour_file*:
+              The filename of the FITS file to plot the contours of
+              
+        Optional Arguments:
+        
+            *layer*:
+              The name of the contour layer. This is useful for giving
+              custom names to layers (instead of contour_set_n) and for
+              replacing existing layers.
+              
+            *levels*:
+              This can either be the number of contour levels to compute
+              (if an integer is provided) or the actual list of contours
+              to show (if a list of floats is provided) 
+              
+            *filled*
+              Whether to show filled or line contours
+                
+        '''
         if layer:
             self.remove_layer(layer,raise_exception=False)
         
