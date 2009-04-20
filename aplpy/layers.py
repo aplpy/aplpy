@@ -10,6 +10,9 @@ class Layers(object):
         self._scatter_counter = 0
     
     def list_layers(self):
+        '''
+        Print a list of layers to standard output
+        '''
         
         n_layers = len(self._layers_list)
         if n_layers == 0:
@@ -47,6 +50,14 @@ class Layers(object):
             self._layers_list.append({'name' : name,'visible' : True})
     
     def remove_layer(self,layer,raise_exception=True):
+        '''
+        Remove a layer
+        
+        Required Arguments:
+        
+            *layer*: [ string ]
+                The name of the layer to remove
+        '''
         
         if not self.layer_exists(layer):
             if raise_exception:
@@ -65,6 +76,17 @@ class Layers(object):
         self.refresh()
     
     def hide_layer(self,layer,raise_exception=True):
+        '''
+        Hide a layer
+        
+        This differs from remove_layer in that if a layer is hidden
+        it can be shown again using show_layer.
+        
+        Required Arguments:
+        
+            *layer*: [ string ]
+                The name of the layer to hide
+        '''
         
         if not self.layer_exists(layer):
             if raise_exception:
@@ -84,7 +106,16 @@ class Layers(object):
     
     
     def show_layer(self,layer,raise_exception=True):
+        '''
+        Show a layer
         
+        This shows a layer previously hidden with hide_layer
+        
+        Required Arguments:
+        
+            *layer*: [ string ]
+                The name of the layer to show
+        '''
         if not self.layer_exists(layer):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")

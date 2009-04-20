@@ -30,32 +30,78 @@ class Grid(object):
         self._ax1.callbacks.connect('xlim_changed',generate_grid)
         self._ax1.callbacks.connect('ylim_changed',generate_grid)
     
-    def set_grid_xspacing(self,xspacing='auto'):
+    def set_grid_xspacing(self,xspacing):
+        '''
+        Set the grid line spacing in the longitudinal direction
+        
+        Required Arguments:
+            
+            *xspacing*: [ float | 'auto' ]
+                The spacing in the longitudinal direction, in degrees.
+                To set the spacing to be automatically determined, set this
+                to 'auto'
+        '''
         self._ax1.xaxis.apl_grid_spacing = xspacing
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
             
-    def set_grid_yspacing(self,yspacing='auto'):
+    def set_grid_yspacing(self,yspacing):
+        '''
+        Set the grid line spacing in the latitudinal direction
+        
+        Required Arguments:
+            
+            *yspacing*: [ float | 'auto' ]
+                The spacing in the latitudinal direction, in degrees.
+                To set the spacing to be automatically determined, set this
+                to 'auto'
+        '''
         self._ax1.yaxis.apl_grid_spacing = yspacing    
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
         
     def set_grid_color(self,color):
+        '''
+        Set the color of the grid lines
+        
+        Required Arguments:
+        
+            *color*: [ string ]
+                The color of the grid lines
+        '''
         self._ax1.apl_grid_color = color
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
     
     def set_grid_alpha(self,alpha):
+        '''
+        Set the alpha (transparency) of the grid lines
+        
+        Required Arguments:
+        
+            *alpha*: [ float ]
+                The alpha value of the grid. This should be a floating
+                point value between 0 and 1, where 0 is completely
+                transparent, and 1 is completely opaque.
+        '''
         self._ax1.apl_grid_alpha = alpha
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
     
     def show_grid(self):
+        '''
+        Overlay the coordinate grid
+        '''
+        
         self._ax1.apl_show_grid = True
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
     
     def hide_grid(self):
+        '''
+        Hide the coordinate grid
+        '''
+        
         self._ax1.apl_show_grid = False
         self._ax1 = generate_grid(self._ax1)
         self.refresh()

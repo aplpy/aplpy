@@ -20,7 +20,8 @@ class Ticks(object):
         find_default_spacing(self._ax2)
         
         # Set tick spacing to default
-        self.set_tick_spacing(xspacing='auto',yspacing='auto',refresh=False)
+        self.set_tick_xspacing('auto',refresh=False)
+        self.set_tick_yspacing('auto',refresh=False)
         
         # Set major tick locators
         lx = WCSLocator(wcs=self._wcs,axist='x')
@@ -39,16 +40,47 @@ class Ticks(object):
         self._ax1.callbacks.connect('ylim_changed',find_default_spacing)
         self._ax2.callbacks.connect('ylim_changed',find_default_spacing)
     
-    def set_tick_spacing(self,xspacing='auto',yspacing='auto',refresh=True):
+    def set_tick_xspacing(self,xspacing,refresh=True):
+        '''
+        Set the x-axis tick spacing
+        
+        Required Arguments:
+            
+            *xspacing*: [ float | 'auto' ]
+                The spacing of the ticks on the x-axis, in degrees. To set
+                the tick spacing to be automatically determined, set this to 'auto'
+        '''
         
         self._ax1.xaxis.apl_tick_spacing = xspacing
         self._ax2.xaxis.apl_tick_spacing = xspacing
+        
+        if refresh: self.refresh()
+    
+    def set_tick_yspacing(self,xspacing,refresh=True):
+        '''
+        Set the y-axis tick spacing
+        
+        Required Arguments:
+            
+            *yspacing*: [ float | 'auto' ]
+                The spacing of the ticks on the y-axis, in degrees. To set
+                the tick spacing to be automatically determined, set this to 'auto'
+        '''
+        
         self._ax1.yaxis.apl_tick_spacing = yspacing
         self._ax2.yaxis.apl_tick_spacing = yspacing
         
         if refresh: self.refresh()
     
     def set_tick_color(self,color,refresh=True):
+        '''
+        Set the tick color
+        
+        Required Arguments:
+            
+            *color*: [ string ]
+                The color of the ticks
+        '''
         
         for line in self._ax1.xaxis.get_ticklines():
             line.set_color(color)
@@ -62,6 +94,14 @@ class Ticks(object):
         if refresh: self.refresh()
     
     def set_tick_size(self,size,refresh=True):
+        '''
+        Set the tick size
+        
+        Required Arguments:
+            
+            *size*: [ float ]
+                The size of the ticks (in points)
+        '''
         
         for line in self._ax1.xaxis.get_ticklines():
             line.set_markersize(size)

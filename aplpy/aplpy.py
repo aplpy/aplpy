@@ -31,12 +31,43 @@ from grid import Grid
 from ticks import Ticks
 from labels import Labels
 
-
 class FITSFigure(Layers,Grid,Ticks,Labels):
     
     "A class for plotting FITS files."
     
     def __init__(self,filename,hdu=0,downsample=False,north=False,**kwargs):
+        '''
+        Create a FITSFigure instance
+              
+        Required arguments:
+        
+            *filename*: [ string ]
+                The filename of the FITS file to open
+              
+        Optional Keyword Arguments:
+        
+            *hdu*: [ int ]
+                By default, the image in the primary HDU is read in. If a
+                different HDU is required, use this argument.
+                
+            *downsample*: [ int ]
+                If this option is specified, the image will be downsampled
+                by a factor *downsample* when reading in the data.
+                
+            *north*: [ True | False ]
+                Whether to rotate the image so that the North Celestial
+                Pole is up. Note that this option requires Montage to be
+                installed.
+                
+        Any additional arguments are passed on to matplotlib's Figure() class.
+        For example, to set the figure size, use the figsize=(xsize,ysize)
+        argument (where xsize and ysize are in inches). For more information
+        on these additional arguments, see the *Optional keyword arguments*
+        section in the documentation for Figure_
+        
+        .. _Figure: http://matplotlib.sourceforge.net/api/figure_api.html?#matplotlib.figure.Figure
+        
+        '''
         
         # Open the figure
         self._figure = mpl.figure(**kwargs)
@@ -104,8 +135,30 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         # Set default theme
         self.set_theme(theme='pretty',refresh=False)
     
-    def show_grayscale(self,invert='default',**kwargs):
+    def show_grayscale(self,vmin='default',vmax='default',stretch='linear',exponent=2,invert='default'):
+        '''
+        Show a grayscale image of the FITS file
+              
+        Optional Keyword Arguments:
+                        
+            *vmin*: [ float ]
+                Minimum pixel value to show (default is to use the 0.25% percentile)
+              
+            *vmax*: [ float ]
+                Maximum pixel value to show (default is to use the 99.97% percentile)
         
+            *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+                The stretch function to use
+              
+            *exponent*: [ float ]
+                If stretch is set to 'power', this is the exponent to use
+              
+            *invert*: [ True | False ]
+                Whether to invert the grayscale or not. The default is False, unless
+                set_theme is used, in which case the default depends on the theme.
+              
+                                            
+        '''
         if invert=='default':
             invert = self._get_invert_default()
         
@@ -116,7 +169,28 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         self.show_colorscale(cmap=cmap,**kwargs)
     
-    def show_colorscale(self,stretch='linear',exponent=2,vmin='default',vmax='default',cmap='default',interpolation='nearest',labels='auto',smooth=False):
+    def show_colorscale(self,vmin='default',vmax='default',stretch='linear',exponent=2,cmap='default'):
+        '''
+        Show a colorscale image of the FITS file
+              
+        Optional Keyword Arguments:
+        
+            *vmin*: [ float ]
+                Minimum pixel value to show (default is to use the 0.25% percentile)
+              
+            *vmax*: [ float ]
+                Maximum pixel value to show (default is to use the 99.97% percentile)
+        
+            *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+                The stretch function to use
+              
+            *exponent*: [ float ]
+                If stretch is set to 'power', this is the exponent to use
+              
+            *cmap*: [ string ]
+                The name of the colormap to use
+                              
+        '''
         
         if cmap=='default':
             cmap = self._get_colormap_default()
@@ -141,16 +215,27 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self.image.set_clim(vmin=vmin,vmax=vmax)
             self.image.set_cmap(cmap=cmap)
         else:
-            self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation=interpolation,origin='lower',extent=self._extent)
+            self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation='nearest',origin='lower',extent=self._extent)
         
         self.refresh()
     
     def show_rgb(self,filename):
+        '''
+        Show a 3-color image instead of the FITS file data
+        
+        Required Arguments:
+        
+            *filename*
+                The 3-color image should have exactly the same dimensions as the FITS file, and
+                will be shown with exactly the same projection.
+                
+        '''
+        
         pretty_image = flipud(imread(filename))
         self._ax1.imshow(pretty_image,extent=self._extent)
         self.refresh()
     
-    def show_contour(self,contour_file,layer=None,levels=5,filled=False, **kwargs):
+    def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,**kwargs):
         '''
         Overlay contours on the current plot
         
@@ -162,47 +247,38 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         Optional Keyword Arguments:
         
             *layer*: [ string ]
-              The name of the contour layer. This is useful for giving
-              custom names to layers (instead of contour_set_n) and for
-              replacing existing layers.
-              
+                The name of the contour layer. This is useful for giving
+                custom names to layers (instead of contour_set_n) and for
+                replacing existing layers.
+
             *levels*: [ int | list ]
-              This can either be the number of contour levels to compute
-              (if an integer is provided) or the actual list of contours
-              to show (if a list of floats is provided) 
-              
+                This can either be the number of contour levels to compute
+                (if an integer is provided) or the actual list of contours
+                to show (if a list of floats is provided) 
+
             *filled*: [ True | False ]
-              Whether to show filled or line contours
-              
-            Any additional keyword arguments will be passed on directly to
-            matplotlib's contour or contourf methods. For example, the
-            contour color can be specified using *either*:
-            
-            *colors*: [ string | tuple of strings ]
-              If a string, like 'r' or 'red', all levels will be plotted in this
-              color.
-
-              If a tuple of strings, different levels will be plotted in
-              different colors in the order specified.
-
-            or
+                Whether to show filled or line contours
 
             *cmap*: [ string ]
-              The colormap to use
+                The colormap to use for the contours
+
+            *colors*: [ string | tuple of strings ]
+                If a single string is provided, all contour levels will be
+                shown in this color. If a tuple of strings is provided,
+                each contour will be colored according to the corresponding
+                tuple element.
               
-            Examples of other parameters include
-
-            *alpha*: float
-              The alpha blending value (i.e. transparency)
-
-              *linewidths*: [ number | tuple of numbers ]
-                If a number, all levels will be plotted with this linewidth.
-
-                If a tuple, different levels will be plotted with different
-                linewidths in the order specified
-
-              *linestyles*: ['solid' | 'dashed' | 'dashdot' | 'dotted' ]
-                The line style for the contours
+            Any additional keyword arguments will be passed on directly to
+            matplotlib's contour or contourf methods. This includes for
+            example the alpha, linewidths, and linestyles arguments which
+            can be used to further control the appearance of the contours.
+            
+            For more information on these additional arguments, see the
+            *Optional keyword arguments* sections in the documentation for
+            contour_ and contourf_.
+            
+            .. _contour: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.contour
+            .. _contourf: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.contourf`
                               
         '''
         if layer:
@@ -242,6 +318,36 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     # in degree format.
     
     def show_markers(self,xw,yw,layer=False,**kwargs):
+        '''
+        Overlay markers on the current plot.
+        
+        Required arguments:
+        
+            *xw*: [ list | numpy.ndarray ]
+                The x postions of the markers (in world coordinates)
+                
+            *yw*: [ list | numpy.ndarray ]
+                The y positions of the markers (in world coordinates)
+              
+        Optional Keyword Arguments:
+        
+            *layer*: [ string ]
+                The name of the scatter layer. This is useful for giving
+                custom names to layers (instead of scatter_set_n) and for
+                replacing existing layers.
+
+            Any additional keyword arguments will be passed on directly to
+            matplotlib's scatter method. This includes for example the marker,
+            alpha, edgecolor, and facecolor arguments which can be used to
+            further control the appearance of the markers.
+            
+            For more information on these additional arguments, see the
+            *Optional keyword arguments* sections in the documentation for
+            scatter_.
+
+            .. _scatter: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.scatter
+
+        '''
         
         if not kwargs.has_key('c'):
             kwargs.setdefault('edgecolor','red')
@@ -270,15 +376,38 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     def refresh(self):
         self._figure.canvas.draw()
     
-    def save(self,saveName,dpi=None,transparent=False):
+    def save(self,filename,dpi=None,transparent=False):
+        '''
+        Save the current figure to a file
         
-        if dpi == None and os.path.splitext(saveName)[1] in ['.EPS','.eps','.ps','.PS','.Eps','.Ps']:
+        Required arguments:
+        
+            *filename*: [ string ]
+                The name of the file to save the plot to. This can be
+                for example a PS, EPS, PDF, PNG, JPEG, or SVG file.
+                          
+        Optional Keyword Arguments:
+        
+            *dpi*: [ float ]
+                The output resolution, in dots per inch. If the output file
+                is a vector graphics format (such as PS, EPS, PDF or SVG) only
+                the image itself will be rasterized. If the output is a PS or
+                EPS file and no dpi is specified, the dpi is automatically
+                calculated to match the resolution of the image. If this value is
+                larger than 300, then dpi is set to 300.
+                
+            *transparent*: [ True | False ]
+                Whether to preserve transparency
+                
+        '''
+        
+        if dpi == None and os.path.splitext(filename)[1] in ['.EPS','.eps','.ps','.PS','.Eps','.Ps']:
             width = self._ax1.get_position().width * self._figure.get_figwidth()
             interval = self._ax1.xaxis.get_view_interval()
             nx = interval[1] - interval[0]
-            dpi = nx / width
+            dpi = np.min( nx / width, 300)
             print "Auto-setting resolution to ",dpi," dpi"
-            self._figure.savefig(saveName,dpi=dpi,transparent=transparent)
+            self._figure.savefig(filename,dpi=dpi,transparent=transparent)
     
     def _initialize_view(self):
         
@@ -296,7 +425,18 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     def _get_colormap_default(self):
         return self._figure.apl_colorscale_cmap_default
     
-    def set_theme(self,theme='pretty',refresh=True):
+    def set_theme(self,theme,refresh=True):
+        '''
+        Set the axes, ticks, grid, and image colors to a certain style (experimental)
+              
+        Required Arguments:
+        
+            *theme*: [ string ]
+                The theme to use. At the moment, this can be 'pretty' (for
+                viewing on-screen) and 'publication' (which makes the ticks
+                and grid black, and displays the image in inverted grayscale)
+
+        '''
         
         if theme=='pretty':
             self.set_frame_color('white',refresh=False)
@@ -323,5 +463,15 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if refresh: self.refresh()
     
     def set_frame_color(self,color,refresh=True):
+        '''
+        Set color of the frame
+              
+        Required arguments:
+        
+            *color*:
+                The color to use for the frame.
+
+        '''
+        
         self._ax1.frame.set_edgecolor(color)
         if refresh: self.refresh()

@@ -45,17 +45,43 @@ class Labels(object):
         self._ax2.xaxis.set_major_formatter(fx2)
         self._ax2.yaxis.set_major_formatter(fy2)
     
-    def set_labels(self,refresh=True,**kwargs):
+    def set_xlabels_format(self,format,refresh=True):
+        '''
+        Set the format of the x-axis tick labels
         
-        if kwargs.has_key('xform'):
-            self._ax1.xaxis.apl_label_form = kwargs['xform']
+        Required Arguments:
         
-        if kwargs.has_key('yform'):
-            self._ax1.yaxis.apl_label_form = kwargs['yform']
-        
+            *format*: [ string ]
+                The format for the tick labels. This can be:
+
+                    * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
+                    * ``hh`` or ``dd`` - hours (or degrees)
+                    * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
+                    * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
+                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.              
+        '''
+        self._ax1.xaxis.apl_label_form = format
         if refresh: self.refresh()
     
-    def set_xylabels(self,refresh=True,family='serif',fontsize='12',fontstyle='normal'):
+    def set_ylabels_format(self,format,refresh=True):
+        '''
+        Set the format of the x-axis tick labels
+        
+        Required Arguments:
+        
+            *format*: [ string ]
+                The format for the tick labels. This can be:
+
+                    * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
+                    * ``hh`` or ``dd`` - hours (or degrees)
+                    * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
+                    * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
+                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.              
+        '''
+        self._ax1.yaxis.apl_label_form = format
+        if refresh: self.refresh()
+    
+    def set_axis_labels(self,refresh=True,family='serif',fontsize='12',fontstyle='normal'):
         """
         family                [ 'serif' | 'sans-serif' | 'cursive' | 'fantasy' | 'monospace' ]
           size or fontsize    [ size in points | relative size eg 'smaller', 'x-large' ]
