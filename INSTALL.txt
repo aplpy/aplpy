@@ -6,7 +6,7 @@ Installing APLpy
 
     APLpy requires the following packages to function properly:
 
-      - matplotlib 0.98.3 or later
+      - matplotlib 0.98.5.2 or later
         http://matplotlib.sourceforge.net/
 
       - numpy 1.1.1 or later
@@ -37,4 +37,3 @@ Installing APLpy
     To install APLpy, simply run:
 
       sudo python setup.py install
-
