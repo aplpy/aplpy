@@ -49,6 +49,13 @@ class Ticks(object):
             *xspacing*: [ float | 'auto' ]
                 The spacing of the ticks on the x-axis, in degrees. To set
                 the tick spacing to be automatically determined, set this to 'auto'
+                
+        Optional Keyword Arguments:
+        
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+                
         '''
         
         self._ax1.xaxis.apl_tick_spacing = xspacing
@@ -65,6 +72,12 @@ class Ticks(object):
             *yspacing*: [ float | 'auto' ]
                 The spacing of the ticks on the y-axis, in degrees. To set
                 the tick spacing to be automatically determined, set this to 'auto'
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
         
         self._ax1.yaxis.apl_tick_spacing = yspacing
@@ -80,6 +93,12 @@ class Ticks(object):
             
             *color*: [ string ]
                 The color of the ticks
+                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
         
         for line in self._ax1.xaxis.get_ticklines():
@@ -101,6 +120,12 @@ class Ticks(object):
             
             *size*: [ float ]
                 The size of the ticks (in points)
+        
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
         
         for line in self._ax1.xaxis.get_ticklines():

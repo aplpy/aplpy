@@ -58,8 +58,15 @@ class Labels(object):
                     * ``hh`` or ``dd`` - hours (or degrees)
                     * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
                     * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
-                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.              
+                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied. 
+                    
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.                                         
         '''
+        
         self._ax1.xaxis.apl_label_form = format
         if refresh: self.refresh()
     
@@ -76,8 +83,15 @@ class Labels(object):
                     * ``hh`` or ``dd`` - hours (or degrees)
                     * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
                     * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
-                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.              
+                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.  
+            
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.            
         '''
+        
         self._ax1.yaxis.apl_label_form = format
         if refresh: self.refresh()
     

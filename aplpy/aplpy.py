@@ -436,6 +436,11 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 viewing on-screen) and 'publication' (which makes the ticks
                 and grid black, and displays the image in inverted grayscale)
 
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
         
         if theme=='pretty':
@@ -470,7 +475,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
             *color*:
                 The color to use for the frame.
+                
+        Optional Keyword Arguments:
 
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
         
         self._ax1.frame.set_edgecolor(color)
