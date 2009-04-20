@@ -25,6 +25,7 @@ import contour_util
 import montage
 import image_util
 import header
+import wcs_util
 
 from layers import Layers
 from grid import Grid
@@ -167,7 +168,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             cmap = 'gray'
         
-        self.show_colorscale(cmap=cmap,**kwargs)
+        self.show_colorscale(vmin=vmin,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap)
     
     def show_colorscale(self,vmin='default',vmax='default',stretch='linear',exponent=2,cmap='default'):
         '''
@@ -214,6 +215,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self.image.set_data(stretched_image)
             self.image.set_clim(vmin=vmin,vmax=vmax)
             self.image.set_cmap(cmap=cmap)
+            self.image.origin='lower'
         else:
             self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation='nearest',origin='lower',extent=self._extent)
         
@@ -231,8 +233,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 
         '''
         
-        pretty_image = flipud(imread(filename))
-        self._ax1.imshow(pretty_image,extent=self._extent)
+        pretty_image = mpl.imread(filename)
+        self.image = self._ax1.imshow(pretty_image,extent=self._extent)
         self.refresh()
     
     def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,**kwargs):
@@ -284,10 +286,10 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if layer:
             self.remove_layer(layer,raise_exception=False)
         
-        if kwargs.has_key('cmap'):
-            kwargs['cmap'] = mpl.cm.get_cmap(kwargs['cmap'],1000)
-        elif not kwargs.has_key('colors'):
-            kwargs['cmap'] = mpl.cm.get_cmap('jet',1000)
+        if cmap:
+            cmap = mpl.cm.get_cmap(kwargs['cmap'],1000)
+        elif not colors:
+            cmap = mpl.cm.get_cmap('jet',1000)
         
         hdu_contour = pyfits.open(contour_file)[0]
         hdu_contour.header  = header.check(hdu_contour.header)
@@ -298,9 +300,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self._name_empty_layers('user')
         
         if filled:
-            self._ax1.contourf(image_contour,levels,extent=extent_contour,**kwargs)
+            self._ax1.contourf(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
         else:
-            self._ax1.contour(image_contour,levels,extent=extent_contour,**kwargs)
+            self._ax1.contour(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
         
         self._ax1 = contour_util.transform(self._ax1,wcs_contour,self._wcs)
         
@@ -360,7 +362,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         self._name_empty_layers('user')
         
-        xp,yp = wcs_util.world2pix(wcs,xw,yw)
+        xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
         self._ax1.scatter(xp,yp,**kwargs)
         
         if layer:
@@ -407,7 +409,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             nx = interval[1] - interval[0]
             dpi = np.min( nx / width, 300)
             print "Auto-setting resolution to ",dpi," dpi"
-            self._figure.savefig(filename,dpi=dpi,transparent=transparent)
+        self._figure.savefig(filename,dpi=dpi,transparent=transparent)
     
     def _initialize_view(self):
         

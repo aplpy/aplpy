@@ -185,7 +185,7 @@ def generate_grid(ax):
                 grid_id=i
                 break
         
-        print "Grid ID = "+str(grid_id)
+#        print "Grid ID = "+str(grid_id)
         
         if grid_id >= 0:
             ax.collections[grid_id].set_verts(polygons_out)

@@ -63,7 +63,7 @@ class Ticks(object):
         
         if refresh: self.refresh()
     
-    def set_tick_yspacing(self,xspacing,refresh=True):
+    def set_tick_yspacing(self,yspacing,refresh=True):
         '''
         Set the y-axis tick spacing
         

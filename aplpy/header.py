@@ -25,10 +25,8 @@ def check(header):
     
     # Check that the two projections are equal
     
-    if xproj==yproj:
-        print "[check] x and y projections agree"
-    else:
-        print "[check] x and y projections do not agree"
+    if xproj<>yproj:
+        raise Exception("x and y projections do not agree")
     
     # If projection is -CAR, then make sure the projection center is within the image
     
