@@ -22,6 +22,8 @@ except ImportError:
 
 import contour_util
 
+import numpy as np
+
 import montage
 import image_util
 import header
@@ -47,11 +49,11 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
               
         Optional Keyword Arguments:
         
-            *hdu*: [ int ]
+            *hdu*: [ integer ]
                 By default, the image in the primary HDU is read in. If a
                 different HDU is required, use this argument.
                 
-            *downsample*: [ int ]
+            *downsample*: [ integer ]
                 If this option is specified, the image will be downsampled
                 by a factor *downsample* when reading in the data.
                 
@@ -94,10 +96,10 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         # Downsample if requested
         if downsample:
-            naxis1_new = self._wcs.naxis1 - np.mod(wcs.naxis1,downsample)
-            naxis2_new = self._wcs.naxis2 - np.mod(wcs.naxis2,downsample)
+            naxis1_new = self._wcs.naxis1 - np.mod(self._wcs.naxis1,downsample)
+            naxis2_new = self._wcs.naxis2 - np.mod(self._wcs.naxis2,downsample)
             self._hdu.data = self._hdu.data[0:naxis2_new,0:naxis1_new]
-            self._hdu.data = resample(self._hdu.data,downsample)
+            self._hdu.data = image_util.resample(self._hdu.data,downsample)
             self._wcs.naxis1,self._wcs.naxis2 = naxis1_new,naxis2_new
         
         # Create the two set of axes

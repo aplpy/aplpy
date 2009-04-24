@@ -86,12 +86,12 @@ def system(wcs):
     elif xcoord=='ELON' and ycoord=='ELAT':
         system = 'ecliptic'
     else:
-        raise Warning("Cannot determine coordinate system for "+xcoord+"/"+ycoord+". Assuming celestial.")
+        print "Warning: cannot determine coordinate system for "+xcoord+"/"+ycoord+". Assuming celestial."
         system = 'celestial'
     
     if system == 'celestial':
-        if equinox == '':
-            raise Warning("Cannot determine equinox. Assuming J2000.")
+        if equinox == '' or np.isnan(equinox):
+            print "Warning: cannot determine equinox. Assuming J2000."
             equinox = 'j2000'
         elif equinox == 1950.:
             equinox = 'b1950'
@@ -108,7 +108,7 @@ def arcperpix(wcs):
     return np.sqrt(wcs.wcs.cd[0,0]**2 + wcs.wcs.cd[1,0]**2)*3600.
 
 def world2pix(wcs,x_world,y_world):
-    if type(x_world) == float or type(x_world) == np.float32 or type(x_world) == np.float64 or type(x_world) == np.float128:
+    if type(x_world) == float or type(x_world) == np.float32 or type(x_world) == np.float64:
         x_pix,y_pix = wcs.wcs_sky2pix(np.array([x_world]),np.array([y_world]),1)
         return x_pix[0],y_pix[0]
     elif type(x_world) == list:
@@ -120,7 +120,7 @@ def world2pix(wcs,x_world,y_world):
         raise Exception("world2pix should be provided either with two floats, two lists, or two numpy arrays")
 
 def pix2world(wcs,x_pix,y_pix):
-    if type(x_pix) == float or type(x_pix) == np.float32 or type(x_pix) == np.float64 or type(x_pix) == np.float128:
+    if type(x_pix) == float or type(x_pix) == np.float32 or type(x_pix) == np.float64:
         x_world,y_world = wcs.wcs_pix2sky(np.array([x_pix]),np.array([y_pix]),1)
         return x_world[0],y_world[0]
     elif type(x_pix) == list:
