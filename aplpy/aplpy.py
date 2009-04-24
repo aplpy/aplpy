@@ -239,7 +239,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self.image = self._ax1.imshow(pretty_image,extent=self._extent)
         self.refresh()
     
-    def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,**kwargs):
+    def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
         '''
         Overlay contours on the current plot
         
@@ -271,6 +271,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 shown in this color. If a tuple of strings is provided,
                 each contour will be colored according to the corresponding
                 tuple element.
+                
+            *returnlevels*: [ True | False ]
+                Whether to return the list of contours to the caller.
               
             Any additional keyword arguments will be passed on directly to
             matplotlib's contour or contourf methods. This includes for
@@ -299,6 +302,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         image_contour = hdu_contour.data
         extent_contour = (0.5,wcs_contour.naxis1+0.5,0.5,wcs_contour.naxis2+0.5)
         
+        if type(levels) == int:
+            auto_levels = image_util.percentile_function(image_contour)
+            vmin = auto_levels(0.0025)
+            vmax = auto_levels(0.9975)
+            levels = np.linspace(vmin,vmax,levels)
+        
         self._name_empty_layers('user')
         
         if filled:
@@ -317,6 +326,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self._name_empty_layers(contour_set_name)
         
         self.refresh()
+        
+        if returnlevels:
+            return levels
     
     # This method plots markers. The input should be an Nx2 array with WCS coordinates
     # in degree format.
