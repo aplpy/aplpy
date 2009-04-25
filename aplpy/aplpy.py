@@ -7,7 +7,7 @@ try:
 except ImportError:
     raise Exception("matplotlib is required for APLpy")
 
-if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('0.98.5.3'):
+if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('0.98.5.2'):
     print '''
 WARNING : matplotlib >= 0.98.5.2 is recommended for APLpy. Previous
           versions of matplotlib contain bugs which may affect APLpy.
