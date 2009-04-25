@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='APLpy',
-      version='0.4.6',
+      version='0.4.7',
       description='The Astronomical Plotting Library in Python',
       author='Eli Bressert and Thomas Robitaille',
       author_email='elibre@users.sourceforge.net, robitaille@users.sourceforge.net',
