@@ -25,11 +25,16 @@ Installing APLpy
     package that contains the Matplotlib, Numpy, and Scipy packages.
     If EPD, pyfits, and pywcs are installed, APLpy should work out of
     the box. If not, please contact us through email or the forum
-    at sourceforge.net.
+    at sourceforge.net. Note that to satisfy the version requirement
+    for matplotlib, you should install v4.2 of EPD. APLpy can still
+    be used with older versions of matplotlib, but problems may occur
+    in certain situations..
 	  
 	  - EPD
 		http://www.enthought.com/products/epd.php
 
+          - EPD v4.2 (beta 2)
+                http://www.enthought.com/products/epdearlyaccess.php
 
   Installation
   ============
