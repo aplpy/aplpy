@@ -146,6 +146,13 @@ class Labels(object):
     
         if refresh:
             self.refresh()
+            
+    def set_latex(self, usetex, refresh=True):
+        
+        mpl.rc('text',usetex=usetex)
+        
+        if refresh:
+            self.refresh()
     
     def set_font(self,family=None,usetex=None):
         
