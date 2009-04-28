@@ -153,6 +153,37 @@ class Labels(object):
         
         if refresh:
             self.refresh()
+            
+    def set_tick_labels_size(self, size, refresh=True):
+
+        self.font.set_size(size)
+        self._update_tick_font()
+
+        if refresh:
+            self.refresh()
+            
+    def set_tick_labels_weight(self, weight, refresh=True):
+
+        self.font.set_weight(weight)
+        self._update_tick_font()
+
+        if refresh:
+            self.refresh()
+            
+    def set_tick_labels_family(self, family, refresh=True):
+
+        self.font.set_family(family)
+        self._update_tick_font()
+
+        if refresh:
+            self.refresh()
+            
+    def _update_tick_font(self):
+        
+        for tick in self._ax1.get_xticklabels():
+            tick.set_fontproperties(self.font)
+        for tick in self._ax1.get_yticklabels():
+            tick.set_fontproperties(self.font)
     
     def set_font(self,family=None,usetex=None):
         
