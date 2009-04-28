@@ -166,7 +166,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *invert*: [ True | False ]
                 Whether to invert the grayscale or not. The default is False, unless
                 set_theme is used, in which case the default depends on the theme.
-                                            
+        
         
         '''
         if invert=='default':
@@ -248,6 +248,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self.image.origin='lower'
         else:
             self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation='nearest',origin='lower',extent=self._extent)
+        
+        xmin,xmax = self._ax1.get_xbound()
+        if xmin < 0.5: self._ax1.set_xlim(0.5,xmax)
+        
+        ymin,ymax = self._ax1.get_ybound()
+        if ymin < 0.5: self._ax1.set_ylim(0.5,ymax)
         
         self.refresh()
     
