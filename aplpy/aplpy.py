@@ -449,7 +449,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             width = self._ax1.get_position().width * self._figure.get_figwidth()
             interval = self._ax1.xaxis.get_view_interval()
             nx = interval[1] - interval[0]
-            dpi = np.min( nx / width, 300)
+            dpi = np.minimum( nx / width, 300.)
             print "Auto-setting resolution to ",dpi," dpi"
         self._figure.savefig(filename,dpi=dpi,transparent=transparent)
     
