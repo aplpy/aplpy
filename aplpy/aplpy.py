@@ -142,7 +142,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         # Set default theme
         self.set_theme(theme='pretty',refresh=False)
     
-    def show_grayscale(self,vmin='default',vmax='default',stretch='linear',exponent=2,invert='default'):
+    def show_grayscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,invert='default'):
         '''
         Show a grayscale image of the FITS file
               
@@ -174,9 +174,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             cmap = 'gray'
         
-        self.show_colorscale(vmin=vmin,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap)
+        self.show_colorscale(vmin=vmin,vmid=vmid,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap)
     
-    def show_colorscale(self,vmin='default',vmax='default',stretch='linear',exponent=2,cmap='default'):
+    def show_colorscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,cmap='default'):
         '''
         Show a colorscale image of the FITS file
               
@@ -204,26 +204,31 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap,1000)
-        stretched_image = image_util.stretch(self._hdu.data,function=stretch,exponent=exponent)
-        
-        vmin_auto = image_util.stretch(self._auto_v(0.0025),function=stretch,exponent=exponent)
-        vmax_auto = image_util.stretch(self._auto_v(0.9975),function=stretch,exponent=exponent)
-        
+
+        vmin_auto,vmax_auto = self._auto_v(0.0025),self._auto_v(0.9975)
         vmin_auto,vmax_auto = vmin_auto-(vmax_auto-vmin_auto)/10.,vmax_auto+(vmax_auto-vmin_auto)/10.
         
         if type(vmin) is str:
-            vmin=vmin_auto
+            vmin = vmin_auto
         
         if type(vmax) is str:
-            vmax=vmax_auto
+            vmax = vmax_auto
+            
+        if type(vmid) is str:
+            vmid = 0.5
+        else:
+            vmid = (vmid - vmin) / (vmax - vmin)
+            
+        # Set stretch
+        stretched_image = (self._hdu.data - vmin) / (vmax - vmin)
+        stretched_image = image_util.stretch(stretched_image,function=stretch,exponent=exponent,midpoint=vmid)        
         
         if self.image:
             self.image.set_data(stretched_image)
-            self.image.set_clim(vmin=vmin,vmax=vmax)
             self.image.set_cmap(cmap=cmap)
             self.image.origin='lower'
         else:
-            self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation='nearest',origin='lower',extent=self._extent)
+            self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=0.,vmax=1.,interpolation='nearest',origin='lower',extent=self._extent)
         
         self.refresh()
     

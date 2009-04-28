@@ -42,17 +42,16 @@ def percentile_function(array):
     
     return spl
 
-def stretch(array, function, exponent = 2):
-    
+def stretch(array, function, exponent=2, midpoint=0.5):
+        
     if function is 'linear':
         return array
     elif function is 'log':
-        minnz = np.min(np.abs(array))
-        return np.log10(np.maximum(array,minnz))
+        return np.log10(array/midpoint+1.) / np.log10(1./midpoint+1.)
     elif function is 'sqrt':
-        return np.sqrt(np.maximum(array,0))
+        return np.sqrt(array)
     elif function is 'arcsinh':
-        return np.arcsinh(array)
+        return np.arcsinh(array/midpoint) / np.arcsinh(1./midpoint)
     elif function is 'power':
         return np.power(array, exponent)
     else:
