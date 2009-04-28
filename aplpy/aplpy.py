@@ -264,7 +264,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         '''
         
         pretty_image = mpl.imread(filename)
-        self.image = self._ax1.imshow(pretty_image,extent=self._extent,interpolation=interpolation)
+        self.image = self._ax1.imshow(pretty_image,extent=self._extent,interpolation=interpolation,origin='upper')
         self.refresh()
     
     def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
