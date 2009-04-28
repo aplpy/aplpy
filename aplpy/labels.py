@@ -1,6 +1,4 @@
 import matplotlib.pyplot as mpl
-import math
-import angle_util as au
 import wcs_util
 import numpy as np
 import string
@@ -18,11 +16,11 @@ class Labels(object):
         
         # Set default label format
         if system == 'celestial':
-            self.set_xlabels_format("hh:mm:ss.ss")
-            self.set_ylabels_format("dd:mm:ss.s")
+            self.set_labels_xformat("hh:mm:ss.ss")
+            self.set_labels_yformat("dd:mm:ss.s")
         else:
-            self.set_xlabels_format("ddd.dddd")
-            self.set_ylabels_format("dd.dddd")
+            self.set_labels_xformat("ddd.dddd")
+            self.set_labels_yformat("dd.dddd")
         
         if system == 'celestial':
             if equinox == 'b1950':
@@ -139,7 +137,7 @@ class Labels(object):
         if refresh:
             self.refresh()
             
-    def set_latex(self, usetex, refresh=True):
+    def set_labels_latex(self, usetex, refresh=True):
         """
         Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
         
