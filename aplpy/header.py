@@ -1,7 +1,4 @@
-import numpy as np
-
 import pywcs
-
 import wcs_util
 
 def check(header):
@@ -48,7 +45,7 @@ def check(header):
             print "[check] updated projection center"
     
     return header
-
+    
     
     
     

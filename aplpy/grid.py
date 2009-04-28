@@ -45,9 +45,9 @@ class Grid(object):
                 The spacing in the longitudinal direction, in degrees.
                 To set the spacing to be the same as the ticks, set this
                 to 'tick'
-
+        
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -59,10 +59,10 @@ class Grid(object):
             self._ax1.xaxis.apl_auto_grid_spacing = False
             self._ax1.xaxis.apl_grid_spacing = au.Angle(degrees = xspacing)
         
-        if refresh: 
+        if refresh:
             self._ax1 = generate_grid(self._ax1)
             self.refresh()
-                    
+    
     def set_grid_yspacing(self,yspacing,refresh=True):
         '''
         Set the grid line spacing in the latitudinal direction
@@ -73,9 +73,9 @@ class Grid(object):
                 The spacing in the latitudinal direction, in degrees.
                 To set the spacing to be the same as the ticks, set this
                 to 'tick'
-
+        
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -85,23 +85,23 @@ class Grid(object):
             self._ax1.yaxis.apl_auto_grid_spacing = True
         else:
             self._ax1.yaxis.apl_auto_grid_spacing = False
-            self._ax1.yaxis.apl_grid_spacing = au.Angle(degrees = xspacing)
+            self._ax1.yaxis.apl_grid_spacing = au.Angle(degrees = yspacing)
         
-        if refresh: 
+        if refresh:
             self._ax1 = generate_grid(self._ax1)
             self.refresh()
-        
+    
     def set_grid_color(self,color,refresh=True):
         '''
         Set the color of the grid lines
         
         Required Arguments:
-        
+            
             *color*: [ string ]
                 The color of the grid lines
-                
+        
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -117,14 +117,14 @@ class Grid(object):
         Set the alpha (transparency) of the grid lines
         
         Required Arguments:
-        
+            
             *alpha*: [ float ]
                 The alpha value of the grid. This should be a floating
                 point value between 0 and 1, where 0 is completely
                 transparent, and 1 is completely opaque.
-                
+        
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -152,7 +152,7 @@ class Grid(object):
         self._ax1.apl_show_grid = False
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
-        
+    
     def _update_grid(self):
         
         if self._ax1.apl_show_grid:
@@ -179,10 +179,10 @@ def generate_grid(ax):
             yspacing = ax.yaxis.apl_tick_spacing.todegrees()
         else:
             yspacing = ax.yaxis.apl_grid_spacing.todegrees()
-                
+        
         # Find longitude lines that intersect with axes
         lon_i,lat_i = find_intersections(wcs,'x',xspacing)
-                
+        
         lon_i_unique = np.array(list(set(lon_i)))
         
         # Plot those lines
@@ -236,7 +236,7 @@ def generate_grid(ax):
             if is_grid(ax.collections[i]):
                 grid_id=i
                 break
-        
+
 #        print "Grid ID = "+str(grid_id)
         
         if grid_id >= 0:

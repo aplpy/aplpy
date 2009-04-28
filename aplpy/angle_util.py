@@ -5,7 +5,7 @@ import math_util
 class Angle(object):
     
     def __init__(self,degrees='none',sexagesimal='none',latitude=False):
-                
+        
         if degrees <> 'none':
             
             # Find out if the angle is negative
@@ -31,19 +31,19 @@ class Angle(object):
         
         elif sexagesimal <> 'none':
             self.angle = sexagesimal
-            
+        
         # Whether to keep the angle between 0 and 360 or -90 and 90
         self.latitude = latitude
         
         self.negative = False
-                
-        self._simplify()
         
+        self._simplify()
+    
     def _simplify(self):
-
+        
         # Decompose angle
         d,m,s = self.angle
-
+        
         # Make sure seconds are between 0. (inclusive) and 60. (exclusive)
         r = np.mod(s,60.)
         m = m + int(round(s - r)) / 60
@@ -52,8 +52,8 @@ class Angle(object):
         # Make sure minutes are between 0 and 59 (both inclusive)
         r = np.mod(m,60)
         d = d + (m - r) / 60
-        m = r 
-
+        m = r
+        
         # Make sure degrees are between 0 and 359 (both inclusive)
         d = np.mod(d,360)
         
@@ -70,10 +70,10 @@ class Angle(object):
                     m = m + 1
                 if m == 60:
                     m = m - 60.
-                    d = d + 1 
+                    d = d + 1
             else:
                 raise Exception("latitude should be between -90 and 90 degrees")
-                
+        
         # Set new angle
         self.angle = (d,m,s)
     
@@ -85,33 +85,33 @@ class Angle(object):
         return degrees
     
     def tohours(self):
-
+        
         d,m,s = self.angle
         
         rd = np.mod(d,15)
         h = (d - rd) / 15
-
+        
         rm = np.mod(m,15)
         m = (m - rm) / 15 + rd * 4
-
+        
         s = s / 15. + rm * 4.
         
         a = Angle(sexagesimal=(h,m,s),latitude=self.latitude)
         a.negative = self.negative
         
         return a
-         
+    
     def toround(self,rval=3):
-
+        
         # Decompose angle
         d,m,s = self.angle
-
+        
         # Round numbers:
         # 1: degrees only
         # 2: degrees and minutes
         # 3: degrees, minutes, and seconds
         # 4.n: degrees, minutes, and decimal seconds with n decimal places
-
+        
         if rval < 2:
             n = int(round( ( rval - 1. ) * 100 ))
             d = round(d + m / 60. + s / 3600.,n)
@@ -141,7 +141,7 @@ class Angle(object):
                 m = m + 1
             if m == 60:
                 m = 0
-                d = d + 1 
+                d = d + 1
             return (d,m,s)
     
     def tostringlist(self,format='ddd:mm:ss',sep=("d","m","s")):
@@ -167,7 +167,7 @@ class Angle(object):
             tup = list(tup)
         else:
             tup = [tup]
-            
+        
         string = []
         
         if 'dd' in format:
@@ -187,7 +187,7 @@ class Angle(object):
                 string[0] = "-" + string[0]
             else:
                 string[0] = "+" + string[0]
-                
+        
         return string
     
     def __add__(self,other):
@@ -202,7 +202,7 @@ class Angle(object):
         return s
     
     def __mul__(self,other):
-    
+        
         d,m,s = self.angle
         s = s * other
         m = m * other
@@ -210,7 +210,7 @@ class Angle(object):
         
         if self.latitude and self.negative:
             d,m,s = -d,-m,-s
-            
+        
         s = Angle(sexagesimal=(d,m,s),latitude=self.latitude)
         s._simplify()
         

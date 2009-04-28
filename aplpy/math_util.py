@@ -35,7 +35,7 @@ def complete_range(xmin,xmax,spacing):
         return r
     else:
         return np.hstack([r,xmax])
-        
+
 
 def closest(array,a):
     ipos = minloc(np.abs(a-array))

@@ -1,4 +1,8 @@
-import os,random,string,pyfits
+import os
+import random
+import string
+import sys
+import pyfits
 
 def check_status(status):
     if not status == 0:

@@ -1,8 +1,6 @@
 import numpy as np
 from matplotlib.pyplot import Locator
-from scipy.interpolate import UnivariateSpline
-import sys
-from wcs_util import *
+import wcs_util
 import angle_util as au
 import math_util
 
@@ -19,7 +17,7 @@ class Ticks(object):
         # Set tick spacing to default
         self.set_tick_xspacing('auto',refresh=False)
         self.set_tick_yspacing('auto',refresh=False)
-    
+        
         # Initialize default tick spacing
         find_default_spacing(self._ax1)
         find_default_spacing(self._ax2)
@@ -50,13 +48,13 @@ class Ticks(object):
             *xspacing*: [ float | 'auto' ]
                 The spacing of the ticks on the x-axis, in degrees. To set
                 the tick spacing to be automatically determined, set this to 'auto'
-                
-        Optional Keyword Arguments:
         
+        Optional Keyword Arguments:
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
-                
+        
         '''
         
         if xspacing == 'auto':
@@ -81,9 +79,9 @@ class Ticks(object):
             *yspacing*: [ float | 'auto' ]
                 The spacing of the ticks on the y-axis, in degrees. To set
                 the tick spacing to be automatically determined, set this to 'auto'
-
+        
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -110,9 +108,9 @@ class Ticks(object):
             
             *color*: [ string ]
                 The color of the ticks
-                
+        
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -139,7 +137,7 @@ class Ticks(object):
                 The size of the ticks (in points)
         
         Optional Keyword Arguments:
-
+            
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
@@ -172,7 +170,7 @@ class WCSLocator(Locator):
         
         ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
-                
+        
         px,py,wx = tick_positions_v2(self._wcs,self.axis.apl_tick_spacing.todegrees(),self.axist,self.axist,farside=self.farside,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
         
         self.axis.apl_tick_positions_world = np.array(wx,int)
@@ -195,7 +193,7 @@ def find_default_spacing(ax):
         px,py,wx,wy = axis_positions(wcs,'x',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
         wxmin,wxmax = math_util.smart_range(wx)
         ax.xaxis.apl_tick_spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False)
-
+    
     if ax.yaxis.apl_auto_tick_spacing:
         px,py,wx,wy = axis_positions(wcs,'y',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
         wymin,wymax = min(wy),max(wy)
@@ -248,8 +246,8 @@ def tick_positions_v2(wcs,spacing,axis,coord,farside=False,xmin=False,xmax=False
                 px_out.append(px[i] + (px[i+1]-px[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
                 py_out.append(py[i] + (py[i+1]-py[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
                 warr_out.append(w)
-    
 
+    
     return px_out,py_out,warr_out
 
 def tick_positions(wcs,spacing,axis,coord,farside=False,xmin=False,xmax=False,ymin=False,ymax=False):
@@ -339,7 +337,7 @@ def axis_positions(wcs,axis,farside,xmin=False,xmax=False,ymin=False,ymax=False)
             x_pix = x_pix * xmin
     
     # Convert these to world coordinates
-    x_world,y_world = pix2world(wcs,x_pix,y_pix)
+    x_world,y_world = wcs_util.pix2world(wcs,x_pix,y_pix)
     
     return x_pix,y_pix,x_world,y_world
 

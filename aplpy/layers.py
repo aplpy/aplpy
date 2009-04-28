@@ -54,7 +54,7 @@ class Layers(object):
         Remove a layer
         
         Required Arguments:
-        
+            
             *layer*: [ string ]
                 The name of the layer to remove
         '''
@@ -82,7 +82,7 @@ class Layers(object):
         it can be shown again using show_layer.
         
         Required Arguments:
-        
+            
             *layer*: [ string ]
                 The name of the layer to hide
         '''
@@ -91,7 +91,7 @@ class Layers(object):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
             return
-                
+        
         for i in range(len(self._ax1.collections)-1,-1,-1):
             if(layer==self._ax1.collections[i].aplpy_layer_name):
                 self._ax1.collections[i].set_visible(False)
@@ -110,7 +110,7 @@ class Layers(object):
         This shows a layer previously hidden with hide_layer
         
         Required Arguments:
-        
+            
             *layer*: [ string ]
                 The name of the layer to show
         '''

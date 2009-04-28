@@ -9,7 +9,6 @@ def ds9(self,regionfile):
     
     self.refresh()
 
-import string
 import numpy as np
 from ds9_util import *
 

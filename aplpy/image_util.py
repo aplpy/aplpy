@@ -43,7 +43,7 @@ def percentile_function(array):
     return spl
 
 def stretch(array, function, exponent=2, midpoint='default'):
-        
+    
     if function is 'linear':
         return array
     elif function is 'log':

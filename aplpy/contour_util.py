@@ -1,6 +1,3 @@
-import numpy as np
-from matplotlib.collections import LineCollection
-from time import time
 import wcs_util
 
 def transform(ax,wcs_in,wcs_out):
