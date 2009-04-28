@@ -24,7 +24,7 @@ class Labels(object):
         self.ylabel = None
         
         self.set_axis_labels_xdisp(-0.05,refresh=False)
-        self.set_axis_labels_ydisp(-0.13,refresh=False)
+        self.set_axis_labels_ydisp(-0.15,refresh=False)
         
         system,equinox,units = wcs_util.system(self._wcs)
         
