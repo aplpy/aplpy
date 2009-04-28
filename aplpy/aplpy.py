@@ -227,7 +227,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             vmid = (vmid - vmin) / (vmax - vmin)
             
-        stretched_image = (self._hdu.data - vmin) / (vmax - vmin)
+        stretched_image = (self._hdu.data - vmin) / (vmax - vmin)        
         
         if min_auto:
             vmin = -0.1

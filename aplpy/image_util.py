@@ -44,16 +44,15 @@ def percentile_function(array):
 
 def stretch(array, function, exponent=2, midpoint='default'):
         
-    if midpoint == 'default':
-        midpoint = 0.05
-        
     if function is 'linear':
         return array
     elif function is 'log':
+        if midpoint == 'default': midpoint = 0.05
         return np.log10(array/midpoint+1.) / np.log10(1./midpoint+1.)
     elif function is 'sqrt':
         return np.sqrt(array)
     elif function is 'arcsinh':
+        if midpoint == 'default': midpoint = -0.033
         return np.arcsinh(array/midpoint) / np.arcsinh(1./midpoint)
     elif function is 'power':
         return np.power(array, exponent)
