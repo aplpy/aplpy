@@ -45,7 +45,7 @@ def percentile_function(array):
 def stretch(array, function, exponent=2, midpoint='default'):
         
     if midpoint == 'default':
-        midpoint = np.median(array)
+        midpoint = 0.05
         
     if function is 'linear':
         return array

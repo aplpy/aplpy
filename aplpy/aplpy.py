@@ -202,25 +202,41 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if cmap=='default':
             cmap = self._get_colormap_default()
         
+        
+        min_auto = type(vmin) == str
+        mid_auto = type(vmid) == str
+        max_auto = type(vmax) == str
+
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap,1000)
 
         vmin_auto,vmax_auto = self._auto_v(0.0025),self._auto_v(0.9975)
-        vmin_auto,vmax_auto = vmin_auto-(vmax_auto-vmin_auto)/10.,vmax_auto+(vmax_auto-vmin_auto)/10.
+#        vmin_auto,vmax_auto = vmin_auto-(vmax_auto-vmin_auto)/10.,vmax_auto+(vmax_auto-vmin_auto)/10.
         
-        if type(vmin) is str:
+        if min_auto:
             vmin = vmin_auto
         
-        if type(vmax) is str:
+        if max_auto:
             vmax = vmax_auto
             
-        if type(vmid) is str:
-            vmid = 0.5
+        if mid_auto:
+            vmid = 'default'
         else:
             vmid = (vmid - vmin) / (vmax - vmin)
             
-        # Set stretch
         stretched_image = (self._hdu.data - vmin) / (vmax - vmin)
+        
+        if min_auto:
+            vmin = -0.1
+        else:
+            vmin = 0.
+            
+        if vmax_auto:
+            vmax = +1.1
+        else:
+            vmax = +1
+            
+        # Set stretch
         stretched_image = image_util.stretch(stretched_image,function=stretch,exponent=exponent,midpoint=vmid)        
         
         if self.image:
@@ -228,7 +244,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self.image.set_cmap(cmap=cmap)
             self.image.origin='lower'
         else:
-            self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=0.,vmax=1.,interpolation='nearest',origin='lower',extent=self._extent)
+            self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation='nearest',origin='lower',extent=self._extent)
         
         self.refresh()
     
