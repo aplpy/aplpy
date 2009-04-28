@@ -42,7 +42,10 @@ def percentile_function(array):
     
     return spl
 
-def stretch(array, function, exponent=2, midpoint=0.5):
+def stretch(array, function, exponent=2, midpoint='default'):
+        
+    if midpoint == 'default':
+        midpoint = np.median(array)
         
     if function is 'linear':
         return array
