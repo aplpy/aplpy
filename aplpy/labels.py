@@ -13,7 +13,7 @@ class Labels(object):
         self.tick_font = FontProperties()
         self.axes_font = FontProperties()
 
-        self.set_labels_latex(False)
+        self.set_labels_latex(False, refresh=False)
         self.set_tick_labels_style('plain', refresh=False)
         self.set_tick_labels_size('small', refresh=False)
         
@@ -24,11 +24,11 @@ class Labels(object):
         
         # Set default label format
         if system == 'celestial':
-            self.set_tick_labels_xformat("hh:mm:ss.ss")
-            self.set_tick_labels_yformat("dd:mm:ss.s")
+            self.set_tick_labels_xformat("hh:mm:ss.ss", refresh=False)
+            self.set_tick_labels_yformat("dd:mm:ss.s", refresh=False)
         else:
-            self.set_tick_labels_xformat("ddd.dddd")
-            self.set_tick_labels_yformat("dd.dddd")
+            self.set_tick_labels_xformat("ddd.dddd", refresh=False)
+            self.set_tick_labels_yformat("dd.dddd", refresh=False)
         
         if system == 'celestial':
             if equinox == 'b1950':

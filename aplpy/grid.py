@@ -28,8 +28,8 @@ class Grid(object):
         self.set_grid_xspacing('tick',refresh=False)
         self.set_grid_yspacing('tick',refresh=False)
         
-        self.set_grid_color('white')
-        self.set_grid_alpha(0.5)
+        self.set_grid_color('white',refresh=False)
+        self.set_grid_alpha(0.5,refresh=False)
         
         # Set grid event handler
         self._ax1.callbacks.connect('xlim_changed',generate_grid)
@@ -91,7 +91,7 @@ class Grid(object):
             self._ax1 = generate_grid(self._ax1)
             self.refresh()
         
-    def set_grid_color(self,color):
+    def set_grid_color(self,color,refresh=True):
         '''
         Set the color of the grid lines
         
@@ -99,12 +99,20 @@ class Grid(object):
         
             *color*: [ string ]
                 The color of the grid lines
+                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
+        
         self._ax1.apl_grid_color = color
-        self._ax1 = generate_grid(self._ax1)
-        self.refresh()
+        if refresh:
+            self._ax1 = generate_grid(self._ax1)
+            self.refresh()
     
-    def set_grid_alpha(self,alpha):
+    def set_grid_alpha(self,alpha,refresh=True):
         '''
         Set the alpha (transparency) of the grid lines
         
@@ -114,10 +122,18 @@ class Grid(object):
                 The alpha value of the grid. This should be a floating
                 point value between 0 and 1, where 0 is completely
                 transparent, and 1 is completely opaque.
+                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
+        
         self._ax1.apl_grid_alpha = alpha
-        self._ax1 = generate_grid(self._ax1)
-        self.refresh()
+        if refresh:
+            self._ax1 = generate_grid(self._ax1)
+            self.refresh()
     
     def show_grid(self):
         '''

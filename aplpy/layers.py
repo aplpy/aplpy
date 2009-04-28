@@ -64,7 +64,6 @@ class Layers(object):
                 raise Exception("Layer "+layer+" does not exist")
             return
         
-#        if "contour_set_" in layer or "scatter_set_" in layer:
         for i in range(len(self._ax1.collections)-1,-1,-1):
             if(layer==self._ax1.collections[i].aplpy_layer_name):
                 self._ax1.collections.pop(i)
@@ -93,7 +92,6 @@ class Layers(object):
                 raise Exception("Layer "+layer+" does not exist")
             return
                 
-#        if "contour_set_" in layer or "scatter_set_" in layer:
         for i in range(len(self._ax1.collections)-1,-1,-1):
             if(layer==self._ax1.collections[i].aplpy_layer_name):
                 self._ax1.collections[i].set_visible(False)
@@ -121,7 +119,6 @@ class Layers(object):
                 raise Exception("Layer "+layer+" does not exist")
             return
         
-#        if "contour_set_" in layer or "scatter_set_" in layer:
         for i in range(len(self._ax1.collections)-1,-1,-1):
             if(layer==self._ax1.collections[i].aplpy_layer_name):
                 self._ax1.collections[i].set_visible(True)
