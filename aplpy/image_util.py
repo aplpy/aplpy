@@ -25,17 +25,17 @@ def percentile_function(array):
     
     array = array.ravel()
     array = array[np.where(np.isnan(array)==False)]
+    array = array[np.where(np.isinf(array)==False)]
     
     n_total  = np.shape(array)[0]
     array = np.sort(array)
     
-    x = np.arange(0.,n_total,1.)
-    x = x / float(n_total-1)
+    x = np.linspace(0.,1.,num=n_total)
     
     spl = interpolate.interp1d(x=x,y=array)
     
     if n_total > 10000:
-        x = math_util.complete_range(0.,1.,10000)
+        x = np.linspace(0.,1.,num=10000)
         spl = interpolate.interp1d(x=x,y=spl(x))
     
     array = None
