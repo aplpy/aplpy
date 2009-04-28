@@ -1,0 +1,60 @@
+import numpy as np
+
+def smart_range(array):
+    
+    array.sort()
+    
+    minval = 360.
+    i1 = 0
+    i2 = 0
+    
+    for i in range(0,np.size(array)-1):
+        if 360.-abs(array[i+1]-array[i]) < minval:
+            minval = 360.-abs(array[i+1]-array[i])
+            i1 = i+1
+            i2 = i
+    
+    if(max(array)-min(array) < minval):
+        i1 = 0
+        i2 = np.size(array)-1
+    
+    x_min = array[i1]
+    x_max = array[i2]
+    
+    if(x_min > x_max):
+        x_min = x_min - 360.
+    
+    return x_min,x_max
+
+def complete_range(xmin,xmax,spacing):
+    if(xmax-xmin < 1):
+        spacing = 10
+    xstep = (xmax - xmin) / float(spacing)
+    r = np.arange(xmin,xmax,xstep)
+    if(np.any(r>=xmax)):
+        return r
+    else:
+        return np.hstack([r,xmax])
+        
+
+def closest(array,a):
+    ipos = minloc(np.abs(a-array))
+    return array[ipos]
+
+def minloc(array):
+    return np.where(array == np.min(array))[0][0]
+
+def divisors(n, dup = False):
+    divisors = []
+    i = 0
+    if n == 1:
+        return {1: 1}
+    while 1:
+        i += 1
+        if dup:
+            break
+        if i == n + 1:
+            break
+        if n % i == 0:
+            divisors[i:i+1] = [i]
+    return np.array(divisors)

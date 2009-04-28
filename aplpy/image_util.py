@@ -2,7 +2,7 @@ import scipy.ndimage as ndimage
 import scipy.interpolate as interpolate
 import numpy as np
 
-import util
+import math_util
 
 def resample(array,factor):
     nx,ny = np.shape(array)
@@ -35,7 +35,7 @@ def percentile_function(array):
     spl = interpolate.interp1d(x=x,y=array)
     
     if n_total > 10000:
-        x = util.complete_range(0.,1.,10000)
+        x = math_util.complete_range(0.,1.,10000)
         spl = interpolate.interp1d(x=x,y=spl(x))
     
     array = None

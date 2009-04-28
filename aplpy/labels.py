@@ -1,7 +1,10 @@
 import matplotlib.pyplot as mpl
 import math
-
+import angle_util as au
 import wcs_util
+import numpy as np
+import string
+import math_util
 
 class Labels(object):
     
@@ -15,7 +18,7 @@ class Labels(object):
         # Set default label format
         if system == 'celestial':
             self._ax1.xaxis.apl_label_form = "hh:mm:ss."
-            self._ax1.yaxis.apl_label_form = "dd:mm:ss."
+            self._ax1.yaxis.apl_label_form = "sdd:mm:ss."
         else:
             self._ax1.xaxis.apl_label_form = "ddd.dddd"
             self._ax1.yaxis.apl_label_form = "dd.dddd"
@@ -106,7 +109,6 @@ class Labels(object):
         
         if refresh: self.refresh()
 
-
 class WCSFormatter(mpl.Formatter):
     
     def __init__(self, wcs=False,axist='x'):
@@ -116,102 +118,35 @@ class WCSFormatter(mpl.Formatter):
     def __call__(self,x,pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
         
+        hours = 'h' in self.axis.apl_label_form
+        
+        if hours:
+            sep = ('h','m','s')
+        else:
+            sep = ('d','m','s')
+        
         ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
+            
+        ipos = math_util.minloc(np.abs(self.axis.apl_tick_positions_pix-x))
         
-        if self.axist=='x':
-            y = ymin
-            x = x
-        else:
-            y = x
-            x = xmin
-        
-        xw,yw = wcs_util.pix2world(self._wcs,x,y)
-        
-        if self.axist=='x':
-            return "$"+_lon2dms(xw,form=self.axis.apl_label_form)+"$"
-        else:
-            return "$"+_lat2dms(yw,form=self.axis.apl_label_form)+"$"
+        c = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
 
-def _lat2dms(x,form='dd:mm:ss.ss'):
-    
-    if x < 0:
-        return '-' + _lon2dms(abs(x),form)
-    else:
-        return '+' + _lon2dms(abs(x),form)
-
-def _lon2dms(x,form='ddd:mm:ss.ss'):
-    
-    if "hh" in form:
-        sep = ["^h","^m","^s"]
-#        sep = ["h","m","s"]
-        x = x / 15.
-    else:
-        sep = ["^{\circ}","^{\prime}","^{\prime\prime}"]
-#        sep = ["d","'",'"']
-    
-    # count number of decimal arcseconds or of decimal places to degrees
-    if '.s' in form or '.d' in form:
-        pos = form.find('.')
-        ns = len(form[pos+1:])
-        fns = ".%0"+str(ns)+"d"
-    
-    # If there are decimal places to degrees, conversion is simple
-    if '.d' in form:
+        if hours:
+            c = c.tohours()
         
-        fd,d = math.modf(x)
+        c = c.tostringlist(format=self.axis.apl_label_form,sep=sep)
         
-        part1 = int(d)
-        part2 = int(round(fd*10**ns))
-        if part2 == 10**ns: part1,part2 = part1+1,0
-        
-        string = ("%d"+fns) % (part1,part2) + sep[0]
-        return string
-    
-    else:
-        
-        # use this for dms, hms, and -dms
-        
-        m,d = math.modf(x)
-        s,m = math.modf(m*60.)
-        fs,s = math.modf(s*60.)
-        
-        parts = []
-        
-        if 'mm' in form:
-            parts.append(int(d))
-            if 'ss' in form:
-                parts.append(int(m))
-                if '.s' in form:
-                    parts.append(int(s))
-                    parts.append(int(round(fs*10**ns)))
+        if ipos <> len(self.axis.apl_tick_positions_pix)-1:
+            cnext = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos+1]
+            if hours:
+                cnext = cnext.tohours()
+            cnext = cnext.tostringlist(format=self.axis.apl_label_form,sep=sep)
+            for iter in range(len(c)):
+                if cnext[0] == c[0]:
+                    c.pop(0)
+                    cnext.pop(0)
                 else:
-                    parts.append(int(round(s+fs)))
-            else:
-                parts.append(int(round(m+(s+fs)/60.)))
-        else:
-            parts.append(int(round(x)))
-        
-        if len(parts) >= 4 and parts[3] == 10**(ns+2): parts[2],parts[3] = parts[2] + 1, 0
-        if len(parts) >= 3 and  parts[2] == 60: parts[1],parts[2] = parts[1] + 1, 0
-        if len(parts) >= 2 and  parts[1] == 60: parts[0],parts[1] = parts[0] + 1, 0
-        
-        if 'hh' in form:
-            if parts[0] == 24: parts[0] = 0
-        else:
-            if parts[0] == 360: parts[0] = 0
-        
-        string = ""
-        
-        if len(parts) > 0:
-            string = "%d" % parts[0] + sep[0]
-            if len(parts) > 1:
-                string += "%02d" % parts[1] + sep[1]
-                if len(parts) > 2:
-                    string += "%02d" % parts[2]
-                    if len(parts) > 3:
-                        string += fns % parts[3] + sep[2]
-                    else:
-                        string += sep[2]
-        
-        return string
+                    break
+            
+        return string.join(c,"")

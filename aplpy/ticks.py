@@ -2,8 +2,9 @@ import numpy as np
 from matplotlib.pyplot import Locator
 from scipy.interpolate import UnivariateSpline
 import sys
-from util import *
 from wcs_util import *
+import angle_util as au
+import math_util
 
 class Ticks(object):
     
@@ -15,13 +16,13 @@ class Ticks(object):
         self._ax2.yaxis.tick_right()
         self._ax2.xaxis.tick_top()
         
-        # Initialize default tick spacing
-        find_default_spacing(self._ax1)
-        find_default_spacing(self._ax2)
-        
         # Set tick spacing to default
         self.set_tick_xspacing('auto',refresh=False)
         self.set_tick_yspacing('auto',refresh=False)
+    
+        # Initialize default tick spacing
+        find_default_spacing(self._ax1)
+        find_default_spacing(self._ax2)
         
         # Set major tick locators
         lx = WCSLocator(wcs=self._wcs,axist='x')
@@ -58,10 +59,18 @@ class Ticks(object):
                 
         '''
         
-        self._ax1.xaxis.apl_tick_spacing = xspacing
-        self._ax2.xaxis.apl_tick_spacing = xspacing
+        if xspacing == 'auto':
+            self._ax1.xaxis.apl_auto_tick_spacing = True
+            self._ax2.xaxis.apl_auto_tick_spacing = True
+        else:
+            self._ax1.xaxis.apl_auto_tick_spacing = False
+            self._ax2.xaxis.apl_auto_tick_spacing = False
+            self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
+            self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
         
-        if refresh: self.refresh()
+        if refresh:
+            self._update_grid()
+            self.refresh()
     
     def set_tick_yspacing(self,yspacing,refresh=True):
         '''
@@ -80,10 +89,18 @@ class Ticks(object):
                 For non-interactive uses, this can be set to False.
         '''
         
-        self._ax1.yaxis.apl_tick_spacing = yspacing
-        self._ax2.yaxis.apl_tick_spacing = yspacing
+        if yspacing == 'auto':
+            self._ax1.yaxis.apl_auto_tick_spacing = True
+            self._ax2.yaxis.apl_auto_tick_spacing = True
+        else:
+            self._ax1.yaxis.apl_auto_tick_spacing = False
+            self._ax2.yaxis.apl_auto_tick_spacing = False
+            self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
+            self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
         
-        if refresh: self.refresh()
+        if refresh:
+            self._update_grid()
+            self.refresh()
     
     def set_tick_color(self,color,refresh=True):
         '''
@@ -155,17 +172,16 @@ class WCSLocator(Locator):
         
         ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
+                
+        px,py,wx = tick_positions_v2(self._wcs,self.axis.apl_tick_spacing.todegrees(),self.axist,self.axist,farside=self.farside,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
         
-        if self.axis.apl_tick_spacing == 'auto':
-            spacing = self.axis.apl_spacing_default
-        else:
-            spacing = self.axis.apl_tick_spacing
-        
-        px,py,wx,wy = tick_positions(self._wcs,spacing,self.axist,self.axist,farside=self.farside,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
+        self.axis.apl_tick_positions_world = np.array(wx,int)
         
         if self.axist=='x':
+            self.axis.apl_tick_positions_pix = px
             return px
         else:
+            self.axis.apl_tick_positions_pix = py
             return py
 
 def find_default_spacing(ax):
@@ -175,13 +191,15 @@ def find_default_spacing(ax):
     xmin, xmax = ax.xaxis.get_view_interval()
     ymin, ymax = ax.yaxis.get_view_interval()
     
-    px,py,wx,wy = axis_positions(wcs,'x',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
-    wxmin,wxmax = smart_range(wx)
-    ax.xaxis.apl_spacing_default = smart_round_x((wxmax-wxmin)/5.)
-    
-    px,py,wx,wy = axis_positions(wcs,'y',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
-    wymin,wymax = min(wy),max(wy)
-    ax.yaxis.apl_spacing_default = smart_round_y((wymax-wymin)/5.)
+    if ax.xaxis.apl_auto_tick_spacing:
+        px,py,wx,wy = axis_positions(wcs,'x',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
+        wxmin,wxmax = math_util.smart_range(wx)
+        ax.xaxis.apl_tick_spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False)
+
+    if ax.yaxis.apl_auto_tick_spacing:
+        px,py,wx,wy = axis_positions(wcs,'y',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
+        wymin,wymax = min(wy),max(wy)
+        ax.yaxis.apl_tick_spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True)
 
 ###############################################################
 # find_ticks:      Find positions of ticks along a given axis
@@ -193,6 +211,46 @@ def find_default_spacing(ax):
 #     x_min,x_max: range of x values along all axes
 #     y_min,y_max: range of y values along all axes
 ###############################################################
+
+# Find wx in units of spacing, then search for pixel position of integer wx/spacing
+# To plot labels, convert to an int and multiply by spacing in sexagesimal space
+
+def tick_positions_v2(wcs,spacing,axis,coord,farside=False,xmin=False,xmax=False,ymin=False,ymax=False):
+    
+    (px,py,wx,wy) = axis_positions(wcs,axis,farside,xmin,xmax,ymin,ymax)
+    
+    if coord=='x':
+        warr = wx
+    else:
+        warr = wy
+    
+    # Check for 360 degree transition, and if encountered,
+    # change the values so that there is continuity
+    
+    for i in range(0,len(warr)-1):
+        if(abs(warr[i]-warr[i+1])>180.):
+            if(warr[i] > warr[i+1]):
+                 warr[i+1:] = warr[i+1:] + 360.
+            else:
+                 warr[i+1:] = warr[i+1:] - 360.
+    
+    # Convert warr to units of the spacing, then ticks are at integer values
+    warr = warr / spacing
+    
+    # Create empty arrays for tick positions
+    px_out = []
+    py_out = []
+    warr_out = []
+    
+    for w in np.arange(np.floor(min(warr)),np.ceil(max(warr)),1.):
+        for i in range(len(px)-1):
+            if (warr[i] <= w and warr[i+1] > w) or (warr[i] > w and warr[i+1] <= w):
+                px_out.append(px[i] + (px[i+1]-px[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
+                py_out.append(py[i] + (py[i+1]-py[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
+                warr_out.append(w)
+    
+
+    return px_out,py_out,warr_out
 
 def tick_positions(wcs,spacing,axis,coord,farside=False,xmin=False,xmax=False,ymin=False,ymax=False):
     

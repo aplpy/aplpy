@@ -7,9 +7,12 @@ from ticks import tick_positions
 import numpy as np
 from matplotlib.collections import LineCollection
 
-import util
+import math_util
 
 import wcs_util
+
+import angle_util as au
+
 
 # can do coarse search to check if any longitude lines are completely contained inside box.
 # if not, then has to intersect axis, and so can just do the ones that intersect
@@ -20,45 +23,73 @@ class Grid(object):
         
         # Set default parameters for grid
         self._ax1.apl_show_grid = False
-        self._ax1.xaxis.apl_grid_spacing = 'auto'
-        self._ax1.yaxis.apl_grid_spacing = 'auto'
         
-        self._ax1.apl_grid_color = 'white'
-        self._ax1.apl_grid_alpha = 0.5
+        # Set grid spacing to default
+        self.set_grid_xspacing('tick',refresh=False)
+        self.set_grid_yspacing('tick',refresh=False)
+        
+        self.set_grid_color('white')
+        self.set_grid_alpha(0.5)
         
         # Set grid event handler
         self._ax1.callbacks.connect('xlim_changed',generate_grid)
         self._ax1.callbacks.connect('ylim_changed',generate_grid)
     
-    def set_grid_xspacing(self,xspacing):
+    def set_grid_xspacing(self,xspacing,refresh=True):
         '''
         Set the grid line spacing in the longitudinal direction
         
         Required Arguments:
             
-            *xspacing*: [ float | 'auto' ]
+            *xspacing*: [ float | 'tick' ]
                 The spacing in the longitudinal direction, in degrees.
-                To set the spacing to be automatically determined, set this
-                to 'auto'
+                To set the spacing to be the same as the ticks, set this
+                to 'tick'
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
-        self._ax1.xaxis.apl_grid_spacing = xspacing
-        self._ax1 = generate_grid(self._ax1)
-        self.refresh()
-            
-    def set_grid_yspacing(self,yspacing):
+        
+        if xspacing == 'tick':
+            self._ax1.xaxis.apl_auto_grid_spacing = True
+        else:
+            self._ax1.xaxis.apl_auto_grid_spacing = False
+            self._ax1.xaxis.apl_grid_spacing = au.Angle(degrees = xspacing)
+        
+        if refresh: 
+            self._ax1 = generate_grid(self._ax1)
+            self.refresh()
+                    
+    def set_grid_yspacing(self,yspacing,refresh=True):
         '''
         Set the grid line spacing in the latitudinal direction
         
         Required Arguments:
             
-            *yspacing*: [ float | 'auto' ]
+            *yspacing*: [ float | 'tick' ]
                 The spacing in the latitudinal direction, in degrees.
-                To set the spacing to be automatically determined, set this
-                to 'auto'
+                To set the spacing to be the same as the ticks, set this
+                to 'tick'
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         '''
-        self._ax1.yaxis.apl_grid_spacing = yspacing    
-        self._ax1 = generate_grid(self._ax1)
-        self.refresh()
+        
+        if yspacing == 'tick':
+            self._ax1.yaxis.apl_auto_grid_spacing = True
+        else:
+            self._ax1.yaxis.apl_auto_grid_spacing = False
+            self._ax1.yaxis.apl_grid_spacing = au.Angle(degrees = xspacing)
+        
+        if refresh: 
+            self._ax1 = generate_grid(self._ax1)
+            self.refresh()
         
     def set_grid_color(self,color):
         '''
@@ -105,6 +136,11 @@ class Grid(object):
         self._ax1.apl_show_grid = False
         self._ax1 = generate_grid(self._ax1)
         self.refresh()
+        
+    def _update_grid(self):
+        
+        if self._ax1.apl_show_grid:
+            self.show_grid()
 
 ##########################################################
 # plot_grid: the main routine to plot a coordinate grid
@@ -118,19 +154,19 @@ def generate_grid(ax):
         
         polygons_out = []
         
-        if ax.xaxis.apl_grid_spacing == 'auto':
-            xspacing = ax.xaxis.apl_spacing_default
+        if ax.xaxis.apl_auto_grid_spacing:
+            xspacing = ax.xaxis.apl_tick_spacing.todegrees()
         else:
-            xspacing = ax.xaxis.apl_grid_spacing
+            xspacing = ax.xaxis.apl_grid_spacing.todegrees()
         
-        if ax.yaxis.apl_grid_spacing == 'auto':
-            yspacing = ax.yaxis.apl_spacing_default
+        if ax.yaxis.apl_auto_grid_spacing:
+            yspacing = ax.yaxis.apl_tick_spacing.todegrees()
         else:
-            yspacing = ax.yaxis.apl_grid_spacing
-        
+            yspacing = ax.yaxis.apl_grid_spacing.todegrees()
+                
         # Find longitude lines that intersect with axes
         lon_i,lat_i = find_intersections(wcs,'x',xspacing)
-        
+                
         lon_i_unique = np.array(list(set(lon_i)))
         
         # Plot those lines
@@ -139,7 +175,7 @@ def generate_grid(ax):
                 polygons_out.append(line)
         
         # Find longitude lines that don't intersect with axes
-        lon_all = util.complete_range(0.0,360.0,xspacing)
+        lon_all = math_util.complete_range(0.0,360.0,xspacing)
         lon_ni  = np.sort(np.array(list(set(lon_all)-set(lon_i_unique))))
         lat_ni  = np.ones(np.size(lon_ni)) # doesn't matter what value is, is either in or outside
         
@@ -164,7 +200,7 @@ def generate_grid(ax):
                 polygons_out.append(line)
         
         # Find latitude lines that don't intersect with axes
-        lat_all = util.complete_range(-90.0,90.0,yspacing)
+        lat_all = math_util.complete_range(-90.0,90.0,yspacing)
         lat_ni  = np.sort(np.array(list(set(lat_all)-set(lat_i_unique))))
         lon_ni  = np.ones(np.size(lat_ni)) # doesn't matter what value is, is either in or outside
         
@@ -241,7 +277,7 @@ def plot_latitude(wcs,lon,lat,lat0,alpha=0.5):
         # If inside, then current intersection closes arc - plot it
         if(inside):
             lon_max = l
-            x_world = util.complete_range(lon_min,lon_max,360) # Plotting every degree, make more general
+            x_world = math_util.complete_range(lon_min,lon_max,360) # Plotting every degree, make more general
             y_world = np.ones(len(x_world)) * lat0
             x_pix,y_pix = wcs_util.world2pix(wcs,x_world,y_world)
             lines_out.append(zip(x_pix,y_pix))
@@ -253,7 +289,7 @@ def plot_latitude(wcs,lon,lat,lat0,alpha=0.5):
     # If still inside when finished going through intersections, then close at longitude 360
     if(inside):
         lon_max = 360.
-        x_world = util.complete_range(lon_min,lon_max,360)
+        x_world = math_util.complete_range(lon_min,lon_max,360)
         y_world = np.ones(len(x_world)) * lat0
         x_pix,y_pix = wcs_util.world2pix(wcs,x_world,y_world)
         lines_out.append(zip(x_pix,y_pix))
@@ -287,7 +323,7 @@ def plot_longitude(wcs,lon,lat,lon0,alpha=0.5):
     for l in latnew:
         if(inside):
             lat_max = l
-            y_world = util.complete_range(lat_min,lat_max,360)
+            y_world = math_util.complete_range(lat_min,lat_max,360)
             x_world = np.ones(len(y_world)) * lon0
             x_pix,y_pix = wcs_util.world2pix(wcs,x_world,y_world)
             lines_out.append(zip(x_pix,y_pix))
@@ -298,7 +334,7 @@ def plot_longitude(wcs,lon,lat,lon0,alpha=0.5):
     
     if(inside):
         lat_max = 90.
-        y_world = util.complete_range(lat_min,lat_max,360)
+        y_world = math_util.complete_range(lat_min,lat_max,360)
         x_world = np.ones(len(y_world)) * lon0
         x_pix,y_pix = wcs_util.world2pix(wcs,x_world,y_world)
         lines_out.append(zip(x_pix,y_pix))
