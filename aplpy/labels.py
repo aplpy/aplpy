@@ -20,6 +20,12 @@ class Labels(object):
         self._ax2.yaxis.set_label_position('right')
         self._ax2.xaxis.set_label_position('top')
         
+        self.xlabel = None
+        self.ylabel = None
+        
+        self.set_axis_labels_xdisp(-0.05,refresh=False)
+        self.set_axis_labels_ydisp(-0.13,refresh=False)
+        
         system,equinox,units = wcs_util.system(self._wcs)
         
         # Set default label format
@@ -241,7 +247,61 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_fontproperties(self.tick_font)
     
-    def set_axis_labels(self,xlabel,ylabel, refresh=True):
+    def set_axis_labels_xdisp(self,displacement,refresh=True):
+        """
+        Set the vertical displacement of the x-axis label
+            
+        Required Arguments:
+        
+            *dispacement*: [ float ]
+                The vertical displacement of the x-axis label, in units of the
+                size of the viewport. The default is -0.05. A value of 0 would
+                place the label on the bottom x-axis, and a value of 1 would place
+                the label on the top x-axis.
+                                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        self.apl_xlabel_disp = displacement
+        
+        if self.xlabel:
+            self.xlabel.set_y(self.apl_xlabel_disp)
+        
+        if refresh:
+            self.refresh()
+            
+    def set_axis_labels_ydisp(self,displacement,refresh=True):
+        """
+        Set the horizontal displacement of the y-axis label
+
+        Required Arguments:
+
+            *dispacement*: [ float ]
+                The vertical displacement of the y-axis label, in units of the
+                size of the viewport. The default is -0.13. A value of 0 would
+                place the label on the left y-axis, and a value of 1 would place
+                the label on the right y-axis.
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        self.apl_ylabel_disp = displacement
+            
+        if self.ylabel:
+            self.ylabel.set_x(self.apl_ylabel_disp)
+           
+        if refresh:
+            self.refresh()
+            
+    def set_axis_labels(self,xlabel,ylabel,refresh=True):
         """
         Set the axes labels
             
@@ -260,8 +320,17 @@ class Labels(object):
                 For non-interactive uses, this can be set to False.
         """
         
-        self._ax1.set_xlabel(xlabel,fontproperties=self.axes_font)
-        self._ax1.set_ylabel(ylabel,fontproperties=self.axes_font)
+        if self.xlabel:
+            self.xlabel.set_text(xlabel)
+            self.xlabel.set_y(self.apl_xlabel_disp)
+        else:
+            self.xlabel = self._ax1.text(0.5,self.apl_xlabel_disp,xlabel,fontproperties=self.axes_font,transform = self._ax1.transAxes,ha='center',va='center')
+    
+        if self.ylabel:
+            self.ylabel.set_text(ylabel)
+            self.ylabel.set_x(self.apl_ylabel_disp)
+        else:
+            self.ylabel = self._ax1.text(self.apl_ylabel_disp,0.5,ylabel,fontproperties=self.axes_font,transform = self._ax1.transAxes,rotation='vertical',ha='center',va='center')
                
         if refresh:
             self.refresh()
