@@ -113,7 +113,7 @@ class Angle(object):
         # 4.n: degrees, minutes, and decimal seconds with n decimal places
 
         if rval < 2:
-            n = int(round( ( rval - 1. ) * 10 ))
+            n = int(round( ( rval - 1. ) * 100 ))
             d = round(d + m / 60. + s / 3600.,n)
             if n==0:
                 d = int(d)
@@ -134,7 +134,7 @@ class Angle(object):
                 d = d + 1
             return (d,m,s)
         else:
-            n = int(round( ( rval - 4. ) * 10 ))
+            n = int(round( ( rval - 4. ) * 100 ))
             s = round(s,n)
             if s == 60.:
                 s = 0.
@@ -153,14 +153,14 @@ class Angle(object):
              r = 1
              pos = format.find('.')
              nd = len(format[pos+1:])
-             r = r + nd/10.
+             r = r + nd/100.
         if 'mm' in format: r = 2
         if 'ss' in format: r = 3
         if '.s' in format:
              r = 4
              pos = format.find('.')
              ns = len(format[pos+1:])
-             r = r + ns/10.
+             r = r + ns/100.
         
         tup = self.toround(rval=r)
         if type(tup) == tuple:
