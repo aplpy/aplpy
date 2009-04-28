@@ -9,6 +9,14 @@ class Labels(object):
     
     def _initialize_labels(self):
         
+        # Set font
+        self.tick_font = FontProperties()
+        self.axes_font = FontProperties()
+
+        self.set_labels_latex(False)
+        self.set_tick_labels_style('plain', refresh=False)
+        self.set_tick_labels_size('small', refresh=False)
+        
         self._ax2.yaxis.set_label_position('right')
         self._ax2.xaxis.set_label_position('top')
         
@@ -16,11 +24,11 @@ class Labels(object):
         
         # Set default label format
         if system == 'celestial':
-            self.set_labels_xformat("hh:mm:ss.ss")
-            self.set_labels_yformat("dd:mm:ss.s")
+            self.set_tick_labels_xformat("hh:mm:ss.ss")
+            self.set_tick_labels_yformat("dd:mm:ss.s")
         else:
-            self.set_labels_xformat("ddd.dddd")
-            self.set_labels_yformat("dd.dddd")
+            self.set_tick_labels_xformat("ddd.dddd")
+            self.set_tick_labels_yformat("dd.dddd")
         
         if system == 'celestial':
             if equinox == 'b1950':
@@ -42,13 +50,6 @@ class Labels(object):
         fy2 = mpl.NullFormatter()
         self._ax2.xaxis.set_major_formatter(fx2)
         self._ax2.yaxis.set_major_formatter(fy2)
-        
-        # Set font
-        self.tick_font = FontProperties()
-        self.axes_font = FontProperties()
-        self._ax1.usetex = False
-        self.set_tick_label_style('plain', refresh=False)
-        self.set_tick_labels_size('small', refresh=False)
         
     def set_tick_labels_xformat(self,format,refresh=True):
         '''
@@ -119,7 +120,7 @@ class Labels(object):
                 'latex' uses superscripts, and typesets the labels
                 with LaTeX. To decide whether to use the matplotlib
                 internal LaTeX engine or a real LaTeX installation, use
-                the set_latex() method.
+                the set_labels_latex() method.
                 
         Optional Keyword Arguments:
 
@@ -131,8 +132,8 @@ class Labels(object):
         if not style in ['colons','plain','latex']:
             raise Exception("Label style should be one of colons/plain/latex")
         
-        self._ax1.xaxis.apl_label_style = style
-        self._ax1.yaxis.apl_label_style = style
+        self._ax1.xaxis.apl_labels_style = style
+        self._ax1.yaxis.apl_labels_style = style
     
         if refresh:
             self.refresh()
@@ -259,8 +260,8 @@ class Labels(object):
                 For non-interactive uses, this can be set to False.
         """
         
-        self._ax1.set_xlabel(xlabel,fontdict=self.axes_font)
-        self._ax1.set_ylabel(ylabel,fontdict=self.axes_font)
+        self._ax1.set_xlabel(xlabel,fontproperties=self.axes_font)
+        self._ax1.set_ylabel(ylabel,fontproperties=self.axes_font)
                
         if refresh:
             self.refresh()
@@ -357,12 +358,12 @@ class WCSFormatter(mpl.Formatter):
         
         hours = 'h' in self.axis.apl_label_form
         
-        if self.axis.apl_label_style == 'plain':
+        if self.axis.apl_labels_style == 'plain':
             sep = ('d','m','s')
             if hours: sep = ('h','m','s') 
-        elif self.axis.apl_label_style == 'colons':
+        elif self.axis.apl_labels_style == 'colons':
             sep = (':',':','')
-        elif self.axis.apl_label_style == 'latex':
+        elif self.axis.apl_labels_style == 'latex':
             if hours:
                 sep = ('^{h}','^{m}','^{s}')
             else:
@@ -392,7 +393,7 @@ class WCSFormatter(mpl.Formatter):
                 else:
                     break
         
-        if self.axis.apl_label_style == 'latex':
+        if self.axis.apl_labels_style == 'latex':
             return "$"+string.join(c,"")+"$"
         else:
             return string.join(c,"")
