@@ -52,7 +52,7 @@ class Labels(object):
         self.set_tick_label_style('plain', refresh=False)
         self.set_tick_labels_size('small', refresh=False)
         
-    def set_xlabels_format(self,format,refresh=True):
+    def set_tick_labels_xformat(self,format,refresh=True):
         '''
         Set the format of the x-axis tick labels
         
@@ -77,7 +77,7 @@ class Labels(object):
         self._ax1.xaxis.apl_label_form = format
         if refresh: self.refresh()
     
-    def set_ylabels_format(self,format,refresh=True):
+    def set_tick_labels_yformat(self,format,refresh=True):
         '''
         Set the format of the x-axis tick labels
         
