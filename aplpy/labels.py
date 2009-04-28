@@ -18,25 +18,21 @@ class Labels(object):
         
         # Set default label format
         if system == 'celestial':
-            self._ax1.xaxis.apl_label_form = "hh:mm:ss.ss"
-            self._ax1.yaxis.apl_label_form = "dd:mm:ss.s"
+            self.set_xlabels_format("hh:mm:ss.ss")
+            self.set_ylabels_format("dd:mm:ss.s")
         else:
-            self._ax1.xaxis.apl_label_form = "ddd.dddd"
-            self._ax1.yaxis.apl_label_form = "dd.dddd"
+            self.set_xlabels_format("ddd.dddd")
+            self.set_ylabels_format("dd.dddd")
         
         if system == 'celestial':
             if equinox == 'b1950':
-                self._ax1.set_xlabel('RA (B1950)')
-                self._ax1.set_ylabel('Dec (B1950)')
+                self.set_axes_labels('RA (B1950)','Dec (B1950)', refresh=False)
             else:
-                self._ax1.set_xlabel('RA (J2000)')
-                self._ax1.set_ylabel('Dec (J2000)')
+                self.set_axes_labels('RA (J2000)','Dec (J2000)', refresh=False)
         elif system == 'galactic':
-            self._ax1.set_xlabel('Galactic Longitude')
-            self._ax1.set_ylabel('Galactic Latitude')
+            self.set_axes_labels('Galactic Longitude','Galactic Latitude', refresh=False)
         else:
-            self._ax1.set_xlabel('Ecliptic Longitude')
-            self._ax1.set_ylabel('Ecliptic Latitude')
+            self.set_axes_labels('Ecliptic Longitude','Ecliptic Latitude', refresh=False)
         
         # Set major tick formatters
         fx1 = WCSFormatter(wcs=self._wcs,axist='x')
@@ -50,7 +46,8 @@ class Labels(object):
         self._ax2.yaxis.set_major_formatter(fy2)
         
         # Set font
-        self.font = FontProperties()
+        self.tick_font = FontProperties()
+        self.axes_font = FontProperties()
         self._ax1.usetex = False
         self.set_tick_label_style('plain', refresh=False)
         self.set_tick_labels_size('small', refresh=False)
@@ -105,17 +102,6 @@ class Labels(object):
         self._ax1.yaxis.apl_label_form = format
         if refresh: self.refresh()
     
-    def set_axis_labels(self,refresh=True,family='serif',fontsize='12',fontstyle='normal'):
-        """
-        family                [ 'serif' | 'sans-serif' | 'cursive' | 'fantasy' | 'monospace' ]
-          size or fontsize    [ size in points | relative size eg 'smaller', 'x-large' ]
-          style or fontstyle    [ 'normal' | 'italic' | 'oblique']
-        """
-        self._ax1.set_xlabel('(R.A. J2000)',family=family,fontsize=fontsize,fontstyle=fontstyle)
-        self._ax1.set_ylabel('(Dec. J2000)',family=family,fontsize=fontsize,fontstyle=fontstyle)
-        
-        if refresh: self.refresh()
-    
     def set_tick_label_style(self,style,refresh=True):
         """
         Set the format of the x-axis tick labels
@@ -124,19 +110,24 @@ class Labels(object):
             
             *style*: [ 'colons' | 'plain' | 'latex' ]
             
-            How to style the tick labels:
+                How to style the tick labels:
             
-            'colons' uses colons as separators, for example
-            31:41:59.26 +27:18:28.1
+                'colons' uses colons as separators, for example
+                31:41:59.26 +27:18:28.1
             
-            'plain' uses plain letters as separators, for example
-            31:41:59.26 +27:18:28.1
+                'plain' uses plain letters as separators, for example
+                31:41:59.26 +27:18:28.1
             
-            'latex' uses superscripts, and typesets the labels
-            with LaTeX. To decide whether to use the matplotlib
-            internal LaTeX engine or a real LaTeX installation, use
-            the set_latex() method.
-        
+                'latex' uses superscripts, and typesets the labels
+                with LaTeX. To decide whether to use the matplotlib
+                internal LaTeX engine or a real LaTeX installation, use
+                the set_latex() method.
+                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
         """
         
         if not style in ['colons','plain','latex']:
@@ -149,6 +140,22 @@ class Labels(object):
             self.refresh()
             
     def set_latex(self, usetex, refresh=True):
+        """
+        Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
+        
+        Required Arguments:
+        
+            *usetex*: [ True | False ]
+                Whether to use a real LaTex installation (True) or the built-in
+                matplotlib LaTeX (False). Note that if the former is chosen, an
+                installation of LaTex is required.
+                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
         
         mpl.rc('text',usetex=usetex)
         
@@ -156,24 +163,73 @@ class Labels(object):
             self.refresh()
             
     def set_tick_labels_size(self, size, refresh=True):
+        """
+        Set the size of the tick labels
+            
+        Required Arguments:
+        
+            *size*: [ size in points | ‘xx-small’ | ‘x-small’ | ‘small’ |
+                      ‘medium’ | ‘large’ | ‘x-large’ | ‘xx-large’ ]
+                      
+                The size of the numeric tick labels. Default is 'small'.
+                                
+        Optional Keyword Arguments:
 
-        self.font.set_size(size)
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        self.tick_font.set_size(size)
         self._update_tick_font()
 
         if refresh:
             self.refresh()
             
     def set_tick_labels_weight(self, weight, refresh=True):
+        """
+        Set the weight of the tick labels
+        
+        Required Arguments:
+        
+            *weight*: [ a numeric value in range 0-1000 | ‘ultralight’ |
+                        ‘light’ | ‘normal’ | ‘regular’ | ‘book’ | ‘medium’ |
+                        ‘roman’ | ‘semibold’ | ‘demibold’ | ‘demi’ | ‘bold’ |
+                        ‘heavy’ | ‘extra bold’ | ‘black’ ]
+                      
+                The weight of the numeric tick labels. Default is 'normal'.
+                                
+        Optional Keyword Arguments:
 
-        self.font.set_weight(weight)
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        self.tick_font.set_weight(weight)
         self._update_tick_font()
 
         if refresh:
             self.refresh()
             
     def set_tick_labels_family(self, family, refresh=True):
+        """
+        Set the font family of the tick labels
+        
+        Required Arguments:
+        
+            *family*: [ ‘serif’ | ‘sans-serif’ | ‘cursive’ | ‘fantasy’ | ‘monospace’ ]
+                      
+                The font family of the numeric tick labels. Default is 'sans-serif'.
+                                
+        Optional Keyword Arguments:
 
-        self.font.set_family(family)
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        self.tick_font.set_family(family)
         self._update_tick_font()
 
         if refresh:
@@ -182,23 +238,115 @@ class Labels(object):
     def _update_tick_font(self):
         
         for tick in self._ax1.get_xticklabels():
-            tick.set_fontproperties(self.font)
+            tick.set_fontproperties(self.tick_font)
         for tick in self._ax1.get_yticklabels():
-            tick.set_fontproperties(self.font)
+            tick.set_fontproperties(self.tick_font)
     
-    def set_font(self,family=None,usetex=None):
+    def set_axes_labels(self,xlabel,ylabel, refresh=True):
+        """
+        Set the axes labels
+            
+        Required Arguments:
         
-        if family:
-            self.font.set_family(family)
-        if usetex:
-            self._ax1.usetex = usetex
+            *xlabel*: [ string ]
+                The x-axis label.
+                
+            *ylabel*: [ string ]
+                The y-axis label.
+                                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
         
-        for tick in self._ax1.get_xticklabels():
-            tick.set_fontproperties(self.font)
-        for tick in self._ax1.get_yticklabels():
-            tick.set_fontproperties(self.font)
+        self._ax1.set_xlabel(xlabel,fontdict=self.axes_font)
+        self._ax1.set_ylabel(ylabel,fontdict=self.axes_font)
+               
+        if refresh:
+            self.refresh()
+                    
+    def set_axes_labels_size(self, size, refresh=True):
+        """
+        Set the size of the tick labels
+            
+        Required Arguments:
         
-        self.refresh()
+            *size*: [ size in points | ‘xx-small’ | ‘x-small’ | ‘small’ |
+                      ‘medium’ | ‘large’ | ‘x-large’ | ‘xx-large’ ]
+                      
+                The size of the numeric tick labels. Default is 'small'.
+                                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        self.axes_font.set_size(size)
+        self._update_axes_font()
+
+        if refresh:
+            self.refresh()
+
+    def set_axes_labels_weight(self, weight, refresh=True):
+        """
+        Set the weight of the tick labels
+        
+        Required Arguments:
+        
+            *weight*: [ a numeric value in range 0-1000 | ‘ultralight’ |
+                        ‘light’ | ‘normal’ | ‘regular’ | ‘book’ | ‘medium’ |
+                        ‘roman’ | ‘semibold’ | ‘demibold’ | ‘demi’ | ‘bold’ |
+                        ‘heavy’ | ‘extra bold’ | ‘black’ ]
+                      
+                The weight of the numeric tick labels. Default is 'normal'.
+                                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        self.axes_font.set_weight(weight)
+        self._update_axes_font()
+
+        if refresh:
+            self.refresh()
+
+    def set_axes_labels_family(self, family, refresh=True):
+        """
+        Set the font family of the tick labels
+        
+        Required Arguments:
+        
+            *family*: [ ‘serif’ | ‘sans-serif’ | ‘cursive’ | ‘fantasy’ | ‘monospace’ ]
+                      
+                The font family of the numeric tick labels. Default is 'sans-serif'.
+                                
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        self.axes_font.set_family(family)
+        self._update_axes_font()
+
+        if refresh:
+            self.refresh()
+            
+    def _update_axes_font(self):
+
+        xlabel = self._ax1.get_xlabel()
+        ylabel = self._ax1.get_ylabel()
+
+        self._ax1.set_xlabel(xlabel,fontproperties=self.axes_font)
+        self._ax1.set_ylabel(ylabel,fontproperties=self.axes_font)
 
 class WCSFormatter(mpl.Formatter):
     
