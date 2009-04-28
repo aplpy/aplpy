@@ -76,6 +76,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         '''
         
+        if not kwargs.has_key('figsize'):
+            kwargs['figsize'] = (9,9)
+        
         # Open the figure
         self._figure = mpl.figure(**kwargs)
         
