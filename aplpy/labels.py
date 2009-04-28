@@ -410,11 +410,8 @@ class Labels(object):
     
     def _update_axes_font(self):
         
-        xlabel = self._ax1.get_xlabel()
-        ylabel = self._ax1.get_ylabel()
-        
-        self._ax1.set_xlabel(xlabel,fontproperties=self.axes_font)
-        self._ax1.set_ylabel(ylabel,fontproperties=self.axes_font)
+        self.xlabel.set_fontproperties(self.axes_font)
+        self.ylabel.set_fontproperties(self.axes_font)
 
 class WCSFormatter(mpl.Formatter):
     
