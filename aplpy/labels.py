@@ -26,13 +26,13 @@ class Labels(object):
         
         if system == 'celestial':
             if equinox == 'b1950':
-                self.set_axes_labels('RA (B1950)','Dec (B1950)', refresh=False)
+                self.set_axis_labels('RA (B1950)','Dec (B1950)', refresh=False)
             else:
-                self.set_axes_labels('RA (J2000)','Dec (J2000)', refresh=False)
+                self.set_axis_labels('RA (J2000)','Dec (J2000)', refresh=False)
         elif system == 'galactic':
-            self.set_axes_labels('Galactic Longitude','Galactic Latitude', refresh=False)
+            self.set_axis_labels('Galactic Longitude','Galactic Latitude', refresh=False)
         else:
-            self.set_axes_labels('Ecliptic Longitude','Ecliptic Latitude', refresh=False)
+            self.set_axis_labels('Ecliptic Longitude','Ecliptic Latitude', refresh=False)
         
         # Set major tick formatters
         fx1 = WCSFormatter(wcs=self._wcs,axist='x')
@@ -102,7 +102,7 @@ class Labels(object):
         self._ax1.yaxis.apl_label_form = format
         if refresh: self.refresh()
     
-    def set_tick_label_style(self,style,refresh=True):
+    def set_tick_labels_style(self,style,refresh=True):
         """
         Set the format of the x-axis tick labels
         
@@ -242,7 +242,7 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_fontproperties(self.tick_font)
     
-    def set_axes_labels(self,xlabel,ylabel, refresh=True):
+    def set_axis_labels(self,xlabel,ylabel, refresh=True):
         """
         Set the axes labels
             
@@ -267,16 +267,16 @@ class Labels(object):
         if refresh:
             self.refresh()
                     
-    def set_axes_labels_size(self, size, refresh=True):
+    def set_axis_labels_size(self, size, refresh=True):
         """
-        Set the size of the tick labels
+        Set the size of the axis labels
             
         Required Arguments:
         
             *size*: [ size in points | ‘xx-small’ | ‘x-small’ | ‘small’ |
                       ‘medium’ | ‘large’ | ‘x-large’ | ‘xx-large’ ]
                       
-                The size of the numeric tick labels. Default is 'small'.
+                The size of the axis labels. Default is 'small'.
                                 
         Optional Keyword Arguments:
 
@@ -291,9 +291,9 @@ class Labels(object):
         if refresh:
             self.refresh()
 
-    def set_axes_labels_weight(self, weight, refresh=True):
+    def set_axis_labels_weight(self, weight, refresh=True):
         """
-        Set the weight of the tick labels
+        Set the weight of the axis labels
         
         Required Arguments:
         
@@ -302,7 +302,7 @@ class Labels(object):
                         ‘roman’ | ‘semibold’ | ‘demibold’ | ‘demi’ | ‘bold’ |
                         ‘heavy’ | ‘extra bold’ | ‘black’ ]
                       
-                The weight of the numeric tick labels. Default is 'normal'.
+                The weight of the axis labels. Default is 'normal'.
                                 
         Optional Keyword Arguments:
 
@@ -317,15 +317,15 @@ class Labels(object):
         if refresh:
             self.refresh()
 
-    def set_axes_labels_family(self, family, refresh=True):
+    def set_axis_labels_family(self, family, refresh=True):
         """
-        Set the font family of the tick labels
+        Set the font family of the axis labels
         
         Required Arguments:
         
             *family*: [ ‘serif’ | ‘sans-serif’ | ‘cursive’ | ‘fantasy’ | ‘monospace’ ]
                       
-                The font family of the numeric tick labels. Default is 'sans-serif'.
+                The font family of the axis labels. Default is 'sans-serif'.
                                 
         Optional Keyword Arguments:
 
