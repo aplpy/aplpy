@@ -44,6 +44,13 @@ def check(header):
             
             print "[check] updated projection center"
     
+    # Remove any extra coordinates
+    for key in ['CTYPE','CRPIX','CRVAL','CUNIT','CDELT']:
+        for coord in range(3,5):
+           name = key + str(coord)
+           if header.has_key(name):
+               header.__delitem__(name)
+    
     return header
     
     

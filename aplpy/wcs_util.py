@@ -99,6 +99,8 @@ def system(wcs):
             equinox = 'j2000'
         else:
             raise Exception("Cannot use equinox "+str(equinox))
+    else:
+        equinox = 'none'
     
     units = 'degrees'
     
