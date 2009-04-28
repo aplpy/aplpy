@@ -52,7 +52,8 @@ class Labels(object):
         # Set font
         self.font = FontProperties()
         self._ax1.usetex = False
-        self.set_tick_label_style('plain',refresh=False)
+        self.set_tick_label_style('plain', refresh=False)
+        self.set_tick_labels_size('small', refresh=False)
         
     def set_xlabels_format(self,format,refresh=True):
         '''
