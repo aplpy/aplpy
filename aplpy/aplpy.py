@@ -227,7 +227,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         self.refresh()
     
-    def show_rgb(self,filename):
+    def show_rgb(self,filename,interpolation='nearest'):
         '''
         Show a 3-color image instead of the FITS file data
         
@@ -240,7 +240,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         '''
         
         pretty_image = mpl.imread(filename)
-        self.image = self._ax1.imshow(pretty_image,extent=self._extent)
+        self.image = self._ax1.imshow(pretty_image,extent=self._extent,interpolation=interpolation)
         self.refresh()
     
     def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
