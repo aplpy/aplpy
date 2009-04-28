@@ -47,9 +47,10 @@ def stretch(array, function, exponent = 2):
     if function is 'linear':
         return array
     elif function is 'log':
-        return np.log10(array)
+        minnz = np.min(np.abs(array))
+        return np.log10(np.maximum(array,minnz))
     elif function is 'sqrt':
-        return np.sqrt(array)
+        return np.sqrt(np.maximum(array,0))
     elif function is 'arcsinh':
         return np.arcsinh(array)
     elif function is 'power':
