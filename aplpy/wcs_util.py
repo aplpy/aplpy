@@ -107,7 +107,14 @@ def system(wcs):
     return system,equinox,units
 
 def arcperpix(wcs):
-    return np.sqrt(wcs.wcs.cd[0,0]**2 + wcs.wcs.cd[1,0]**2)*3600.
+    return degperpix(wcs) * 3600.
+    
+def degperpix(wcs):
+    try:
+        pscale = np.sqrt(wcs.wcs.cd[0,0]**2 + wcs.wcs.cd[1,0]**2)
+    except AttributeError:
+        pscale = np.abs(wcs.wcs.cdelt[0])
+    return pscale 
 
 def world2pix(wcs,x_world,y_world):
     if type(x_world) == float or type(x_world) == np.float32 or type(x_world) == np.float64:
