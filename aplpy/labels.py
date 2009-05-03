@@ -47,8 +47,8 @@ class Labels(object):
             self.set_axis_labels('Ecliptic Longitude','Ecliptic Latitude', refresh=False)
         
         # Set major tick formatters
-        fx1 = WCSFormatter(wcs=self._wcs,axist='x')
-        fy1 = WCSFormatter(wcs=self._wcs,axist='y')
+        fx1 = WCSFormatter(wcs=self._wcs,coord='x')
+        fy1 = WCSFormatter(wcs=self._wcs,coord='y')
         self._ax1.xaxis.set_major_formatter(fx1)
         self._ax1.yaxis.set_major_formatter(fy1)
         
@@ -415,9 +415,9 @@ class Labels(object):
 
 class WCSFormatter(mpl.Formatter):
     
-    def __init__(self, wcs=False,axist='x'):
+    def __init__(self, wcs=False,coord='x'):
         self._wcs = wcs
-        self.axist = axist
+        self.coord = coord
     
     def __call__(self,x,pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
@@ -440,26 +440,29 @@ class WCSFormatter(mpl.Formatter):
         
         ipos = math_util.minloc(np.abs(self.axis.apl_tick_positions_pix-x))
         
-        c = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
+        label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
+        if hours: label = label.tohours()        
+        label = label.tostringlist(format=self.axis.apl_label_form,sep=sep)
         
-        if hours:
-            c = c.tohours()
-        
-        c = c.tostringlist(format=self.axis.apl_label_form,sep=sep)
-        
-        if ipos <> len(self.axis.apl_tick_positions_pix)-1:
-            cnext = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos+1]
-            if hours:
-                cnext = cnext.tohours()
-            cnext = cnext.tostringlist(format=self.axis.apl_label_form,sep=sep)
-            for iter in range(len(c)):
-                if cnext[0] == c[0]:
-                    c.pop(0)
-                    cnext.pop(0)
+        if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
+            comp_ipos = ipos - 1
+        else:
+            comp_ipos = ipos + 1
+            
+        if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix)-1:
+
+            comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
+            if hours: comp_label = comp_label.tohours()
+            comp_label = comp_label.tostringlist(format=self.axis.apl_label_form,sep=sep)
+
+            for iter in range(len(label)):
+                if comp_label[0] == label[0]:
+                    label.pop(0)
+                    comp_label.pop(0)
                 else:
                     break
         
         if self.axis.apl_labels_style == 'latex':
-            return "$"+string.join(c,"")+"$"
+            return "$"+string.join(label,"")+"$"
         else:
-            return string.join(c,"")
+            return string.join(label,"")
