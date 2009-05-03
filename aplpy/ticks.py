@@ -18,26 +18,16 @@ class Ticks(object):
         self.set_tick_xspacing('auto',refresh=False)
         self.set_tick_yspacing('auto',refresh=False)
         
-        # Initialize default tick spacing
-        find_default_spacing(self._ax1)
-        find_default_spacing(self._ax2)
-        
         # Set major tick locators
-        lx = WCSLocator(wcs=self._wcs,axist='x')
+        lx = WCSLocator(wcs=self._wcs,coord='x')
         self._ax1.xaxis.set_major_locator(lx)
-        ly = WCSLocator(wcs=self._wcs,axist='y')
+        ly = WCSLocator(wcs=self._wcs,coord='y')
         self._ax1.yaxis.set_major_locator(ly)
         
-        lxt = WCSLocator(wcs=self._wcs,axist='x',farside=True)
+        lxt = WCSLocator(wcs=self._wcs,coord='x',farside=True)
         self._ax2.xaxis.set_major_locator(lxt)
-        lyt = WCSLocator(wcs=self._wcs,axist='y',farside=True)
+        lyt = WCSLocator(wcs=self._wcs,coord='y',farside=True)
         self._ax2.yaxis.set_major_locator(lyt)
-        
-        # Set tick event handler
-        self._ax1.callbacks.connect('xlim_changed',find_default_spacing)
-        self._ax2.callbacks.connect('xlim_changed',find_default_spacing)
-        self._ax1.callbacks.connect('ylim_changed',find_default_spacing)
-        self._ax2.callbacks.connect('ylim_changed',find_default_spacing)
     
     def set_tick_xspacing(self,xspacing,refresh=True):
         '''
@@ -156,48 +146,51 @@ class Ticks(object):
 
 class WCSLocator(Locator):
     
-    def __init__(self, presets=None,wcs=False,axist='x',farside=False,minor=False):
+    def __init__(self, presets=None,wcs=False,coord='x',farside=False,minor=False):
         if presets is None:
             self.presets = {}
         else:
             self.presets = presets
         self._wcs = wcs
-        self.axist = axist
+        self.coord = coord
         self.farside = farside
-        self.minor = minor
     
     def __call__(self):
         
         ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
         
-        px,py,wx = tick_positions_v2(self._wcs,self.axis.apl_tick_spacing.todegrees(),self.axist,self.axist,farside=self.farside,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
+        if self.axis.apl_auto_tick_spacing:
+            self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(),self.coord)
+        
+        px,py,wx = tick_positions_v2(self._wcs,self.axis.apl_tick_spacing.todegrees(),self.coord,self.coord,farside=self.farside,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
         
         self.axis.apl_tick_positions_world = np.array(wx,int)
         
-        if self.axist=='x':
+        if self.coord=='x':
             self.axis.apl_tick_positions_pix = px
-            return px
         else:
             self.axis.apl_tick_positions_pix = py
-            return py
+        
+        return self.axis.apl_tick_positions_pix
 
-def find_default_spacing(ax):
+def default_spacing(ax,coord):
     
     wcs = ax.apl_wcs
     
     xmin, xmax = ax.xaxis.get_view_interval()
     ymin, ymax = ax.yaxis.get_view_interval()
     
-    if ax.xaxis.apl_auto_tick_spacing:
-        px,py,wx,wy = axis_positions(wcs,'x',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
-        wxmin,wxmax = math_util.smart_range(wx)
-        ax.xaxis.apl_tick_spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False)
+    px,py,wx,wy = axis_positions(wcs,coord,False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
     
-    if ax.yaxis.apl_auto_tick_spacing:
-        px,py,wx,wy = axis_positions(wcs,'y',False,xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax)
+    if coord == 'x':
+        wxmin,wxmax = math_util.smart_range(wx)
+        spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False)
+    else:
         wymin,wymax = min(wy),max(wy)
-        ax.yaxis.apl_tick_spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True)
+        spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True)
+    
+    return spacing
 
 ###############################################################
 # find_ticks:      Find positions of ticks along a given axis
@@ -246,7 +239,7 @@ def tick_positions_v2(wcs,spacing,axis,coord,farside=False,xmin=False,xmax=False
                 px_out.append(px[i] + (px[i+1]-px[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
                 py_out.append(py[i] + (py[i+1]-py[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
                 warr_out.append(w)
-
+    
     
     return px_out,py_out,warr_out
 
