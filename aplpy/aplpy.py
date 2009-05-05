@@ -15,6 +15,14 @@ WARNING : matplotlib >= 0.98.5.2 is recommended for APLpy. Previous
           '''
 
 try:
+    # this requires at least revision 7083+ of lib/mpl_toolkits/axes_grid/axislines.py
+    import mpl_toolkits.axes_grid.parasite_axes as mpltk
+    # hardcode as False for the moment
+    axesgrid = False
+except ImportError:
+    axesgrid = False
+    
+try:
     import pyfits
 except ImportError:
     raise Exception("pyfits is required for APLpy")
@@ -42,7 +50,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     
     "A class for plotting FITS files."
     
-    def __init__(self,filename,hdu=0,downsample=False,north=False,**kwargs):
+    def __init__(self,filename,hdu=0,figure=None,rect=None,downsample=False,north=False,**kwargs):
         '''
         Create a FITSFigure instance
         
@@ -79,9 +87,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if not kwargs.has_key('figsize'):
             kwargs['figsize'] = (9,9)
         
-        # Open the figure
-        self._figure = mpl.figure(**kwargs)
-        
         # Read in FITS file
         try:
             self._hdu = pyfits.open(filename)[hdu]
@@ -109,10 +114,39 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self._hdu.data = image_util.resample(self._hdu.data,downsample)
             self._wcs.naxis1,self._wcs.naxis2 = naxis1_new,naxis2_new
         
-        # Create the two set of axes
-        self._ax1 = self._figure.add_subplot(111)
-        self._ax2 = self._ax1.figure.add_axes(self._ax1.get_position(True),frameon=False,aspect='equal')
+        # Open the figure
+        if figure:
+            self._figure = figure
+        else:
+            self._figure = mpl.figure(**kwargs)
         
+        if axesgrid:
+            
+            # Create first axis instance
+            if rect:
+                self._ax1 = mpltk.HostAxes(self._figure,rect,adjustable='datalim')
+            else:
+                self._ax1 = mpltk.SubplotHost(self._figure,1,1,1)
+
+            self._ax1.toggle_axisline(False)
+
+            self._figure.add_axes(self._ax1)
+        
+            # Create second axis instance
+            self._ax2 = self._ax1.twin()
+            self._ax2.set_frame_on(False)        
+
+        else:
+            
+            if rect:
+                print "axes_grid toolkit is not installed, cannot specify viewport rectangle"
+            
+            # Create first axis instance
+            self._ax1 = self._figure.add_subplot(111)
+            
+            # Create second axis instance
+            self._ax2 = self._ax1.figure.add_axes(self._ax1.get_position(True),frameon=False,aspect='equal')
+            
         # Turn off autoscaling
         self._ax1.set_autoscale_on(False)
         self._ax2.set_autoscale_on(False)
@@ -245,15 +279,16 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if self.image:
             self.image.set_data(stretched_image)
             self.image.set_cmap(cmap=cmap)
+            self.image.set_clim(vmin,vmax)
             self.image.origin='lower'
         else:
             self.image = self._ax1.imshow(stretched_image,cmap=cmap,vmin=vmin,vmax=vmax,interpolation='nearest',origin='lower',extent=self._extent)
         
         xmin,xmax = self._ax1.get_xbound()
-        if xmin < 0.5: self._ax1.set_xlim(0.5,xmax)
+        if xmin == 0.0: self._ax1.set_xlim(0.5,xmax)
         
         ymin,ymax = self._ax1.get_ybound()
-        if ymin < 0.5: self._ax1.set_ylim(0.5,ymax)
+        if ymin == 0.0: self._ax1.set_ylim(0.5,ymax)
         
         self.refresh()
     
@@ -326,7 +361,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self.remove_layer(layer,raise_exception=False)
         
         if cmap:
-            cmap = mpl.cm.get_cmap(kwargs['cmap'],1000)
+            cmap = mpl.cm.get_cmap(cmap,1000)
         elif not colors:
             cmap = mpl.cm.get_cmap('jet',1000)
         
