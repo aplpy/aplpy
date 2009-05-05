@@ -15,7 +15,7 @@ WARNING : matplotlib >= 0.98.5.2 is recommended for APLpy. Previous
           '''
 
 try:
-    # this requires at least revision 7083+ of lib/mpl_toolkits/axes_grid/axislines.py
+    # this requires at least revision 7084 of matplotlib toolkits
     import mpl_toolkits.axes_grid.parasite_axes as mpltk
     # hardcode as False for the moment
     axesgrid = False
