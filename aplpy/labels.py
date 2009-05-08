@@ -4,6 +4,7 @@ import numpy as np
 import string
 import math_util
 from matplotlib.font_manager import FontProperties
+import angle_util as au
 
 class Labels(object):
     
@@ -240,6 +241,42 @@ class Labels(object):
         if refresh:
             self.refresh()
     
+    def show_tick_labels(self,refresh=True):
+        """
+        Show the tick labels
+        
+        Optional Keyword Arguments:
+            
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        for tick in self._ax1.get_xticklabels():
+            tick.set_visible(True)
+        for tick in self._ax1.get_yticklabels():
+            tick.set_visible(True)
+        
+        if refresh: self.refresh()
+    
+    def hide_tick_labels(self,refresh=True):
+        """
+        Hide the tick labels
+        
+        Optional Keyword Arguments:
+            
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        for tick in self._ax1.get_xticklabels():
+            tick.set_visible(False)
+        for tick in self._ax1.get_yticklabels():
+            tick.set_visible(False)
+        
+        if refresh: self.refresh()
+    
     def _update_tick_font(self):
         
         for tick in self._ax1.get_xticklabels():
@@ -408,6 +445,42 @@ class Labels(object):
         if refresh:
             self.refresh()
     
+    def show_axis_labels(self,refresh=True):
+        """
+        Show the axis labels
+        
+        Optional Keyword Arguments:
+            
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        if self.xlabel:
+            self.xlabel.set_visible(True)
+        if self.ylabel:
+            self.ylabel.set_visible(True)
+        
+        if refresh: self.refresh()
+    
+    def hide_axis_labels(self,refresh=True):
+        """
+        Hide the axis labels
+        
+        Optional Keyword Arguments:
+            
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+        
+        if self.xlabel:
+            self.xlabel.set_visible(False)
+        if self.ylabel:
+            self.ylabel.set_visible(False)
+        
+        if refresh: self.refresh()
+    
     def _update_axes_font(self):
         
         self.xlabel.set_fontproperties(self.axes_font)
@@ -441,20 +514,20 @@ class WCSFormatter(mpl.Formatter):
         ipos = math_util.minloc(np.abs(self.axis.apl_tick_positions_pix-x))
         
         label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
-        if hours: label = label.tohours()        
+        if hours: label = label.tohours()
         label = label.tostringlist(format=self.axis.apl_label_form,sep=sep)
         
         if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
             comp_ipos = ipos - 1
         else:
             comp_ipos = ipos + 1
-            
+        
         if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix)-1:
-
+            
             comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
             if hours: comp_label = comp_label.tohours()
             comp_label = comp_label.tostringlist(format=self.axis.apl_label_form,sep=sep)
-
+            
             for iter in range(len(label)):
                 if comp_label[0] == label[0]:
                     label.pop(0)
