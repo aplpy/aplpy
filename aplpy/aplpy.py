@@ -73,7 +73,22 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *hdu*: [ integer ]
                 By default, the image in the primary HDU is read in. If a
                 different HDU is required, use this argument.
-            
+                
+            *figure*: [ matplotlib figure() instance ]
+                If specified, a subplot will be added to this existing
+                matplotlib figure() instance, rather than a new figure
+                being created from scratch.
+                
+            *rect*: [ list of four floats ]
+                If specified, a subplot will be added at this position. The
+                list should contain [xmin, ymin, dx, dy] where xmin and ymin
+                are the position of the bottom left corner of the subplot, and
+                dx and dy are the width and height of the subplot respectively.
+                These should all be given in units of the figure width and
+                height. For example, [0.1,0.1,0.8,0.8] will almost fill the
+                entire figure, leaving a 10 percent margin on all sides.
+                Note: this requires matplotlib 0.98.6
+                
             *downsample*: [ integer ]
                 If this option is specified, the image will be downsampled
                 by a factor *downsample* when reading in the data.
