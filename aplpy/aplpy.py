@@ -18,10 +18,19 @@ try:
     # this requires at least revision 7084 of matplotlib toolkits
     import mpl_toolkits.axes_grid.parasite_axes as mpltk
     # hardcode as False for the moment
-    axesgrid = False
+    axesgrid = True
 except ImportError:
     axesgrid = False
-    
+
+if axesgrid:
+    print '''
+WARNING: you appear to be using the svn version of matplotlib. Some features
+         are only enabled with this version, but you need to make sure that
+         you are using at least revision 7097 of matplotlib (Friday 8th May
+         2009), or you may encounter problems (note that this warning will
+         appear even if you do have the latest version).
+'''
+
 try:
     import pyfits
 except ImportError:
@@ -87,6 +96,10 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if not kwargs.has_key('figsize'):
             kwargs['figsize'] = (9,9)
         
+        # Check file exists
+        if not os.path.exists(filename):
+            raise Exception("File not found: "+filename)
+        
         # Read in FITS file
         try:
             self._hdu = pyfits.open(filename)[hdu]
@@ -127,15 +140,17 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 self._ax1 = mpltk.HostAxes(self._figure,rect,adjustable='datalim')
             else:
                 self._ax1 = mpltk.SubplotHost(self._figure,1,1,1)
-
+            
             self._ax1.toggle_axisline(False)
-
+            
             self._figure.add_axes(self._ax1)
-        
+            
             # Create second axis instance
             self._ax2 = self._ax1.twin()
-            self._ax2.set_frame_on(False)        
-
+            self._ax2.set_frame_on(False)
+            
+            self._ax2.toggle_axisline(False)
+        
         else:
             
             if rect:
@@ -146,7 +161,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             
             # Create second axis instance
             self._ax2 = self._ax1.figure.add_axes(self._ax1.get_position(True),frameon=False,aspect='equal')
-            
+        
         # Turn off autoscaling
         self._ax1.set_autoscale_on(False)
         self._ax2.set_autoscale_on(False)
@@ -179,7 +194,39 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         # Set default theme
         self.set_theme(theme='pretty',refresh=False)
     
-    def show_grayscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,invert='default'):
+    def recenter(self,x,y,r,refresh=True):
+        '''
+        Center the image on a given position and with a given radius
+        
+        Required Arguments:
+            
+            *x*: [ float ]
+                Longitude of the position to center on (degrees)
+            
+            *y*: [ float ]
+                Latitude of the position to center on (degrees)
+            
+            *r*: [ float ]
+                Radius of the region to view (degrees)
+        
+        Optional Keyword Arguments:
+            
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        '''
+        
+        xpix,ypix = wcs_util.world2pix(self._wcs,x,y)
+        
+        degperpix = wcs_util.degperpix(self._wcs)
+        rpix = r / degperpix
+        
+        self._ax1.set_xlim(xpix-rpix,xpix+rpix)
+        self._ax1.set_ylim(ypix-rpix,ypix+rpix)
+        
+        if refresh: self.refresh()
+    
+    def show_grayscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,invert='default',percentile_lower=0.0025,percentile_upper=0.9975):
         '''
         Show a grayscale image of the FITS file
         
@@ -200,9 +247,18 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *invert*: [ True | False ]
                 Whether to invert the grayscale or not. The default is False, unless
                 set_theme is used, in which case the default depends on the theme.
-        
-        
+                
+            *percentile_lower*: [ float ]
+                If vmin is not specified, this value is used to determine the
+                percentile position of the faintest pixel to use in the scale. The
+                default value is 0.0025 (0.25%).
+                    
+            *percentile_upper*: [ float ]
+                If vmax is not specified, this value is used to determine the
+                percentile position of the brightest pixel to use in the scale. The
+                default value is 0.9975 (99.75%).
         '''
+        
         if invert=='default':
             invert = self._get_invert_default()
         
@@ -211,9 +267,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             cmap = 'gray'
         
-        self.show_colorscale(vmin=vmin,vmid=vmid,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap)
+        self.show_colorscale(vmin=vmin,vmid=vmid,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap,percentile_lower=percentile_lower,percentile_upper=percentile_upper)
     
-    def show_colorscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,cmap='default'):
+    def show_colorscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,cmap='default',percentile_lower=0.0025,percentile_upper=0.9975):
         '''
         Show a colorscale image of the FITS file
         
@@ -233,8 +289,19 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             
             *cmap*: [ string ]
                 The name of the colormap to use
-        
+                
+            *percentile_lower*: [ float ]
+                If vmin is not specified, this value is used to determine the
+                percentile position of the faintest pixel to use in the scale. The
+                default value is 0.0025 (0.25%).
+
+            *percentile_upper*: [ float ]
+                If vmax is not specified, this value is used to determine the
+                percentile position of the brightest pixel to use in the scale. The
+                default value is 0.9975 (99.75%).
         '''
+        
+        print vmin,vmax
         
         if cmap=='default':
             cmap = self._get_colormap_default()
@@ -247,20 +314,21 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap,1000)
         
-        vmin_auto,vmax_auto = self._auto_v(0.0025),self._auto_v(0.9975)
-#        vmin_auto,vmax_auto = vmin_auto-(vmax_auto-vmin_auto)/10.,vmax_auto+(vmax_auto-vmin_auto)/10.
+        vmin_auto,vmax_auto = self._auto_v(percentile_lower),self._auto_v(percentile_upper)
         
         if min_auto:
+            print "Auto-setting vmin to %10.3e" % vmin_auto
             vmin = vmin_auto
         
         if max_auto:
+            print "Auto-setting vmax to %10.3e" % vmax_auto
             vmax = vmax_auto
         
         if mid_auto:
             vmid = 'default'
         else:
             vmid = (vmid - vmin) / (vmax - vmin)
-        
+                
         stretched_image = (self._hdu.data - vmin) / (vmax - vmin)
         
         if min_auto:
@@ -308,7 +376,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self.image = self._ax1.imshow(pretty_image,extent=self._extent,interpolation=interpolation,origin='upper')
         self.refresh()
     
-    def show_contour(self,contour_file,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
+    def show_contour(self,contour_file,hdu=0,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
         '''
         Overlay contours on the current plot
         
@@ -318,6 +386,10 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
               The filename of the FITS file to plot the contours of
         
         Optional Keyword Arguments:
+            
+            *hdu*: [ integer ]
+                By default, the image in the primary HDU is read in. If a
+                different HDU is required, use this argument.
             
             *layer*: [ string ]
                 The name of the contour layer. This is useful for giving
@@ -365,9 +437,25 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         elif not colors:
             cmap = mpl.cm.get_cmap('jet',1000)
         
-        hdu_contour = pyfits.open(contour_file)[0]
-        hdu_contour.header  = header.check(hdu_contour.header)
-        wcs_contour = pywcs.WCS(hdu_contour.header)
+        # Check file exists
+        if not os.path.exists(contour_file):
+            raise Exception("File not found: "+contour_file)
+        
+        # Read in FITS file
+        try:
+            hdu_contour = pyfits.open(contour_file)[hdu]
+        except:
+            raise Exception("An error occured while reading "+contour_file)
+        
+        # Check header
+        hdu_contour.header = header.check(hdu_contour.header)
+        
+        # Parse WCS info
+        try:
+            wcs_contour = pywcs.WCS(hdu_contour.header)
+        except:
+            raise Exception("An error occured while parsing the WCS from "+contour_file)
+        
         image_contour = hdu_contour.data
         extent_contour = (0.5,wcs_contour.naxis1+0.5,0.5,wcs_contour.naxis2+0.5)
         
