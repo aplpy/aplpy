@@ -33,7 +33,7 @@ def reproject_north(hdu):
     pyfits.writeto('raw/image.fits',hdu.data,hdu.header)
     
     # Make image table
-    status = os.system("mImgtbl raw images_raw.tbl")
+    status = os.system("mImgtbl -c raw images_raw.tbl")
     check_status(status)
     
     # Make new north-aligned header
