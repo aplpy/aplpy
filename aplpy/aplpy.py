@@ -59,7 +59,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     
     "A class for plotting FITS files."
     
-    def __init__(self,data,hdu=0,figure=None,rect=None,downsample=False,north=False,**kwargs):
+    def __init__(self,data,hdu=0,figure=None,subplot=None,downsample=False,north=False,**kwargs):
         '''
         Create a FITSFigure instance
         
@@ -80,7 +80,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 matplotlib figure() instance, rather than a new figure
                 being created from scratch.
             
-            *rect*: [ list of four floats ]
+            *subplot*: [ list of four floats ]
                 If specified, a subplot will be added at this position. The
                 list should contain [xmin, ymin, dx, dy] where xmin and ymin
                 are the position of the bottom left corner of the subplot, and
@@ -131,8 +131,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if axesgrid:
             
             # Create first axis instance
-            if rect:
-                self._ax1 = mpltk.HostAxes(self._figure,rect,adjustable='datalim')
+            if subplot:
+                self._ax1 = mpltk.HostAxes(self._figure,subplot,adjustable='datalim')
             else:
                 self._ax1 = mpltk.SubplotHost(self._figure,1,1,1)
             
@@ -148,8 +148,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         else:
             
-            if rect:
-                print "axes_grid toolkit is not installed, cannot specify viewport rectangle"
+            if subplot:
+                print "axes_grid toolkit is not installed, cannot specify subplot area"
             
             # Create first axis instance
             self._ax1 = self._figure.add_subplot(111)
