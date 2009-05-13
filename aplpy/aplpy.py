@@ -59,14 +59,15 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     
     "A class for plotting FITS files."
     
-    def __init__(self,filename,hdu=0,figure=None,rect=None,downsample=False,north=False,**kwargs):
+    def __init__(self,data,hdu=0,figure=None,rect=None,downsample=False,north=False,**kwargs):
         '''
         Create a FITSFigure instance
         
         Required arguments:
             
-            *filename*: [ string ]
-                The filename of the FITS file to open
+            *data*: [ string | pyfits PrimaryHDU | pyfits ImageHDU ]
+                Either the filename of the FITS file to open, or a pyfits
+                PrimaryHDU or ImageHDU instance.
         
         Optional Keyword Arguments:
             
@@ -111,16 +112,33 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if not kwargs.has_key('figsize'):
             kwargs['figsize'] = (9,9)
         
-        # Check file exists
-        if not os.path.exists(filename):
-            raise Exception("File not found: "+filename)
+        if type(data) == str:
+            
+            filename = data
         
-        # Read in FITS file
-        try:
-            self._hdu = pyfits.open(filename)[hdu]
-        except:
-            raise Exception("An error occured while reading the FITS file")
+            # Check file exists
+            if not os.path.exists(filename):
+                raise Exception("File not found: "+filename)
         
+            # Read in FITS file
+            try:
+                self._hdu = pyfits.open(filename)[hdu]
+            except:
+                raise Exception("An error occured while reading the FITS file")
+        
+        elif isinstance(data,pyfits.PrimaryHDU) or isinstance(data,pyfits.ImageHDU):
+            
+            self._hdu = data
+            
+            
+        elif isinstance(data,pyfits.HDUList):
+            
+            self._hdu = data[hdu]
+            
+        else:
+            
+            raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
+                                 
         # Reproject to face north if requested
         if north:
             self._hdu = montage.reproject_north(self._hdu)
