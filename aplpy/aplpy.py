@@ -74,12 +74,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *hdu*: [ integer ]
                 By default, the image in the primary HDU is read in. If a
                 different HDU is required, use this argument.
-                
+            
             *figure*: [ matplotlib figure() instance ]
                 If specified, a subplot will be added to this existing
                 matplotlib figure() instance, rather than a new figure
                 being created from scratch.
-                
+            
             *rect*: [ list of four floats ]
                 If specified, a subplot will be added at this position. The
                 list should contain [xmin, ymin, dx, dy] where xmin and ymin
@@ -89,7 +89,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 height. For example, [0.1,0.1,0.8,0.8] will almost fill the
                 entire figure, leaving a 10 percent margin on all sides.
                 Note: this requires matplotlib 0.98.6
-                
+            
             *downsample*: [ integer ]
                 If this option is specified, the image will be downsampled
                 by a factor *downsample* when reading in the data.
@@ -112,45 +112,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if not kwargs.has_key('figsize'):
             kwargs['figsize'] = (9,9)
         
-        if type(data) == str:
-            
-            filename = data
-        
-            # Check file exists
-            if not os.path.exists(filename):
-                raise Exception("File not found: "+filename)
-        
-            # Read in FITS file
-            try:
-                self._hdu = pyfits.open(filename)[hdu]
-            except:
-                raise Exception("An error occured while reading the FITS file")
-        
-        elif isinstance(data,pyfits.PrimaryHDU) or isinstance(data,pyfits.ImageHDU):
-            
-            self._hdu = data
-            
-            
-        elif isinstance(data,pyfits.HDUList):
-            
-            self._hdu = data[hdu]
-            
-        else:
-            
-            raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
-                                 
-        # Reproject to face north if requested
-        if north:
-            self._hdu = montage.reproject_north(self._hdu)
-        
-        # Check header
-        self._hdu.header = header.check(self._hdu.header)
-        
-        # Parse WCS info
-        try:
-            self._wcs = pywcs.WCS(self._hdu.header)
-        except:
-            raise Exception("An error occured while parsing the WCS information")
+        self._hdu,self._wcs = self._get_hdu(data,hdu,north)
         
         # Downsample if requested
         if downsample:
@@ -227,6 +189,49 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         # Set default theme
         self.set_theme(theme='pretty',refresh=False)
     
+    def _get_hdu(self,data,hdu,north):
+        
+        if type(data) == str:
+            
+            filename = data
+            
+            # Check file exists
+            if not os.path.exists(filename):
+                raise Exception("File not found: "+filename)
+            
+            # Read in FITS file
+            try:
+                hdu = pyfits.open(filename)[hdu]
+            except:
+                raise Exception("An error occured while reading the FITS file")
+        
+        elif isinstance(data,pyfits.PrimaryHDU) or isinstance(data,pyfits.ImageHDU):
+            
+            hdu = data
+        
+        elif isinstance(data,pyfits.HDUList):
+            
+            hdu = data[hdu]
+        
+        else:
+            
+            raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
+        
+        # Reproject to face north if requested
+        if north:
+            self._hdu = montage.reproject_north(self._hdu)
+        
+        # Check header
+        hdu.header = header.check(hdu.header)
+        
+        # Parse WCS info
+        try:
+            wcs = pywcs.WCS(hdu.header)
+        except:
+            raise Exception("An error occured while parsing the WCS information")
+        
+        return hdu,wcs
+    
     def recenter(self,x,y,r,refresh=True):
         '''
         Center the image on a given position and with a given radius
@@ -280,12 +285,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *invert*: [ True | False ]
                 Whether to invert the grayscale or not. The default is False, unless
                 set_theme is used, in which case the default depends on the theme.
-                
+            
             *percentile_lower*: [ float ]
                 If vmin is not specified, this value is used to determine the
                 percentile position of the faintest pixel to use in the scale. The
                 default value is 0.0025 (0.25%).
-                    
+            
             *percentile_upper*: [ float ]
                 If vmax is not specified, this value is used to determine the
                 percentile position of the brightest pixel to use in the scale. The
@@ -322,19 +327,17 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             
             *cmap*: [ string ]
                 The name of the colormap to use
-                
+            
             *percentile_lower*: [ float ]
                 If vmin is not specified, this value is used to determine the
                 percentile position of the faintest pixel to use in the scale. The
                 default value is 0.0025 (0.25%).
-
+            
             *percentile_upper*: [ float ]
                 If vmax is not specified, this value is used to determine the
                 percentile position of the brightest pixel to use in the scale. The
                 default value is 0.9975 (99.75%).
         '''
-        
-        print vmin,vmax
         
         if cmap=='default':
             cmap = self._get_colormap_default()
@@ -361,7 +364,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             vmid = 'default'
         else:
             vmid = (vmid - vmin) / (vmax - vmin)
-                
+        
         stretched_image = (self._hdu.data - vmin) / (vmax - vmin)
         
         if min_auto:
@@ -409,14 +412,15 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self.image = self._ax1.imshow(pretty_image,extent=self._extent,interpolation=interpolation,origin='upper')
         self.refresh()
     
-    def show_contour(self,contour_file,hdu=0,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
+    def show_contour(self,data,hdu=0,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
         '''
         Overlay contours on the current plot
         
         Required Arguments:
             
-            *contour_file*:
-              The filename of the FITS file to plot the contours of
+            *data*: [ string | pyfits PrimaryHDU | pyfits ImageHDU ]
+                Either the filename of the FITS file to open, or a pyfits
+                PrimaryHDU or ImageHDU instance.
         
         Optional Keyword Arguments:
             
@@ -470,24 +474,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         elif not colors:
             cmap = mpl.cm.get_cmap('jet',1000)
         
-        # Check file exists
-        if not os.path.exists(contour_file):
-            raise Exception("File not found: "+contour_file)
-        
-        # Read in FITS file
-        try:
-            hdu_contour = pyfits.open(contour_file)[hdu]
-        except:
-            raise Exception("An error occured while reading "+contour_file)
-        
-        # Check header
-        hdu_contour.header = header.check(hdu_contour.header)
-        
-        # Parse WCS info
-        try:
-            wcs_contour = pywcs.WCS(hdu_contour.header)
-        except:
-            raise Exception("An error occured while parsing the WCS from "+contour_file)
+        hdu_contour,wcs_contour = self._get_hdu(data,hdu,False)
         
         image_contour = hdu_contour.data
         extent_contour = (0.5,wcs_contour.naxis1+0.5,0.5,wcs_contour.naxis2+0.5)
