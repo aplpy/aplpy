@@ -1,8 +1,33 @@
-import scipy.ndimage as ndimage
-import scipy.interpolate as interpolate
 import numpy as np
 
 import math_util
+
+class interp1d(object):
+    
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+        self.dy = np.zeros(y.shape,dtype=y.dtype)
+        for i in range(len(self.x)-1):
+            self.dy[i] = (self.y[i+1] - self.y[i]) / (self.x[i+1] - self.x[i])
+        self.dy[-1] = self.dy[-2]
+        
+    def __call__(self,x_new):
+        
+        isfloat = type(x_new) == float
+        
+        ipos = np.searchsorted(self.x,x_new)
+                        
+        if isfloat:
+            if ipos == 0: ipos = 1
+            if ipos == len(self.x): ipos = len(self.x)-1
+        else:
+            ipos[ ipos == 0 ] = 1
+            ipos[ ipos == len(self.x) ] = len(self.x)-1
+            
+        ipos = ipos - 1
+                        
+        return (x_new - self.x[ipos]) * self.dy[ipos] + self.y[ipos]
 
 def resample(array,factor):
     nx,ny = np.shape(array)
@@ -18,8 +43,8 @@ def resample(array,factor):
     
     return array3
 
-def smooth(array,sigma):
-    ndimage.gaussian_filter(array,sigma=sigma)
+#def smooth(array,sigma):
+#    ndimage.gaussian_filter(array,sigma=sigma)
 
 def percentile_function(array):
     
@@ -32,11 +57,11 @@ def percentile_function(array):
     
     x = np.linspace(0.,1.,num=n_total)
     
-    spl = interpolate.interp1d(x=x,y=array)
+    spl = interp1d(x=x,y=array)
     
     if n_total > 10000:
         x = np.linspace(0.,1.,num=10000)
-        spl = interpolate.interp1d(x=x,y=spl(x))
+        spl = interp1d(x=x,y=spl(x))
     
     array = None
     
