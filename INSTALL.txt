@@ -12,9 +12,6 @@ Installing APLpy
       - numpy 1.1.1 or later
         http://numpy.scipy.org/
 
-      - scipy 0.6.0 or later
-        http://www.scipy.org/
-
       - pyfits 1.3 or later
         http://www.stsci.edu/resources/software_hardware/pyfits
 
@@ -28,12 +25,9 @@ Installing APLpy
     at sourceforge.net. Note that to satisfy the version requirement
     for matplotlib, you should install v4.2 of EPD. APLpy can still
     be used with older versions of matplotlib, but problems may occur
-    in certain situations..
+    in certain situations.
 	  
-	  - EPD
-		http://www.enthought.com/products/epd.php
-
-          - EPD v4.2 (beta 2)
+          - EPD v4.2
                 http://www.enthought.com/products/epdearlyaccess.php
 
   Installation
