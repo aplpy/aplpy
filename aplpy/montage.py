@@ -6,9 +6,7 @@ import pyfits
 
 def check_status(status):
     if not status == 0:
-        print "[montage] an error occured while trying to use Montage"
-        print "          Note that Montage is required for this feature."
-        sys.exit(0)
+        raise Exception("An error occured while trying to use Montage")
 
 def reproject_north(hdu):
     

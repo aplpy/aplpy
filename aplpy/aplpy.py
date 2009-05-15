@@ -149,7 +149,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             
             if subplot:
-                print "axes_grid toolkit is not installed, cannot specify subplot area"
+                print "WARNING: axes_grid toolkit is not installed, cannot specify subplot area"
             
             # Create first axis instance
             self._ax1 = self._figure.add_subplot(111)
@@ -219,7 +219,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         # Reproject to face north if requested
         if north:
-            self._hdu = montage.reproject_north(self._hdu)
+            hdu = montage.reproject_north(hdu)
         
         # Check header
         hdu.header = header.check(hdu.header)
