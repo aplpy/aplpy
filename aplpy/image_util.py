@@ -8,8 +8,7 @@ class interp1d(object):
         self.x = x
         self.y = y
         self.dy = np.zeros(y.shape,dtype=y.dtype)
-        for i in range(len(self.x)-1):
-            self.dy[i] = (self.y[i+1] - self.y[i]) / (self.x[i+1] - self.x[i])
+        self.dy[:-1] = (self.y[1:] - self.y[:-1]) / (self.x[1:] - self.x[:-1])
         self.dy[-1] = self.dy[-2]
         
     def __call__(self,x_new):
