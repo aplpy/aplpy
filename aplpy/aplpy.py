@@ -676,5 +676,11 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 For non-interactive uses, this can be set to False.
         '''
         
-        self._ax1.frame.set_edgecolor(color)
+        # The matplotlib API changed in 0.98.6
+        try:
+            self._ax1.frame.set_edgecolor(color)
+        except AttributeError:
+            for key in self._ax1.spines:
+                self._ax1.spines[key].set_edgecolor(color)
+            
         if refresh: self.refresh()
