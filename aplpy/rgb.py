@@ -4,7 +4,8 @@ import Image
 import image_util
 import math_util as m
 
-def _data_stretch(image,vmin=None,vmax=None,pmin=0.25,pmax=99.75,stretch='linear',exponent=2):
+def _data_stretch(image,vmin=None,vmax=None,pmin=0.25,pmax=99.75, \
+                  stretch='linear',vmid=None,exponent=2):
     
     min_auto = not m.isnumeric(vmin)
     max_auto = not m.isnumeric(vmax)
@@ -25,9 +26,9 @@ def _data_stretch(image,vmin=None,vmax=None,pmin=0.25,pmax=99.75,stretch='linear
     else:
         print "vmax = %10.3e" % vmax
     
-    stretched_image = (image - vmin) / (vmax - vmin)
+    image = (image - vmin) / (vmax - vmin)
     
-    data = image_util.stretch(stretched_image,stretch,exponent=exponent)
+    data = image_util.stretch(image,stretch,exponent=exponent,midpoint=vmid)
     
     data = np.nan_to_num(data)
     data = np.clip(data*255.,0.,255.)
@@ -35,23 +36,26 @@ def _data_stretch(image,vmin=None,vmax=None,pmin=0.25,pmax=99.75,stretch='linear
     return data.astype(np.uint8)
 
 def make_rgb_image(data,output, \
-                   vmin_r=None,vmax_r=None,vmin_g=None,vmax_g=None,vmin_b=None,vmax_b=None, \
-                   pmin_r=0.25,pmax_r=99.75,pmin_g=0.25,pmax_g=99.75,pmin_b=0.25,pmax_b=99.75, \
-                   **kwargs):
+                   vmin_r=None,vmax_r=None,pmin_r=0.25,pmax_r=99.75, \
+                   stretch_r='linear',vmid_r=None,exponent_r=2, \
+                   vmin_g=None,vmax_g=None,pmin_g=0.25,pmax_g=99.75, \
+                   stretch_g='linear',vmid_g=None,exponent_g=2, \
+                   vmin_b=None,vmax_b=None,pmin_b=0.25,pmax_b=99.75, \
+                   stretch_b='linear',vmid_b=None,exponent_b=2):
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files
     
     Required arguments:
         
         *data*: [ string | tuple | list ]
-            If a string, this is the filename of an RGB FITS cube. If a tuple or list,
-            this should give the filename of three files to use for the red, green, and
-            blue channel.
+            If a string, this is the filename of an RGB FITS cube. If a tuple
+            or list, this should give the filename of three files to use for
+            the red, green, and blue channel.
         
         *output*: [ string ]
-            The output filename. The image type (e.g. PNG, JPEG, TIFF, ...) will be
-            determined from the extension. Any image type supported by the Python
-            Imaging Library can be used.
+            The output filename. The image type (e.g. PNG, JPEG, TIFF, ...)
+            will be determined from the extension. Any image type supported by
+            the Python Imaging Library can be used.
     
     Optional keyword arguments:
         
@@ -85,11 +89,21 @@ def make_rgb_image(data,output, \
             maximum pixel value to use for that channel if the corresponding
             vmax_? is set to None. The default is 99.75% for all channels.
         
-        *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
-            The stretch function to use for all channels.
+        *stretch_r*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+        *stretch_g*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+        *stretch_b*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+            The stretch function to use for the different channels.
         
-        *exponent*: [ float ]
-            If stretch is set to 'power', this is the exponent to use.
+        *vmid_r*: [ None | float ]
+        *vmid_g*: [ None | float ]
+        *vmid_b*: [ None | float ]
+            Mid-pixel value used for the log and arcsinh stretches. If
+            set to None, this is set to a sensible value.
+        
+        *exponent_r*: [ float ]
+        *exponent_g*: [ float ]
+        *exponent_b*: [ float ]
+            If stretch_? is set to 'power', this is the exponent to use.
         '''
     
     if type(data) == str:
@@ -106,13 +120,28 @@ def make_rgb_image(data,output, \
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
     
     print "Red:"
-    image_r = Image.fromarray(_data_stretch(image_r,vmin=vmin_r,vmax=vmax_r,pmin=pmin_r,pmax=pmax_r,**kwargs))
+    image_r = Image.fromarray(_data_stretch(image_r, \
+                                            vmin=vmin_r,vmax=vmax_r, \
+                                            pmin=pmin_r,pmax=pmax_r, \
+                                            stretch=stretch_r, \
+                                            vmid=vmid_r, \
+                                            exponent=exponent_r))
     
     print "\nGreen:"
-    image_g = Image.fromarray(_data_stretch(image_g,vmin=vmin_g,vmax=vmax_g,pmin=pmin_g,pmax=pmax_g,**kwargs))
+    image_g = Image.fromarray(_data_stretch(image_g, \
+                                            vmin=vmin_g,vmax=vmax_g, \
+                                            pmin=pmin_g,pmax=pmax_g, \
+                                            stretch=stretch_g, \
+                                            vmid=vmid_g, \
+                                            exponent=exponent_g))
     
     print "\nBlue:"
-    image_b = Image.fromarray(_data_stretch(image_b,vmin=vmin_b,vmax=vmax_b,pmin=pmin_b,pmax=pmax_b,**kwargs))
+    image_b = Image.fromarray(_data_stretch(image_b, \
+                                            vmin=vmin_b,vmax=vmax_b, \
+                                            pmin=pmin_b,pmax=pmax_b, \
+                                            stretch=stretch_b, \
+                                            vmid=vmid_b, \
+                                            exponent=exponent_b))
     
     img = Image.merge("RGB",(image_r,image_g,image_b))
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
