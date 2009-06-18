@@ -148,6 +148,9 @@ def make_rgb_cube(files,output):
         image_cube[i,:,:] = pyfits.getdata('final/image'+str(i)+'.fits')
 
     pyfits.writeto(output,image_cube,header,clobber=True)
+    
+    pyfits.writeto(output.replace('.fits','_2d.fits'), \
+                   np.sum(image_cube,axis=0),header,clobber=True)
 
     os.chdir(start_dir)
 

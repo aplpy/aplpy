@@ -144,7 +144,7 @@ def make_rgb_image(data,output, \
                                             exponent=exponent_b))
     
     img = Image.merge("RGB",(image_r,image_g,image_b))
-    img = img.transpose(Image.FLIP_TOP_BOTTOM)
+#    img = img.transpose(Image.FLIP_TOP_BOTTOM)
     img.save(output)
     
     return
