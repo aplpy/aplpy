@@ -2,15 +2,16 @@ import pyfits
 import numpy as np
 import Image
 import image_util
+import math_util as m
 
 def _data_stretch(image,vmin=None,vmax=None,pmin=0.25,pmax=99.75,stretch='linear',exponent=2):
     
-    min_auto = not type(vmin) == float
-    max_auto = not type(vmax) == float
+    min_auto = not m.isnumeric(vmin)
+    max_auto = not m.isnumeric(vmax)
     
     if min_auto or max_auto:
         auto_v = image_util.percentile_function(image)
-        vmin_auto,vmax_auto = auto_v(pmin/100.),auto_v(pmax/100.)
+        vmin_auto,vmax_auto = auto_v(pmin),auto_v(pmax)
     
     if min_auto:
         print "vmin = %10.3e (auto)" % vmin_auto

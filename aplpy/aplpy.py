@@ -49,6 +49,7 @@ import montage
 import image_util
 import header
 import wcs_util
+import math_util as m
 
 from layers import Layers
 from grid import Grid
@@ -264,7 +265,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         if refresh: self.refresh()
     
-    def show_grayscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,invert='default',percentile_lower=0.0025,percentile_upper=0.9975):
+    def show_grayscale(self,vmin=None,vmid=None,vmax=None,stretch='linear',exponent=2,invert='default',pmin=0.25,pmax=99.75):
         '''
         Show a grayscale image of the FITS file
         
@@ -305,9 +306,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             cmap = 'gray'
         
-        self.show_colorscale(vmin=vmin,vmid=vmid,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap,percentile_lower=percentile_lower,percentile_upper=percentile_upper)
+        self.show_colorscale(vmin=vmin,vmid=vmid,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap,pmin=pmin,pmax=pmax)
     
-    def show_colorscale(self,vmin='default',vmid='default',vmax='default',stretch='linear',exponent=2,cmap='default',percentile_lower=0.0025,percentile_upper=0.9975):
+    def show_colorscale(self,vmin=None,vmid=None,vmax=None,stretch='linear',exponent=2,cmap='default',pmin=0.25,pmax=99.75):
         '''
         Show a colorscale image of the FITS file
         
@@ -342,15 +343,14 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if cmap=='default':
             cmap = self._get_colormap_default()
         
-        
-        min_auto = type(vmin) == str
-        mid_auto = type(vmid) == str
-        max_auto = type(vmax) == str
+        min_auto = not m.isnumeric(vmin)
+        mid_auto = not m.isnumeric(vmid)
+        max_auto = not m.isnumeric(vmax)
         
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap,1000)
         
-        vmin_auto,vmax_auto = self._auto_v(percentile_lower),self._auto_v(percentile_upper)
+        vmin_auto,vmax_auto = self._auto_v(pmin),self._auto_v(pmax)
         
         if min_auto:
             print "Auto-setting vmin to %10.3e" % vmin_auto
@@ -361,7 +361,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             vmax = vmax_auto
         
         if mid_auto:
-            vmid = 'default'
+            vmid = None
         else:
             vmid = (vmid - vmin) / (vmax - vmin)
         
@@ -682,5 +682,5 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         except AttributeError:
             for key in self._ax1.spines:
                 self._ax1.spines[key].set_edgecolor(color)
-            
+        
         if refresh: self.refresh()

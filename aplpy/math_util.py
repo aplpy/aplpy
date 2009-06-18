@@ -1,5 +1,8 @@
 import numpy as np
 
+def isnumeric(value):
+    return type(value) in [float,int,np.int8,np.int16,np.int32,np.float32,np.float64]
+    
 def smart_range(array):
     
     array.sort()
