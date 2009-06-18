@@ -3,14 +3,14 @@ import numpy as np
 import Image
 import image_util
 
-def _data_stretch(image,stretch='linear',exponent=2,divisor=10,vmin='default',vmax='default',percentile_lower=0.0025,percentile_upper=0.9975):
+def _data_stretch(image,vmin=None,vmax=None,pmin=0.25,pmax=99.75,stretch='linear',exponent=2):
     
-    min_auto = type(vmin) == str
-    max_auto = type(vmax) == str
+    min_auto = not type(vmin) == float
+    max_auto = not type(vmax) == float
     
     if min_auto or max_auto:
         auto_v = image_util.percentile_function(image)
-        vmin_auto,vmax_auto = auto_v(percentile_lower),auto_v(percentile_upper)
+        vmin_auto,vmax_auto = auto_v(pmin/100.),auto_v(pmax/100.)
     
     if min_auto:
         print "vmin = %10.3e (auto)" % vmin_auto
@@ -33,7 +33,10 @@ def _data_stretch(image,stretch='linear',exponent=2,divisor=10,vmin='default',vm
     
     return data.astype(np.uint8)
 
-def make_rgb_image(data,output,vmin_r='default',vmax_r='default',vmin_g='default',vmax_g='default',vmin_b='default',vmax_b='default',**kwargs):
+def make_rgb_image(data,output, \
+                   vmin_r=None,vmax_r=None,vmin_g=None,vmax_g=None,vmin_b=None,vmax_b=None, \
+                   pmin_r=0.25,pmax_r=99.75,pmin_g=0.25,pmax_g=99.75,pmin_b=0.25,pmax_b=99.75, \
+                   **kwargs):
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files
     
@@ -51,39 +54,35 @@ def make_rgb_image(data,output,vmin_r='default',vmax_r='default',vmin_g='default
             
     Optional keyword arguments:
         
-        *vmin_r*: [ float ]
-            Minimum pixel value to show for the red channel (default is to use the 0.25% percentile)
+        *vmin_r*: [ None | float ]
+        *vmin_g*: [ None | float ]
+        *vmin_b*: [ None | float ]
+            Minimum pixel value to show for the red, green, and blue channels. If set, these values
+            override the percentile values given by the pmin_? arguments. The default is None.
         
-        *vmax_r*: [ float ]
-            Maximum pixel value to show for the red channel (default is to use the 99.97% percentile)
-            
-        *vmin_g*: [ float ]
-            Minimum pixel value to show for the green channel (default is to use the 0.25% percentile)
+        *vmax_r*: [ None | float ]
+        *vmax_g*: [ None | float ]
+        *vmax_b*: [ None | float ]
+            maximum pixel value to show for the red, green, and blue channels. If set, these values
+            override the percentile values given by the pmax_? arguments. The default is None.
 
-        *vmax_g*: [ float ]
-            Maximum pixel value to show for the green channel (default is to use the 99.97% percentile)
-            
-        *vmin_b*: [ float ]
-            Minimum pixel value to show for the blue channel (default is to use the 0.25% percentile)
+        *pmin_r*: [ float ]
+        *pmin_g*: [ float ]
+        *pmin_b*: [ float ]
+            If a vmin_? argument is set to None, the corresponding pmin_? argument is used to determine
+            the percentile to use for the lower level. The default is 0.25% for all channels. 
 
-        *vmax_b*: [ float ]
-            Maximum pixel value to show for the blue channel (default is to use the 99.97% percentile)
+        *pmax_r*: [ float ]
+        *pmax_g*: [ float ]
+        *pmax_b*: [ float ]
+            If a vmax_? argument is set to None, the corresponding pmax_? argument is used to determaxe
+            the percentile to use for the lower level. The default is 99.75% for all channels.
             
         *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
             The stretch function to use
         
         *exponent*: [ float ]
             If stretch is set to 'power', this is the exponent to use
-        
-        *percentile_lower*: [ float ]
-            If vmin is not specified, this value is used to determine the
-            percentile position of the faintest pixel to use in the scale. The
-            default value is 0.0025 (0.25%). This value is used for all channels.
-        
-        *percentile_upper*: [ float ]
-            If vmax is not specified, this value is used to determine the
-            percentile position of the brightest pixel to use in the scale. The
-            default value is 0.9975 (99.75%). This value is used for all channels.
         '''
     
     if type(data) == str:
@@ -100,13 +99,13 @@ def make_rgb_image(data,output,vmin_r='default',vmax_r='default',vmin_g='default
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
     
     print "Red:"
-    image_r = Image.fromarray(_data_stretch(image_r,vmin=vmin_r,vmax=vmax_r,**kwargs))
+    image_r = Image.fromarray(_data_stretch(image_r,vmin=vmin_r,vmax=vmax_r,pmin=pmin_r,pmax=pmax_r,**kwargs))
     
     print "\nGreen:"
-    image_g = Image.fromarray(_data_stretch(image_g,vmin=vmin_g,vmax=vmax_g,**kwargs))
+    image_g = Image.fromarray(_data_stretch(image_g,vmin=vmin_g,vmax=vmax_g,pmin=pmin_g,pmax=pmax_g,**kwargs))
 
     print "\nBlue:"
-    image_b = Image.fromarray(_data_stretch(image_b,vmin=vmin_b,vmax=vmax_b,**kwargs))
+    image_b = Image.fromarray(_data_stretch(image_b,vmin=vmin_b,vmax=vmax_b,pmin=pmin_b,pmax=pmax_b,**kwargs))
 
     img = Image.merge("RGB",(image_r,image_g,image_b))
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
