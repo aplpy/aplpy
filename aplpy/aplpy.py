@@ -265,37 +265,46 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         if refresh: self.refresh()
     
-    def show_grayscale(self,vmin=None,vmid=None,vmax=None,stretch='linear',exponent=2,invert='default',pmin=0.25,pmax=99.75):
+    def show_grayscale(self,vmin=None,vmid=None,vmax=None, \
+                            pmin=0.25,pmax=99.75, \
+                            stretch='linear',exponent=2,invert='default'):
         '''
         Show a grayscale image of the FITS file
         
         Optional Keyword Arguments:
             
-            *vmin*: [ float ]
-                Minimum pixel value to show (default is to use the 0.25% percentile)
+            *vmin*: [ None | float ]
+                Minimum pixel value to use for the grayscale. If set to None,
+                the minimum pixel value is determined using pmin (default).
             
-            *vmax*: [ float ]
-                Maximum pixel value to show (default is to use the 99.97% percentile)
+            *vmax*: [ None | float ]
+                Maximum pixel value to use for the grayscale. If set to None,
+                the maximum pixel value is determined using pmax (default).
+            
+            *pmin*: [ float ]
+                Percentile value used to determine the minimum pixel value to
+                use for the grayscale if vmin is set to None. The default
+                value is 0.25%.
+            
+            *pmax*: [ float ]
+                Percentile value used to determine the maximum pixel value to
+                use for the grayscale if vmax is set to None. The default
+                value is 99.75%.
             
             *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
                 The stretch function to use
+            
+            *vmid*: [ None | float ]
+                Mid-pixel value used for the log and arcsinh stretches. If
+                set to None, this is set to a sensible value.
             
             *exponent*: [ float ]
                 If stretch is set to 'power', this is the exponent to use
             
             *invert*: [ True | False ]
-                Whether to invert the grayscale or not. The default is False, unless
-                set_theme is used, in which case the default depends on the theme.
-            
-            *percentile_lower*: [ float ]
-                If vmin is not specified, this value is used to determine the
-                percentile position of the faintest pixel to use in the scale. The
-                default value is 0.0025 (0.25%).
-            
-            *percentile_upper*: [ float ]
-                If vmax is not specified, this value is used to determine the
-                percentile position of the brightest pixel to use in the scale. The
-                default value is 0.9975 (99.75%).
+                Whether to invert the grayscale or not. The default is False,
+                unless set_theme is used, in which case the default depends on
+                the theme.
         '''
         
         if invert=='default':
@@ -308,36 +317,44 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         self.show_colorscale(vmin=vmin,vmid=vmid,vmax=vmax,stretch=stretch,exponent=exponent,cmap=cmap,pmin=pmin,pmax=pmax)
     
-    def show_colorscale(self,vmin=None,vmid=None,vmax=None,stretch='linear',exponent=2,cmap='default',pmin=0.25,pmax=99.75):
+    def show_colorscale(self,vmin=None,vmid=None,vmax=None, \
+                             pmin=0.25,pmax=99.75,
+                             stretch='linear',exponent=2,cmap='default'):
         '''
         Show a colorscale image of the FITS file
         
         Optional Keyword Arguments:
             
-            *vmin*: [ float ]
-                Minimum pixel value to show (default is to use the 0.25% percentile)
+            *vmin*: [ None | float ]
+                Minimum pixel value to use for the colorscale. If set to None,
+                the minimum pixel value is determined using pmin (default).
             
-            *vmax*: [ float ]
-                Maximum pixel value to show (default is to use the 99.97% percentile)
+            *vmax*: [ None | float ]
+                Maximum pixel value to use for the colorscale. If set to None,
+                the maximum pixel value is determined using pmax (default).
+            
+            *pmin*: [ float ]
+                Percentile value used to determine the minimum pixel value to
+                use for the colorscale if vmin is set to None. The default
+                value is 0.25%.
+            
+            *pmax*: [ float ]
+                Percentile value used to determine the maximum pixel value to
+                use for the colorscale if vmax is set to None. The default
+                value is 99.75%.
             
             *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
                 The stretch function to use
+            
+            *vmid*: [ None | float ]
+                Mid-pixel value used for the log and arcsinh stretches. If
+                set to None, this is set to a sensible value.
             
             *exponent*: [ float ]
                 If stretch is set to 'power', this is the exponent to use
             
             *cmap*: [ string ]
                 The name of the colormap to use
-            
-            *percentile_lower*: [ float ]
-                If vmin is not specified, this value is used to determine the
-                percentile position of the faintest pixel to use in the scale. The
-                default value is 0.0025 (0.25%).
-            
-            *percentile_upper*: [ float ]
-                If vmax is not specified, this value is used to determine the
-                percentile position of the brightest pixel to use in the scale. The
-                default value is 0.9975 (99.75%).
         '''
         
         if cmap=='default':

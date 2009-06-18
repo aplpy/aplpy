@@ -11,12 +11,10 @@ class interp1d(object):
         self.dy[-1] = self.dy[-2]
     
     def __call__(self,x_new):
-        
-        isfloat = type(x_new) == float
-        
+                        
         ipos = np.searchsorted(self.x,x_new)
         
-        if isfloat:
+        if m.isnumeric(x_new):
             if ipos == 0: ipos = 1
             if ipos == len(self.x): ipos = len(self.x)-1
         else:
