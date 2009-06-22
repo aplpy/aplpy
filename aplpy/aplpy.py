@@ -233,7 +233,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         return hdu,wcs
     
-    def recenter(self,x,y,r,refresh=True):
+    def recenter(self,x,y,radius=None,width=None,height=None,refresh=True):
         '''
         Center the image on a given position and with a given radius
         
@@ -245,10 +245,20 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             *y*: [ float ]
                 Latitude of the position to center on (degrees)
             
-            *r*: [ float ]
-                Radius of the region to view (degrees)
-        
         Optional Keyword Arguments:
+            
+            Either the radius or width/heigh arguments should be specified.
+            
+            *radius*: [ float ]
+                Radius of the region to view (degrees). This produces a square plot.
+                
+            *width*: [ float ]
+                Width of the region to view (degrees). This should be given in
+                conjunction with the height argument.
+            
+            *height*: [ float ]
+                Height of the region to view (degrees). This should be given in
+                conjunction with the width argument.
             
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
@@ -258,10 +268,18 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         xpix,ypix = wcs_util.world2pix(self._wcs,x,y)
         
         degperpix = wcs_util.degperpix(self._wcs)
-        rpix = r / degperpix
         
-        self._ax1.set_xlim(xpix-rpix,xpix+rpix)
-        self._ax1.set_ylim(ypix-rpix,ypix+rpix)
+        if radius:
+            dx_pix = radius / degperpix
+            dy_pix = radius / degperpix
+        elif width and height:
+            dx_pix = width / degperpix / 2.
+            dy_pix = height / degperpix / 2.
+        else:
+            raise Exception("Need to specify either radius= or width= and height= arguments")
+            
+        self._ax1.set_xlim(xpix-dx_pix,xpix+dx_pix)
+        self._ax1.set_ylim(ypix-dy_pix,ypix+dy_pix)
         
         if refresh: self.refresh()
     
