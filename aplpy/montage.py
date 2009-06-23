@@ -52,8 +52,10 @@ def reproject_north(hdu):
     # Project image
     os.system(binary+" raw/image.fits final/image.fits header.hdr")
     
+    os.system("mConvert -b -32 final/image.fits final/image32.fits")
+    
     # Read in output image
-    hdu = pyfits.open('final/image.fits')[0]
+    hdu = pyfits.open('final/image32.fits')[0]
     
     os.chdir(start_dir)
     
@@ -144,8 +146,9 @@ def make_rgb_cube(files,output):
         os.system(binary+" raw"+str(i)+"/image"+str(i)+".fits tmp"+str(i)+"/image"+str(i)+".fits header.hdr")
         os.system("mImgTbl -c tmp"+str(i)+" images_tmp"+str(i)+".tbl")
         os.system("mAdd -e -p tmp"+str(i)+" images_tmp"+str(i)+".tbl header.hdr final/image"+str(i)+".fits")
+        os.system("mConvert -b -32 final/image"+str(i)+".fits final/image"+str(i)+"32.fits")
 
-        image_cube[i,:,:] = pyfits.getdata('final/image'+str(i)+'.fits')
+        image_cube[i,:,:] = pyfits.getdata('final/image'+str(i)+'32.fits')
 
     pyfits.writeto(output,image_cube,header,clobber=True)
     
