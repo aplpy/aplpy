@@ -516,9 +516,10 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         
         if type(levels) == int:
             auto_levels = image_util.percentile_function(image_contour)
-            vmin = auto_levels(0.0025)
-            vmax = auto_levels(0.9975)
+            vmin = auto_levels(0.25)
+            vmax = auto_levels(99.75)
             levels = np.linspace(vmin,vmax,levels)
+            print levels
         
         self._name_empty_layers('user')
         
