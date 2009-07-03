@@ -519,7 +519,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             vmin = auto_levels(0.25)
             vmax = auto_levels(99.75)
             levels = np.linspace(vmin,vmax,levels)
-            print levels
         
         self._name_empty_layers('user')
         
