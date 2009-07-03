@@ -1,19 +1,21 @@
 import wcs_util
 
-def transform(ax,wcs_in,wcs_out):
+def transform(ax,wcs_in,wcs_out,layer):
     
     system_in,equinox_in,units_in = wcs_util.system(wcs_in)
     system_out,equinox_out,units_out = wcs_util.system(wcs_out)
     
     for i in range(len(ax.collections)):
         
-        try:
-            process = not ax.collections[i].apl_corrected
-        except AttributeError:
-            process = True
-            ax.collections[i].apl_corrected = True
-        
-        if process:
+        if ax.collections[i].aplpy_layer_name == layer:
+            
+            try:
+                process = not ax.collections[i].apl_converted
+            except AttributeError:
+                process = True
+            
+            if not process:
+                return
             
             polygons_out = []
             for polygon in ax.collections[i].get_paths():

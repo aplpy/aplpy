@@ -113,6 +113,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         if not kwargs.has_key('figsize'):
             kwargs['figsize'] = (9,9)
         
+        if north and not montage._installed():
+            raise Exception("Montage needs to be installed and in the $PATH in order to use the north= option")
+        
         self._hdu,self._wcs = self._get_hdu(data,hdu,north)
         
         # Downsample if requested
@@ -244,14 +247,14 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             
             *y*: [ float ]
                 Latitude of the position to center on (degrees)
-            
+        
         Optional Keyword Arguments:
             
             Either the radius or width/heigh arguments should be specified.
             
             *radius*: [ float ]
                 Radius of the region to view (degrees). This produces a square plot.
-                
+            
             *width*: [ float ]
                 Width of the region to view (degrees). This should be given in
                 conjunction with the height argument.
@@ -277,7 +280,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             dy_pix = height / degperpix / 2.
         else:
             raise Exception("Need to specify either radius= or width= and height= arguments")
-            
+        
         self._ax1.set_xlim(xpix-dx_pix,xpix+dx_pix)
         self._ax1.set_ylim(ypix-dy_pix,ypix+dy_pix)
         
@@ -527,8 +530,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         else:
             self._ax1.contour(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
         
-        self._ax1 = contour_util.transform(self._ax1,wcs_contour,self._wcs)
-        
         if layer:
             contour_set_name = layer
         else:
@@ -536,6 +537,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             contour_set_name = 'contour_set_'+str(self._contour_counter)
         
         self._name_empty_layers(contour_set_name)
+        
+        self._ax1 = contour_util.transform(self._ax1,wcs_contour,self._wcs,contour_set_name)
         
         self.refresh()
         
