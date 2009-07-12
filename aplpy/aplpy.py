@@ -692,7 +692,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             self._figure.apl_colorscale_cmap_default  = 'gist_heat'
             self.set_grid_color('black')
             self.set_grid_alpha(1.0)
-            self.image.set_cmap(cmap='jet')
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg',1000))
         
