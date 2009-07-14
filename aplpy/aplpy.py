@@ -609,7 +609,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
     # Show circles. Different from markers as this method allows more definitions
     # for the circles. 
     def show_circles(self,xw,yw,r,layer=False,**kwargs):
-         '''
+        '''
             Overlay circles on the current plot.
             
             Required arguments:
@@ -658,8 +658,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 pass
         except:
             general_array = np.zeros(len(xp))+1
-            wp = wp*general_array
-            hp = hp*general_array
+            rp = rp*general_array
                         
         pcollection = shape_util.make_circles(xp,yp,rp,**kwargs)
         self._ax1.add_collection(pcollection)
@@ -673,7 +672,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self._name_empty_layers(circle_set_name)
         
         self.refresh()
-        
+
     def show_ellipses(self,xw,yw,width,height,layer=False,**kwargs):
         '''
            Overlay ellipses on the current plot.
