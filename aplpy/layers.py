@@ -8,6 +8,9 @@ class Layers(object):
         self._layers_list = []
         self._contour_counter = 0
         self._scatter_counter = 0
+        self._circle_counter = 0
+        self._ellipse_counter = 0
+        self._rectangle_counter = 0
     
     def list_layers(self):
         '''

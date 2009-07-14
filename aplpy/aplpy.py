@@ -50,6 +50,7 @@ import image_util
 import header
 import wcs_util
 import math_util as m
+import shape_util 
 
 from layers import Layers
 from grid import Grid
@@ -601,6 +602,217 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
             scatter_set_name = 'scatter_set_'+str(self._scatter_counter)
         
         self._name_empty_layers(scatter_set_name)
+        
+        self.refresh()
+        
+    
+    # Show circles. Different from markers as this method allows more definitions
+    # for the circles. 
+    def show_circles(self,xw,yw,r,layer=False,**kwargs):
+         '''
+            Overlay circles on the current plot.
+            
+            Required arguments:
+            
+                *xw*: [ list | numpy.ndarray ]
+                    The x postions of the circles (in world coordinates)
+                    
+                *yw*: [ list | numpy.ndarray ]
+                    The y positions of the circles (in world coordinates)
+                    
+                *r*: [integer | float | list | numpy.ndarray ]
+                    The radii of the circles in degrees
+                    
+            Optional Keyword Arguments:
+            
+                *layer*: [ string ]
+                    The name of the circle layer. This is useful for giving
+                    custom names to layers (instead of scatter_set_n) and for
+                    replacing existing layers.
+                    
+                Any additional keyword arguments will be passed on directly to
+                matplotlib's Circle method. This includes for example the fill,
+                alpha, edgecolor, and facecolor arguments which can be used to
+                further control the appearance of the markers.
+                
+                For more information on these additional arguments, see the
+                matplotlib documation at the following link.
+                
+                http://matplotlib.sourceforge.net/api/artist_api.html?highlight=circle#matplotlib.patches.Circle
+                
+            '''
+        
+        if not kwargs.has_key('facecolor'):
+            kwargs.setdefault('facecolor','none')
+            
+        if layer:
+            self.remove_layer(layer,raise_exception=False)
+            
+        self._name_empty_layers('user')
+        
+        xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
+        rp = 3600.0*r/wcs_util.arcperpix(self._wcs)
+        
+        try:
+            if len(rp)>1:
+                pass
+        except:
+            general_array = np.zeros(len(xp))+1
+            wp = wp*general_array
+            hp = hp*general_array
+                        
+        pcollection = shape_util.make_circles(xp,yp,rp,**kwargs)
+        self._ax1.add_collection(pcollection)
+        
+        if layer:
+            circle_set_name = layer
+        else:
+            self._circle_counter += 1
+            circle_set_name = 'circle_set_'+str(self._circle_counter)
+            
+        self._name_empty_layers(circle_set_name)
+        
+        self.refresh()
+        
+    def show_ellipses(self,xw,yw,width,height,layer=False,**kwargs):
+        '''
+           Overlay ellipses on the current plot.
+           
+           Required arguments:
+           
+               *xw*: [ list | numpy.ndarray ]
+                   The x postions of the ellipses (in world coordinates)
+                   
+               *yw*: [ list | numpy.ndarray ]
+                   The y positions of the ellipses (in world coordinates)
+                   
+               *width*: [integer | float | list | numpy.ndarray ]
+                   The width of the ellipse in degrees
+                   
+               *height*: [integer | float | list | numpy.ndarray ]
+                   The height of the ellipse in degrees
+                   
+           Optional Keyword Arguments:
+           
+               *angle*: [integer | float | list | numpy.ndarray ]
+                   rotation in degrees (anti-clockwise). Default
+                   angle is 0.0.
+               
+               *layer*: [ string ]
+                   The name of the ellipse layer. This is useful for giving
+                   custom names to layers (instead of scatter_set_n) and for
+                   replacing existing layers.
+                   
+               Any additional keyword arguments will be passed on directly to
+               matplotlib's ellipse method. This includes for example the fill,
+               alpha, edgecolor, and facecolor arguments which can be used to
+               further control the appearance of the markers.
+               
+               For more information on these additional arguments, see the
+               matplotlib documation at the following link.
+               
+               http://matplotlib.sourceforge.net/api/artist_api.html?highlight=ellipse#matplotlib.patches.Ellipse
+           '''
+           
+        if not kwargs.has_key('facecolor'):
+            kwargs.setdefault('facecolor','none')
+            
+        if layer:
+            self.remove_layer(layer,raise_exception=False)
+            
+        self._name_empty_layers('user')
+        
+        xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
+        wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
+        hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
+        
+        try:
+            if len(wp)>1:
+                pass
+        except:
+            general_array = np.zeros(len(xp))+1
+            wp = wp*general_array
+            hp = hp*general_array
+                        
+        pcollection = shape_util.make_ellipses(xp,yp,wp,hp,**kwargs)
+        self._ax1.add_collection(pcollection)
+        
+        if layer:
+            ellipse_set_name = layer
+        else:
+            self._ellipse_counter += 1
+            ellipse_set_name = 'ellipse_set_'+str(self._ellipse_counter)
+            
+        self._name_empty_layers(ellipse_set_name)
+        
+        self.refresh()
+        
+    def show_rectangles(self,xw,yw,width,height,layer=False,**kwargs):
+        '''
+           Overlay rectangles on the current plot.
+           
+           Required arguments:
+           
+               *xw*: [ list | numpy.ndarray ]
+                   The x postions of the rectangles (in world coordinates)
+                   
+               *yw*: [ list | numpy.ndarray ]
+                   The y positions of the rectangles (in world coordinates)
+                   
+               *width*: [integer | float | list | numpy.ndarray ]
+                   The width of the rectangle in degrees
+                   
+               *height*: [integer | float | list | numpy.ndarray ]
+                   The height of the rectangle in degrees
+                   
+           Optional Keyword Arguments:
+           
+               *layer*: [ string ]
+                   The name of the rectangle layer. This is useful for giving
+                   custom names to layers (instead of scatter_set_n) and for
+                   replacing existing layers.
+                   
+               Any additional keyword arguments will be passed on directly to
+               matplotlib's rectangle method. This includes for example the fill,
+               alpha, edgecolor, and facecolor arguments which can be used to
+               further control the appearance of the markers.
+               
+               For more information on these additional arguments, see the
+               matplotlib documation at the following link.
+               
+               http://matplotlib.sourceforge.net/api/artist_api.html?highlight=ellipse#matplotlib.patches.Rectangle
+           '''
+           
+        if not kwargs.has_key('facecolor'):
+            kwargs.setdefault('facecolor','none')
+            
+        if layer:
+            self.remove_layer(layer,raise_exception=False)
+            
+        self._name_empty_layers('user')
+        
+        xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
+        wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
+        hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
+        
+        try:
+            if len(wp)>1:
+                pass
+        except:
+            general_array = np.zeros(len(xp))+1
+            wp = wp*general_array
+            hp = hp*general_array
+            
+        pcollection = shape_util.make_rectangles(xp,yp,wp,hp,**kwargs)
+        self._ax1.add_collection(pcollection)
+        
+        if layer:
+            rectangle_set_name = layer
+        else:
+            self._rectangle_counter += 1
+            rectangle_set_name = 'rectangle_set_'+str(self._rectangle_counter)
+            
+        self._name_empty_layers(rectangle_set_name)
         
         self.refresh()
     
