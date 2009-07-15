@@ -315,14 +315,14 @@ def axis_positions(wcs,axis,farside,xmin=False,xmax=False,ymin=False,ymax=False)
     
     # Generate an array of pixel values for the x-axis
     if axis=='x':
-        x_pix = np.arange(xmin,xmax)
+        x_pix = math_util.arange2(xmin,xmax,1.)
         y_pix = np.ones(np.shape(x_pix))
         if(farside):
             y_pix = y_pix * ymax
         else:
             y_pix = y_pix * ymin
     else:
-        y_pix = np.arange(ymin,ymax)
+        y_pix = math_util.arange2(ymin,ymax,1.)
         x_pix = np.ones(np.shape(y_pix))
         if(farside):
             x_pix = x_pix * xmax

@@ -39,6 +39,12 @@ def complete_range(xmin,xmax,spacing):
     else:
         return np.hstack([r,xmax])
 
+def arange2(xmin,xmax,xstep):
+    r = np.arange(xmin,xmax,xstep)
+    if(np.any(r>=xmax)):
+        return r
+    else:
+        return np.hstack([r,xmax])
 
 def closest(array,a):
     ipos = minloc(np.abs(a-array))
