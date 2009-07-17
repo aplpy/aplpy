@@ -14,7 +14,7 @@ class Labels(object):
         self.tick_font = FontProperties()
         self.axes_font = FontProperties()
         
-        self.set_labels_latex(False, refresh=False)
+#        self.set_labels_latex(False, refresh=False)
         self.set_tick_labels_style('plain', refresh=False)
         self.set_tick_labels_size('small', refresh=False)
         
