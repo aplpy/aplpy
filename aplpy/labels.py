@@ -15,7 +15,6 @@ class Labels(object):
         self.axes_font = FontProperties()
         
         self.set_tick_labels_style('plain', refresh=False)
-        self.set_tick_labels_size('small', refresh=False)
         
         self._ax2.yaxis.set_label_position('right')
         self._ax2.xaxis.set_label_position('top')
@@ -171,73 +170,51 @@ class Labels(object):
             self.refresh()
     
     def set_tick_labels_size(self, size, refresh=True):
+        print "This method has been depracated. Please use the set_tick_labels_font() instead"
+        return
+    
+    def set_tick_labels_weight(self, weight, refresh=True):
+        print "This method has been depracated. Please use the set_tick_labels_font() instead"
+        return
+    
+    def set_tick_labels_family(self, family, refresh=True):
+        print "This method has been depracated. Please use the set_tick_labels_font() instead"
+        return
+    
+    def set_tick_labels_font(self,size=None,weight=None,family=None,refresh=True):
         """
         Set the size of the tick labels
         
-        Required Arguments:
+        Optional Keyword Arguments:
+            
+            Default values for size/weight/family are set by matplotlib. Custom
+            values can be set globally by editing the matplotlibrc file.
             
             *size*: [ size in points | xx-small | x-small | small |
                       medium | large | x-large | xx-large ]
                 
-                The size of the numeric tick labels. Default is 'small'.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        """
-        
-        self.tick_font.set_size(size)
-        self._update_tick_font()
-        
-        if refresh:
-            self.refresh()
-    
-    def set_tick_labels_weight(self, weight, refresh=True):
-        """
-        Set the weight of the tick labels
-        
-        Required Arguments:
+                The size of the numeric tick labels.
             
             *weight*: [ a numeric value in range 0-1000 | ultralight |
-                        light | normal | regular | book | medium |
-                        roman | semibold | demibold | demi | bold |
-                        heavy | extra bold | black ]
+                      light | normal | regular | book | medium |
+                      roman | semibold | demibold | demi | bold |
+                      heavy | extra bold | black ]
                 
-                The weight of the numeric tick labels. Default is 'normal'.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        """
-        
-        self.tick_font.set_weight(weight)
-        self._update_tick_font()
-        
-        if refresh:
-            self.refresh()
-    
-    def set_tick_labels_family(self, family, refresh=True):
-        """
-        Set the font family of the tick labels
-        
-        Required Arguments:
+                The weight of the numeric tick labels.
             
             *family*: [ serif | sans-serif | cursive | fantasy | monospace ]
                 
-                The font family of the numeric tick labels. Default is 'sans-serif'.
-        
-        Optional Keyword Arguments:
+                The font family of the numeric tick labels.
             
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
         """
         
-        self.tick_font.set_family(family)
+        if size: self.tick_font.set_size(size)
+        if weight: self.tick_font.set_weight(weight)
+        if family: self.tick_font.set_family(family)
+        
         self._update_tick_font()
         
         if refresh:
@@ -287,11 +264,11 @@ class Labels(object):
             tick.set_fontproperties(self.tick_font)
     
     def set_axis_labels_xdisp(self,displacement,refresh=True):
-        print "This function has been depracated. Please use the xpad= argument for set_axis_labels() instead"
+        print "This method has been depracated. Please use the xpad= argument for set_axis_labels() instead"
         return
     
     def set_axis_labels_ydisp(self,displacement,refresh=True):
-        print "This function has been depracated. Please use the ypad= argument for set_axis_labels() instead"
+        print "This method has been depracated. Please use the ypad= argument for set_axis_labels() instead"
         return
     
     def set_axis_labels(self,xlabel='default',ylabel='default',xpad=0,ypad=0,refresh=True):
@@ -345,73 +322,51 @@ class Labels(object):
             self.refresh()
     
     def set_axis_labels_size(self, size, refresh=True):
+        print "This method has been depracated. Please use the set_axis_labels_font() instead"
+        return
+    
+    def set_axis_labels_weight(self, weight, refresh=True):
+        print "This method has been depracated. Please use the set_axis_labels_font() instead"
+        return
+    
+    def set_axis_labels_family(self, family, refresh=True):
+        print "This method has been depracated. Please use the set_axis_labels_font() instead"
+        return
+    
+    def set_axis_labels_font(self,size=None,weight=None,family=None,refresh=True):
         """
         Set the size of the axis labels
         
-        Required Arguments:
+        Default values for size/weight/family are set by matplotlib. Custom
+        values can be set globally by editing the matplotlibrc file.
+        
+        Optional Keyword Arguments:
             
             *size*: [ size in points | xx-small | x-small | small |
                       medium | large | x-large | xx-large ]
                 
-                The size of the axis labels. Default is 'small'.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        """
-        
-        self.axes_font.set_size(size)
-        self._update_axes_font()
-        
-        if refresh:
-            self.refresh()
-    
-    def set_axis_labels_weight(self, weight, refresh=True):
-        """
-        Set the weight of the axis labels
-        
-        Required Arguments:
+                The size of the axis labels
             
             *weight*: [ a numeric value in range 0-1000 | ultralight |
-                        light | normal | regular | book | medium |
-                        roman | semibold | demibold | demi | bold |
-                        heavy | extra bold | black ]
+                      light | normal | regular | book | medium |
+                      roman | semibold | demibold | demi | bold |
+                      heavy | extra bold | black ]
                 
-                The weight of the axis labels. Default is 'normal'.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        """
-        
-        self.axes_font.set_weight(weight)
-        self._update_axes_font()
-        
-        if refresh:
-            self.refresh()
-    
-    def set_axis_labels_family(self, family, refresh=True):
-        """
-        Set the font family of the axis labels
-        
-        Required Arguments:
+                The weight of the axis labels
             
             *family*: [ serif | sans-serif | cursive | fantasy | monospace ]
                 
-                The font family of the axis labels. Default is 'sans-serif'.
-        
-        Optional Keyword Arguments:
+                The font family of the axis labels.
             
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
         """
         
-        self.axes_font.set_family(family)
+        if size: self.axes_font.set_size(size)
+        if weight: self.axes_font.set_weight(weight)
+        if family: self.axes_font.set_family(family)
+        
         self._update_axes_font()
         
         if refresh:
