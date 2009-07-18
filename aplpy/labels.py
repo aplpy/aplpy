@@ -71,7 +71,9 @@ class Labels(object):
         Optional Keyword Arguments:
             
             *xformat*: [ string ]
+            
             *yformat*: [ string ]
+
                 The x and y formats for the tick labels. These can be:
                     
                     * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
