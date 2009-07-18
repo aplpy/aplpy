@@ -443,7 +443,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         self.image.set_visible(False)
         self.refresh()
     
-    def show_rgb(self,filename,interpolation='nearest'):
+    def show_rgb(self,filename,interpolation='nearest',flip=False):
         '''
         Show a 3-color image instead of the FITS file data
         
@@ -453,10 +453,20 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
                 The 3-color image should have exactly the same dimensions as the FITS file, and
                 will be shown with exactly the same projection.
         
+        Optional Arguments:
+            
+            *flip*: [ True | False ]
+                Whether to vertically flip the RGB image in case it is the
+                wrong way around.
+        
         '''
         
-        pretty_image = mpl.imread(filename)
-        self.image = self._ax1.imshow(pretty_image,extent=self._extent,interpolation=interpolation,origin='upper')
+        img = mpl.imread(filename)
+        
+        if flip:
+            img = np.flipud(img)
+        
+        self.image = self._ax1.imshow(img,extent=self._extent,interpolation=interpolation,origin='upper')
         self.refresh()
     
     def show_contour(self,data,hdu=0,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
