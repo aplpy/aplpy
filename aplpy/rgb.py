@@ -6,7 +6,7 @@ try:
     installed_pil = True
 except:
     installed_pil = False
-    
+
 import image_util
 import math_util as m
 
@@ -66,56 +66,77 @@ def make_rgb_image(data,output, \
     Optional keyword arguments:
         
         *vmin_r*: [ None | float ]
+        
         *vmin_g*: [ None | float ]
+        
         *vmin_b*: [ None | float ]
+            
             Minimum pixel value to use for the red, green, and blue channels.
             If set to None for a given channel, the minimum pixel value for
             that channel is determined using the corresponding pmin_? argument
             (default).
         
         *vmax_r*: [ None | float ]
+        
         *vmax_g*: [ None | float ]
+        
         *vmax_b*: [ None | float ]
+            
             Maximum pixel value to use for the red, green, and blue channels.
             If set to None for a given channel, the maximum pixel value for
             that channel is determined using the corresponding pmax_? argument
             (default).
         
         *pmin_r*: [ float ]
+        
         *pmin_g*: [ float ]
+
         *pmin_b*: [ float ]
+
             Percentile values used to determine for a given channel the
             minimum pixel value to use for that channel if the corresponding
             vmin_? is set to None. The default is 0.25% for all channels.
         
         *pmax_r*: [ float ]
+
         *pmax_g*: [ float ]
+
         *pmax_b*: [ float ]
+
             Percentile values used to determine for a given channel the
             maximum pixel value to use for that channel if the corresponding
             vmax_? is set to None. The default is 99.75% for all channels.
         
         *stretch_r*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+
         *stretch_g*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+
         *stretch_b*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
+
             The stretch function to use for the different channels.
         
         *vmid_r*: [ None | float ]
+
         *vmid_g*: [ None | float ]
+
         *vmid_b*: [ None | float ]
+
             Mid-pixel value used for the log and arcsinh stretches. If
             set to None, this is set to a sensible value.
         
         *exponent_r*: [ float ]
+
         *exponent_g*: [ float ]
+
         *exponent_b*: [ float ]
+
             If stretch_? is set to 'power', this is the exponent to use.
         '''
     
     if not installed_pil:
         print '''ERROR : The Python Imaging Library (PIL) is not installed but is required for this function'''
         return
-        
+    
     if type(data) == str:
         image = pyfits.getdata(data)
         image_r = image[0,:,:]
