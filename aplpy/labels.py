@@ -14,7 +14,6 @@ class Labels(object):
         self.tick_font = FontProperties()
         self.axes_font = FontProperties()
         
-#        self.set_labels_latex(False, refresh=False)
         self.set_tick_labels_style('plain', refresh=False)
         self.set_tick_labels_size('small', refresh=False)
         
@@ -23,9 +22,6 @@ class Labels(object):
         
         self.xlabel = None
         self.ylabel = None
-        
-        self.set_axis_labels_xdisp(-0.05,refresh=False)
-        self.set_axis_labels_ydisp(-0.15,refresh=False)
         
         system,equinox,units = wcs_util.system(self._wcs)
         
@@ -39,13 +35,19 @@ class Labels(object):
         
         if system == 'celestial':
             if equinox == 'b1950':
-                self.set_axis_labels('RA (B1950)','Dec (B1950)', refresh=False)
+                self.xlabel_default = 'RA (B1950)'
+                self.ylabel_default = 'Dec (B1950)'
             else:
-                self.set_axis_labels('RA (J2000)','Dec (J2000)', refresh=False)
+                self.xlabel_default = 'RA (J2000)'
+                self.ylabel_default = 'Dec (J2000)'
         elif system == 'galactic':
-            self.set_axis_labels('Galactic Longitude','Galactic Latitude', refresh=False)
+            self.xlabel_default = 'Galactic Longitude'
+            self.ylabel_default = 'Galactic Latitude'
         else:
-            self.set_axis_labels('Ecliptic Longitude','Ecliptic Latitude', refresh=False)
+            self.xlabel_default = 'Ecliptic Longitude'
+            self.ylabel_default = 'Ecliptic Latitude'
+        
+        self.set_axis_labels()
         
         # Set major tick formatters
         fx1 = WCSFormatter(wcs=self._wcs,coord='x')
@@ -285,89 +287,59 @@ class Labels(object):
             tick.set_fontproperties(self.tick_font)
     
     def set_axis_labels_xdisp(self,displacement,refresh=True):
-        """
-        Set the vertical displacement of the x-axis label
-        
-        Required Arguments:
-            
-            *dispacement*: [ float ]
-                The vertical displacement of the x-axis label, in units of the
-                size of the viewport. The default is -0.05. A value of 0 would
-                place the label on the bottom x-axis, and a value of 1 would place
-                the label on the top x-axis.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        """
-        
-        self.apl_xlabel_disp = displacement
-        
-        if self.xlabel:
-            self.xlabel.set_y(self.apl_xlabel_disp)
-        
-        if refresh:
-            self.refresh()
+        print "This function has been depracated. Please use the xpad= argument for set_axis_labels() instead"
+        return
     
     def set_axis_labels_ydisp(self,displacement,refresh=True):
-        """
-        Set the horizontal displacement of the y-axis label
-        
-        Required Arguments:
-            
-            *dispacement*: [ float ]
-                The vertical displacement of the y-axis label, in units of the
-                size of the viewport. The default is -0.13. A value of 0 would
-                place the label on the left y-axis, and a value of 1 would place
-                the label on the right y-axis.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        """
-        
-        self.apl_ylabel_disp = displacement
-        
-        if self.ylabel:
-            self.ylabel.set_x(self.apl_ylabel_disp)
-        
-        if refresh:
-            self.refresh()
+        print "This function has been depracated. Please use the ypad= argument for set_axis_labels() instead"
+        return
     
-    def set_axis_labels(self,xlabel,ylabel,refresh=True):
+    def set_axis_labels(self,xlabel='default',ylabel='default',xpad=0,ypad=0,refresh=True):
         """
         Set the axes labels
         
-        Required Arguments:
+        Optional Keyword Arguments:
             
             *xlabel*: [ string ]
-                The x-axis label.
+                The x-axis label. The default is chosen based on the WCS coordinate system.
             
             *ylabel*: [ string ]
-                The y-axis label.
-        
-        Optional Keyword Arguments:
+                The y-axis label. The default is chosen based on the WCS coordinate system.
+            
+            *xpad*: [ integer ]
+                Correction to the x label vertical position relative to default position, in points
+            
+            *ypad*: [ integer ]
+                Correction to the y label horizontal position relative to default position, in points
             
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
         """
         
-        if self.xlabel:
-            self.xlabel.set_text(xlabel)
-            self.xlabel.set_y(self.apl_xlabel_disp)
-        else:
-            self.xlabel = self._ax1.text(0.5,self.apl_xlabel_disp,xlabel,fontproperties=self.axes_font,transform = self._ax1.transAxes,ha='center',va='center')
+        if xlabel == 'default':
+            xlabel = self.xlabel_default
         
-        if self.ylabel:
-            self.ylabel.set_text(ylabel)
-            self.ylabel.set_x(self.apl_ylabel_disp)
+        if xpad <> 0:
+            try:
+                self.xlabel = self._ax1.set_xlabel(xlabel,labelpad=xpad)
+            except:
+                print "WARNING: the version of matplotlib you are using does not support the labelpad= argument for set_xlabel. Ignoring the xpad= argument"
+                self.xlabel = self._ax1.set_xlabel(xlabel)
         else:
-            self.ylabel = self._ax1.text(self.apl_ylabel_disp,0.5,ylabel,fontproperties=self.axes_font,transform = self._ax1.transAxes,rotation='vertical',ha='center',va='center')
+            self.xlabel = self._ax1.set_xlabel(xlabel)
+        
+        if ylabel == 'default':
+            ylabel = self.ylabel_default
+        
+        if ypad <> 0:
+            try:
+                self.ylabel = self._ax1.set_ylabel(ylabel,labelpad=ypad)
+            except:
+                print "WARNING: the version of matplotlib you are using does not support the labelpad= argument for set_ylabel. Ignoring the ypad= argument"
+                self.ylabel = self._ax1.set_ylabel(ylabel)
+        else:
+            self.ylabel = self._ax1.set_ylabel(ylabel)
         
         if refresh:
             self.refresh()
