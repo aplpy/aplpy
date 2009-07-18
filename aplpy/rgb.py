@@ -1,6 +1,12 @@
 import pyfits
 import numpy as np
-import Image
+
+try:
+    import Image
+    installed_pil = True
+except:
+    installed_pil = False
+    
 import image_util
 import math_util as m
 
@@ -106,6 +112,10 @@ def make_rgb_image(data,output, \
             If stretch_? is set to 'power', this is the exponent to use.
         '''
     
+    if not installed_pil:
+        print '''ERROR : The Python Imaging Library (PIL) is not installed but is required for this function'''
+        return
+        
     if type(data) == str:
         image = pyfits.getdata(data)
         image_r = image[0,:,:]
