@@ -4,7 +4,6 @@ import numpy as np
 import string
 import math_util
 from matplotlib.font_manager import FontProperties
-import angle_util as au
 
 class Labels(object):
     
@@ -26,11 +25,9 @@ class Labels(object):
         
         # Set default label format
         if system == 'celestial':
-            self.set_tick_labels_xformat("hh:mm:ss.ss", refresh=False)
-            self.set_tick_labels_yformat("dd:mm:ss.s", refresh=False)
+            self.set_tick_labels_format(xformat="hh:mm:ss.ss", yformat="dd:mm:ss.s", refresh=False)
         else:
-            self.set_tick_labels_xformat("ddd.dddd", refresh=False)
-            self.set_tick_labels_yformat("dd.dddd", refresh=False)
+            self.set_tick_labels_format(xformat="ddd.dddd", yformat="dd.dddd", refresh=False)
         
         if system == 'celestial':
             if equinox == 'b1950':
@@ -60,53 +57,39 @@ class Labels(object):
         self._ax2.yaxis.set_major_formatter(fy2)
     
     def set_tick_labels_xformat(self,format,refresh=True):
-        '''
-        Set the format of the x-axis tick labels
-        
-        Required Arguments:
-            
-            *format*: [ string ]
-                The format for the tick labels. This can be:
-                    
-                    * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
-                    * ``hh`` or ``dd`` - hours (or degrees)
-                    * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
-                    * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
-                    * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        '''
-        
-        self._ax1.xaxis.apl_label_form = format
-        if refresh: self.refresh()
+        print "This method has been depracated. Please use the set_tick_labels_format() instead"
+        return
     
     def set_tick_labels_yformat(self,format,refresh=True):
+        print "This method has been depracated. Please use the set_tick_labels_format() instead"
+        return
+    
+    def set_tick_labels_format(self,xformat=None,yformat=None,refresh=True):
         '''
-        Set the format of the x-axis tick labels
+        Set the format of the tick labels
         
-        Required Arguments:
+        Optional Keyword Arguments:
             
-            *format*: [ string ]
-                The format for the tick labels. This can be:
+            *xformat*: [ string ]
+            *yformat*: [ string ]
+                The x and y formats for the tick labels. These can be:
                     
                     * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
                     * ``hh`` or ``dd`` - hours (or degrees)
                     * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
                     * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
                     * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.
-        
-        Optional Keyword Arguments:
+                
+                If one of these arguments is not specified, the format for that axis
+                is left unchanged.
             
             *refresh*: [ True | False ]
                 Whether to refresh the display straight after setting the parameter.
                 For non-interactive uses, this can be set to False.
         '''
         
-        self._ax1.yaxis.apl_label_form = format
+        if xformat: self._ax1.xaxis.apl_label_form = xformat
+        if yformat: self._ax1.yaxis.apl_label_form = yformat
         if refresh: self.refresh()
     
     def set_tick_labels_style(self,style,refresh=True):
@@ -187,8 +170,10 @@ class Labels(object):
         
         Optional Keyword Arguments:
             
-            Default values for size/weight/family are set by matplotlib. Custom
-            values can be set globally by editing the matplotlibrc file.
+            Default values for size/weight/family are set by matplotlib
+            or previously set values if set_tick_labels_font has
+            already been called. Global default values can be set by
+            editing the matplotlibrc file.
             
             *size*: [ size in points | xx-small | x-small | small |
                       medium | large | x-large | xx-large ]
@@ -337,8 +322,10 @@ class Labels(object):
         """
         Set the size of the axis labels
         
-        Default values for size/weight/family are set by matplotlib. Custom
-        values can be set globally by editing the matplotlibrc file.
+        Default values for size/weight/family are set by matplotlib
+        or previously set values if set_axis_labels_font has
+        already been called. Global default values can be set by
+        editing the matplotlibrc file.
         
         Optional Keyword Arguments:
             
