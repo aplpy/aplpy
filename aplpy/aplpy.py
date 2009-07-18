@@ -112,7 +112,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels):
         '''
         
         if not kwargs.has_key('figsize'):
-            kwargs['figsize'] = (9,9)
+            kwargs['figsize'] = (10,9)
         
         if north and not montage._installed():
             raise Exception("Montage needs to be installed and in the $PATH in order to use the north= option")
