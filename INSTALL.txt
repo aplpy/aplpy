@@ -9,13 +9,13 @@ Installing APLpy
       - matplotlib 0.98.5.2 or later
         http://matplotlib.sourceforge.net/
 
-      - numpy 1.1.1 or later
+      - numpy 1.3.0 or later
         http://numpy.scipy.org/
 
-      - pyfits 1.3 or later
+      - pyfits 2.1 or later
         http://www.stsci.edu/resources/software_hardware/pyfits
 
-      - pywcs 1.3a1-4.3 or later
+      - pywcs 1.5.1-4.3.3 or later
         https://www.stsci.edu/trac/ssb/astrolib
 
     The Enthought Python Distribution (EPD) is an easy-to-install
@@ -23,12 +23,12 @@ Installing APLpy
     If EPD, pyfits, and pywcs are installed, APLpy should work out of
     the box. If not, please contact us through email or the forum
     at sourceforge.net. Note that to satisfy the version requirement
-    for matplotlib, you should install v4.2 of EPD. APLpy can still
+    for matplotlib, you should install v4.3 of EPD. APLpy can still
     be used with older versions of matplotlib, but problems may occur
     in certain situations.
 	  
-          - EPD v4.2
-                http://www.enthought.com/products/epdearlyaccess.php
+          - EPD v4.3
+                http://www.enthought.com/products/getepd.php
 
   Installation
   ============
