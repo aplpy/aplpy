@@ -1,0 +1,111 @@
+CHANGES
+--------
+
+Version 0.9.3
+
+    New Features
+    ~~~~~~~~~~~~
+
+    - added aplpy.make_rgb_cube() that allows users to make a FITS RGB cube
+      from three FITS files with different projections
+      
+    - added aplpy.make_rgb_image() that allows users to make an RGB file in
+      standard image formats from a FITS RGB cube
+
+    - added width= and height= arguments to aplpy.FITSFigure.recenter()
+      method.
+
+    - added show_circles(), show_ellipses(), and show_rectangles() to
+      aplpy.FITSFigure
+
+    - new hide_grayscale() and hide_colorscale() methods
+
+    API changes
+    ~~~~~~~~~~~
+
+    - changes to the API for set_tick_labels_* and set_axis_labels_* methods
+
+    - percentiles values are now specified between 0 and 100
+  
+    Bug fixes
+    ~~~~~~~~~
+
+    - fixed an issue which ocurred when reading in FITS cubes
+
+    - fixed an issue which led to the last tick along an axis being missing
+      for coarse images
+
+    - fixed a bug that occured if set_theme was called before showing the
+      image
+
+    - fixed a bug that occured when show_contour was called after removing a
+      layer
+
+    Acknowledgments
+    ~~~~~~~~~~~~~~~
+
+    Thanks to Paul Ray, Adam Ginsburg, Gus Muench, and forum user hatchell for
+    bug reports and feature suggestions.
+    
+    
+Version 0.9.2
+
+    Improvements
+    ~~~~~~~~~~~~
+
+    - Improved compatibility issues with matplotlib 0.98.6svn
+
+    - Improved speed of initialization of FITSFigure
+    
+    
+Version 0.9.1.2
+
+    Bug fixes
+    ~~~~~~~~~
+    
+    - fixed a major bug that occured when reading in Galactic -CAR images
+    
+    
+Version 0.9.1
+
+    SciPy Dependency Dropped
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    While SciPy is a great python package, it can be troublesome to build and
+    install from scratch. Thanks to Tom Aldcroft's suggestion and highlighting
+    some of his own code we were able to easily drop the SciPy dependency.
+
+    New Features
+    ~~~~~~~~~~~~
+
+    - Users can now pass a pyfits HDU instance instead of filenames for both
+      FITSFigure() and show_contour() if desired.
+
+    - Users can now specify an existing figure with the figure= argument.
+
+    - Users with a recent enough version of matplotlib (0.98.6svn) can now use
+      the subplot= argument to place multiple plots in a single figure.
+
+    - New hide/show_tick_labels() and hide/show_axis_labels() methods.
+
+    - Show_grayscale and show_colorscale() now accept percentile_lower= and
+      percentile_higher= as arguments.
+
+    - Show_grayscale and show_colorscale() now print out vmin and vmax if
+      chosen automatically.
+
+    - New recenter() method to pan and zoom non-interactively.
+
+    General Fixes and Optimization
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    - Added HDU keyword for the show_contour() method.
+    
+    - More robust reading in FITS file for the show_contour() method.
+    
+    - Warning if FITS files do not exist for FITSFigure() or show_contour().
+
+
+Version 0.9.0
+
+    First public beta release
