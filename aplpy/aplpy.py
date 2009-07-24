@@ -56,8 +56,9 @@ from layers import Layers
 from grid import Grid
 from ticks import Ticks
 from labels import Labels
+from overlays import Beam
 
-class FITSFigure(Layers,Grid,Ticks,Labels):
+class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
     
     "A class for plotting FITS files."
     
