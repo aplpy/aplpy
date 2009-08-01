@@ -138,7 +138,7 @@ def make_rgb_cube(files,output):
     ny = int(header['NAXIS2'])
     
     # Generate emtpy cube
-    image_cube = np.zeros((len(files),ny,nx))
+    image_cube = np.zeros((len(files),ny,nx),dtype=np.float32)
     
     # Loop through files
     for i in range(len(files)):
