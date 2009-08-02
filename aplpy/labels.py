@@ -243,6 +243,22 @@ class Labels(object):
 
         if refresh: self.refresh()
 
+    def show_xtick_labels(self,refresh=True):
+        """
+        Show the x-axis tick labels
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        for tick in self._ax1.get_xticklabels():
+            tick.set_visible(True)
+
+        if refresh: self.refresh()
+
     def hide_xtick_labels(self,refresh=True):
         """
         Hide the x-axis tick labels
@@ -256,6 +272,22 @@ class Labels(object):
 
         for tick in self._ax1.get_xticklabels():
             tick.set_visible(False)
+
+        if refresh: self.refresh()
+
+    def show_ytick_labels(self,refresh=True):
+        """
+        Show the y-axis tick labels
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        for tick in self._ax1.get_yticklabels():
+            tick.set_visible(True)
 
         if refresh: self.refresh()
 
@@ -429,6 +461,22 @@ class Labels(object):
 
         if refresh: self.refresh()
 
+    def show_xaxis_label(self,refresh=True):
+        """
+        Show the x-axis labels
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        if self.xlabel:
+            self.xlabel.set_visible(True)
+
+        if refresh: self.refresh()
+
     def hide_xaxis_label(self,refresh=True):
         """
         Hide the x-axis labels
@@ -442,6 +490,22 @@ class Labels(object):
 
         if self.xlabel:
             self.xlabel.set_visible(False)
+
+        if refresh: self.refresh()
+
+    def show_yaxis_label(self,refresh=True):
+        """
+        Show the y-axis labels
+
+        Optional Keyword Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display straight after setting the parameter.
+                For non-interactive uses, this can be set to False.
+        """
+
+        if self.ylabel:
+            self.ylabel.set_visible(True)
 
         if refresh: self.refresh()
 
