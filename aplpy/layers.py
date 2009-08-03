@@ -1,5 +1,5 @@
 from matplotlib.contour import ContourSet
-from matplotlib.collections import RegularPolyCollection
+from matplotlib.collections import RegularPolyCollection, PatchCollection
 
 class Layers(object):
     
@@ -10,7 +10,9 @@ class Layers(object):
         if isinstance(self._layers[layer],ContourSet):
             return 'contour'
         elif isinstance(self._layers[layer],RegularPolyCollection):
-            return 'markers'
+            return 'collection'
+        elif isinstance(self._layers[layer],PatchCollection):
+            return 'collection'
         else:
             raise Exception("Unknown layer type: " + str(type(self._layers[layer])))
     
@@ -36,7 +38,7 @@ class Layers(object):
             
             if layer_type == 'contour':
                 visible = self._layers[layer].collections[0].get_visible()
-            elif layer_type == 'markers':
+            elif layer_type == 'collection':
                 visible = self._layers[layer].get_visible()
             
             layers_list.append({'name':layer,'visible':visible})
@@ -73,7 +75,7 @@ class Layers(object):
                 for contour in self._layers[layer].collections:
                     contour.remove()
                 self._layers.pop(layer)
-            elif layer_type == 'markers':
+            elif layer_type == 'collection':
                 self._layers[layer].remove()
         
         else:
@@ -102,7 +104,7 @@ class Layers(object):
             if layer_type == 'contour':
                 for contour in self._layers[layer].collections:
                     contour.set_visible(False)
-            elif layer_type == 'markers':
+            elif layer_type == 'collection':
                 self._layers[layer].set_visible(False)
         
         else:
@@ -130,7 +132,7 @@ class Layers(object):
             if layer_type == 'contour':
                 for contour in self._layers[layer].collections:
                     contour.set_visible(True)
-            elif layer_type == 'markers':
+            elif layer_type == 'collection':
                 self._layers[layer].set_visible(True)
         
         else:
