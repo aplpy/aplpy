@@ -582,7 +582,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             
             *layer*: [ string ]
                 The name of the scatter layer. This is useful for giving
-                custom names to layers (instead of scatter_set_n) and for
+                custom names to layers (instead of markers_set_n) and for
                 replacing existing layers.
             
             Any additional keyword arguments will be passed on directly to
@@ -611,12 +611,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         s = self._ax1.scatter(xp,yp,**kwargs)
         
         if layer:
-            scatter_set_name = layer
+            markers_set_name = layer
         else:
             self._scatter_counter += 1
-            scatter_set_name = 'scatter_set_'+str(self._scatter_counter)
+            markers_set_name = 'markers_set_'+str(self._scatter_counter)
         
-        self._layers[scatter_set_name] = s
+        self._layers[markers_set_name] = s
         
         self.refresh()
     
@@ -641,7 +641,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                 
                 *layer*: [ string ]
                     The name of the circle layer. This is useful for giving
-                    custom names to layers (instead of scatter_set_n) and for
+                    custom names to layers (instead of circle_set_n) and for
                     replacing existing layers.
                 
                 Any additional keyword arguments will be passed on directly to
@@ -711,7 +711,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                
                *layer*: [ string ]
                    The name of the ellipse layer. This is useful for giving
-                   custom names to layers (instead of scatter_set_n) and for
+                   custom names to layers (instead of ellipse_set_n) and for
                    replacing existing layers.
                
                Any additional keyword arguments will be passed on directly to
@@ -778,7 +778,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                
                *layer*: [ string ]
                    The name of the rectangle layer. This is useful for giving
-                   custom names to layers (instead of scatter_set_n) and for
+                   custom names to layers (instead of rectangle_set_n) and for
                    replacing existing layers.
                
                Any additional keyword arguments will be passed on directly to
