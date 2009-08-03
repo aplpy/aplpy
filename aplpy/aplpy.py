@@ -543,12 +543,10 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             vmax = auto_levels(99.75)
             levels = np.linspace(vmin,vmax,levels)
         
-        self._name_empty_layers('user')
-        
         if filled:
-            self._ax1.contourf(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
+            c = self._ax1.contourf(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
         else:
-            self._ax1.contour(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
+            c = self._ax1.contour(image_contour,levels,extent=extent_contour,cmap=cmap,colors=colors,**kwargs)
         
         if layer:
             contour_set_name = layer
@@ -556,9 +554,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._contour_counter += 1
             contour_set_name = 'contour_set_'+str(self._contour_counter)
         
-        self._name_empty_layers(contour_set_name)
+        contour_util.transform(c,wcs_contour,self._wcs)
         
-        self._ax1 = contour_util.transform(self._ax1,wcs_contour,self._wcs,contour_set_name)
+        self._layers[contour_set_name] = c
         
         self.refresh()
         
@@ -609,10 +607,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         if layer:
             self.remove_layer(layer,raise_exception=False)
         
-        self._name_empty_layers('user')
-        
         xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
-        self._ax1.scatter(xp,yp,**kwargs)
+        s = self._ax1.scatter(xp,yp,**kwargs)
         
         if layer:
             scatter_set_name = layer
@@ -620,10 +616,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._scatter_counter += 1
             scatter_set_name = 'scatter_set_'+str(self._scatter_counter)
         
-        self._name_empty_layers(scatter_set_name)
+        self._layers[scatter_set_name] = s
         
         self.refresh()
-    
     
     # Show circles. Different from markers as this method allows more definitions
     # for the circles.
@@ -667,8 +662,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         if layer:
             self.remove_layer(layer,raise_exception=False)
         
-        self._name_empty_layers('user')
-        
         xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
         rp = 3600.0*r/wcs_util.arcperpix(self._wcs)
         
@@ -680,7 +673,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             rp = rp*general_array
         
         pcollection = shape_util.make_circles(xp,yp,rp,**kwargs)
-        self._ax1.add_collection(pcollection)
+        c = self._ax1.add_collection(pcollection)
         
         if layer:
             circle_set_name = layer
@@ -688,7 +681,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._circle_counter += 1
             circle_set_name = 'circle_set_'+str(self._circle_counter)
         
-        self._name_empty_layers(circle_set_name)
+        self._layers[circle_set_name] = c
         
         self.refresh()
     
@@ -738,8 +731,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         if layer:
             self.remove_layer(layer,raise_exception=False)
         
-        self._name_empty_layers('user')
-        
         xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
         wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
         hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
@@ -753,7 +744,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             hp = hp*general_array
         
         pcollection = shape_util.make_ellipses(xp,yp,wp,hp,**kwargs)
-        self._ax1.add_collection(pcollection)
+        c = self._ax1.add_collection(pcollection)
         
         if layer:
             ellipse_set_name = layer
@@ -761,7 +752,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._ellipse_counter += 1
             ellipse_set_name = 'ellipse_set_'+str(self._ellipse_counter)
         
-        self._name_empty_layers(ellipse_set_name)
+        self._layers[ellipse_set_name] = c
         
         self.refresh()
     
@@ -807,8 +798,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         if layer:
             self.remove_layer(layer,raise_exception=False)
         
-        self._name_empty_layers('user')
-        
         xp,yp = wcs_util.world2pix(self._wcs,xw,yw)
         wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
         hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
@@ -822,7 +811,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             hp = hp*general_array
         
         pcollection = shape_util.make_rectangles(xp,yp,wp,hp,**kwargs)
-        self._ax1.add_collection(pcollection)
+        c = self._ax1.add_collection(pcollection)
         
         if layer:
             rectangle_set_name = layer
@@ -830,7 +819,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._rectangle_counter += 1
             rectangle_set_name = 'rectangle_set_'+str(self._rectangle_counter)
         
-        self._name_empty_layers(rectangle_set_name)
+        self._layers[rectangle_set_name] = c
         
         self.refresh()
     
