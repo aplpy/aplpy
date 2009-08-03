@@ -582,7 +582,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             
             *layer*: [ string ]
                 The name of the scatter layer. This is useful for giving
-                custom names to layers (instead of markers_set_n) and for
+                custom names to layers (instead of marker_set_n) and for
                 replacing existing layers.
             
             Any additional keyword arguments will be passed on directly to
@@ -611,12 +611,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         s = self._ax1.scatter(xp,yp,**kwargs)
         
         if layer:
-            markers_set_name = layer
+            marker_set_name = layer
         else:
             self._scatter_counter += 1
-            markers_set_name = 'markers_set_'+str(self._scatter_counter)
+            marker_set_name = 'marker_set_'+str(self._scatter_counter)
         
-        self._layers[markers_set_name] = s
+        self._layers[marker_set_name] = s
         
         self.refresh()
     
