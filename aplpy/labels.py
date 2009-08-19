@@ -131,7 +131,7 @@ class Labels(object):
         if refresh:
             self.refresh()
 
-    def set_labels_latex(self, usetex, refresh=True):
+    def set_system_latex(self, usetex, refresh=True):
         """
         Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
 
@@ -153,6 +153,10 @@ class Labels(object):
 
         if refresh:
             self.refresh()
+
+    def set_labels_latex(self, usetex, refresh=True):
+        print "This method has been depracated. Please use the set_system_latex() instead"
+        return
 
     def set_tick_labels_size(self, size, refresh=True):
         print "This method has been depracated. Please use the set_tick_labels_font() instead"
