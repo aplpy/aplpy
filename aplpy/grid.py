@@ -3,7 +3,7 @@
 # To improve, create array with e.g. all declination values, insert values which occur at intersections then
 # remove all array sections with out of bounds pixel values
 
-from ticks import tick_positions
+from ticks import tick_positions, default_spacing
 import numpy as np
 from matplotlib.collections import LineCollection
 
@@ -163,7 +163,7 @@ class Grid(object):
 ##########################################################
 
 def generate_grid(ax):
-    
+        
     if ax.apl_show_grid:
         
         wcs = ax.apl_wcs
@@ -171,12 +171,12 @@ def generate_grid(ax):
         polygons_out = []
         
         if ax.xaxis.apl_auto_grid_spacing:
-            xspacing = ax.xaxis.apl_tick_spacing.todegrees()
+            xspacing = default_spacing(ax,'x').todegrees()
         else:
             xspacing = ax.xaxis.apl_grid_spacing.todegrees()
         
         if ax.yaxis.apl_auto_grid_spacing:
-            yspacing = ax.yaxis.apl_tick_spacing.todegrees()
+            yspacing = default_spacing(ax,'y').todegrees()
         else:
             yspacing = ax.yaxis.apl_grid_spacing.todegrees()
         

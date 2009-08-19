@@ -4,32 +4,12 @@ import os
 try:
     import matplotlib
     import matplotlib.pyplot as mpl
-except ImportError:
-    raise Exception("matplotlib is required for APLpy")
-
-if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('0.98.5.2'):
-    print '''
-WARNING : matplotlib >= 0.98.5.2 is recommended for APLpy. Previous
-          versions of matplotlib contain bugs which may affect APLpy.
-          This is just a warning, and you may continue to use APLpy.
-          '''
-
-try:
-    # this requires at least revision 7084 of matplotlib toolkits
     import mpl_toolkits.axes_grid.parasite_axes as mpltk
-    # hardcode as False for the moment
-    axesgrid = True
 except ImportError:
-    axesgrid = False
+    raise Exception("matplotlib 0.99.0 or later is required for APLpy")
 
-if axesgrid:
-    print '''
-WARNING: you appear to be using the svn version of matplotlib. Some features
-         are only enabled with this version, but you need to make sure that
-         you are using at least revision 7097 of matplotlib (Friday 8th May
-         2009), or you may encounter problems (note that this warning will
-         appear even if you do have the latest version).
-'''
+if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('0.99.0'):
+    raise Exception("matplotlib 0.99.0 or later is required for APLpy")
 
 try:
     import pyfits
@@ -41,9 +21,13 @@ try:
 except ImportError:
     raise Exception("pywcs is required for APLpy")
 
-import contour_util
+try:
+    import numpy as np
+except ImportError:
+    raise Exception("numpy is required for APLpy")
 
-import numpy as np
+
+import contour_util
 
 import montage
 import image_util
@@ -133,35 +117,22 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._figure = figure
         else:
             self._figure = mpl.figure(**kwargs)
-        
-        if axesgrid:
-            
-            # Create first axis instance
-            if subplot:
-                self._ax1 = mpltk.HostAxes(self._figure,subplot,adjustable='datalim')
-            else:
-                self._ax1 = mpltk.SubplotHost(self._figure,1,1,1)
-            
-            self._ax1.toggle_axisline(False)
-            
-            self._figure.add_axes(self._ax1)
-            
-            # Create second axis instance
-            self._ax2 = self._ax1.twin()
-            self._ax2.set_frame_on(False)
-            
-            self._ax2.toggle_axisline(False)
-        
+                    
+        # Create first axis instance
+        if subplot:
+            self._ax1 = mpltk.HostAxes(self._figure,subplot,adjustable='datalim')
         else:
-            
-            if subplot:
-                print "WARNING: axes_grid toolkit is not installed, cannot specify subplot area"
-            
-            # Create first axis instance
-            self._ax1 = self._figure.add_subplot(111)
-            
-            # Create second axis instance
-            self._ax2 = self._ax1.figure.add_axes(self._ax1.get_position(True),frameon=False,aspect='equal')
+            self._ax1 = mpltk.SubplotHost(self._figure,1,1,1)
+        
+        self._ax1.toggle_axisline(False)
+        
+        self._figure.add_axes(self._ax1)
+        
+        # Create second axis instance
+        self._ax2 = self._ax1.twin()
+        self._ax2.set_frame_on(False)
+        
+        self._ax2.toggle_axisline(False)
         
         # Turn off autoscaling
         self._ax1.set_autoscale_on(False)
