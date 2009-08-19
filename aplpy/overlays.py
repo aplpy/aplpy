@@ -30,9 +30,11 @@ class Beam(object):
 
         self._ax1._beam = AnchoredEllipse(self._ax1.transData, \
             width=self.major, height=self.minor, angle=angle, \
-            loc=corner, pad=0.5, borderpad=0.4, frameon=frame, **kwargs)
+            loc=corner, pad=0.5, borderpad=0.4, frameon=frame)
 
         self._ax1.add_artist(self._ax1._beam)
+
+        self._ax1._beam.ellipse.set(**kwargs)
 
         self.refresh()
 
@@ -46,6 +48,6 @@ class Beam(object):
 
     def set_beam_properties(self, refresh=True, **kwargs):
 
-        self._ax1._beam.set(**kwargs)
+        self._ax1._beam.ellipse.set(**kwargs)
         if refresh:
             self.refresh()
