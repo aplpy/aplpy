@@ -117,7 +117,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             self._figure = figure
         else:
             self._figure = mpl.figure(**kwargs)
-                    
+        
         # Create first axis instance
         if subplot:
             self._ax1 = mpltk.HostAxes(self._figure,subplot,adjustable='datalim')
@@ -253,6 +253,13 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             dy_pix = height / degperpix / 2.
         else:
             raise Exception("Need to specify either radius= or width= and height= arguments")
+        
+        if xpix + dx_pix < self._extent[0] or \
+           xpix - dx_pix > self._extent[1] or \
+           ypix + dy_pix < self._extent[2] or \
+           ypix - dy_pix > self._extent[3]:
+            
+            raise Exception("Zoom region falls outside the image")
         
         self._ax1.set_xlim(xpix-dx_pix,xpix+dx_pix)
         self._ax1.set_ylim(ypix-dy_pix,ypix+dy_pix)
