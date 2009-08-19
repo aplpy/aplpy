@@ -918,3 +918,38 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                 self._ax1.spines[key].set_edgecolor(color)
         
         if refresh: self.refresh()
+    
+    def world2pixel(self,xw,yw):
+        '''
+        Convert world to pixel coordinates
+        
+        Required arguments:
+            
+            *xw*: [ scalar | list | numpy array ]
+                x world coordinate
+            
+            *yw*: [ scalar | list | numpy array ]
+                y world coordinate
+        
+        Returns the pixel coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
+        '''
+        
+        return wcs_util.world2pix(self._wcs,xw,yw)
+    
+    def pixel2world(self,xp,yp):
+        '''
+        Convert pixel to world coordinates
+        
+        Required arguments:
+            
+            *xp*: [ scalar | list | numpy array ]
+                x pixel coordinate
+            
+            *yp*: [ scalar | list | numpy array ]
+                y pixel coordinate
+        
+        Returns the world coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
+        '''
+        
+        return wcs_util.pix2world(self._wcs,xp,yp)
+        
