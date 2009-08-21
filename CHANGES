@@ -1,6 +1,55 @@
 CHANGES
 --------
 
+Version 0.9.4
+
+    Important changes
+    ~~~~~~~~~~~~~~~~~
+
+    Matplotlib 0.99 is now required for APLpy
+
+    New Features
+    ~~~~~~~~~~~~
+
+    - methods such as show_contour, show_markers, etc. now return the
+      instance reference if required
+      
+    - added a method to retrieve the instance of a specific layer:
+        -> get_layer()
+
+    - ability to show the beam for the observations:
+        -> show_beam()
+        -> hide_beam()
+        -> set_beam_properties()
+      
+    - added the ability to show/hide only the x or y axis/tick labels:
+        -> show_xtick_labels()
+        -> hide_xtick_labels()
+        -> show_ytick_labels()
+        -> hide_ytick_labels()
+        -> show_xaxis_labels()
+        -> hide_xaxis_labels()
+        -> show_yaxis_labels()
+        -> hide_yaxis_labels()
+        
+    - convenience functions for world to pixel and pixel to world
+      conversion:
+        -> world2pixel()
+        -> pixel2world()
+      
+    API changes
+    ~~~~~~~~~~~
+
+    - set_labels_latex() is now set_system_latex()
+  
+    Bug fixes
+    ~~~~~~~~~
+
+    - fixed an issue which caused RGB FITS cubes to be 64-bit
+    
+    - fixed a bug which meant that the coordinate grid was not updated
+      immediately during pan and zoom
+
 Version 0.9.3
 
     New Features
