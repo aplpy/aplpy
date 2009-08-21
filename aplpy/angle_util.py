@@ -154,8 +154,10 @@ class Angle(object):
              pos = format.find('.')
              nd = len(format[pos+1:])
              r = r + nd/100.
-        if 'mm' in format: r = 2
-        if 'ss' in format: r = 3
+        if 'mm' in format:
+             r = 2
+        if 'ss' in format:
+             r = 3
         if '.s' in format:
              r = 4
              pos = format.find('.')

@@ -90,9 +90,12 @@ class Labels(object):
                 For non-interactive uses, this can be set to False.
         '''
 
-        if xformat: self._ax1.xaxis.apl_label_form = xformat
-        if yformat: self._ax1.yaxis.apl_label_form = yformat
-        if refresh: self.refresh()
+        if xformat:
+            self._ax1.xaxis.apl_label_form = xformat
+        if yformat:
+            self._ax1.yaxis.apl_label_form = yformat
+        if refresh:
+            self.refresh()
 
     def set_tick_labels_style(self,style,refresh=True):
         """
@@ -562,7 +565,8 @@ class WCSFormatter(mpl.Formatter):
         ipos = math_util.minloc(np.abs(self.axis.apl_tick_positions_pix-x))
 
         label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
-        if hours: label = label.tohours()
+        if hours:
+            label = label.tohours()
         label = label.tostringlist(format=self.axis.apl_label_form,sep=sep)
 
         if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
@@ -573,7 +577,8 @@ class WCSFormatter(mpl.Formatter):
         if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix)-1:
 
             comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
-            if hours: comp_label = comp_label.tohours()
+            if hours:
+                comp_label = comp_label.tohours()
             comp_label = comp_label.tostringlist(format=self.axis.apl_label_form,sep=sep)
 
             for iter in range(len(label)):
