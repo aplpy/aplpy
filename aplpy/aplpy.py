@@ -785,10 +785,32 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
         self.refresh(force=False)
 
     def set_auto_refresh(self, refresh):
+        '''
+        Set whether the display should refresh after each method call
+
+        Required Arguments:
+
+            *refresh*: [ True | False ]
+                Whether to refresh the display every time a FITSFigure
+                method is called. The default is True. If set to false,
+                the display can be refreshed manually using the refresh()
+                method
+        '''
         self.auto_refresh = refresh
         self.refresh(force=False)
 
     def refresh(self, force=True):
+        '''
+        Refresh the display
+
+        Optional Keyword Arguments:
+
+            *force*: [ True | False ]
+                If set to False, refresh() will only have an effect if
+                auto refresh is on. If set to True, the display will be
+                refreshed whatever the auto refresh setting is set to.
+                The default is True.
+        '''
         if self.auto_refresh or force:
             self._figure.canvas.draw()
 
