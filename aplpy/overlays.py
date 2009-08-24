@@ -45,10 +45,10 @@ class Beam(object):
 
             Additional keyword arguments can be used to control the appearance
             of the beam, which is an instance of the matplotlib Ellipse class.
-            For more information on available arguments, see `Ellipse 
+            For more information on available arguments, see `Ellipse
             <http://matplotlib.sourceforge.net/api/artist_api.html
             #matplotlib.patches.Ellipse>`_.
-                   
+
         '''
 
         if type(major) == str:
@@ -94,12 +94,12 @@ class Beam(object):
     def set_beam_properties(self, **kwargs):
         '''
         Modify the beam properties
-        
+
         All arguments are passed to the beam, which is an instance of the
         matplotlib Ellipse class. For more information on available arguments,
         see `Ellipse <http://matplotlib.sourceforge.net/api/artist_api.html
         #matplotlib.patches.Ellipse>`_.
         '''
-        
+
         self._ax1._beam.ellipse.set(**kwargs)
         self.refresh(force=False)

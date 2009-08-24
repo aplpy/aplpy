@@ -1,8 +1,8 @@
 
-def ds9(self,regionfile):
+def ds9(self, regionfile):
     
     reg = ds9.RegionFile()
-    reg.parse(regionfile,wcs)
+    reg.parse(regionfile, wcs)
     
     for p in reg.plot():
         self._ax1.add_patch(p)
@@ -13,11 +13,11 @@ import numpy as np
 from ds9_util import *
 
 def ds9type(line):
-    return line.replace("# ","")
+    return line.replace("# ", "")
 
 class RegionFile(object):
     
-    ds9Dict = {'box':'',}
+    ds9Dict = {'box':'', }
     
     """
     This class parses DS9 region files. This is used
@@ -29,7 +29,7 @@ class RegionFile(object):
     
     def parse(self, fileName, wcs):
         try:
-            f = open(fileName,'r')
+            f = open(fileName, 'r')
             self.file = f.read().splitlines()
             f.close()
         except:
@@ -50,7 +50,7 @@ class RegionFile(object):
             
             line_prefix = line[:p1]
             line_coords = line[p1+1:p2]
-            line_format = line[p2:].replace("# ","")
+            line_format = line[p2:].replace("# ", "")
             line_format = line_format[2:]
             format = line_format.split(" ")
             
@@ -69,25 +69,25 @@ class RegionFile(object):
                     if arr[1] == "1": shape['ls'] = "dashed"
             shape['type'] = ds9type(line_prefix)
             shape['coord_sys'] = self.coord_sys
-            coords = line_coords.split(",")
+            coords = line_coords.split(", ")
             
             if shape['type'] == 'circle':
                 shape['x'] = float(coords[0])
                 shape['y'] = float(coords[1])
-                shape['radius'] = float(coords[2].replace('"',''))
+                shape['radius'] = float(coords[2].replace('"', ''))
             elif shape['type'] == 'box':
                 shape['x'] = float(coords[0])
                 shape['y'] = float(coords[1])
-                shape['width'] = float(coords[2].replace('"',''))
-                shape['height'] = float(coords[3].replace('"',''))
+                shape['width'] = float(coords[2].replace('"', ''))
+                shape['height'] = float(coords[3].replace('"', ''))
                 shape['angle'] = float(coords[4])
             elif shape['type'] == 'line':
-                shape['x'] = [float(coords[0]),float(coords[2])]
-                shape['y'] = [float(coords[1]),float(coords[3])]
+                shape['x'] = [float(coords[0]), float(coords[2])]
+                shape['y'] = [float(coords[1]), float(coords[3])]
             elif shape['type'] == 'polygon':
-                vertices = np.array(coords,float)
+                vertices = np.array(coords, float)
                 n = vertices.size / 2
-                vertices = vertices.reshape((2,n),order='F')
+                vertices = vertices.reshape((2, n), order='F')
                 shape['v'] = vertices.tolist()
             
             self.shapes.append(shape)
@@ -99,13 +99,13 @@ class RegionFile(object):
         for shape in self.shapes:
             
             if shape['type'] == 'circle':
-                shape = dict2pix(shape,self._wcs)
+                shape = dict2pix(shape, self._wcs)
                 patches.append(circle_patch(**shape))
             elif shape['type'] == 'box':
-                shape = dict2pix(shape,self._wcs)
+                shape = dict2pix(shape, self._wcs)
                 patches.append(box_patch(**shape))
             elif shape['type'] == 'line':
-                shape = dict2pix(shape,self._wcs)
+                shape = dict2pix(shape, self._wcs)
                 patches.append(line_patch(**shape))
         
         return patches
