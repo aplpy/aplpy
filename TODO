@@ -1,12 +1,4 @@
-Here is a list, in no specific order, of planned improvements to APLpy
+For information on planned features and fixes, see the Trac site at:
 
-    Ability to plot a scale bar to show angular or physical sizes
+    http://sourceforge.net/apps/trac/aplpy/report/6
 
-    Ability to plot a compass to show the North and East directions
-
-    Ability to plot a gray/colorscale wedge
-
-    Ability to read in and plot positions from VO, FITS, IPAC, and ASCII
-    tables
-
-    Integration with SAMP-enabled applications
