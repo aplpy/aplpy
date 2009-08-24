@@ -37,6 +37,12 @@ Version 0.9.4
         -> world2pixel()
         -> pixel2world()
       
+    - added a convention= argument to FITSFigure() and show_contour(). This is
+      to be used in cases where the WCS interpretation is ambiguous. For
+      example, a -CAR projection with CRVAL2<>0 can be interpreted in two
+      different ways. If an ambiguous case pops up, APLpy will raise an
+      exception and ask for the convention to be specified.
+      
     API changes
     ~~~~~~~~~~~
 
