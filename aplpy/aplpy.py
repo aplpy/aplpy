@@ -42,11 +42,12 @@ from ticks import Ticks
 from labels import Labels
 from overlays import Beam
 
+
 class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
 
     "A class for plotting FITS files."
 
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -85,6 +86,12 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
                 Whether to rotate the image so that the North Celestial
                 Pole is up. Note that this option requires Montage to be
                 installed.
+                
+            *convention*: [ string ]
+                This is used in cases where a FITS header can be interpreted
+                in multiple ways. For example, for files with a -CAR
+                projection and CRVAL2=0, this can be set to 'wells' or
+                'calabretta' to choose the appropriate convention.
 
         Any additional arguments are passed on to matplotlib's Figure() class.
         For example, to set the figure size, use the figsize=(xsize, ysize)
@@ -103,7 +110,8 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
         if north and not montage._installed():
             raise Exception("Montage needs to be installed and in the $PATH in order to use the north= option")
 
-        self._hdu, self._wcs = self._get_hdu(data, hdu, north)
+        self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
+            convention=convention)
 
         # Downsample if requested
         if downsample:
@@ -169,7 +177,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
 
         self.set_auto_refresh(True)
 
-    def _get_hdu(self, data, hdu, north):
+    def _get_hdu(self, data, hdu, north, convention=None):
 
         if type(data) == str:
 
@@ -202,7 +210,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
             hdu = montage.reproject_north(hdu)
 
         # Check header
-        hdu.header = header.check(hdu.header)
+        hdu.header = header.check(hdu.header, convention=convention)
 
         # Parse WCS info
         try:
@@ -447,7 +455,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
 
         self.refresh(force=False)
 
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, **kwargs):
+    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, **kwargs):
         '''
         Overlay contours on the current plot
 
@@ -488,6 +496,12 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
             *returnlevels*: [ True | False ]
                 Whether to return the list of contours to the caller.
 
+            *convention*: [ string ]
+                This is used in cases where a FITS header can be interpreted
+                in multiple ways. For example, for files with a -CAR
+                projection and CRVAL2=0, this can be set to 'wells' or
+                'calabretta' to choose the appropriate convention.
+
             Additional keyword arguments (such as alpha, linewidths, or
             linestyles) will be passed on directly to matplotlib's contour or
             contourf methods. For more information on these additional
@@ -506,7 +520,8 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
         elif not colors:
             cmap = mpl.cm.get_cmap('jet', 1000)
 
-        hdu_contour, wcs_contour = self._get_hdu(data, hdu, False)
+        hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
+            convention=convention)
 
         image_contour = hdu_contour.data
         extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
