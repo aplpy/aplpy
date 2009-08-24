@@ -150,6 +150,8 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
         # Store WCS in axes
         self._ax1.apl_wcs = self._wcs
         self._ax2.apl_wcs = self._wcs
+        
+        self._ax1.format_coord = self.cursor_position
 
         # Set view to whole FITS file
         self._initialize_view()

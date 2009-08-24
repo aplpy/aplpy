@@ -4,6 +4,7 @@ import numpy as np
 import string
 import math_util
 from matplotlib.font_manager import FontProperties
+import angle_util as au
 
 
 class Labels(object):
@@ -186,9 +187,12 @@ class Labels(object):
 
         """
 
-        if size: self.tick_font.set_size(size)
-        if weight: self.tick_font.set_weight(weight)
-        if family: self.tick_font.set_family(family)
+        if size:
+            self.tick_font.set_size(size)
+        if weight:
+            self.tick_font.set_weight(weight)
+        if family:
+            self.tick_font.set_family(family)
 
         self._update_tick_font()
 
@@ -360,9 +364,12 @@ class Labels(object):
 
         """
 
-        if size: self.axes_font.set_size(size)
-        if weight: self.axes_font.set_weight(weight)
-        if family: self.axes_font.set_family(family)
+        if size:
+            self.axes_font.set_size(size)
+        if weight:
+            self.axes_font.set_weight(weight)
+        if family:
+            self.axes_font.set_family(family)
 
         self._update_axes_font()
 
@@ -437,6 +444,42 @@ class Labels(object):
         self.xlabel.set_fontproperties(self.axes_font)
         self.ylabel.set_fontproperties(self.axes_font)
 
+    def cursor_position(self, x, y):
+
+        xaxis = self._ax1.xaxis
+        yaxis = self._ax1.yaxis
+
+        xw, yw = self.pixel2world(x, y)
+
+        xw = au.Angle(degrees=xw, latitude=False)
+        yw = au.Angle(degrees=yw, latitude=True)
+
+        hours = 'h' in xaxis.apl_label_form
+
+        if hours:
+            xw = xw.tohours()
+
+        if xaxis.apl_labels_style in ['plain', 'latex']:
+            sep = ('d', 'm', 's')
+            if hours:
+                sep = ('h', 'm', 's')
+        elif xaxis.apl_labels_style == 'colons':
+            sep = (':', ':', '')
+
+        xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
+
+        if yaxis.apl_labels_style in ['plain', 'latex']:
+            sep = ('d', 'm', 's')
+            if hours:
+                sep = ('h', 'm', 's')
+        elif yaxis.apl_labels_style == 'colons':
+            sep = (':', ':', '')
+
+        ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
+
+        return string.join(xlabel, "") + " " + string.join(ylabel, "")
+
+
 class WCSFormatter(mpl.Formatter):
 
     def __init__(self, wcs=False, coord='x'):
@@ -450,7 +493,8 @@ class WCSFormatter(mpl.Formatter):
 
         if self.axis.apl_labels_style == 'plain':
             sep = ('d', 'm', 's')
-            if hours: sep = ('h', 'm', 's')
+            if hours:
+                sep = ('h', 'm', 's')
         elif self.axis.apl_labels_style == 'colons':
             sep = (':', ':', '')
         elif self.axis.apl_labels_style == 'latex':
@@ -458,9 +502,6 @@ class WCSFormatter(mpl.Formatter):
                 sep = ('^{h}', '^{m}', '^{s}')
             else:
                 sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
-
-        ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
-        xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
 
         ipos = math_util.minloc(np.abs(self.axis.apl_tick_positions_pix-x))
 
