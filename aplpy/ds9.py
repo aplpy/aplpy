@@ -7,7 +7,7 @@ def ds9(self,regionfile):
     for p in reg.plot():
         self._ax1.add_patch(p)
     
-    self.refresh()
+    self.refresh(force=False)
 
 import numpy as np
 from ds9_util import *

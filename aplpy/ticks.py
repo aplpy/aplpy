@@ -15,8 +15,8 @@ class Ticks(object):
         self._ax2.xaxis.tick_top()
         
         # Set tick spacing to default
-        self.set_tick_xspacing('auto',refresh=False)
-        self.set_tick_yspacing('auto',refresh=False)
+        self.set_tick_xspacing('auto')
+        self.set_tick_yspacing('auto')
         
         # Set major tick locators
         lx = WCSLocator(wcs=self._wcs,coord='x')
@@ -29,7 +29,7 @@ class Ticks(object):
         lyt = WCSLocator(wcs=self._wcs,coord='y',farside=True)
         self._ax2.yaxis.set_major_locator(lyt)
     
-    def set_tick_xspacing(self,xspacing,refresh=True):
+    def set_tick_xspacing(self,xspacing):
         '''
         Set the x-axis tick spacing
         
@@ -38,13 +38,6 @@ class Ticks(object):
             *xspacing*: [ float | 'auto' ]
                 The spacing of the ticks on the x-axis, in degrees. To set
                 the tick spacing to be automatically determined, set this to 'auto'
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        
         '''
         
         if xspacing == 'auto':
@@ -56,11 +49,10 @@ class Ticks(object):
             self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
             self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
         
-        if refresh:
-            self._update_grid()
-            self.refresh()
+        self._update_grid()
+        self.refresh(force=False)
     
-    def set_tick_yspacing(self,yspacing,refresh=True):
+    def set_tick_yspacing(self,yspacing):
         '''
         Set the y-axis tick spacing
         
@@ -69,12 +61,6 @@ class Ticks(object):
             *yspacing*: [ float | 'auto' ]
                 The spacing of the ticks on the y-axis, in degrees. To set
                 the tick spacing to be automatically determined, set this to 'auto'
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
         '''
         
         if yspacing == 'auto':
@@ -86,11 +72,10 @@ class Ticks(object):
             self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
             self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
         
-        if refresh:
-            self._update_grid()
-            self.refresh()
+        self._update_grid()
+        self.refresh(force=False)
     
-    def set_tick_color(self,color,refresh=True):
+    def set_tick_color(self,color):
         '''
         Set the tick color
         
@@ -98,12 +83,6 @@ class Ticks(object):
             
             *color*: [ string ]
                 The color of the ticks
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
         '''
         
         for line in self._ax1.xaxis.get_ticklines():
@@ -115,9 +94,9 @@ class Ticks(object):
         for line in self._ax2.yaxis.get_ticklines():
             line.set_color(color)
         
-        if refresh: self.refresh()
+        self.refresh(force=False)
     
-    def set_tick_size(self,size,refresh=True):
+    def set_tick_size(self,size):
         '''
         Set the tick size
         
@@ -125,12 +104,6 @@ class Ticks(object):
             
             *size*: [ float ]
                 The size of the ticks (in points)
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
         '''
         
         for line in self._ax1.xaxis.get_ticklines():
@@ -142,7 +115,7 @@ class Ticks(object):
         for line in self._ax2.yaxis.get_ticklines():
             line.set_markersize(size)
         
-        if refresh: self.refresh()
+        self.refresh(force=False)
 
 class WCSLocator(Locator):
     

@@ -85,7 +85,7 @@ class Layers(object):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
         
-        self.refresh()
+        self.refresh(force=False)
     
     def hide_layer(self,layer,raise_exception=True):
         '''
@@ -114,7 +114,7 @@ class Layers(object):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
         
-        self.refresh()
+        self.refresh(force=False)
     
     def show_layer(self,layer,raise_exception=True):
         '''
@@ -141,7 +141,7 @@ class Layers(object):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
         
-        self.refresh()
+        self.refresh(force=False)
     
     def get_layer(self,layer):
         '''

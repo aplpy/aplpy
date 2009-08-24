@@ -75,7 +75,7 @@ class Beam(object):
 
         self._ax1._beam.ellipse.set(**kwargs)
 
-        self.refresh()
+        self.refresh(force=False)
 
     def hide_beam(self):
         '''
@@ -86,10 +86,9 @@ class Beam(object):
         except:
             pass
 
-        self.refresh()
+        self.refresh(force=False)
 
     def set_beam_properties(self, refresh=True, **kwargs):
 
         self._ax1._beam.ellipse.set(**kwargs)
-        if refresh:
-            self.refresh()
+        self.refresh(force=False)

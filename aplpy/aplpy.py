@@ -96,6 +96,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         '''
         
+        self.set_auto_refresh(False)
+        
         if not kwargs.has_key('figsize'):
             kwargs['figsize'] = (10,9)
         
@@ -145,11 +147,11 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         # Set view to whole FITS file
         self._initialize_view()
         
-        # Initialize ticks
-        self._initialize_ticks()
-        
         # Initialize grid
         self._initialize_grid()
+        
+        # Initialize ticks
+        self._initialize_ticks()
         
         # Initialize labels
         self._initialize_labels()
@@ -164,7 +166,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         self.image = None
         
         # Set default theme
-        self.set_theme(theme='pretty',refresh=False)
+        self.set_theme(theme='pretty')
+        
+        self.set_auto_refresh(True)
     
     def _get_hdu(self,data,hdu,north):
         
@@ -209,7 +213,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         return hdu,wcs
     
-    def recenter(self,x,y,radius=None,width=None,height=None,refresh=True):
+    def recenter(self,x,y,radius=None,width=None,height=None):
         '''
         Center the image on a given position and with a given radius
         
@@ -235,10 +239,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             *height*: [ float ]
                 Height of the region to view (degrees). This should be given in
                 conjunction with the width argument.
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
         '''
         
         xpix,ypix = wcs_util.world2pix(self._wcs,x,y)
@@ -264,7 +264,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         self._ax1.set_xlim(xpix-dx_pix,xpix+dx_pix)
         self._ax1.set_ylim(ypix-dy_pix,ypix+dy_pix)
         
-        if refresh: self.refresh()
+        self.refresh(force=False)
     
     def show_grayscale(self,vmin=None,vmid=None,vmax=None, \
                             pmin=0.25,pmax=99.75, \
@@ -416,11 +416,11 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         ymin,ymax = self._ax1.get_ybound()
         if ymin == 0.0: self._ax1.set_ylim(0.5,ymax)
         
-        self.refresh()
+        self.refresh(force=False)
     
     def hide_colorscale(self):
         self.image.set_visible(False)
-        self.refresh()
+        self.refresh(force=False)
     
     def show_rgb(self,filename,interpolation='nearest',flip=False):
         '''
@@ -437,7 +437,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             *flip*: [ True | False ]
                 Whether to vertically flip the RGB image in case it is the
                 wrong way around.
-        
         '''
         
         img = mpl.imread(filename)
@@ -446,7 +445,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             img = np.flipud(img)
         
         self.image = self._ax1.imshow(img,extent=self._extent,interpolation=interpolation,origin='upper')
-        self.refresh()
+        
+        self.refresh(force=False)
     
     def show_contour(self,data,hdu=0,layer=None,levels=5,filled=False,cmap=None,colors=None,returnlevels=False,**kwargs):
         '''
@@ -500,7 +500,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             
             .. _contour: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.contour
             .. _contourf: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.contourf`
-        
         '''
         if layer:
             self.remove_layer(layer,raise_exception=False)
@@ -536,7 +535,8 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         self._layers[contour_set_name] = c
         
-        self.refresh()
+        self.refresh(force=False)
+        
         
         if returnlevels:
             return levels
@@ -573,7 +573,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             scatter_.
             
             .. _scatter: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.scatter
-        
         '''
         
         if not kwargs.has_key('c'):
@@ -596,7 +595,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         self._layers[marker_set_name] = s
         
-        self.refresh()
+        self.refresh(force=False)
     
     # Show circles. Different from markers as this method allows more definitions
     # for the circles.
@@ -631,7 +630,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                 matplotlib documation at the following link.
                 
                 http://matplotlib.sourceforge.net/api/artist_api.html?highlight=circle#matplotlib.patches.Circle
-            
             '''
         
         if not kwargs.has_key('facecolor'):
@@ -661,7 +659,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         self._layers[circle_set_name] = c
         
-        self.refresh()
+        self.refresh(force=False)
     
     def show_ellipses(self,xw,yw,width,height,layer=False,**kwargs):
         '''
@@ -732,7 +730,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         self._layers[ellipse_set_name] = c
         
-        self.refresh()
+        self.refresh(force=False)
     
     def show_rectangles(self,xw,yw,width,height,layer=False,**kwargs):
         '''
@@ -799,10 +797,15 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         
         self._layers[rectangle_set_name] = c
         
-        self.refresh()
+        self.refresh(force=False)
     
-    def refresh(self):
-        self._figure.canvas.draw()
+    def set_auto_refresh(self,refresh):
+        self.auto_refresh = refresh
+        self.refresh(force=False)
+    
+    def refresh(self,force=True):
+        if self.auto_refresh or force:
+            self._figure.canvas.draw()
     
     def save(self,filename,dpi=None,transparent=False):
         '''
@@ -853,7 +856,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
     def _get_colormap_default(self):
         return self._figure.apl_colorscale_cmap_default
     
-    def set_theme(self,theme,refresh=True):
+    def set_theme(self,theme):
         '''
         Set the axes, ticks, grid, and image colors to a certain style (experimental)
         
@@ -863,18 +866,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                 The theme to use. At the moment, this can be 'pretty' (for
                 viewing on-screen) and 'publication' (which makes the ticks
                 and grid black, and displays the image in inverted grayscale)
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
-        '''
+       '''
         
         if theme=='pretty':
-            self.set_frame_color('white',refresh=False)
-            self.set_tick_color('white',refresh=False)
-            self.set_tick_size(7,refresh=False)
+            self.set_frame_color('white')
+            self.set_tick_color('white')
+            self.set_tick_size(7)
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default  = 'jet'
             self.set_grid_color('white')
@@ -882,9 +879,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('jet',1000))
         elif theme=='publication':
-            self.set_frame_color('black',refresh=False)
-            self.set_tick_color('black',refresh=False)
-            self.set_tick_size(7,refresh=False)
+            self.set_frame_color('black')
+            self.set_tick_color('black')
+            self.set_tick_size(7)
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default  = 'gist_heat'
             self.set_grid_color('black')
@@ -892,9 +889,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg',1000))
         
-        if refresh: self.refresh()
+        self.refresh(force=False)
     
-    def set_frame_color(self,color,refresh=True):
+    def set_frame_color(self,color):
         '''
         Set color of the frame
         
@@ -902,12 +899,6 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             
             *color*:
                 The color to use for the frame.
-        
-        Optional Keyword Arguments:
-            
-            *refresh*: [ True | False ]
-                Whether to refresh the display straight after setting the parameter.
-                For non-interactive uses, this can be set to False.
         '''
         
         # The matplotlib API changed in 0.98.6
@@ -917,7 +908,7 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             for key in self._ax1.spines:
                 self._ax1.spines[key].set_edgecolor(color)
         
-        if refresh: self.refresh()
+        self.refresh(force=False)
     
     def world2pixel(self,xw,yw):
         '''

@@ -6,7 +6,7 @@ def transform(contours,wcs_in,wcs_out):
     system_out,equinox_out,units_out = wcs_util.system(wcs_out)
     
     for contour in contours.collections:
-                
+        
         polygons_out = []
         for polygon in contour.get_paths():
             
