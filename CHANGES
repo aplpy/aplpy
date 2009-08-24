@@ -42,7 +42,7 @@ Version 0.9.4
       example, a -CAR projection with CRVAL2<>0 can be interpreted in two
       different ways. If an ambiguous case pops up, APLpy will raise an
       exception and ask for the convention to be specified.
-      
+
     API changes
     ~~~~~~~~~~~
 
@@ -51,6 +51,9 @@ Version 0.9.4
     Bug fixes
     ~~~~~~~~~
 
+    - the current position of the cursor in world coordinates is now correctly
+      shown in interactive mode
+      
     - fixed an issue which caused RGB FITS cubes to be 64-bit
     
     - fixed a bug which meant that the coordinate grid was not updated
