@@ -2,9 +2,6 @@ Here is a list, in no specific order, of planned improvements to APLpy
 
     Ability to plot a scale bar to show angular or physical sizes
 
-    Ability to plot an elliptical beam, for example for interferometric
-    observations
-
     Ability to plot a compass to show the North and East directions
 
     Ability to plot a gray/colorscale wedge
