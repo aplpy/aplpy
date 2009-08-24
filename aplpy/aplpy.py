@@ -90,10 +90,9 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
         For example, to set the figure size, use the figsize=(xsize,ysize)
         argument (where xsize and ysize are in inches). For more information
         on these additional arguments, see the *Optional keyword arguments*
-        section in the documentation for Figure_
-        
-        .. _Figure: http://matplotlib.sourceforge.net/api/figure_api.html?#matplotlib.figure.Figure
-        
+        section in the documentation for `Figure
+        <http://matplotlib.sourceforge.net/api/figure_api.html?
+        #matplotlib.figure.Figure>`_
         '''
         
         self.set_auto_refresh(False)
@@ -489,17 +488,15 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
             *returnlevels*: [ True | False ]
                 Whether to return the list of contours to the caller.
             
-            Any additional keyword arguments will be passed on directly to
-            matplotlib's contour or contourf methods. This includes for
-            example the alpha, linewidths, and linestyles arguments which
-            can be used to further control the appearance of the contours.
-            
-            For more information on these additional arguments, see the
-            *Optional keyword arguments* sections in the documentation for
-            contour_ and contourf_.
-            
-            .. _contour: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.contour
-            .. _contourf: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.contourf`
+            Additional keyword arguments (such as alpha, linewidths, or
+            linestyles) will be passed on directly to matplotlib's contour or
+            contourf methods. For more information on these additional
+            arguments, see the *Optional keyword arguments* sections in the
+            documentation for `contour
+            <http://matplotlib.sourceforge.net/api/axes_api.html?
+            #matplotlib.axes.Axes.contour>`_ and `contourf
+            <http://matplotlib.sourceforge.net/api/axes_api.html?
+            #matplotlib.axes.Axes.contourf>`_.
         '''
         if layer:
             self.remove_layer(layer,raise_exception=False)
@@ -562,17 +559,14 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                 The name of the scatter layer. This is useful for giving
                 custom names to layers (instead of marker_set_n) and for
                 replacing existing layers.
+        
+        Additional keyword arguments (such as marker, facecolor, edgecolor,
+        alpha, or linewidth) will be passed on directly to matplotlib's
+        scatter method. For more information on these additional arguments,
+        see the *Optional keyword arguments* sections in the documentation for
+        `scatter <http://matplotlib.sourceforge.net/api/
+        axes_api.html?#matplotlib.axes.Axes.scatter>`_.
             
-            Any additional keyword arguments will be passed on directly to
-            matplotlib's scatter method. This includes for example the marker,
-            alpha, edgecolor, and facecolor arguments which can be used to
-            further control the appearance of the markers.
-            
-            For more information on these additional arguments, see the
-            *Optional keyword arguments* sections in the documentation for
-            scatter_.
-            
-            .. _scatter: http://matplotlib.sourceforge.net/api/axes_api.html?#matplotlib.axes.Axes.scatter
         '''
         
         if not kwargs.has_key('c'):
@@ -621,15 +615,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                     custom names to layers (instead of circle_set_n) and for
                     replacing existing layers.
                 
-                Any additional keyword arguments will be passed on directly to
-                matplotlib's Circle method. This includes for example the fill,
-                alpha, edgecolor, and facecolor arguments which can be used to
-                further control the appearance of the markers.
-                
-                For more information on these additional arguments, see the
-                matplotlib documation at the following link.
-                
-                http://matplotlib.sourceforge.net/api/artist_api.html?highlight=circle#matplotlib.patches.Circle
+            Additional keyword arguments (such as facecolor, edgecolor, alpha,
+            or linewidth) can be used to control the appearance of the
+            circles, which are instances of the matplotlib Circle class. For
+            more information on available arguments, see `Circle
+            <http://matplotlib.sourceforge.net/api/
+            artist_api.html#matplotlib.patches.Circle>`_.
             '''
         
         if not kwargs.has_key('facecolor'):
@@ -690,15 +681,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                    custom names to layers (instead of ellipse_set_n) and for
                    replacing existing layers.
                
-               Any additional keyword arguments will be passed on directly to
-               matplotlib's ellipse method. This includes for example the fill,
-               alpha, edgecolor, and facecolor arguments which can be used to
-               further control the appearance of the markers.
-               
-               For more information on these additional arguments, see the
-               matplotlib documation at the following link.
-               
-               http://matplotlib.sourceforge.net/api/artist_api.html?highlight=ellipse#matplotlib.patches.Ellipse
+           Additional keyword arguments (such as facecolor, edgecolor, alpha,
+           or linewidth) can be used to control the appearance of the
+           ellipses, which are instances of the matplotlib Ellipse class. For
+           more information on available arguments, see `Ellipse
+           <http://matplotlib.sourceforge.net/api/
+           artist_api.html#matplotlib.patches.Ellipse>`_.
            '''
         
         if not kwargs.has_key('facecolor'):
@@ -757,15 +745,12 @@ class FITSFigure(Layers,Grid,Ticks,Labels,Beam):
                    custom names to layers (instead of rectangle_set_n) and for
                    replacing existing layers.
                
-               Any additional keyword arguments will be passed on directly to
-               matplotlib's rectangle method. This includes for example the fill,
-               alpha, edgecolor, and facecolor arguments which can be used to
-               further control the appearance of the markers.
-               
-               For more information on these additional arguments, see the
-               matplotlib documation at the following link.
-               
-               http://matplotlib.sourceforge.net/api/artist_api.html?highlight=ellipse#matplotlib.patches.Rectangle
+           Additional keyword arguments (such as facecolor, edgecolor, alpha,
+           or linewidth) can be used to control the appearance of the
+           rectangles, which are instances of the matplotlib Rectangle class.
+           For more information on available arguments, see `Rectangle
+           <http://matplotlib.sourceforge.net/api/
+           artist_api.html#matplotlib.patches.Rectangle>`_.
            '''
         
         if not kwargs.has_key('facecolor'):

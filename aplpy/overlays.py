@@ -43,9 +43,12 @@ class Beam(object):
             *frame*: [ True | False ]
                 Whether to display a frame behind the beam (default is False)
 
-            Additional arguments can be used to control the appearance of the
-            beam (more information soon)
-
+            Additional keyword arguments can be used to control the appearance
+            of the beam, which is an instance of the matplotlib Ellipse class.
+            For more information on available arguments, see `Ellipse 
+            <http://matplotlib.sourceforge.net/api/artist_api.html
+            #matplotlib.patches.Ellipse>`_.
+                   
         '''
 
         if type(major) == str:
@@ -88,7 +91,15 @@ class Beam(object):
 
         self.refresh(force=False)
 
-    def set_beam_properties(self, refresh=True, **kwargs):
-
+    def set_beam_properties(self, **kwargs):
+        '''
+        Modify the beam properties
+        
+        All arguments are passed to the beam, which is an instance of the
+        matplotlib Ellipse class. For more information on available arguments,
+        see `Ellipse <http://matplotlib.sourceforge.net/api/artist_api.html
+        #matplotlib.patches.Ellipse>`_.
+        '''
+        
         self._ax1._beam.ellipse.set(**kwargs)
         self.refresh(force=False)
