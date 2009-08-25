@@ -12,9 +12,9 @@ Version 0.9.4
     ~~~~~~~~~~~~
 
     - methods such as show_contour, show_markers, etc. now return the
-      instance reference if required
-      
-    - added a method to retrieve the instance of a specific layer:
+      contour, marker, etc. object
+
+    - added a method to retrieve the object in a specific layer:
         -> get_layer()
 
     - ability to show the beam for the observations:
