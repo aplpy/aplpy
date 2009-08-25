@@ -923,8 +923,6 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
             *color*:
                 The color to use for the frame.
         '''
-
-        # The matplotlib API changed in 0.98.6
         try:
             self._ax1.frame.set_edgecolor(color)
         except AttributeError:
