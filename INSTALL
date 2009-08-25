@@ -1,8 +1,104 @@
 Installing APLpy
 ++++++++++++++++
 
-=======================================================================
-**Links to dependencies
+
+Installation Instructions
+=========================
+
+numpy and matplotlib
+--------------------
+
+APLpy requires numpy-1.3.0 or later, and matplotlib-0.99 or later.
+
+You can download the required packages from the numpy and matplotlib
+home pages and install these using the standard installation method,
+for example:
+
+    tar xvzf numpy-1.3.0.tar.gz 
+    cd numpy-1.3.0
+    sudo python setup.py install
+
+Be sure to install numpy before matplotlib! If you run into complications installing any of these packages you should go to the numpy and/or matplotlib mailing lists for help.
+
+
+
+pyfits
+------
+
+In order to read/write FITS files, APLpy requires pyfits-2.1 or later
+to be installed. The pyfits module is developed at the Space Telescope
+Science Institute, and the link can be found at the bottom of this
+file. Once you have the gzipped tar file downloaded, you can either
+install it using the standard installation method:
+
+    tar -xvzf pyfits-2.x.x.tar.gz 
+    cd pyfits-2.x.x 
+    sudo python setup.py install
+
+
+
+pywcs
+-----
+In order to use the World Coordinate System (WCS) information contained
+in FITS file headers, APLpy requires pywcs. The pywcs module is
+developed at the Space Telescope Science Institute, and can be
+downloaded through the link provided at the bottom. Once you have the
+tar file downloaded, you can either install it using the standard
+installation method:
+
+    tar -xvzf pywcs-1.5.x-x.x.x.tar.gz 
+    cd pywcs-1.5.x-x.x.x 
+    sudo python setup.py install
+
+
+
+Montage (optional)
+------------------
+
+Currently, two features in APLpy (re-projecting a FITS file to point
+north and making RGB images) requires Montage to be installed. Montage
+is a set of tools developed at the Infrared Processing and Analysis
+Center (IPAC) to re-project and mosaic FITS files. Installation
+instructions are available on the Montage website. Montage's URL is
+provided at the bottom of this file.
+
+
+
+APLpy
+=====
+
+New APLpy Install
+-----------------
+
+If you have easy_install installed, you can install APLpy by simply typing
+
+    easy_install aplpy
+
+Otherwise, you can install APLpy by downloading the latest available
+tar file from 
+
+http://sourceforge.net/projects/aplpy/files/
+
+and using the standard installation method:
+
+    tar -xvzf APLpy-0.9.x.tar.gz
+    cd APLpy-0.9.x sudo
+    sudo python setup.py install
+
+
+
+Updating APLpy
+--------------
+
+If you have easy_install, you can update APLpy to the latest version by
+simply typing
+
+    easy_install -U aplpy
+
+
+
+Links to dependencies
+=====================
 
     Required
 
@@ -23,114 +119,3 @@ Installing APLpy
 
     - Montage 3.0 or later
       http://montage.ipac.caltech.edu/
-
-
-=======================================================================
-**Installation Instructions
-
-*NumPy and Matplotlib
-
-APLpy requires NumPy-1.3.0 or later, and matplotlib-0.99 or later.
-There are two different ways to install these packages.
-
-You can download the required packages from the NumPy and matplotlib
-home pages, and install these using the standard installation method,
-for example:
-
-    tar xvzf NumPy-1.3.0.tar.gz 
-    cd NumPy-1.3.0 sudo
-    python setup.py install
-
-Be sure to install NumPy before Matplotlib!
-
-The second alternative, if you have easy_install installed, is:
-
-    easy_install NumPy
-    easy_install matplotlib 
-
-which will install the latest versions. Bear in mind, that some
-computers will require the sudo command before the easy_install
-command. If you run into complications installing any of these packages
-you should go to the NumPy and/or Matplotlib mailing lists for help.
-
-
------------------------------------------------------------------------
-*pyfits
-
-In order to read/write FITS files, APLpy requires pyfits-2.1 or later
-to be installed. The pyfits module is developed at the Space Telescope
-Science Institute, and the link can be found at the top of this page.
-Once you have the tar file downloaded, you can either install it using
-the standard installation method:
-
-    tar -xvzf pyfits-2.x.x.tar.gz 
-    cd pyfits-2.x.x sudo python setup.py
-    install
-
-or using easy_install:
-
-    easy_install pyfits-2.x.x.tar.gz
-
-
------------------------------------------------------------------------
-*pywcs
-
-In order to use the World Coordinate System (WCS) information contained
-in FITS file headers, APLpy requires pywcs. The pywcs module is
-developed at the Space Telescope Science Institute, and can be
-downloaded pywcs link provided at the top. Once you have the tar file
-downloaded, you can either install it using the standard installation
-method:
-
-    tar -xvzf pywcs-1.5.x-x.x.x.tar.gz 
-    cd pywcs-1.5.x-x.x.x sudo python
-    setup.py install
-
-or using easy_install:
-
-easy_install http://stsdas.stsci.edu/astrolib/pywcs-1.5.x-x.x.x.tar.gz
-
-
------------------------------------------------------------------------
-*Montage (optional)
-
-Currently, one of the features in APLpy (re-projecting a FITS file to
-point north) requires Montage to be installed. Montage is a set of
-tools developed at the Infrared Processing and Analysis Center (IPAC)
-to re-project and mosaic FITS files. If you do wish to use the north
-argument when initializing a FITSFigure instance, you will need to
-install Montage. Installation instructions are available on the Montage
-website.
-
-
-=======================================================================
-**APLpy
-
-*New APLpy Install
-
-If you have easy_install, you can install APLpy by simply typing
-
-    easy_install aplpy
-
-Otherwise, you can install APLpy by downloading the latest available
-tar file from 
-
-http://sourceforge.net/projects/aplpy/files/
-
-and using the standard installation method:
-
-    tar -xvzf APLpy-0.9.x.tar.gz
-    cd APLpy-0.9.x sudo
-    python setup.py install
-
-
------------------------------------------------------------------------
-*Updating APLpy
-
-If you have easy_install, you can update APLpy to the latest version by
-simply typing
-
-    easy_install -U aplpy
-
-Alternatively, simply follow the instructions given for installation to
-install the latest tar file manually.
