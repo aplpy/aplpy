@@ -76,7 +76,6 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
                 These should all be given in units of the figure width and
                 height. For example, [0.1, 0.1, 0.8, 0.8] will almost fill the
                 entire figure, leaving a 10 percent margin on all sides.
-                Note: this requires matplotlib 0.98.6
 
             *downsample*: [ integer ]
                 If this option is specified, the image will be downsampled
