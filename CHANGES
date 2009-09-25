@@ -1,6 +1,16 @@
 CHANGES
 --------
 
+Version 0.9.5 (in progress)
+
+    New Features
+    ~~~~~~~~~~~~
+    
+    - ability to show a scalebar for the observations:
+        -> show_scalebar()
+        -> hide_scalebar()
+        -> set_scalebar_properties()
+
 Version 0.9.4
 
     Important changes

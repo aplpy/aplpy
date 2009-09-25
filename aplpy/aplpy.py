@@ -40,10 +40,10 @@ from layers import Layers
 from grid import Grid
 from ticks import Ticks
 from labels import Labels
-from overlays import Beam
+from overlays import Beam, ScaleBar
 
 
-class FITSFigure(Layers, Grid, Ticks, Labels, Beam):
+class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar):
 
     "A class for plotting FITS files."
 
