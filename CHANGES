@@ -11,6 +11,11 @@ Version 0.9.5 (in progress)
         -> hide_scalebar()
         -> set_scalebar_properties()
 
+    Bug fixes
+    ~~~~~~~~~
+
+    - Fixed filled contours
+
 Version 0.9.4
 
     Important changes
