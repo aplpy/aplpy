@@ -85,7 +85,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar):
                 Whether to rotate the image so that the North Celestial
                 Pole is up. Note that this option requires Montage to be
                 installed.
-                
+
             *convention*: [ string ]
                 This is used in cases where a FITS header can be interpreted
                 in multiple ways. For example, for files with a -CAR
@@ -149,7 +149,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar):
         # Store WCS in axes
         self._ax1.apl_wcs = self._wcs
         self._ax2.apl_wcs = self._wcs
-        
+
         self._ax1.format_coord = self.cursor_position
 
         # Set view to whole FITS file
@@ -544,7 +544,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar):
             self._contour_counter += 1
             contour_set_name = 'contour_set_'+str(self._contour_counter)
 
-        contour_util.transform(c, wcs_contour, self._wcs)
+        contour_util.transform(c, wcs_contour, self._wcs, filled=filled)
 
         self._layers[contour_set_name] = c
 
