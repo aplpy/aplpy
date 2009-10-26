@@ -29,9 +29,12 @@ class Regions:
         Overplot regions as specified in the regionsfile
         """
 
-        PC = ds9( regionfile, self.ff._hdu.header, **kwargs)
+        PC,TC = ds9( regionfile, self.ff._hdu.header, **kwargs)
 
         ffpc = self.ff._ax1.add_collection(PC)
+        TC.add_to_axes(self.ff._ax1)
+        # for a in TC: 
+        #     self.ff._ax1.add_artist(a)
 
         if layer:
             region_set_name = layer
@@ -40,9 +43,9 @@ class Regions:
             region_set_name = 'region_set_'+str(self.ff._region_counter)
 
         self.ff._layers[region_set_name] = ffpc
+        self.ff._layers[region_set_name+"_txt"] = TC
 
         if refresh: self.ff.refresh(force=False)
-
 
 
 def ds9(regionfile, header, **kwargs):
@@ -63,7 +66,36 @@ def ds9(regionfile, header, **kwargs):
     pp,aa = rrim.get_mpl_patches_texts() 
 
     PC = matplotlib.collections.PatchCollection(pp, match_original=True)
+    #TC =  matplotlib.text.Text(aa) 
+    TC = TextCollection(aa)
 
-    return PC
+    return PC,TC
 
-class TextCollection(matplotlib.collections.Collection):
+class TextCollection():
+    """
+    Matplotlib collections can't handle Text.  
+    This is a barebones collection for text objects
+    that supports removing and making (in)visible
+    """
+    def __init__(self,textlist):
+        """
+        Pass in a list of matplotlib.text.Text objects
+        (or possibly any matplotlib Artist will work)
+        """
+        self.textlist = textlist
+        pass
+    def remove(self):
+        for T in self.textlist:
+            T.remove()
+    def add_to_axes(self,ax):
+        for T in self.textlist:
+            ax.add_artist(T)
+    def get_visible(self):
+        visible = True
+        for T in self.textlist:
+            if not T.get_visible():
+                visible = False
+        return visible
+    def set_visible(self,visible=True):
+        for T in self.textlist:
+            T.set_visible(visible)
