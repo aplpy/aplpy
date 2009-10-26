@@ -34,12 +34,12 @@ class Regions:
         ffpc = self.ff._ax1.add_collection(PC)
 
         if layer:
-            ds9_set_name = layer
+            region_set_name = layer
         else:
-            self.ff._ds9_counter += 1
-            ds9_set_name = 'ds9_set_'+str(self.ff._ds9_counter)
+            self.ff._region_counter += 1
+            region_set_name = 'region_set_'+str(self.ff._region_counter)
 
-        self.ff._layers[ds9_set_name] = ffpc
+        self.ff._layers[region_set_name] = ffpc
 
         if refresh: self.ff.refresh(force=False)
 
@@ -66,3 +66,4 @@ def ds9(regionfile, header, **kwargs):
 
     return PC
 
+class TextCollection(matplotlib.collections.Collection):

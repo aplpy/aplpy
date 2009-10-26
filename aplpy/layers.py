@@ -29,6 +29,7 @@ class Layers(object):
         self._circle_counter = 0
         self._ellipse_counter = 0
         self._rectangle_counter = 0
+        self._region_counter = 0
 
     def list_layers(self):
         '''
