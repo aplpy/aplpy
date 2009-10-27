@@ -1,7 +1,7 @@
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
-    PatchCollection, CircleCollection
-from regions import TextCollection
+    PatchCollection, CircleCollection, Collection
+from regions import ArtistCollection, PatchCollection2
 
 
 class Layers(object):
@@ -16,9 +16,13 @@ class Layers(object):
             return 'collection'
         elif isinstance(self._layers[layer], PatchCollection):
             return 'collection'
+        elif isinstance(self._layers[layer], PatchCollection2):
+            return 'collection'
         elif isinstance(self._layers[layer], CircleCollection):
             return 'collection'
-        elif isinstance(self._layers[layer], TextCollection):
+        elif isinstance(self._layers[layer], ArtistCollection):
+            return 'collection'
+        elif hasattr(self._layers[layer], 'remove'):
             return 'collection'
         else:
             raise Exception("Unknown layer type: " + \
