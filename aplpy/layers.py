@@ -22,7 +22,7 @@ class Layers(object):
             return 'collection'
         elif isinstance(self._layers[layer], ArtistCollection):
             return 'collection'
-        elif hasattr(self._layers[layer], 'remove'):
+        elif hasattr(self._layers[layer], 'remove') and hasattr(self._layers[layer], 'get_visible') and hasattr(self._layers[layer], 'set_visible'):
             return 'collection'
         else:
             raise Exception("Unknown layer type: " + \
