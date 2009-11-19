@@ -46,6 +46,10 @@ def properties_func_default(shape, saved_attrs):
     attr_list.extend(saved_attrs[0])
     attr_dict.update(saved_attrs[1])
 
+    # color translation
+    if attr_dict.get("color",None) == "green":
+        attr_dict["color"] = "lime"
+
     if shape.name == "text":
         kwargs = dict(color=attr_dict.get("color", None),
                       rotation=attr_dict.get("textangle", 0),
