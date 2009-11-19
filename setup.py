@@ -8,5 +8,5 @@ setup(name='APLpy',
       author='Eli Bressert and Thomas Robitaille',
       author_email='elibre@users.sourceforge.net, robitaille@users.sourceforge.net',
       url='http://aplpy.sourceforge.net/',
-      packages=['aplpy'],
+      packages=['aplpy.pyregion.pyparsing','aplpy.pyregion','aplpy'],
      )
