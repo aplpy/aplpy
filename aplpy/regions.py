@@ -1,16 +1,17 @@
 import warnings
 
 try:
-    import pyparsing
-except ImportError:
-    # raise Exception("pyparsing is required for pyregions, which is needed for ds9 region parsing")
-    warnings.warn("pyparsing is not installed - region file parsing will be unavailable")
-    
-try:
     import pyregion
 except ImportError:
     # raise Exception("pyregion is required for regions parsing")
     warnings.warn("pyregion is not installed - region file parsing will be unavailable")
+
+try:
+    import pyregion.pyparsing
+except ImportError:
+    # raise Exception("pyparsing is required for pyregions, which is needed for ds9 region parsing")
+    warnings.warn("pyparsing is not installed - region file parsing will be unavailable")
+    
 
 import matplotlib
 import numpy
@@ -21,6 +22,34 @@ class Regions:
 
     Used for overplotting various shapes and annotations on APLpy
     fitsfigures
+
+    Example:
+    # DS9 region file called "test.reg"
+    # (the coordinates are around l=28 in the Galactic Plane)
+    # Filename: test.fits
+    fk5
+    box(18:42:48.262,-04:01:17.91,505.668",459.714",0) # color=red dash=1
+    point(18:42:51.797,-03:59:44.82) # point=x color=red dash=1
+    point(18:42:50.491,-04:03:09.39) # point=box color=red dash=1
+    # vector(18:42:37.433,-04:02:10.77,107.966",115.201) vector=1 color=red dash=1
+    ellipse(18:42:37.279,-04:02:11.92,26.4336",40.225",0) # color=red dash=1
+    polygon(18:42:59.016,-03:58:22.06,18:42:58.219,-03:58:11.30,18:42:57.403,-03:58:35.86,18:42:58.094,-03:58:57.69,18:42:59.861,-03:58:41.60,18:42:59.707,-03:58:23.21) # color=red dash=1
+    point(18:42:52.284,-04:00:02.80) # point=diamond color=red dash=1
+    point(18:42:46.561,-03:58:01.57) # point=circle color=red dash=1
+    point(18:42:42.615,-03:58:25.84) # point=cross color=red dash=1
+    point(18:42:42.946,-04:01:44.74) # point=arrow color=red dash=1
+    point(18:42:41.961,-03:57:26.16) # point=boxcircle color=red dash=1
+    # text(18:42:41.961,-03:57:26.16) text={This is text} color=red
+
+    Code:
+    import aplpy
+    import regions 
+
+    ff = aplpy.FITSFigure("test.fits")    
+    ff.show_grayscale()
+    myreg = regions.Regions(ff)
+    myreg.show_regions("test.reg")
+
     """
 
     def __init__(self,ff):
@@ -33,14 +62,27 @@ class Regions:
     def show_regions(self, regionfile, layer=False, refresh=True, **kwargs):
         """
         Overplot regions as specified in the regionsfile
+
+        Required Arguments:
+            *regionfile*: [ string ]
+                Path to a ds9 regions file
+
+        Optional Keyword Arguments:
+
+            *layer*: [ string ]
+                The name of the layer
+            *refresh*: [ bool ]
+                Refresh the figure?
+
+        Additional keyword arguments, e.g. zorder, will be passed to the ds9
+        call and onto the patchcollections.
         """
 
         PC,TC = ds9( regionfile, self.ff._hdu.header, **kwargs)
 
-        ffpc = self.ff._ax1.add_collection(PC)
+        #ffpc = self.ff._ax1.add_collection(PC)
+        PC.add_to_axes(self.ff._ax1)
         TC.add_to_axes(self.ff._ax1)
-        # for a in TC: 
-        #     self.ff._ax1.add_artist(a)
 
         if layer:
             region_set_name = layer
@@ -48,16 +90,18 @@ class Regions:
             self.ff._region_counter += 1
             region_set_name = 'region_set_'+str(self.ff._region_counter)
 
-        self.ff._layers[region_set_name] = ffpc
+        self.ff._layers[region_set_name] = PC
         self.ff._layers[region_set_name+"_txt"] = TC
 
         if refresh: self.ff.refresh(force=False)
 
 
-def ds9(regionfile, header, **kwargs):
+def ds9(regionfile, header, zorder=3, **kwargs):
     """
     Wrapper to return a PatchCollection given a ds9 region file
     and a fits header.
+
+    zorder - defaults to 3 so that regions are on top of contours
     """
 
     # read region file
@@ -72,11 +116,18 @@ def ds9(regionfile, header, **kwargs):
         r.coord_list[0] += 1
         r.coord_list[1] += 1
 
-    # grab the shapes to overplot
-    pp,aa = rrim.get_mpl_patches_texts() 
+    if kwargs.has_key('text_offset'): 
+        text_offset = kwargs['text_offset']
+        del kwargs['text_offset']
+    else: text_offset = 5.0
 
-    PC = PatchCollection2(pp, match_original=True) # preserves line style (dashed)
-    TC = ArtistCollection(aa)
+    # grab the shapes to overplot
+    pp,aa = rrim.get_mpl_patches_texts(text_offset=text_offset) 
+
+    PC = ArtistCollection(pp, **kwargs) # preserves line style (dashed)
+    TC = ArtistCollection(aa, **kwargs)
+    PC.set_zorder(zorder)
+    TC.set_zorder(zorder)
 
     return PC,TC
 
@@ -107,6 +158,10 @@ class ArtistCollection():
     def set_visible(self,visible=True):
         for T in self.artistlist:
             T.set_visible(visible)
+    def set_zorder(self,zorder):
+        for T in self.artistlist:
+            T.set_zorder(zorder)
+
 
 class PatchCollection2(matplotlib.collections.Collection):
     """
@@ -145,7 +200,7 @@ class PatchCollection2(matplotlib.collections.Collection):
             def determine_facecolor(patch):
                 if patch.fill:
                     return patch.get_facecolor()
-                return [0, 0, 0, 0]
+                return 'none'
 
             facecolors   = [determine_facecolor(p) for p in patches]
             edgecolors   = [p.get_edgecolor() for p in patches]
