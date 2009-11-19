@@ -3,18 +3,16 @@ import warnings
 try:
     import pyregion
 except ImportError:
-    # raise Exception("pyregion is required for regions parsing")
-    warnings.warn("pyregion is not installed - region file parsing will be unavailable")
+    raise Exception("could not import the pyregion sub-package")
 
 try:
     import pyregion.pyparsing
 except ImportError:
-    # raise Exception("pyparsing is required for pyregions, which is needed for ds9 region parsing")
-    warnings.warn("pyparsing is not installed - region file parsing will be unavailable")
-    
+    raise Exception("could not import the pyparsing sub-package")
+
 
 import matplotlib
-import numpy
+
 
 class Regions:
     """
@@ -43,21 +41,13 @@ class Regions:
 
     Code:
     import aplpy
-    import regions 
+    import regions
 
-    ff = aplpy.FITSFigure("test.fits")    
+    ff = aplpy.FITSFigure("test.fits")
     ff.show_grayscale()
-    myreg = regions.Regions(ff)
-    myreg.show_regions("test.reg")
+    ff.show_regions('test.reg')
 
     """
-
-    def __init__(self,ff):
-        """
-        Initialize a Regions file by passing an aplpy.FITSfigure instance
-        """
-        self.ff = ff
-        pass
 
     def show_regions(self, regionfile, layer=False, refresh=True, **kwargs):
         """
@@ -78,22 +68,23 @@ class Regions:
         call and onto the patchcollections.
         """
 
-        PC,TC = ds9( regionfile, self.ff._hdu.header, **kwargs)
+        PC, TC = ds9(regionfile, self._hdu.header, **kwargs)
 
-        #ffpc = self.ff._ax1.add_collection(PC)
-        PC.add_to_axes(self.ff._ax1)
-        TC.add_to_axes(self.ff._ax1)
+        #ffpc = self._ax1.add_collection(PC)
+        PC.add_to_axes(self._ax1)
+        TC.add_to_axes(self._ax1)
 
         if layer:
             region_set_name = layer
         else:
-            self.ff._region_counter += 1
-            region_set_name = 'region_set_'+str(self.ff._region_counter)
+            self._region_counter += 1
+            region_set_name = 'region_set_'+str(self._region_counter)
 
-        self.ff._layers[region_set_name] = PC
-        self.ff._layers[region_set_name+"_txt"] = TC
+        self._layers[region_set_name] = PC
+        self._layers[region_set_name+"_txt"] = TC
 
-        if refresh: self.ff.refresh(force=False)
+        if refresh:
+            self.refresh(force=False)
 
 
 def ds9(regionfile, header, zorder=3, **kwargs):
@@ -116,49 +107,57 @@ def ds9(regionfile, header, zorder=3, **kwargs):
         r.coord_list[0] += 1
         r.coord_list[1] += 1
 
-    if kwargs.has_key('text_offset'): 
+    if 'text_offset' in kwargs:
         text_offset = kwargs['text_offset']
         del kwargs['text_offset']
-    else: text_offset = 5.0
+    else:
+        text_offset = 5.0
 
     # grab the shapes to overplot
-    pp,aa = rrim.get_mpl_patches_texts(text_offset=text_offset) 
+    pp, aa = rrim.get_mpl_patches_texts(text_offset=text_offset)
 
     PC = ArtistCollection(pp, **kwargs) # preserves line style (dashed)
     TC = ArtistCollection(aa, **kwargs)
     PC.set_zorder(zorder)
     TC.set_zorder(zorder)
 
-    return PC,TC
+    return PC, TC
+
 
 class ArtistCollection():
     """
-    Matplotlib collections can't handle Text.  
+    Matplotlib collections can't handle Text.
     This is a barebones collection for text objects
     that supports removing and making (in)visible
     """
-    def __init__(self,artistlist):
+
+    def __init__(self, artistlist):
         """
         Pass in a list of matplotlib.text.Text objects
         (or possibly any matplotlib Artist will work)
         """
         self.artistlist = artistlist
+
     def remove(self):
         for T in self.artistlist:
             T.remove()
-    def add_to_axes(self,ax):
+
+    def add_to_axes(self, ax):
         for T in self.artistlist:
             ax.add_artist(T)
+
     def get_visible(self):
         visible = True
         for T in self.artistlist:
             if not T.get_visible():
                 visible = False
         return visible
-    def set_visible(self,visible=True):
+
+    def set_visible(self, visible=True):
         for T in self.artistlist:
             T.set_visible(visible)
-    def set_zorder(self,zorder):
+
+    def set_zorder(self, zorder):
         for T in self.artistlist:
             T.set_zorder(zorder)
 
@@ -197,6 +196,7 @@ class PatchCollection2(matplotlib.collections.Collection):
         """
 
         if match_original:
+
             def determine_facecolor(patch):
                 if patch.fill:
                     return patch.get_facecolor()

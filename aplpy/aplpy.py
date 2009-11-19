@@ -41,9 +41,9 @@ from grid import Grid
 from ticks import Ticks
 from labels import Labels
 from overlays import Beam, ScaleBar
+from regions import Regions
 
-
-class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar):
+class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
 
     "A class for plotting FITS files."
 
