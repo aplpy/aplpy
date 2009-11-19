@@ -91,6 +91,7 @@ class Layers(object):
                 self._layers.pop(layer)
             elif layer_type == 'collection':
                 self._layers[layer].remove()
+                self._layers.pop(layer)                
 
         else:
 
