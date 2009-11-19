@@ -1,11 +1,16 @@
+import warnings
+
 try:
     import pyparsing
 except ImportError:
-    raise Exception("pyparsing is required for pyregions, which is needed for ds9 region parsing")
+    # raise Exception("pyparsing is required for pyregions, which is needed for ds9 region parsing")
+    warnings.warn("pyparsing is not installed - region file parsing will be unavailable")
+    
 try:
     import pyregion
 except ImportError:
-    raise Exception("pyregion is required for regions parsing")
+    # raise Exception("pyregion is required for regions parsing")
+    warnings.warn("pyregion is not installed - region file parsing will be unavailable")
 
 import matplotlib
 import numpy
