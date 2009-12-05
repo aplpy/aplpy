@@ -123,6 +123,8 @@ class ProjectionBase(object):
         ctype1, ctype2 = self.ctypes
         equinox = self.equinox
         radecsys = coord_system_guess(ctype1, ctype2, equinox)
+        if radecsys is None:
+            raise RuntimeError("Cannot determine the coordinate system with (CTYPE1=%s, CTYPE2=%s, EQUINOX=%s)." % (ctype1, ctype2, equinox))
         return radecsys
 
     radesys = property(_get_radesys)

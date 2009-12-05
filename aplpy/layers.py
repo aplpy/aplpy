@@ -92,6 +92,9 @@ class Layers(object):
             elif layer_type == 'collection':
                 self._layers[layer].remove()
                 self._layers.pop(layer)                
+                if self._layers.has_key(layer+'_txt'):
+                    self._layers[layer+'_txt'].remove()
+                    self._layers.pop(layer+'_txt')                
 
         else:
 
