@@ -123,7 +123,7 @@ def make_rgb_cube(files, output):
         os.symlink(f, 'raw/image'+str(i)+'.fits')
 
     # List files and create optimal header
-    os.system('mImgTbl -c raw images_raw.tbl')
+    os.system('mImgtbl -c raw images_raw.tbl')
     os.system('mMakeHdr images_raw.tbl header.hdr')
 
     # Write out header without 'END'
@@ -161,7 +161,7 @@ def make_rgb_cube(files, output):
             binary = 'mProject'
 
         os.system(binary+" raw"+str(i)+"/image"+str(i)+".fits tmp"+str(i)+"/image"+str(i)+".fits header.hdr")
-        os.system("mImgTbl -c tmp"+str(i)+" images_tmp"+str(i)+".tbl")
+        os.system("mImgtbl -c tmp"+str(i)+" images_tmp"+str(i)+".tbl")
         os.system("mAdd -e -p tmp"+str(i)+" images_tmp"+str(i)+".tbl header.hdr final/image"+str(i)+".fits")
         os.system("mConvert -b -32 final/image"+str(i)+".fits final/image"+str(i)+"32.fits")
 
