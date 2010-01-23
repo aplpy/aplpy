@@ -830,7 +830,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
         if self.auto_refresh or force:
             self._figure.canvas.draw()
 
-    def save(self, filename, dpi=None, transparent=False):
+    def save(self, filename, dpi=None, transparent=False, adjust_bbox=True):
         '''
         Save the current figure to a file
 
@@ -853,6 +853,9 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
             *transparent*: [ True | False ]
                 Whether to preserve transparency
 
+            *adjust_bbox*: [ True | False ]
+                Auto-adjust the bounding box for the output
+
         '''
 
         if dpi == None and os.path.splitext(filename)[1] in ['.EPS', '.eps', '.ps', '.PS', '.Eps', '.Ps']:
@@ -861,7 +864,11 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
             nx = interval[1] - interval[0]
             dpi = np.minimum(nx / width, 300.)
             print "Auto-setting resolution to ", dpi, " dpi"
-        self._figure.savefig(filename, dpi=dpi, transparent=transparent)
+
+        if adjust_bbox:
+            self._figure.savefig(filename, dpi=dpi, transparent=transparent, bbox_inches='tight')
+        else:
+            self._figure.savefig(filename, dpi=dpi, transparent=transparent)
 
     def _initialize_view(self):
 
