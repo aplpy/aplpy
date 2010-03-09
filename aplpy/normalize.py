@@ -48,7 +48,7 @@ class APLpyNormalize(Normalize):
         self.stretch = stretch
         self.exponent = exponent
         
-        if not np.equal(None):
+        if not np.equal(vmid, None):
             self.midpoint = (vmid - vmin) / (vmax - vmin)
         else:
             self.midpoint = None
