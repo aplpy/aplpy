@@ -48,10 +48,19 @@ class APLpyNormalize(Normalize):
         self.stretch = stretch
         self.exponent = exponent
         
-        if not np.equal(vmid, None):
-            self.midpoint = (vmid - vmin) / (vmax - vmin)
+        if stretch == 'power' and np.equal(self.exponent, None):
+            raise Exception("For stretch=='power', an exponent should be specified")
+
+        if np.equal(vmid, None):
+            if stretch == 'log':
+                self.midpoint = 0.05
+            elif stretch == 'arcsinh':
+                self.midpoint = -0.033
+            else:
+                self.midpoint = None
         else:
-            self.midpoint = None
+            self.midpoint = (vmid - vmin) / (vmax - vmin)
+
 
     def __call__(self, value, clip=None):
 
@@ -93,9 +102,6 @@ class APLpyNormalize(Normalize):
 
             elif self.stretch == 'log':
 
-                if np.equal(self.midpoint, None):
-                    self.midpoint = 0.05
-
                 result = ma.log10((result/self.midpoint) + 1.) \
                        / ma.log10((1./self.midpoint) + 1.)
 
@@ -104,9 +110,6 @@ class APLpyNormalize(Normalize):
                 result = ma.sqrt(result)
 
             elif self.stretch == 'arcsinh':
-
-                if np.equal(self.midpoint, None):
-                    self.midpoint = -0.033
 
                 result = ma.arcsinh(result/self.midpoint) \
                        / ma.arcsinh(1./self.midpoint)
