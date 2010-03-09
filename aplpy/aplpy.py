@@ -1,5 +1,6 @@
 from distutils import version
 import os
+import warnings
 
 try:
     import matplotlib
@@ -33,7 +34,6 @@ import montage
 import image_util
 import header
 import wcs_util
-import math_util as m
 import shape_util
 
 from layers import Layers
@@ -42,8 +42,10 @@ from ticks import Ticks
 from labels import Labels
 from overlays import Beam, ScaleBar
 from regions import Regions
+from colorbar import Colorbar
+from normalize import APLpyNormalize
 
-class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
+class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar):
 
     "A class for plotting FITS files."
 
@@ -166,6 +168,9 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
 
         # Initialize layers list
         self._initialize_layers()
+
+        # Initialize layers list
+        self._initialize_colorbar()
 
         # Find generating function for vmin/vmax
         self._auto_v = image_util.percentile_function(self._hdu.data)
@@ -372,51 +377,46 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions):
         if cmap=='default':
             cmap = self._get_colormap_default()
 
-        min_auto = not m.isnumeric(vmin)
-        mid_auto = not m.isnumeric(vmid)
-        max_auto = not m.isnumeric(vmax)
+        min_auto = np.equal(vmin, None)
+        max_auto = np.equal(vmax, None)
 
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap, 1000)
 
-        vmin_auto, vmax_auto = self._auto_v(pmin), self._auto_v(pmax)
-
         if min_auto:
-            print "Auto-setting vmin to %10.3e" % vmin_auto
-            vmin = vmin_auto
+            vmin = self._auto_v(pmin)
 
         if max_auto:
-            print "Auto-setting vmax to %10.3e" % vmax_auto
-            vmax = vmax_auto
+            vmax = self._auto_v(pmax)
 
-        if mid_auto:
-            vmid = None
-        else:
-            vmid = (vmid - vmin) / (vmax - vmin)
+        # Prepare normalizer object
+        normalizer = APLpyNormalize(stretch=stretch, exponent=exponent,
+                                    vmid=vmid, vmin=vmin, vmax=vmax)
 
-        stretched_image = (self._hdu.data - vmin) / (vmax - vmin)
-
+        # Adjust vmin/vmax if auto
         if min_auto:
-            vmin = -0.1
-        else:
-            vmin = 0.
+            if stretch <> 'linear':
+                warnings.warn("Auto-scaling for non-linear stretches may produce slightly different results compared to APLpy 0.9.4")
+            vmin = normalizer.inverse(-0.1)
+            print "Auto-setting vmin to %10.3e" % vmin
 
-        if vmax_auto:
-            vmax = +1.1
-        else:
-            vmax = +1
+        if max_auto:
+            if stretch <> 'linear':
+                warnings.warn("Auto-scaling for non-linear stretches may produce slightly different results compared to APLpy 0.9.4")
+            vmax = normalizer.inverse(+1.1)
+            print "Auto-setting vmax to %10.3e" % vmax
 
-        # Set stretch
-        stretched_image = image_util.stretch(stretched_image, function=stretch, exponent=exponent, midpoint=vmid)
+        # Update normalizer object
+        normalizer.vmin = vmin
+        normalizer.vmax = vmax
 
         if self.image:
             self.image.set_visible(True)
-            self.image.set_data(stretched_image)
+            self.image.set_norm(normalizer)
             self.image.set_cmap(cmap=cmap)
-            self.image.set_clim(vmin, vmax)
             self.image.origin='lower'
         else:
-            self.image = self._ax1.imshow(stretched_image, cmap=cmap, vmin=vmin, vmax=vmax, interpolation='nearest', origin='lower', extent=self._extent)
+            self.image = self._ax1.imshow(self._hdu.data, cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0: self._ax1.set_xlim(0.5, xmax)
