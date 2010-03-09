@@ -425,6 +425,8 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
 
         ymin, ymax = self._ax1.get_ybound()
         if ymin == 0.0: self._ax1.set_ylim(0.5, ymax)
+        
+        self.update_colorbar()
 
         self.refresh(force=False)
 

@@ -1,14 +1,34 @@
 import warnings
 
 from mpl_toolkits.axes_grid import make_axes_locatable
+import matplotlib.axes as maxes
 
+import numpy as np
 
 class Colorbar(object):
 
     def _initialize_colorbar(self):
         self._colorbar_axes = None
+        self.location = 'right'
+        self.size = "5%"
+        self.pad = 0.05
 
-    def show_colorbar(self, location='right', size="5%", pad=0.05):
+    def reset_colorbar(self):
+        self.location = 'right'
+        self.size = "5%"
+        self.pad = 0.05
+        self.update_colorbar()
+
+    def show_colorbar(self, location=None, size=None, pad=None):
+
+        if type(location) == str:
+            self.location = location
+
+        if type(size) == str:
+            self.size = size
+
+        if not np.equal(pad, None):
+            self.pad = pad
 
         if self.image:
 
@@ -17,38 +37,55 @@ class Colorbar(object):
 
             divider = make_axes_locatable(self._ax1)
 
-            if location=='right':
-                self._colorbar_axes = divider.new_horizontal(size=size, pad=pad)
+            if self.location=='right':
+                self._colorbar_axes = divider.new_horizontal(size=self.size, pad=self.pad, axes_class=maxes.Axes)
                 self.orientation='vertical'
-                self._colorbar_axes.axis["left"].toggle(ticklabels=False, ticks=True)
-                self._colorbar_axes.axis["right"].toggle(ticklabels=True, ticks=True)
-            elif location=='top':
-                self._colorbar_axes = divider.new_vertical(size=size, pad=pad)
+            elif self.location=='top':
+                self._colorbar_axes = divider.new_vertical(size=self.size, pad=self.pad, axes_class=maxes.Axes)
                 self.orientation='horizontal'
-                self._colorbar_axes.axis["bottom"].toggle(ticklabels=False, ticks=True)
-                self._colorbar_axes.axis["top"].toggle(ticklabels=True, ticks=True)
-            elif location=='left':
+            elif self.location=='left':
                 warnings.warn("Left colorbar not fully implemented")
-                self._colorbar_axes = divider.new_horizontal(size=size, pad=pad, pack_start=True)
+                self._colorbar_axes = divider.new_horizontal(size=self.size, pad=self.pad, pack_start=True, axes_class=maxes.Axes)
                 locator = divider.new_locator(nx=0, ny=0)
                 self._colorbar_axes.set_axes_locator(locator)
                 self.orientation='vertical'
-                self._colorbar_axes.axis["left"].toggle(ticklabels=True, ticks=True)
-                self._colorbar_axes.axis["right"].toggle(ticklabels=False, ticks=True)
-            elif location=='bottom':
+            elif self.location=='bottom':
                 warnings.warn("Bottom colorbar not fully implemented")
-                self._colorbar_axes = divider.new_vertical(size=size, pad=pad, pack_start=True)
+                self._colorbar_axes = divider.new_vertical(size=self.size, pad=self.pad, pack_start=True, axes_class=maxes.Axes)
                 locator = divider.new_locator(nx=0, ny=0)
                 self._colorbar_axes.set_axes_locator(locator)
                 self.orientation='horizontal'
-                self._colorbar_axes.axis["bottom"].toggle(ticklabels=True, ticks=True)
-                self._colorbar_axes.axis["top"].toggle(ticklabels=False, ticks=True)
             else:
-                raise Exception("Location should be one of: right/top")
+                raise Exception("location should be one of: right/top")
 
             self._figure.add_axes(self._colorbar_axes)
 
             self._colorbar = self._figure.colorbar(self.image, cax=self._colorbar_axes, orientation=self.orientation)
+
+            if self.location=='right':
+                for tick in self._colorbar_axes.yaxis.get_major_ticks():
+                    tick.tick1On = True
+                    tick.tick2On = True
+                    tick.label1On = False
+                    tick.label2On = True
+            if self.location=='top':
+                for tick in self._colorbar_axes.xaxis.get_major_ticks():
+                    tick.tick1On = True
+                    tick.tick2On = True
+                    tick.label1On = False
+                    tick.label2On = True
+            if self.location=='left':
+                for tick in self._colorbar_axes.yaxis.get_major_ticks():
+                    tick.tick1On = True
+                    tick.tick2On = True
+                    tick.label1On = True
+                    tick.label2On = False
+            if self.location=='bottom':
+                for tick in self._colorbar_axes.xaxis.get_major_ticks():
+                    tick.tick1On = True
+                    tick.tick2On = True
+                    tick.label1On = True
+                    tick.label2On = False
 
         else:
 
@@ -56,7 +93,10 @@ class Colorbar(object):
 
         self.refresh()
 
-    def hide_colorbar(self):
+    def update_colorbar(self):
+        if self._colorbar_axes:
+            self.show_colorbar()
 
+    def hide_colorbar(self):
         self._figure.delaxes(self._colorbar_axes)
         self._colorbar_axes = None
