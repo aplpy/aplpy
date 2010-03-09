@@ -397,13 +397,15 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
         if min_auto:
             if stretch <> 'linear':
                 warnings.warn("Auto-scaling for non-linear stretches may produce slightly different results compared to APLpy 0.9.4")
-            vmin = normalizer.inverse(-0.1)
+            else:
+                vmin = -0.1 * (vmax - vmin) + vmin
             print "Auto-setting vmin to %10.3e" % vmin
 
         if max_auto:
             if stretch <> 'linear':
                 warnings.warn("Auto-scaling for non-linear stretches may produce slightly different results compared to APLpy 0.9.4")
-            vmax = normalizer.inverse(+1.1)
+            else:
+                vmax = 0.1 * (vmax - vmin) + vmax
             print "Auto-setting vmax to %10.3e" % vmax
 
         # Update normalizer object
@@ -428,6 +430,19 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
 
     def hide_colorscale(self):
         self.image.set_visible(False)
+        self.refresh(force=False)
+
+    def set_nan_color(self, color):
+        '''
+        Set the color for NaN pixels
+
+        Required Arguments:
+
+            *color*: [ string | matplotlib color ]
+        '''
+        cm = self.image.get_cmap()
+        cm.set_bad(color)
+        self.image.set_cmap(cm)
         self.refresh(force=False)
 
     def show_rgb(self, filename, interpolation='nearest', flip=False):
