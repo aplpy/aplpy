@@ -6,7 +6,19 @@ import wcs_util
 
 class ScaleBar(object):
 
-    def show_scalebar(self, length, label=None, corner=4, frame=False, **kwargs):
+    def __init__(self, parent):
+
+        # Retrieve info from parent figure
+        self._refresh = parent.refresh
+        self._ax = parent._ax1
+        self._wcs = parent._wcs
+
+        # Initialize settings
+        self._base_settings = {}
+        self._scalebar_settings = {}
+        self._label_settings = {}
+
+    def show(self, length, label=None, corner=4, frame=False, **kwargs):
         '''
         Display a scalebar
 
@@ -18,7 +30,7 @@ class ScaleBar(object):
         Optional Keyword Arguments:
 
             *label*: [ string ]
-                Label to place above the scalebar
+                Label to place below the scalebar
 
             *corner*: [ integer ]
                 Where to place the scalebar. Acceptable values are:
@@ -51,73 +63,137 @@ class ScaleBar(object):
 
         '''
 
+        self._length = length
+        self._base_settings['corner'] = corner
+        self._base_settings['frame'] = frame
+
         degperpix = wcs_util.degperpix(self._wcs)
 
         length = length / degperpix
 
         try:
-            self._ax1._scalebar.remove()
+            self._scalebar.remove()
         except:
             pass
 
-        self._ax1._scalebar = AnchoredSizeBar(self._ax1.transData, length, label, corner, \
+        self._scalebar = AnchoredSizeBar(self._ax.transData, length, label, corner, \
                               pad=0.5, borderpad=0.4, sep=5, frameon=frame)
 
-        self._ax1.add_artist(self._ax1._scalebar)
+        self._ax.add_artist(self._scalebar)
 
-        self.set_scalebar_properties(**kwargs)
+        self.set_properties(**kwargs)
 
-        self.refresh(force=False)
+        self._refresh(force=False)
 
-    def hide_scalebar(self):
+    def hide(self):
         '''
         Hide the scalebar
         '''
         try:
-            self._ax1._scalebar.remove()
+            self._scalebar.remove()
         except:
             pass
 
-        self.refresh(force=False)
+        self._refresh(force=False)
+
+    def set_length(self, length):
+        self.show(length, **self._base_settings)
+        self.set_scalebar_properties(**self._scalebar_settings)
+        self.set_label_properties(**self._scalebar_settings)
+
+    def set_label(self, label):
+        self.set_label_properties(text=label)
+
+    def set_corner(self, corner):
+        self._base_settings['corner'] = corner
+        self.show(self._length, **self._base_settings)
+        self.set_scalebar_properties(**self._scalebar_settings)
+        self.set_label_properties(**self._scalebar_settings)
+
+    def set_frame(self, frame):
+        self._base_settings['frame'] = frame
+        self.show(self._length, **self._base_settings)
+        self.set_scalebar_properties(**self._scalebar_settings)
+        self.set_label_properties(**self._scalebar_settings)
+
+    def set_alpha(self, alpha):
+        self.set_scalebar_properties(alpha=alpha)
+        self.set_label_properties(alpha=alpha)
+
+    def set_color(self, color):
+        self.set_scalebar_properties(color=color)
+        self.set_label_properties(color=color)
+
+    def set_font_family(self, family):
+        self.set_label_properties(family=family)
+
+    def set_font_weight(self, weight):
+        self.set_label_properties(weight=weight)
+
+    def set_font_size(self, size):
+        self.set_label_properties(size=size)
+
+    def set_font_style(self, style):
+        self.set_style(style=style)
+
+    def set_label_properties(self, **kwargs):
+        '''
+        Modify the scalebar label properties. All arguments are passed to the
+        matplotlib Text class. See the matplotlib documentation for more
+        details.
+        '''
+        for kwarg in kwargs:
+            self._label_settings[kwarg] = kwargs[kwarg]
+        self._scalebar.txt_label.get_children()[0].set(**kwargs)
+        self._refresh(force=False)
 
     def set_scalebar_properties(self, **kwargs):
         '''
-        Modify the scalebar properties
-
-        All arguments are passed to the scalebar, which is made up of an
-        instance of the matplotlib Rectangle class and a an instance of the
-        Text class. For more information on available arguments, see
-
-        `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
-
-        and
-
-        `Text <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.text.Text>`_`.
-
-        In cases where the same argument exists for the two objects, the
-        argument is passed to both the Text and Rectangle instance
+        Modify the scalebar properties. All arguments are passed to the
+        matplotlib Rectangle class. See the matplotlib documentation for more
+        details.
         '''
-
         for kwarg in kwargs:
+            self._scalebar_settings[kwarg] = kwargs[kwarg]
+        self._scalebar.size_bar.get_children()[0].set(**kwargs)
+        self._refresh(force=False)
 
-            args = {kwarg: kwargs[kwarg]}
-
+    def set_properties(self, **kwargs):
+        '''
+        Modify the scalebar and scalebar properties. All arguments are passed
+        to the matplotlib Rectangle and Text classes. See the matplotlib
+        documentation for more details. In cases where the same argument
+        exists for the two objects, the argument is passed to both the Text
+        and Rectangle instance.
+        '''
+        for kwarg in kwargs:
+            kwargs_single = {kwarg: kwargs[kwarg]}
             try:
-                self._ax1._scalebar.size_bar.get_children()[0].set(**args)
+                self.set_label_properties(**kwargs_single)
             except AttributeError:
                 pass
-
             try:
-                self._ax1._scalebar.txt_label.get_children()[0].set(**args)
+                self.set_scalebar_properties(**kwargs_single)
             except AttributeError:
                 pass
-
-        self.refresh(force=False)
+        self._refresh(force=False)
 
 
 class Beam(object):
 
-    def show_beam(self, major='BMAJ', minor='BMIN', \
+    def __init__(self, parent):
+
+        # Retrieve info from parent figure
+        self._refresh = parent.refresh
+        self._hdu = parent._hdu
+        self._ax = parent._ax1
+        self._wcs = parent._wcs
+
+        # Initialize settings
+        self._base_settings = {}
+        self._beam_settings = {}
+
+    def show(self, major='BMAJ', minor='BMIN', \
         angle='BPA', corner=3, frame=False, **kwargs):
 
         '''
@@ -173,36 +249,87 @@ class Beam(object):
 
         degperpix = wcs_util.degperpix(self._wcs)
 
-        self.minor = minor / degperpix
-        self.major = major / degperpix
+        self._base_settings['minor'] = minor
+        self._base_settings['major'] = major
+        self._base_settings['angle'] = angle
+        self._base_settings['corner'] = corner
+        self._base_settings['frame'] = frame
+
+        minor /= degperpix
+        major /= degperpix
 
         try:
-            self._ax1._beam.remove()
+            self._beam.remove()
         except:
             pass
 
-        self._ax1._beam = AnchoredEllipse(self._ax1.transData, \
-            width=self.major, height=self.minor, angle=angle, \
+        self._beam = AnchoredEllipse(self._ax.transData, \
+            width=major, height=minor, angle=angle, \
             loc=corner, pad=0.5, borderpad=0.4, frameon=frame)
 
-        self._ax1.add_artist(self._ax1._beam)
+        self._ax.add_artist(self._beam)
 
-        self._ax1._beam.ellipse.set(**kwargs)
+        self.set_properties(**kwargs)
 
-        self.refresh(force=False)
+        self._refresh(force=False)
 
-    def hide_beam(self):
+    def hide(self):
         '''
         Hide the beam
         '''
         try:
-            self._ax1._beam.remove()
+            self._beam.remove()
         except:
             pass
+        self._refresh(force=False)
 
-        self.refresh(force=False)
+    def set_major(self, major):
+        self._base_settings['major'] = major
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
 
-    def set_beam_properties(self, **kwargs):
+    def set_minor(self, minor):
+        self._base_settings['minor'] = minor
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
+
+    def set_angle(self, angle):
+        self._base_settings['angle'] = angle
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
+
+    def set_corner(self, corner):
+        self._base_settings['corner'] = corner
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
+
+    def set_frame(self, frame):
+        self._base_settings['frame'] = frame
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
+
+    def set_alpha(self, alpha):
+        self.set_properties(alpha=alpha)
+
+    def set_color(self, color):
+        self.set_properties(color=color)
+
+    def set_edgecolor(self, edgecolor):
+        self.set_properties(edgecolor=edgecolor)
+
+    def set_facecolor(self, facecolor):
+        self.set_properties(facecolor=facecolor)
+
+    def set_linestyle(self, linestyle):
+        self.set_properties(linestyle=linestyle)
+
+    def set_linewidth(self, linewidth):
+        self.set_properties(linewidth=linewidth)
+
+    def set_hatch(self, hatch):
+        self.set_properties(hatch=hatch)
+
+    def set_properties(self, **kwargs):
         '''
         Modify the beam properties
 
@@ -211,6 +338,7 @@ class Beam(object):
         see `Ellipse <http://matplotlib.sourceforge.net/api/artist_api.html
         #matplotlib.patches.Ellipse>`_.
         '''
-
-        self._ax1._beam.ellipse.set(**kwargs)
-        self.refresh(force=False)
+        for kwarg in kwargs:
+            self._beam_settings[kwarg] = kwargs[kwarg]
+        self._beam.ellipse.set(**kwargs)
+        self._refresh(force=False)

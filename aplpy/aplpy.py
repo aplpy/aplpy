@@ -45,7 +45,8 @@ from regions import Regions
 from colorbar import Colorbar
 from normalize import APLpyNormalize
 
-class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar):
+
+class FITSFigure(Layers, Grid, Ticks, Labels, Regions):
 
     "A class for plotting FITS files."
 
@@ -105,7 +106,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
 
         self.set_auto_refresh(False)
 
-        if not kwargs.has_key('figsize'):
+        if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
 
         if north and not montage._installed():
@@ -154,6 +155,10 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
 
         self._ax1.format_coord = self.cursor_position
 
+        self.scalebar = ScaleBar(self)
+        self.beam = Beam(self)
+        self.colorbar = Colorbar(self)
+
         # Set view to whole FITS file
         self._initialize_view()
 
@@ -168,9 +173,6 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
 
         # Initialize layers list
         self._initialize_layers()
-
-        # Initialize layers list
-        self._initialize_colorbar()
 
         # Find generating function for vmin/vmax
         self._auto_v = image_util.percentile_function(self._hdu.data)
@@ -421,12 +423,14 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
             self.image = self._ax1.imshow(self._hdu.data, cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
 
         xmin, xmax = self._ax1.get_xbound()
-        if xmin == 0.0: self._ax1.set_xlim(0.5, xmax)
+        if xmin == 0.0:
+            self._ax1.set_xlim(0.5, xmax)
 
         ymin, ymax = self._ax1.get_ybound()
-        if ymin == 0.0: self._ax1.set_ylim(0.5, ymax)
-        
-        self.update_colorbar()
+        if ymin == 0.0:
+            self._ax1.set_ylim(0.5, ymax)
+
+        self.colorbar.update()
 
         self.refresh(force=False)
 
@@ -602,7 +606,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
 
         '''
 
-        if not kwargs.has_key('c'):
+        if not 'c' in kwargs:
             kwargs.setdefault('edgecolor', 'red')
             kwargs.setdefault('facecolor', 'none')
 
@@ -656,7 +660,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
             artist_api.html#matplotlib.patches.Circle>`_.
             '''
 
-        if not kwargs.has_key('facecolor'):
+        if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
 
         if layer:
@@ -722,7 +726,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
            artist_api.html#matplotlib.patches.Ellipse>`_.
            '''
 
-        if not kwargs.has_key('facecolor'):
+        if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
 
         if layer:
@@ -786,7 +790,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
            artist_api.html#matplotlib.patches.Rectangle>`_.
            '''
 
-        if not kwargs.has_key('facecolor'):
+        if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
 
         if layer:
@@ -988,3 +992,31 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Beam, ScaleBar, Regions, Colorbar)
         '''
 
         return wcs_util.pix2world(self._wcs, xp, yp)
+
+    # Shortcut methods
+
+    def show_beam(self, *args, **kwargs):
+        self.beam.show(*args, **kwargs)
+
+    def hide_beam(self, *args, **kwargs):
+        self.beam.hide(*args, **kwargs)
+
+    def set_beam_properties(self, *args, **kwargs):
+        warnings.warn("FITSFigure.set_beam_properties is deprecated - use FITSFigure.beam.set_properties instead")
+        self.beam.set_properties(*args, **kwargs)
+
+    def show_scalebar(self, *args, **kwargs):
+        self.scalebar.show(*args, **kwargs)
+
+    def hide_scalebar(self, *args, **kwargs):
+        self.scalebar.hide(*args, **kwargs)
+
+    def set_scalebar_properties(self, *args, **kwargs):
+        warnings.warn("FITSFigure.set_scalebar_properties is deprecated - use FITSFigure.scalebar.set_properties instead")
+        self.scalebar.set_properties(*args, **kwargs)
+
+    def show_colorbar(self, *args, **kwargs):
+        self.colorbar.show(*args, **kwargs)
+
+    def hide_colorbar(self, *args, **kwargs):
+        self.colorbar.hide(*args, **kwargs)
