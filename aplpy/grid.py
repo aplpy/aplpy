@@ -3,7 +3,7 @@
 # To improve, create array with e.g. all declination values, insert values which occur at intersections then
 # remove all array sections with out of bounds pixel values
 
-from ticks import tick_positions, default_spacing
+from ticks import tick_positions
 import numpy as np
 from matplotlib.collections import LineCollection
 
@@ -19,23 +19,28 @@ import angle_util as au
 
 class Grid(object):
 
-    def _initialize_grid(self):
+    def __init__(self, parent):
 
-        # Set default parameters for grid
-        self._ax1.apl_show_grid = False
+        # Save axes and wcs information
+        self.ax = parent._ax1
+        self.wcs = parent._wcs
+        self.refresh = parent.refresh
 
-        # Set grid spacing to default
-        self.set_grid_xspacing('tick')
-        self.set_grid_yspacing('tick')
+        # Initialize grid container
+        self._grid = None
+        self._active = False
 
-        self.set_grid_color('white')
-        self.set_grid_alpha(0.5)
+        # Set defaults
+        self.x_auto_spacing = True
+        self.y_auto_spacing = True
+        self.default_color = 'white'
+        self.default_alpha = 0.5
 
         # Set grid event handler
-        self._ax1.callbacks.connect('xlim_changed', generate_grid)
-        self._ax1.callbacks.connect('ylim_changed', generate_grid)
+        self.ax.callbacks.connect('xlim_changed', self._update)
+        self.ax.callbacks.connect('ylim_changed', self._update)
 
-    def set_grid_xspacing(self, xspacing):
+    def set_xspacing(self, xspacing):
         '''
         Set the grid line spacing in the longitudinal direction
 
@@ -48,16 +53,15 @@ class Grid(object):
         '''
 
         if xspacing == 'tick':
-            self._ax1.xaxis.apl_auto_grid_spacing = True
+            self.x_auto_spacing = True
         else:
-            self._ax1.xaxis.apl_auto_grid_spacing = False
-            self._ax1.xaxis.apl_grid_spacing = au.Angle(degrees = xspacing)
+            self.x_auto_spacing = False
+            self.x_grid_spacing = au.Angle(degrees = xspacing)
 
-        self._ax1 = generate_grid(self._ax1)
-
+        self._update()
         self.refresh(force=False)
 
-    def set_grid_yspacing(self, yspacing):
+    def set_yspacing(self, yspacing):
         '''
         Set the grid line spacing in the latitudinal direction
 
@@ -70,16 +74,15 @@ class Grid(object):
         '''
 
         if yspacing == 'tick':
-            self._ax1.yaxis.apl_auto_grid_spacing = True
+            self.y_auto_spacing = True
         else:
-            self._ax1.yaxis.apl_auto_grid_spacing = False
-            self._ax1.yaxis.apl_grid_spacing = au.Angle(degrees = yspacing)
+            self.y_auto_spacing = False
+            self.y_grid_spacing = au.Angle(degrees = yspacing)
 
-        self._ax1 = generate_grid(self._ax1)
-
+        self._update()
         self.refresh(force=False)
 
-    def set_grid_color(self, color):
+    def set_color(self, color):
         '''
         Set the color of the grid lines
 
@@ -88,14 +91,13 @@ class Grid(object):
             *color*: [ string ]
                 The color of the grid lines
         '''
-
-        self._ax1.apl_grid_color = color
-
-        self._ax1 = generate_grid(self._ax1)
-
+        if self._grid:
+            self._grid.set_edgecolor(color)
+        else:
+            self.default_color = color
         self.refresh(force=False)
 
-    def set_grid_alpha(self, alpha):
+    def set_alpha(self, alpha):
         '''
         Set the alpha (transparency) of the grid lines
 
@@ -106,69 +108,62 @@ class Grid(object):
                 point value between 0 and 1, where 0 is completely
                 transparent, and 1 is completely opaque.
         '''
-
-        self._ax1.apl_grid_alpha = alpha
-
-        self._ax1 = generate_grid(self._ax1)
-
-        self.refresh(force=False)
-
-    def show_grid(self):
-        '''
-        Overlay the coordinate grid
-        '''
-
-        self._ax1.apl_show_grid = True
-        self._ax1 = generate_grid(self._ax1)
-
-        self.refresh(force=False)
-
-    def hide_grid(self):
-        '''
-        Hide the coordinate grid
-        '''
-
-        self._ax1.apl_show_grid = False
-        self._ax1 = generate_grid(self._ax1)
-
-        self.refresh(force=False)
-
-    def _update_grid(self):
-
-        if self._ax1.apl_show_grid:
-            self.show_grid()
-
-##########################################################
-# plot_grid: the main routine to plot a coordinate grid
-##########################################################
-
-def generate_grid(ax):
-
-    if ax.apl_show_grid:
-
-        wcs = ax.apl_wcs
-
-        polygons_out = []
-
-        if ax.xaxis.apl_auto_grid_spacing:
-            xspacing = default_spacing(ax, 'x').todegrees()
+        if self._grid:
+            self._grid.set_alpha(alpha)
         else:
-            xspacing = ax.xaxis.apl_grid_spacing.todegrees()
+            self.default_alpha = alpha
+        self.refresh(force=False)
 
-        if ax.yaxis.apl_auto_grid_spacing:
-            yspacing = default_spacing(ax, 'y').todegrees()
+    def set_linewidth(self, linewidth):
+        self._grid.set_linewidth(linewidth)
+        self.refresh(force=False)
+
+    def set_linestyle(self, linestyle):
+        self._grid.set_linestyle(linestyle)
+        self.refresh(force=False)
+
+    def show(self):
+        if self._grid:
+            self._grid.set_visible(True)
         else:
-            yspacing = ax.yaxis.apl_grid_spacing.todegrees()
+            self._active = True
+            self._update()
+            self.set_color(self.default_color)
+            self.set_alpha(self.default_alpha)
+
+    def hide(self):
+        self._grid.set_visible(False)
+
+    def _update(self, *args):
+
+        if not self._active:
+            return self.ax
+
+        if len(args) == 1:
+            if id(self.ax) <> id(args[0]):
+                raise Exception("ax ids should match")
+
+        lines = []
+
+        if self.x_auto_spacing:
+            xspacing = self.ax.xaxis.apl_tick_spacing.todegrees()
+        else:
+            xspacing = self.x_grid_spacing.todegrees()
+
+        if self.y_auto_spacing:
+            yspacing = self.ax.yaxis.apl_tick_spacing.todegrees()
+        else:
+            yspacing = self.y_grid_spacing.todegrees()
 
         # Find longitude lines that intersect with axes
-        lon_i, lat_i = find_intersections(wcs, 'x', xspacing)
+        lon_i, lat_i = find_intersections(self.wcs, 'x', xspacing)
 
         lon_i_unique = np.array(list(set(lon_i)))
 
         # Plot those lines
         for l in lon_i_unique:
-            for line in plot_longitude(wcs, lon_i, lat_i, l):
-                polygons_out.append(line)
+            for line in plot_longitude(self.wcs, lon_i, lat_i, l):
+                lines.append(line)
 
         # Find longitude lines that don't intersect with axes
         lon_all = math_util.complete_range(0.0, 360.0, xspacing)
@@ -177,23 +172,23 @@ def generate_grid(ax):
 
         if np.size(lon_ni) > 0:
 
-            xpix, ypix = wcs_util.world2pix(wcs, lon_ni, lat_ni)
+            xpix, ypix = wcs_util.world2pix(self.wcs, lon_ni, lat_ni)
 
             # Plot those lines
-    #        for i in range(0, np.size(lon_ni)):
-    #            if(in_plot(wcs, xpix[i], ypix[i])):
-    #                print "Inside longitude : "+str(lon_ni[i])
-    #                plot_longitude(wcs, np.array([]), np.array([]), lon_ni[i])
+            # for i in range(0, np.size(lon_ni)):
+            #     if(in_plot(wcs, xpix[i], ypix[i])):
+            #         print "Inside longitude : "+str(lon_ni[i])
+            #         plot_longitude(wcs, np.array([]), np.array([]), lon_ni[i])
 
             # Find latitude lines that intersect with axes
-        lon_i, lat_i = find_intersections(wcs, 'y', yspacing)
+        lon_i, lat_i = find_intersections(self.wcs, 'y', yspacing)
 
         lat_i_unique = np.array(list(set(lat_i)))
 
         # Plot those lines
         for l in lat_i_unique:
-            for line in plot_latitude(wcs, lon_i, lat_i, l):
-                polygons_out.append(line)
+            for line in plot_latitude(self.wcs, lon_i, lat_i, l):
+                lines.append(line)
 
         # Find latitude lines that don't intersect with axes
         lat_all = math_util.complete_range(-90.0, 90.0, yspacing)
@@ -202,47 +197,21 @@ def generate_grid(ax):
 
         if np.size(lat_ni) > 0:
 
-            xpix, ypix = wcs_util.world2pix(wcs, lon_ni, lat_ni)
+            xpix, ypix = wcs_util.world2pix(self.wcs, lon_ni, lat_ni)
 
             # Plot those lines
-    #        for i in range(0, np.size(lat_ni)):
-    #            if(in_plot(wcs, xpix[i], ypix[i])):
-    #                print "Inside latitude : "+str(lat_ni[i])
-    #                plot_latitude(wcs, np.array([]), np.array([]), lat_ni[i])
+            # for i in range(0, np.size(lat_ni)):
+            #     if(in_plot(wcs, xpix[i], ypix[i])):
+            #         print "Inside latitude : "+str(lat_ni[i])
+            #         plot_latitude(wcs, np.array([]), np.array([]), lat_ni[i])
 
-        grid_id = -1
-
-        for i in range(len(ax.collections)):
-            if is_grid(ax.collections[i]):
-                grid_id=i
-                break
-
-#        print "Grid ID = "+str(grid_id)
-
-        if grid_id >= 0:
-            ax.collections[grid_id].set_verts(polygons_out)
-            ax.collections[grid_id].set_edgecolor(ax.apl_grid_color)
-            ax.collections[grid_id].set_alpha(ax.apl_grid_alpha)
+        if self._grid:
+            self._grid.set_verts(lines)
         else:
-            c = LineCollection(polygons_out, transOffset=ax.transData, edgecolor=ax.apl_grid_color, alpha=ax.apl_grid_alpha)
-            c.grid = True
-            ax.add_collection(c, False)
+            self._grid = LineCollection(lines, transOffset=self.ax.transData)
+            self.ax.add_collection(self._grid, False)
 
-    else:
-
-        for i in range(len(ax.collections)):
-            if is_grid(ax.collections[i]):
-                ax.collections.pop(i)
-                break
-
-    return ax
-
-def is_grid(collection):
-    try:
-        grid = collection.grid
-    except AttributeError:
-        return False
-    return True
+        return self.ax
 
 ##########################################################
 # plot_latitude: plot a single latitude line

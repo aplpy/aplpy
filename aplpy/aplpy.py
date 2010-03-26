@@ -163,7 +163,7 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Regions):
         self._initialize_view()
 
         # Initialize grid
-        self._initialize_grid()
+        self.grid = Grid(self)
 
         # Initialize ticks
         self._initialize_ticks()
@@ -925,8 +925,8 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Regions):
             self.set_tick_size(7)
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'jet'
-            self.set_grid_color('white')
-            self.set_grid_alpha(0.5)
+            self.grid.set_color('white')
+            self.grid.set_alpha(0.5)
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('jet', 1000))
         elif theme=='publication':
@@ -935,8 +935,8 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Regions):
             self.set_tick_size(7)
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
-            self.set_grid_color('black')
-            self.set_grid_alpha(1.0)
+            self.grid.set_color('black')
+            self.grid.set_alpha(1.0)
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg', 1000))
 
@@ -994,7 +994,29 @@ class FITSFigure(Layers, Grid, Ticks, Labels, Regions):
         return wcs_util.pix2world(self._wcs, xp, yp)
 
     # Shortcut methods
-
+    
+    def show_grid(self, *args, **kwargs):
+        self.grid.show(*args, **kwargs)
+        
+    def hide_grid(self, *args, **kwargs):
+        self.grid.hide(*args, **kwargs)
+        
+    def set_grid_alpha(self, *args, **kwargs):
+        warnings.warn("FITSFigure.set_grid_alpha is deprecated - use FITSFigure.grid.set_alpha instead")
+        self.grid.set_alpha(*args, **kwargs)   
+        
+    def set_grid_color(self, *args, **kwargs):
+        warnings.warn("FITSFigure.set_grid_color is deprecated - use FITSFigure.grid.set_color instead")
+        self.grid.set_color(*args, **kwargs)
+        
+    def set_grid_xspacing(self, *args, **kwargs):
+        warnings.warn("FITSFigure.set_grid_xspacing is deprecated - use FITSFigure.grid.set_xspacing instead")
+        self.grid.set_xspacing(*args, **kwargs)
+        
+    def set_grid_yspacing(self, *args, **kwargs):
+        warnings.warn("FITSFigure.set_grid_yspacing is deprecated - use FITSFigure.grid.set_yspacing instead")
+        self.grid.set_yspacing(*args, **kwargs)
+        
     def show_beam(self, *args, **kwargs):
         self.beam.show(*args, **kwargs)
 

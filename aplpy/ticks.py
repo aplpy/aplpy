@@ -50,7 +50,7 @@ class Ticks(object):
             self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
             self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
 
-        self._update_grid()
+        self.grid._update()
         self.refresh(force=False)
 
     def set_tick_yspacing(self, yspacing):
@@ -73,7 +73,7 @@ class Ticks(object):
             self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
             self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
 
-        self._update_grid()
+        self.grid._update()
         self.refresh(force=False)
 
     def set_tick_color(self, color):
@@ -149,6 +149,7 @@ class WCSLocator(Locator):
 
         return self.axis.apl_tick_positions_pix
 
+
 def default_spacing(ax, coord):
 
     wcs = ax.apl_wcs
@@ -217,6 +218,7 @@ def tick_positions_v2(wcs, spacing, axis, coord, farside=False, xmin=False, xmax
 
 
     return px_out, py_out, warr_out
+
 
 def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False):
 
