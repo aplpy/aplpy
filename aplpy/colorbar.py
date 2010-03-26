@@ -129,6 +129,16 @@ class Colorbar(object):
                 label.set_weight(weight)
 
         self._parent.refresh()
+        
+    def set_frame_linewidth(self, linewidth):
+        for key in self._colorbar_axes.spines:
+            self._colorbar_axes.spines[key].set_linewidth(linewidth)
+        self._parent.refresh()
+
+    def set_frame_color(self, color):
+        for key in self._colorbar_axes.spines:
+            self._colorbar_axes.spines[key].set_edgecolor(color)
+        self._parent.refresh()
 
     def update(self):
         if self._colorbar_axes:
