@@ -12,7 +12,7 @@ class Colorbar(object):
         self._base_settings = {}
         self._label_settings = {}
 
-    def show(self, location='right', size='5%', pad=0.05):
+    def show(self, location='right', size='5%', pad=0.05, ticks=None, labels=True):
 
         self._base_settings['location'] = location
         self._base_settings['size'] = size
@@ -48,31 +48,31 @@ class Colorbar(object):
 
             self._parent._figure.add_axes(self._colorbar_axes)
 
-            self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes, orientation=orientation)
+            self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes, orientation=orientation, ticks=ticks)
 
             if location=='right':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = False
-                    tick.label2On = True
+                    tick.label2On = labels
             if location=='top':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = False
-                    tick.label2On = True
+                    tick.label2On = labels
             if location=='left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
-                    tick.label1On = True
+                    tick.label1On = labels
                     tick.label2On = False
             if location=='bottom':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
-                    tick.label1On = True
+                    tick.label1On = labels
                     tick.label2On = False
 
         else:
