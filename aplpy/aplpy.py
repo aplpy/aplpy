@@ -46,7 +46,7 @@ from colorbar import Colorbar
 from normalize import APLpyNormalize
 
 
-class FITSFigure(Layers, Grid, Ticks, Labels, Regions):
+class FITSFigure(Layers, Ticks, Labels, Regions):
 
     "A class for plotting FITS files."
 

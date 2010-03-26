@@ -125,6 +125,7 @@ class Grid(object):
     def show(self):
         if self._grid:
             self._grid.set_visible(True)
+            self.refresh(force=False)
         else:
             self._active = True
             self._update()
@@ -133,6 +134,7 @@ class Grid(object):
 
     def hide(self):
         self._grid.set_visible(False)
+        self.refresh(force=False)
 
     def _update(self, *args):
 
