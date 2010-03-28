@@ -5,7 +5,7 @@ import string
 import math_util
 from matplotlib.font_manager import FontProperties
 import angle_util as au
-
+from decorators import auto_refresh
 
 class Labels(object):
 
@@ -59,14 +59,7 @@ class Labels(object):
         self._ax2.xaxis.set_major_formatter(fx2)
         self._ax2.yaxis.set_major_formatter(fy2)
 
-    def set_tick_labels_xformat(self, format):
-        print "This method has been depracated. Please use the set_tick_labels_format() instead"
-        return
-
-    def set_tick_labels_yformat(self, format):
-        print "This method has been depracated. Please use the set_tick_labels_format() instead"
-        return
-
+    @auto_refresh
     def set_tick_labels_format(self, xformat=None, yformat=None):
         '''
         Set the format of the tick labels
@@ -94,8 +87,7 @@ class Labels(object):
         if yformat:
             self._ax1.yaxis.apl_label_form = yformat
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def set_tick_labels_style(self, style):
         """
         Set the format of the x-axis tick labels
@@ -124,9 +116,8 @@ class Labels(object):
         self._ax1.xaxis.apl_labels_style = style
         self._ax1.yaxis.apl_labels_style = style
 
-        self.refresh(force=False)
-
-    def set_system_latex(self, usetex, refresh=True):
+    @auto_refresh
+    def set_system_latex(self, usetex):
         """
         Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
 
@@ -140,24 +131,7 @@ class Labels(object):
 
         mpl.rc('text', usetex=usetex)
 
-        self.refresh(force=False)
-
-    def set_labels_latex(self, usetex, refresh=True):
-        print "This method has been depracated. Please use the set_system_latex() instead"
-        return
-
-    def set_tick_labels_size(self, size, refresh=True):
-        print "This method has been depracated. Please use the set_tick_labels_font() instead"
-        return
-
-    def set_tick_labels_weight(self, weight, refresh=True):
-        print "This method has been depracated. Please use the set_tick_labels_font() instead"
-        return
-
-    def set_tick_labels_family(self, family, refresh=True):
-        print "This method has been depracated. Please use the set_tick_labels_font() instead"
-        return
-
+    @auto_refresh
     def set_tick_labels_font(self, size=None, weight=None, family=None):
         """
         Set the size of the tick labels
@@ -196,8 +170,7 @@ class Labels(object):
 
         self._update_tick_font()
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_tick_labels(self):
         """
         Show the tick labels
@@ -208,8 +181,7 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_visible(True)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def hide_tick_labels(self):
         """
         Hide the tick labels
@@ -220,8 +192,7 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_visible(False)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_xtick_labels(self):
         """
         Show the x-axis tick labels
@@ -230,8 +201,7 @@ class Labels(object):
         for tick in self._ax1.get_xticklabels():
             tick.set_visible(True)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def hide_xtick_labels(self):
         """
         Hide the x-axis tick labels
@@ -240,8 +210,7 @@ class Labels(object):
         for tick in self._ax1.get_xticklabels():
             tick.set_visible(False)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_ytick_labels(self):
         """
         Show the y-axis tick labels
@@ -250,8 +219,7 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_visible(True)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def hide_ytick_labels(self):
         """
         Hide the y-axis tick labels
@@ -260,8 +228,7 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_visible(False)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def _update_tick_font(self):
 
         for tick in self._ax1.get_xticklabels():
@@ -269,14 +236,7 @@ class Labels(object):
         for tick in self._ax1.get_yticklabels():
             tick.set_fontproperties(self.tick_font)
 
-    def set_axis_labels_xdisp(self, displacement):
-        print "This method has been depracated. Please use the xpad= argument for set_axis_labels() instead"
-        return
-
-    def set_axis_labels_ydisp(self, displacement):
-        print "This method has been depracated. Please use the ypad= argument for set_axis_labels() instead"
-        return
-
+    @auto_refresh
     def set_axis_labels(self, xlabel='default', ylabel='default', xpad=0, ypad=0):
         """
         Set the axes labels
@@ -321,20 +281,7 @@ class Labels(object):
         else:
             self.ylabel = self._ax1.set_ylabel(ylabel)
 
-        self.refresh(force=False)
-
-    def set_axis_labels_size(self, size, refresh=True):
-        print "This method has been depracated. Please use the set_axis_labels_font() instead"
-        return
-
-    def set_axis_labels_weight(self, weight, refresh=True):
-        print "This method has been depracated. Please use the set_axis_labels_font() instead"
-        return
-
-    def set_axis_labels_family(self, family, refresh=True):
-        print "This method has been depracated. Please use the set_axis_labels_font() instead"
-        return
-
+    @auto_refresh
     def set_axis_labels_font(self, size=None, weight=None, family=None):
         """
         Set the size of the axis labels
@@ -373,8 +320,7 @@ class Labels(object):
 
         self._update_axes_font()
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_axis_labels(self):
         """
         Show the axis labels
@@ -385,8 +331,7 @@ class Labels(object):
         if self.ylabel:
             self.ylabel.set_visible(True)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def hide_axis_labels(self):
         """
         Hide the axis labels
@@ -397,8 +342,7 @@ class Labels(object):
         if self.ylabel:
             self.ylabel.set_visible(False)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_xaxis_label(self):
         """
         Show the x-axis labels
@@ -407,8 +351,8 @@ class Labels(object):
         if self.xlabel:
             self.xlabel.set_visible(True)
 
-        self.refresh(force=False)
 
+    @auto_refresh
     def hide_xaxis_label(self):
         """
         Hide the x-axis labels
@@ -417,8 +361,8 @@ class Labels(object):
         if self.xlabel:
             self.xlabel.set_visible(False)
 
-        self.refresh(force=False)
 
+    @auto_refresh
     def show_yaxis_label(self):
         """
         Show the y-axis labels
@@ -427,8 +371,8 @@ class Labels(object):
         if self.ylabel:
             self.ylabel.set_visible(True)
 
-        self.refresh(force=False)
 
+    @auto_refresh
     def hide_yaxis_label(self):
         """
         Hide the y-axis labels
@@ -437,8 +381,8 @@ class Labels(object):
         if self.ylabel:
             self.ylabel.set_visible(False)
 
-        self.refresh(force=False)
 
+    @auto_refresh
     def _update_axes_font(self):
 
         self.xlabel.set_fontproperties(self.axes_font)

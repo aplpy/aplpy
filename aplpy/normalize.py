@@ -47,7 +47,7 @@ class APLpyNormalize(Normalize):
         # Save parameters
         self.stretch = stretch
         self.exponent = exponent
-        
+
         if stretch == 'power' and np.equal(self.exponent, None):
             raise Exception("For stretch=='power', an exponent should be specified")
 

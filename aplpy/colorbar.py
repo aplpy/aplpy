@@ -3,15 +3,21 @@ import warnings
 from mpl_toolkits.axes_grid import make_axes_locatable
 import matplotlib.axes as maxes
 
+from matplotlib.font_manager import FontProperties
+
+from decorators import auto_refresh
+
 
 class Colorbar(object):
 
     def __init__(self, parent):
+        self._figure = parent._figure
         self._colorbar_axes = None
         self._parent = parent
         self._base_settings = {}
-        self._label_settings = {}
+        self._label_fontproperties = FontProperties()
 
+    @auto_refresh
     def show(self, location='right', size='5%', pad=0.05, ticks=None, labels=True):
 
         self._base_settings['location'] = location
@@ -79,71 +85,104 @@ class Colorbar(object):
 
             warnings.warn("No image is shown, therefore, no colorbar will be plotted")
 
-        self._parent.refresh()
-
-    def set_location(self, location):
-        self._base_settings['location'] = location
-        self.show(**self._base_settings)
-        self.set_label_properties(**self._label_settings)
-
-    def set_size(self, size):
-        self._base_settings['size'] = size
-        self.show(**self._base_settings)
-        self.set_label_properties(**self._label_settings)
-
-    def set_pad(self, pad):
-        self._base_settings['pad'] = pad
-        self.show(**self._base_settings)
-        self.set_label_properties(**self._label_settings)
-
-    def set_font_family(self, family):
-        self.set_label_properties(family=family)
-
-    def set_font_size(self, size):
-        self.set_label_properties(size=size)
-
-    def set_font_weight(self, weight):
-        self.set_label_properties(weight=weight)
-
-    def set_label_properties(self, family=None, size=None, weight=None):
-
-        if family:
-            self._label_settings['family'] = family
-            for label in self._colorbar_axes.get_xticklabels():
-                label.set_family(family)
-            for label in self._colorbar_axes.get_yticklabels():
-                label.set_family(family)
-
-        if size:
-            self._label_settings['size'] = size
-            for label in self._colorbar_axes.get_xticklabels():
-                label.set_size(size)
-            for label in self._colorbar_axes.get_yticklabels():
-                label.set_size(size)
-
-        if weight:
-            self._label_settings['weight'] = weight
-            for label in self._colorbar_axes.get_xticklabels():
-                label.set_weight(weight)
-            for label in self._colorbar_axes.get_yticklabels():
-                label.set_weight(weight)
-
-        self._parent.refresh()
-        
-    def set_frame_linewidth(self, linewidth):
-        for key in self._colorbar_axes.spines:
-            self._colorbar_axes.spines[key].set_linewidth(linewidth)
-        self._parent.refresh()
-
-    def set_frame_color(self, color):
-        for key in self._colorbar_axes.spines:
-            self._colorbar_axes.spines[key].set_edgecolor(color)
-        self._parent.refresh()
-
+    @auto_refresh
     def update(self):
         if self._colorbar_axes:
             self.show(**self._base_settings)
 
+    @auto_refresh
     def hide(self):
         self._parent._figure.delaxes(self._colorbar_axes)
         self._colorbar_axes = None
+
+    # LOCATION AND SIZE
+
+    @auto_refresh
+    def set_location(self, location):
+        self._base_settings['location'] = location
+        self.show(**self._base_settings)
+        self.set_font_properties(fontproperties=self._label_fontproperties)
+
+    @auto_refresh
+    def set_size(self, size):
+        self._base_settings['size'] = size
+        self.show(**self._base_settings)
+        self.set_font_properties(fontproperties=self._label_fontproperties)
+
+    @auto_refresh
+    def set_pad(self, pad):
+        self._base_settings['pad'] = pad
+        self.show(**self._base_settings)
+        self.set_font_properties(fontproperties=self._label_fontproperties)
+
+    # FONT PROPERTIES
+
+    @auto_refresh
+    def set_font_family(self, family):
+        self.set_font_properties(family=family)
+
+    @auto_refresh
+    def set_font_style(self, style):
+        self.set_font_properties(style=style)
+
+    @auto_refresh
+    def set_font_variant(self, variant):
+        self.set_font_properties(variant=variant)
+
+    @auto_refresh
+    def set_font_stretch(self, stretch):
+        self.set_font_properties(stretch=stretch)
+
+    @auto_refresh
+    def set_font_weight(self, weight):
+        self.set_font_properties(weight=weight)
+
+    @auto_refresh
+    def set_font_size(self, size):
+        self.set_font_properties(size=size)
+
+    @auto_refresh
+    def set_label_properties(self, *args, **kwargs):
+        warnings.warn("set_label_properties is deprecated - use set_font_properties instead", DeprecationWarning)
+        self.set_font_properties(*args, **kwargs)
+
+    @auto_refresh
+    def set_font_properties(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+
+        if family:
+            self._label_fontproperties.set_family(family)
+
+        if style:
+            self._label_fontproperties.set_style(style)
+
+        if variant:
+            self._label_fontproperties.set_variant(variant)
+
+        if stretch:
+            self._label_fontproperties.set_stretch(stretch)
+
+        if weight:
+            self._label_fontproperties.set_weight(weight)
+
+        if size:
+            self._label_fontproperties.set_size(size)
+
+        if fontproperties:
+            self._label_fontproperties = fontproperties
+
+        for label in self._colorbar_axes.get_xticklabels():
+            label.set_fontproperties(self._label_fontproperties)
+        for label in self._colorbar_axes.get_yticklabels():
+            label.set_fontproperties(self._label_fontproperties)
+
+    # FRAME PROPERTIES
+
+    @auto_refresh
+    def set_frame_linewidth(self, linewidth):
+        for key in self._colorbar_axes.spines:
+            self._colorbar_axes.spines[key].set_linewidth(linewidth)
+
+    @auto_refresh
+    def set_frame_color(self, color):
+        for key in self._colorbar_axes.spines:
+            self._colorbar_axes.spines[key].set_edgecolor(color)

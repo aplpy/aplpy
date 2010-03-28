@@ -1,8 +1,9 @@
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
-    PatchCollection, CircleCollection, Collection
+    PatchCollection, CircleCollection
 from regions import ArtistCollection, PatchCollection2
 
+from decorators import auto_refresh
 
 class Layers(object):
 
@@ -71,6 +72,7 @@ class Layers(object):
                 else:
                     print "   -> "+layer['name']+" (hidden)"
 
+    @auto_refresh
     def remove_layer(self, layer, raise_exception=True):
         '''
         Remove a layer
@@ -91,18 +93,17 @@ class Layers(object):
                 self._layers.pop(layer)
             elif layer_type == 'collection':
                 self._layers[layer].remove()
-                self._layers.pop(layer)                
+                self._layers.pop(layer)
                 if self._layers.has_key(layer+'_txt'):
                     self._layers[layer+'_txt'].remove()
-                    self._layers.pop(layer+'_txt')                
+                    self._layers.pop(layer+'_txt')
 
         else:
 
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def hide_layer(self, layer, raise_exception=True):
         '''
         Hide a layer
@@ -130,8 +131,7 @@ class Layers(object):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_layer(self, layer, raise_exception=True):
         '''
         Show a layer
@@ -157,9 +157,7 @@ class Layers(object):
             if raise_exception:
                 raise Exception("Layer "+layer+" does not exist")
 
-        self.refresh(force=False)
-
-    def get_layer(self, layer):
+    def get_layer(self, layer, raise_exception=True):
         '''
         Return a layer object
 

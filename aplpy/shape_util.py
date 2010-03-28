@@ -1,7 +1,6 @@
 # from matplotlib.pyplot import Circle
 from matplotlib.patches import Ellipse, Rectangle, Circle
 from matplotlib.collections import PatchCollection
-import wcs_util
 
 
 def make_circles(xp, yp, rp, **kwargs):

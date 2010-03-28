@@ -3,6 +3,7 @@ from matplotlib.pyplot import Locator
 import wcs_util
 import angle_util as au
 import math_util
+from decorators import auto_refresh
 
 
 class Ticks(object):
@@ -30,6 +31,7 @@ class Ticks(object):
         lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True)
         self._ax2.yaxis.set_major_locator(lyt)
 
+    @auto_refresh
     def set_tick_xspacing(self, xspacing):
         '''
         Set the x-axis tick spacing
@@ -51,8 +53,8 @@ class Ticks(object):
             self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
 
         self.grid._update()
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_tick_yspacing(self, yspacing):
         '''
         Set the y-axis tick spacing
@@ -74,8 +76,8 @@ class Ticks(object):
             self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
 
         self.grid._update()
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_tick_color(self, color):
         '''
         Set the tick color
@@ -95,8 +97,7 @@ class Ticks(object):
         for line in self._ax2.yaxis.get_ticklines():
             line.set_color(color)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def set_tick_size(self, size):
         '''
         Set the tick size
@@ -115,8 +116,6 @@ class Ticks(object):
             line.set_markersize(size)
         for line in self._ax2.yaxis.get_ticklines():
             line.set_markersize(size)
-
-        self.refresh(force=False)
 
 
 class WCSLocator(Locator):

@@ -45,11 +45,13 @@ from regions import Regions
 from colorbar import Colorbar
 from normalize import APLpyNormalize
 
+from decorators import auto_refresh
 
 class FITSFigure(Layers, Ticks, Labels, Regions):
 
     "A class for plotting FITS files."
 
+    @auto_refresh
     def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, **kwargs):
         '''
         Create a FITSFigure instance
@@ -104,8 +106,6 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
         #matplotlib.figure.Figure>`_
         '''
 
-        self.set_auto_refresh(False)
-
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
 
@@ -155,6 +155,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self._ax1.format_coord = self.cursor_position
 
+        self.set_auto_refresh(True)
+
         self.scalebar = ScaleBar(self)
         self.beam = Beam(self)
         self.colorbar = Colorbar(self)
@@ -182,8 +184,6 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         # Set default theme
         self.set_theme(theme='pretty')
-
-        self.set_auto_refresh(True)
 
     def _get_hdu(self, data, hdu, north, convention=None):
 
@@ -228,6 +228,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         return hdu, wcs
 
+    @auto_refresh
     def recenter(self, x, y, radius=None, width=None, height=None):
         '''
         Center the image on a given position and with a given radius
@@ -279,8 +280,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
         self._ax1.set_xlim(xpix-dx_pix, xpix+dx_pix)
         self._ax1.set_ylim(ypix-dy_pix, ypix+dy_pix)
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_grayscale(self, vmin=None, vmid=None, vmax=None, \
                             pmin=0.25, pmax=99.75, \
                             stretch='linear', exponent=2, invert='default'):
@@ -333,9 +333,11 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax, stretch=stretch, exponent=exponent, cmap=cmap, pmin=pmin, pmax=pmax)
 
+    @auto_refresh
     def hide_grayscale(self, *args, **kwargs):
         self.hide_colorscale(*args, **kwargs)
 
+    @auto_refresh
     def show_colorscale(self, vmin=None, vmid=None, vmax=None, \
                              pmin=0.25, pmax=99.75,
                              stretch='linear', exponent=2, cmap='default'):
@@ -432,12 +434,11 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self.colorbar.update()
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def hide_colorscale(self):
         self.image.set_visible(False)
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_nan_color(self, color):
         '''
         Set the color for NaN pixels
@@ -449,8 +450,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
         cm = self.image.get_cmap()
         cm.set_bad(color)
         self.image.set_cmap(cm)
-        self.refresh(force=False)
 
+    @auto_refresh
     def show_rgb(self, filename, interpolation='nearest', flip=False):
         '''
         Show a 3-color image instead of the FITS file data
@@ -475,8 +476,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self.image = self._ax1.imshow(img, extent=self._extent, interpolation=interpolation, origin='upper')
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, **kwargs):
         '''
         Overlay contours on the current plot
@@ -569,15 +569,13 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self._layers[contour_set_name] = c
 
-        self.refresh(force=False)
-
-
         if returnlevels:
             return levels
 
     # This method plots markers. The input should be an Nx2 array with WCS coordinates
     # in degree format.
 
+    @auto_refresh
     def show_markers(self, xw, yw, layer=False, **kwargs):
         '''
         Overlay markers on the current plot.
@@ -626,10 +624,9 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self._layers[marker_set_name] = s
 
-        self.refresh(force=False)
-
     # Show circles. Different from markers as this method allows more definitions
     # for the circles.
+    @auto_refresh
     def show_circles(self, xw, yw, r, layer=False, **kwargs):
         '''
             Overlay circles on the current plot.
@@ -687,8 +684,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self._layers[circle_set_name] = c
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_ellipses(self, xw, yw, width, height, layer=False, **kwargs):
         '''
            Overlay ellipses on the current plot.
@@ -755,8 +751,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self._layers[ellipse_set_name] = c
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def show_rectangles(self, xw, yw, width, height, layer=False, **kwargs):
         '''
            Overlay rectangles on the current plot.
@@ -819,8 +814,6 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self._layers[rectangle_set_name] = c
 
-        self.refresh(force=False)
-
     def set_auto_refresh(self, refresh):
         '''
         Set whether the display should refresh after each method call
@@ -833,8 +826,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
                 the display can be refreshed manually using the refresh()
                 method
         '''
-        self.auto_refresh = refresh
-        self.refresh(force=False)
+        self._figure._auto_refresh = refresh
 
     def refresh(self, force=True):
         '''
@@ -848,7 +840,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
                 refreshed whatever the auto refresh setting is set to.
                 The default is True.
         '''
-        if self.auto_refresh or force:
+        if self._figure._auto_refresh or force:
             self._figure.canvas.draw()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True):
@@ -907,6 +899,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
     def _get_colormap_default(self):
         return self._figure.apl_colorscale_cmap_default
 
+    @auto_refresh
     def set_theme(self, theme):
         '''
         Set the axes, ticks, grid, and image colors to a certain style (experimental)
@@ -942,8 +935,7 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg', 1000))
 
-        self.refresh(force=False)
-
+    @auto_refresh
     def set_frame_linewidth(self, linewidth):
         '''
         Set line width of the frame
@@ -955,8 +947,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
         '''
         for key in self._ax1.spines:
             self._ax1.spines[key].set_linewidth(linewidth)
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_frame_color(self, color):
         '''
         Set color of the frame
@@ -968,7 +960,6 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
         '''
         for key in self._ax1.spines:
             self._ax1.spines[key].set_edgecolor(color)
-        self.refresh(force=False)
 
     def world2pixel(self, xw, yw):
         '''
@@ -1006,50 +997,34 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
     # Shortcut methods
 
+    @auto_refresh
     def show_grid(self, *args, **kwargs):
         self.grid.show(*args, **kwargs)
 
+    @auto_refresh
     def hide_grid(self, *args, **kwargs):
         self.grid.hide(*args, **kwargs)
 
-    def set_grid_alpha(self, *args, **kwargs):
-        warnings.warn("FITSFigure.set_grid_alpha is deprecated - use FITSFigure.grid.set_alpha instead")
-        self.grid.set_alpha(*args, **kwargs)
-
-    def set_grid_color(self, *args, **kwargs):
-        warnings.warn("FITSFigure.set_grid_color is deprecated - use FITSFigure.grid.set_color instead")
-        self.grid.set_color(*args, **kwargs)
-
-    def set_grid_xspacing(self, *args, **kwargs):
-        warnings.warn("FITSFigure.set_grid_xspacing is deprecated - use FITSFigure.grid.set_xspacing instead")
-        self.grid.set_xspacing(*args, **kwargs)
-
-    def set_grid_yspacing(self, *args, **kwargs):
-        warnings.warn("FITSFigure.set_grid_yspacing is deprecated - use FITSFigure.grid.set_yspacing instead")
-        self.grid.set_yspacing(*args, **kwargs)
-
+    @auto_refresh
     def show_beam(self, *args, **kwargs):
         self.beam.show(*args, **kwargs)
 
+    @auto_refresh
     def hide_beam(self, *args, **kwargs):
         self.beam.hide(*args, **kwargs)
 
-    def set_beam_properties(self, *args, **kwargs):
-        warnings.warn("FITSFigure.set_beam_properties is deprecated - use FITSFigure.beam.set_properties instead")
-        self.beam.set_properties(*args, **kwargs)
-
+    @auto_refresh
     def show_scalebar(self, *args, **kwargs):
         self.scalebar.show(*args, **kwargs)
 
+    @auto_refresh
     def hide_scalebar(self, *args, **kwargs):
         self.scalebar.hide(*args, **kwargs)
 
-    def set_scalebar_properties(self, *args, **kwargs):
-        warnings.warn("FITSFigure.set_scalebar_properties is deprecated - use FITSFigure.scalebar.set_properties instead")
-        self.scalebar.set_properties(*args, **kwargs)
-
+    @auto_refresh
     def show_colorbar(self, *args, **kwargs):
         self.colorbar.show(*args, **kwargs)
 
+    @auto_refresh
     def hide_colorbar(self, *args, **kwargs):
         self.colorbar.hide(*args, **kwargs)

@@ -10,21 +10,24 @@ from matplotlib.collections import LineCollection
 import math_util
 
 import wcs_util
+from ticks import default_spacing
 
 import angle_util as au
 
+from decorators import auto_refresh
 
 # can do coarse search to check if any longitude lines are completely contained inside box.
 # if not, then has to intersect axis, and so can just do the ones that intersect
 
 class Grid(object):
 
+    @auto_refresh
     def __init__(self, parent):
 
         # Save axes and wcs information
         self.ax = parent._ax1
         self.wcs = parent._wcs
-        self.refresh = parent.refresh
+        self._figure = parent._figure
 
         # Initialize grid container
         self._grid = None
@@ -37,9 +40,10 @@ class Grid(object):
         self.default_alpha = 0.5
 
         # Set grid event handler
-        self.ax.callbacks.connect('xlim_changed', self._update)
-        self.ax.callbacks.connect('ylim_changed', self._update)
+        self.ax.callbacks.connect('xlim_changed', self._update_norefresh)
+        self.ax.callbacks.connect('ylim_changed', self._update_norefresh)
 
+    @auto_refresh
     def set_xspacing(self, xspacing):
         '''
         Set the grid line spacing in the longitudinal direction
@@ -59,8 +63,8 @@ class Grid(object):
             self.x_grid_spacing = au.Angle(degrees = xspacing)
 
         self._update()
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_yspacing(self, yspacing):
         '''
         Set the grid line spacing in the latitudinal direction
@@ -80,8 +84,8 @@ class Grid(object):
             self.y_grid_spacing = au.Angle(degrees = yspacing)
 
         self._update()
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_color(self, color):
         '''
         Set the color of the grid lines
@@ -95,8 +99,8 @@ class Grid(object):
             self._grid.set_edgecolor(color)
         else:
             self.default_color = color
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_alpha(self, alpha):
         '''
         Set the alpha (transparency) of the grid lines
@@ -112,30 +116,33 @@ class Grid(object):
             self._grid.set_alpha(alpha)
         else:
             self.default_alpha = alpha
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_linewidth(self, linewidth):
         self._grid.set_linewidth(linewidth)
-        self.refresh(force=False)
 
+    @auto_refresh
     def set_linestyle(self, linestyle):
         self._grid.set_linestyle(linestyle)
-        self.refresh(force=False)
 
+    @auto_refresh
     def show(self):
         if self._grid:
             self._grid.set_visible(True)
-            self.refresh(force=False)
         else:
             self._active = True
             self._update()
             self.set_color(self.default_color)
             self.set_alpha(self.default_alpha)
 
+    @auto_refresh
     def hide(self):
         self._grid.set_visible(False)
-        self.refresh(force=False)
 
+    def _update_norefresh(self, *args):
+        self._update(*args, refresh=False)
+
+    @auto_refresh
     def _update(self, *args):
 
         if not self._active:
@@ -148,12 +155,18 @@ class Grid(object):
         lines = []
 
         if self.x_auto_spacing:
-            xspacing = self.ax.xaxis.apl_tick_spacing.todegrees()
+            if self.ax.xaxis.apl_auto_tick_spacing:
+                xspacing = default_spacing(self.ax, 'x').todegrees()
+            else:
+                xspacing = self.ax.xaxis.apl_tick_spacing.todegrees()
         else:
             xspacing = self.x_grid_spacing.todegrees()
 
         if self.y_auto_spacing:
-            yspacing = self.ax.yaxis.apl_tick_spacing.todegrees()
+            if self.ax.xaxis.apl_auto_tick_spacing:
+                yspacing = default_spacing(self.ax, 'y').todegrees()
+            else:
+                yspacing = self.ax.yaxis.apl_tick_spacing.todegrees()
         else:
             yspacing = self.y_grid_spacing.todegrees()
 

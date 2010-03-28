@@ -1,5 +1,3 @@
-import warnings
-
 try:
     import pyregion
 except ImportError:
@@ -13,6 +11,7 @@ except ImportError:
 
 import matplotlib
 
+from decorators import auto_refresh
 
 class Regions:
     """
@@ -49,7 +48,8 @@ class Regions:
 
     """
 
-    def show_regions(self, regionfile, layer=False, refresh=True, **kwargs):
+    @auto_refresh
+    def show_regions(self, regionfile, layer=False, **kwargs):
         """
         Overplot regions as specified in the regionsfile
 
@@ -61,8 +61,6 @@ class Regions:
 
             *layer*: [ string ]
                 The name of the layer
-            *refresh*: [ bool ]
-                Refresh the figure?
 
         Additional keyword arguments, e.g. zorder, will be passed to the ds9
         call and onto the patchcollections.
@@ -82,10 +80,6 @@ class Regions:
 
         self._layers[region_set_name] = PC
         self._layers[region_set_name+"_txt"] = TC
-
-        if refresh:
-            self.refresh(force=False)
-
 
 def ds9(regionfile, header, zorder=3, **kwargs):
     """

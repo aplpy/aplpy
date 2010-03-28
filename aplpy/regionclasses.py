@@ -1,9 +1,8 @@
 import matplotlib
-import numpy
 
 class ArtistCollection():
     """
-    Matplotlib collections can't handle Text.  
+    Matplotlib collections can't handle Text.
     This is a barebones collection for text objects
     that supports removing and making (in)visible
     """
