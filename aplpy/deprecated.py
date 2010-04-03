@@ -5,6 +5,46 @@ from decorators import auto_refresh
 class Deprecated(object):
 
     @auto_refresh
+    def show_grid(self, *args, **kwargs):
+        warnings.warn("show_grid is deprecated - use add_grid instead", DeprecationWarning)
+        self.add_grid(*args, **kwargs)
+
+    @auto_refresh
+    def hide_grid(self, *args, **kwargs):
+        warnings.warn("hide_grid is deprecated - use remove_grid instead", DeprecationWarning)
+        self.add_grid(*args, **kwargs)
+        
+    @auto_refresh
+    def show_beam(self, *args, **kwargs):
+        warnings.warn("show_beam is deprecated - use add_beam instead", DeprecationWarning)
+        self.add_beam(*args, **kwargs)
+        
+    @auto_refresh
+    def hide_beam(self, *args, **kwargs):
+        warnings.warn("hide_beam is deprecated - use remove_beam instead", DeprecationWarning)
+        self.add_beam(*args, **kwargs)
+        
+    @auto_refresh
+    def show_scalebar(self, *args, **kwargs):
+        warnings.warn("show_scalebar is deprecated - use add_scalebar instead", DeprecationWarning)
+        self.add_scalebar(*args, **kwargs)
+        
+    @auto_refresh
+    def hide_scalebar(self, *args, **kwargs):
+        warnings.warn("hide_scalebar is deprecated - use remove_scalebar instead", DeprecationWarning)
+        self.add_scalebar(*args, **kwargs)
+        
+    @auto_refresh
+    def show_colorbar(self, *args, **kwargs):
+        warnings.warn("show_colorbar is deprecated - use add_colorbar instead", DeprecationWarning)
+        self.add_colorbar(*args, **kwargs)
+        
+    @auto_refresh
+    def hide_colorbar(self, *args, **kwargs):
+        warnings.warn("hide_colorbar is deprecated - use remove_colorbar instead", DeprecationWarning)
+        self.add_colorbar(*args, **kwargs)
+
+    @auto_refresh
     def set_grid_alpha(self, *args, **kwargs):
         warnings.warn("set_grid_alpha is deprecated - use grid.set_alpha instead", DeprecationWarning)
         self.grid.set_alpha(*args, **kwargs)

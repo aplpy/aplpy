@@ -52,7 +52,8 @@ class Ticks(object):
             self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
             self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
 
-        self.grid._update()
+        if hasattr(self, 'grid'):
+            self.grid._update()
 
     @auto_refresh
     def set_tick_yspacing(self, yspacing):
@@ -75,7 +76,8 @@ class Ticks(object):
             self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
             self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
 
-        self.grid._update()
+        if hasattr(self, 'grid'):
+            self.grid._update()
 
     @auto_refresh
     def set_tick_color(self, color):

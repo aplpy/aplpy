@@ -44,6 +44,10 @@ class Grid(object):
         self.ax.callbacks.connect('ylim_changed', self._update_norefresh)
 
     @auto_refresh
+    def _remove(self):
+        self._grid.remove()
+
+    @auto_refresh
     def set_xspacing(self, xspacing):
         '''
         Set the grid line spacing in the longitudinal direction

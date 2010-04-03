@@ -214,6 +214,10 @@ class ScaleBar(object):
         self.set_properties(**kwargs)
 
     @auto_refresh
+    def _remove(self):
+        self._scalebar.remove()
+
+    @auto_refresh
     def hide(self):
         '''
         Hide the scalebar
@@ -331,7 +335,7 @@ class Beam(object):
 
     @auto_refresh
     def show(self, major='BMAJ', minor='BMIN', \
-        angle='BPA', corner=3, frame=False, **kwargs):
+        angle='BPA', corner=3, frame=False, borderpad=0.4, pad=0.5, **kwargs):
 
         '''
         Display the beam shape and size for the primary image
@@ -407,6 +411,10 @@ class Beam(object):
         self._ax.add_artist(self._beam)
 
         self.set_properties(**kwargs)
+
+    @auto_refresh
+    def _remove(self):
+        self._beam.remove()
 
     @auto_refresh
     def hide(self):

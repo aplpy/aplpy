@@ -95,6 +95,10 @@ class Colorbar(object):
         self._parent._figure.delaxes(self._colorbar_axes)
         self._colorbar_axes = None
 
+    @auto_refresh
+    def _remove(self):
+        self._parent._figure.delaxes(self._colorbar_axes)
+            
     # LOCATION AND SIZE
 
     @auto_refresh

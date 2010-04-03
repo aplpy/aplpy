@@ -47,7 +47,9 @@ from normalize import APLpyNormalize
 
 from decorators import auto_refresh
 
-class FITSFigure(Layers, Ticks, Labels, Regions):
+from deprecated import Deprecated
+
+class FITSFigure(Layers, Ticks, Labels, Regions, Deprecated):
 
     "A class for plotting FITS files."
 
@@ -157,15 +159,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         self.set_auto_refresh(True)
 
-        self.scalebar = ScaleBar(self)
-        self.beam = Beam(self)
-        self.colorbar = Colorbar(self)
-
         # Set view to whole FITS file
         self._initialize_view()
-
-        # Initialize grid
-        self.grid = Grid(self)
 
         # Initialize ticks
         self._initialize_ticks()
@@ -432,7 +427,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
         if ymin == 0.0:
             self._ax1.set_ylim(0.5, ymax)
 
-        self.colorbar.update()
+        if hasattr(self, 'colorbar'):
+            self.colorbar.update()
 
     @auto_refresh
     def hide_colorscale(self):
@@ -919,8 +915,6 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
             self.set_tick_size(7)
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'jet'
-            self.grid.set_color('white')
-            self.grid.set_alpha(0.5)
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('jet', 1000))
         elif theme=='publication':
@@ -930,8 +924,6 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
             self.set_tick_size(7)
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
-            self.grid.set_color('black')
-            self.grid.set_alpha(1.0)
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg', 1000))
 
@@ -995,36 +987,47 @@ class FITSFigure(Layers, Ticks, Labels, Regions):
 
         return wcs_util.pix2world(self._wcs, xp, yp)
 
-    # Shortcut methods
 
     @auto_refresh
-    def show_grid(self, *args, **kwargs):
+    def add_grid(self, *args, **kwargs):
+        if hasattr(self, 'grid'):
+            raise Exception("Grid already exists")
+        self.grid = Grid(self)
         self.grid.show(*args, **kwargs)
 
     @auto_refresh
-    def hide_grid(self, *args, **kwargs):
-        self.grid.hide(*args, **kwargs)
+    def remove_grid(self):
+        self.grid._remove()
 
     @auto_refresh
-    def show_beam(self, *args, **kwargs):
+    def add_beam(self, *args, **kwargs):
+        if hasattr(self, 'beam'):
+            raise Exception("Beam already exists")
+        self.beam = Beam(self)
         self.beam.show(*args, **kwargs)
 
     @auto_refresh
-    def hide_beam(self, *args, **kwargs):
-        self.beam.hide(*args, **kwargs)
+    def remove_beam(self):
+        self.beam._remove()
 
     @auto_refresh
-    def show_scalebar(self, *args, **kwargs):
+    def add_scalebar(self, *args, **kwargs):
+        if hasattr(self, 'scalebar'):
+            raise Exception("Scalebar already exists")
+        self.scalebar = ScaleBar(self)
         self.scalebar.show(*args, **kwargs)
 
     @auto_refresh
-    def hide_scalebar(self, *args, **kwargs):
-        self.scalebar.hide(*args, **kwargs)
+    def remove_scalebar(self):
+        self.scalebar._remove()
 
     @auto_refresh
-    def show_colorbar(self, *args, **kwargs):
+    def add_colorbar(self, *args, **kwargs):
+        if hasattr(self, 'colorbar'):
+            raise Exception("Colorbar already exists")
+        self.colorbar = Colorbar(self)
         self.colorbar.show(*args, **kwargs)
 
     @auto_refresh
-    def hide_colorbar(self, *args, **kwargs):
-        self.colorbar.hide(*args, **kwargs)
+    def remove_colorbar(self):
+        self.colorbar._remove()
