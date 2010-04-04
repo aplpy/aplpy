@@ -39,7 +39,8 @@ import shape_util
 from layers import Layers
 from grid import Grid
 from ticks import Ticks
-from labels import Labels
+from labels import TickLabels
+from axis_labels import AxisLabels
 from overlays import Beam, ScaleBar
 from regions import Regions
 from colorbar import Colorbar
@@ -49,7 +50,7 @@ from decorators import auto_refresh
 
 from deprecated import Deprecated
 
-class FITSFigure(Layers, Ticks, Labels, Regions, Deprecated):
+class FITSFigure(Layers, Regions, Deprecated):
 
     "A class for plotting FITS files."
 
@@ -155,18 +156,19 @@ class FITSFigure(Layers, Ticks, Labels, Regions, Deprecated):
         self._ax1.apl_wcs = self._wcs
         self._ax2.apl_wcs = self._wcs
 
-        self._ax1.format_coord = self.cursor_position
-
         self.set_auto_refresh(True)
 
         # Set view to whole FITS file
         self._initialize_view()
 
         # Initialize ticks
-        self._initialize_ticks()
+        self.ticks = Ticks(self)
 
         # Initialize labels
-        self._initialize_labels()
+        self.axis_labels = AxisLabels(self)
+        self.tick_labels = TickLabels(self)
+
+        self._ax1.format_coord = self.tick_labels.cursor_position
 
         # Initialize layers list
         self._initialize_layers()
@@ -222,6 +224,20 @@ class FITSFigure(Layers, Ticks, Labels, Regions, Deprecated):
             raise Exception("An error occured while parsing the WCS information")
 
         return hdu, wcs
+
+    @auto_refresh
+    def set_system_latex(self, usetex):
+        """
+        Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
+
+        Required Arguments:
+
+            *usetex*: [ True | False ]
+                Whether to use a real LaTex installation (True) or the built-in
+                matplotlib LaTeX (False). Note that if the former is chosen, an
+                installation of LaTex is required.
+        """
+        mpl.rc('text', usetex=usetex)
 
     @auto_refresh
     def recenter(self, x, y, radius=None, width=None, height=None):
@@ -911,8 +927,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions, Deprecated):
         if theme=='pretty':
             self.set_frame_color('white')
             self.set_frame_linewidth(0.5)
-            self.set_tick_color('white')
-            self.set_tick_size(7)
+            self.ticks.set_color('white')
+            self.ticks.set_length(7)
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'jet'
             if self.image:
@@ -920,8 +936,8 @@ class FITSFigure(Layers, Ticks, Labels, Regions, Deprecated):
         elif theme=='publication':
             self.set_frame_color('black')
             self.set_frame_linewidth(0.5)
-            self.set_tick_color('black')
-            self.set_tick_size(7)
+            self.ticks.set_color('black')
+            self.ticks.set_length(7)
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
             if self.image:

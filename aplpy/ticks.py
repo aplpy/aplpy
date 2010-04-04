@@ -8,7 +8,14 @@ from decorators import auto_refresh
 
 class Ticks(object):
 
-    def _initialize_ticks(self):
+    @auto_refresh
+    def __init__(self, parent):
+
+        # Store references to axes
+        self._ax1 = parent._ax1
+        self._ax2 = parent._ax2
+        self._wcs = parent._wcs
+        self._figure = parent._figure
 
         # Set tick positions
         self._ax1.yaxis.tick_left()
@@ -17,8 +24,8 @@ class Ticks(object):
         self._ax2.xaxis.tick_top()
 
         # Set tick spacing to default
-        self.set_tick_xspacing('auto')
-        self.set_tick_yspacing('auto')
+        self.set_xspacing('auto')
+        self.set_yspacing('auto')
 
         # Set major tick locators
         lx = WCSLocator(wcs=self._wcs, coord='x')
@@ -32,7 +39,7 @@ class Ticks(object):
         self._ax2.yaxis.set_major_locator(lyt)
 
     @auto_refresh
-    def set_tick_xspacing(self, xspacing):
+    def set_xspacing(self, xspacing):
         '''
         Set the x-axis tick spacing
 
@@ -56,7 +63,7 @@ class Ticks(object):
             self.grid._update()
 
     @auto_refresh
-    def set_tick_yspacing(self, yspacing):
+    def set_yspacing(self, yspacing):
         '''
         Set the y-axis tick spacing
 
@@ -80,7 +87,7 @@ class Ticks(object):
             self.grid._update()
 
     @auto_refresh
-    def set_tick_color(self, color):
+    def set_color(self, color):
         '''
         Set the tick color
 
@@ -100,7 +107,7 @@ class Ticks(object):
             line.set_color(color)
 
     @auto_refresh
-    def set_tick_size(self, size):
+    def set_length(self, size):
         '''
         Set the tick size
 
@@ -118,6 +125,47 @@ class Ticks(object):
             line.set_markersize(size)
         for line in self._ax2.yaxis.get_ticklines():
             line.set_markersize(size)
+
+    @auto_refresh
+    def set_linewidth(self, linewidth):
+        '''
+        Set the tick linewidth
+
+        Required Arguments:
+
+            *linewidth*: [ float ]
+                The line width of the ticks (in points)
+        '''
+
+        for line in self._ax1.xaxis.get_ticklines():
+            print dir(line)
+            line.set_linewidth(linewidth)
+        for line in self._ax1.yaxis.get_ticklines():
+            line.set_linewidth(linewidth)
+        for line in self._ax2.xaxis.get_ticklines():
+            line.set_linewidth(linewidth)
+        for line in self._ax2.yaxis.get_ticklines():
+            line.set_linewidth(linewidth)
+
+    @auto_refresh
+    def set_linestyle(self, linestyle):
+        '''
+        Set the tick linestyle
+
+        Required Arguments:
+
+            *linestyle*: [ float ]
+                The line style of the ticks
+        '''
+
+        for line in self._ax1.xaxis.get_ticklines():
+            line.set_linestyle(linestyle)
+        for line in self._ax1.yaxis.get_ticklines():
+            line.set_linestyle(linestyle)
+        for line in self._ax2.xaxis.get_ticklines():
+            line.set_linestyle(linestyle)
+        for line in self._ax2.yaxis.get_ticklines():
+            line.set_linestyle(linestyle)
 
 
 class WCSLocator(Locator):
