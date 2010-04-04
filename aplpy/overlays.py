@@ -395,6 +395,8 @@ class Beam(object):
         self._base_settings['angle'] = angle
         self._base_settings['corner'] = corner
         self._base_settings['frame'] = frame
+        self._base_settings['borderpad'] = borderpad
+        self._base_settings['pad'] = pad
 
         minor /= degperpix
         major /= degperpix
@@ -406,7 +408,7 @@ class Beam(object):
 
         self._beam = AnchoredEllipse(self._ax.transData, \
             width=major, height=minor, angle=angle, \
-            loc=corner, pad=0.5, borderpad=0.4, frameon=frame)
+            loc=corner, pad=pad, borderpad=borderpad, frameon=frame)
 
         self._ax.add_artist(self._beam)
 
@@ -453,6 +455,18 @@ class Beam(object):
     @auto_refresh
     def set_frame(self, frame):
         self._base_settings['frame'] = frame
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
+        
+    @auto_refresh
+    def set_borderpad(self, borderpad):
+        self._base_settings['borderpad'] = borderpad
+        self.show(**self._base_settings)
+        self.set_properties(**self._beam_settings)
+    
+    @auto_refresh
+    def set_pad(self, pad):
+        self._base_settings['pad'] = pad
         self.show(**self._base_settings)
         self.set_properties(**self._beam_settings)
 
