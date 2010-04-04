@@ -214,7 +214,7 @@ class ScaleBar(object):
 
         self._ax.add_artist(self._scalebar)
 
-        self.set_properties(**kwargs)
+        self.set(**kwargs)
 
     @auto_refresh
     def _remove(self):
@@ -233,37 +233,44 @@ class ScaleBar(object):
     @auto_refresh
     def set_length(self, length):
         self.show(length, **self._base_settings)
-        self.set_scalebar_properties(**self._scalebar_settings)
-        self.set_label_properties(**self._scalebar_settings)
+        self._set_scalebar_properties(**self._scalebar_settings)
+        self._set_label_properties(**self._scalebar_settings)
 
     @auto_refresh
     def set_label(self, label):
-        self.set_label_properties(text=label)
+        self._set_label_properties(text=label)
+
+    @auto_refresh
+    def set_linewidth(self, linewidth):
+        self._set_scalebar_properties(linewidth=linewidth)
+
+    @auto_refresh
+    def set_linestyle(self, linestyle):
+        self._set_scalebar_properties(linestyle=linestyle)
 
     @auto_refresh
     def set_corner(self, corner):
         self._base_settings['corner'] = corner
         self.show(self._length, **self._base_settings)
-        self.set_scalebar_properties(**self._scalebar_settings)
-        self.set_label_properties(**self._scalebar_settings)
+        self._set_scalebar_properties(**self._scalebar_settings)
+        self._set_label_properties(**self._scalebar_settings)
 
     @auto_refresh
     def set_frame(self, frame):
         self._base_settings['frame'] = frame
         self.show(self._length, **self._base_settings)
-        self.set_scalebar_properties(**self._scalebar_settings)
-        self.set_label_properties(**self._scalebar_settings)
+        self._set_scalebar_properties(**self._scalebar_settings)
+        self._set_label_properties(**self._scalebar_settings)
 
     @auto_refresh
     def set_alpha(self, alpha):
-        self.set_scalebar_properties(alpha=alpha)
-        self.set_label_properties(alpha=alpha)
+        self._set_scalebar_properties(alpha=alpha)
+        self._set_label_properties(alpha=alpha)
 
     @auto_refresh
     def set_color(self, color):
-        self.set_scalebar_properties(color=color)
-        self.set_label_properties(color=color)
-
+        self._set_scalebar_properties(color=color)
+        self._set_label_properties(color=color)
 
     @auto_refresh
     def set_font_family(self, family):
@@ -283,35 +290,35 @@ class ScaleBar(object):
     def set_font_style(self, style):
         warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
         self.set_font(style=style)
-        
+
     @auto_refresh
     def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
 
         if family:
-            self._label_settings['font'].set_family(family)
+            self._label_settings['fontproperties'].set_family(family)
 
         if style:
-            self._label_settings['font'].set_style(style)
+            self._label_settings['fontproperties'].set_style(style)
 
         if variant:
-            self._label_settings['font'].set_variant(variant)
+            self._label_settings['fontproperties'].set_variant(variant)
 
         if stretch:
-            self._label_settings['font'].set_stretch(stretch)
+            self._label_settings['fontproperties'].set_stretch(stretch)
 
         if weight:
-            self._label_settings['font'].set_weight(weight)
+            self._label_settings['fontproperties'].set_weight(weight)
 
         if size:
-            self._label_settings['font'].set_size(size)
+            self._label_settings['fontproperties'].set_size(size)
 
         if fontproperties:
-            self._label_settings['font'] = fontproperties
+            self._label_settings['fontproperties'] = fontproperties
 
-        self._scalebar.txt_label.get_children()[0].set_fontproperties(self._label_settings['font'])
+        self._set_label_properties(fontproperties=self._label_settings['fontproperties'])
 
     @auto_refresh
-    def set_label_properties(self, **kwargs):
+    def _set_label_properties(self, **kwargs):
         '''
         Modify the scalebar label properties. All arguments are passed to the
         matplotlib Text class. See the matplotlib documentation for more
@@ -322,7 +329,7 @@ class ScaleBar(object):
         self._scalebar.txt_label.get_children()[0].set(**kwargs)
 
     @auto_refresh
-    def set_scalebar_properties(self, **kwargs):
+    def _set_scalebar_properties(self, **kwargs):
         '''
         Modify the scalebar properties. All arguments are passed to the
         matplotlib Rectangle class. See the matplotlib documentation for more
@@ -333,7 +340,7 @@ class ScaleBar(object):
         self._scalebar.size_bar.get_children()[0].set(**kwargs)
 
     @auto_refresh
-    def set_properties(self, **kwargs):
+    def set(self, **kwargs):
         '''
         Modify the scalebar and scalebar properties. All arguments are passed
         to the matplotlib Rectangle and Text classes. See the matplotlib
@@ -344,11 +351,11 @@ class ScaleBar(object):
         for kwarg in kwargs:
             kwargs_single = {kwarg: kwargs[kwarg]}
             try:
-                self.set_label_properties(**kwargs_single)
+                self._set_label_properties(**kwargs_single)
             except AttributeError:
                 pass
             try:
-                self.set_scalebar_properties(**kwargs_single)
+                self._set_scalebar_properties(**kwargs_single)
             except AttributeError:
                 pass
 
@@ -446,7 +453,7 @@ class Beam(object):
 
         self._ax.add_artist(self._beam)
 
-        self.set_properties(**kwargs)
+        self.set(**kwargs)
 
     @auto_refresh
     def _remove(self):
@@ -466,74 +473,74 @@ class Beam(object):
     def set_major(self, major):
         self._base_settings['major'] = major
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
+        self.set(**self._beam_settings)
 
     @auto_refresh
     def set_minor(self, minor):
         self._base_settings['minor'] = minor
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
+        self.set(**self._beam_settings)
 
     @auto_refresh
     def set_angle(self, angle):
         self._base_settings['angle'] = angle
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
+        self.set(**self._beam_settings)
 
     @auto_refresh
     def set_corner(self, corner):
         self._base_settings['corner'] = corner
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
+        self.set(**self._beam_settings)
 
     @auto_refresh
     def set_frame(self, frame):
         self._base_settings['frame'] = frame
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
-        
+        self.set(**self._beam_settings)
+
     @auto_refresh
     def set_borderpad(self, borderpad):
         self._base_settings['borderpad'] = borderpad
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
-    
+        self.set(**self._beam_settings)
+
     @auto_refresh
     def set_pad(self, pad):
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
-        self.set_properties(**self._beam_settings)
+        self.set(**self._beam_settings)
 
     @auto_refresh
     def set_alpha(self, alpha):
-        self.set_properties(alpha=alpha)
+        self.set(alpha=alpha)
 
     @auto_refresh
     def set_color(self, color):
-        self.set_properties(color=color)
+        self.set(color=color)
 
     @auto_refresh
     def set_edgecolor(self, edgecolor):
-        self.set_properties(edgecolor=edgecolor)
+        self.set(edgecolor=edgecolor)
 
     @auto_refresh
     def set_facecolor(self, facecolor):
-        self.set_properties(facecolor=facecolor)
+        self.set(facecolor=facecolor)
 
     @auto_refresh
     def set_linestyle(self, linestyle):
-        self.set_properties(linestyle=linestyle)
+        self.set(linestyle=linestyle)
 
     @auto_refresh
     def set_linewidth(self, linewidth):
-        self.set_properties(linewidth=linewidth)
+        self.set(linewidth=linewidth)
 
     @auto_refresh
     def set_hatch(self, hatch):
-        self.set_properties(hatch=hatch)
+        self.set(hatch=hatch)
 
     @auto_refresh
-    def set_properties(self, **kwargs):
+    def set(self, **kwargs):
         '''
         Modify the beam properties
 

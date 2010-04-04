@@ -87,13 +87,18 @@ class Deprecated(object):
 
     @auto_refresh
     def set_scalebar_properties(self, *args, **kwargs):
-        warnings.warn("set_scalebar_properties is deprecated - use scalebar.set_properties instead", DeprecationWarning)
-        self.scalebar.set_properties(*args, **kwargs)
+        warnings.warn("set_scalebar_properties is deprecated - use scalebar.set instead", DeprecationWarning)
+        self.scalebar._set_scalebar_properties(*args, **kwargs)
+        
+    @auto_refresh
+    def set_label_properties(self, *args, **kwargs):
+        warnings.warn("set_label_properties is deprecated - use scalebar.set instead", DeprecationWarning)
+        self.scalebar._set_label_properties(*args, **kwargs)
 
     @auto_refresh
     def set_beam_properties(self, *args, **kwargs):
-        warnings.warn("set_beam_properties is deprecated - use beam.set_properties instead", DeprecationWarning)
-        self.beam.set_properties(*args, **kwargs)
+        warnings.warn("set_beam_properties is deprecated - use beam.set instead", DeprecationWarning)
+        self.beam.set(*args, **kwargs)
 
     @auto_refresh
     def set_labels_latex(self, usetex):
