@@ -246,3 +246,15 @@ class Deprecated(object):
     def hide_yaxis_label(self):
         warnings.warn("hide_yaxis_label has been deprecated - use axis_labels.hide_y instead", DeprecationWarning)
         self.axis_labels.hide_y()
+        
+    # FRAME
+
+    @auto_refresh
+    def set_frame_color(self, *args, **kwargs):
+        warnings.warn("set_frame_color has been deprecated - use frame.set_color instead", DeprecationWarning)
+        self.frame.set_color(*args, **kwargs)
+
+    @auto_refresh
+    def set_frame_linewidth(self, *args, **kwargs):
+        warnings.warn("set_frame_linewidth has been deprecated - use frame.set_linewidth instead", DeprecationWarning)
+        self.frame.set_linewidth(*args, **kwargs)

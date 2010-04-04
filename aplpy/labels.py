@@ -235,7 +235,7 @@ class TickLabels(object):
         xaxis = self._ax1.xaxis
         yaxis = self._ax1.yaxis
 
-        xw, yw = self.pixel2world(x, y)
+        xw, yw = wcs_util.pix2world(self._wcs, x, y)
 
         xw = au.Angle(degrees=xw, latitude=False)
         yw = au.Angle(degrees=yw, latitude=True)

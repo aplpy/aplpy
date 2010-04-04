@@ -45,6 +45,7 @@ from overlays import Beam, ScaleBar
 from regions import Regions
 from colorbar import Colorbar
 from normalize import APLpyNormalize
+from frame import Frame
 
 from decorators import auto_refresh
 
@@ -167,6 +168,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Initialize labels
         self.axis_labels = AxisLabels(self)
         self.tick_labels = TickLabels(self)
+        
+        self.frame = Frame(self)
 
         self._ax1.format_coord = self.tick_labels.cursor_position
 
@@ -925,8 +928,8 @@ class FITSFigure(Layers, Regions, Deprecated):
        '''
 
         if theme=='pretty':
-            self.set_frame_color('white')
-            self.set_frame_linewidth(0.5)
+            self.frame.set_color('white')
+            self.frame.set_linewidth(0.5)
             self.ticks.set_color('white')
             self.ticks.set_length(7)
             self._figure.apl_grayscale_invert_default = False
@@ -934,40 +937,14 @@ class FITSFigure(Layers, Regions, Deprecated):
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('jet', 1000))
         elif theme=='publication':
-            self.set_frame_color('black')
-            self.set_frame_linewidth(0.5)
+            self.frame.set_color('black')
+            self.frame.set_linewidth(0.5)
             self.ticks.set_color('black')
             self.ticks.set_length(7)
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg', 1000))
-
-    @auto_refresh
-    def set_frame_linewidth(self, linewidth):
-        '''
-        Set line width of the frame
-
-        Required arguments:
-
-            *linewidth*:
-                The linewidth to use for the frame.
-        '''
-        for key in self._ax1.spines:
-            self._ax1.spines[key].set_linewidth(linewidth)
-
-    @auto_refresh
-    def set_frame_color(self, color):
-        '''
-        Set color of the frame
-
-        Required arguments:
-
-            *color*:
-                The color to use for the frame.
-        '''
-        for key in self._ax1.spines:
-            self._ax1.spines[key].set_edgecolor(color)
 
     def world2pixel(self, xw, yw):
         '''
