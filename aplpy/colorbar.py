@@ -109,53 +109,29 @@ class Colorbar(object):
     def set_location(self, location):
         self._base_settings['location'] = location
         self.show(**self._base_settings)
-        self.set_font_properties(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._label_fontproperties)
 
     @auto_refresh
     def set_size(self, size):
         self._base_settings['size'] = size
         self.show(**self._base_settings)
-        self.set_font_properties(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._label_fontproperties)
 
     @auto_refresh
     def set_pad(self, pad):
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
-        self.set_font_properties(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._label_fontproperties)
 
     # FONT PROPERTIES
 
     @auto_refresh
-    def set_font_family(self, family):
-        self.set_font_properties(family=family)
-
-    @auto_refresh
-    def set_font_style(self, style):
-        self.set_font_properties(style=style)
-
-    @auto_refresh
-    def set_font_variant(self, variant):
-        self.set_font_properties(variant=variant)
-
-    @auto_refresh
-    def set_font_stretch(self, stretch):
-        self.set_font_properties(stretch=stretch)
-
-    @auto_refresh
-    def set_font_weight(self, weight):
-        self.set_font_properties(weight=weight)
-
-    @auto_refresh
-    def set_font_size(self, size):
-        self.set_font_properties(size=size)
-
-    @auto_refresh
     def set_label_properties(self, *args, **kwargs):
-        warnings.warn("set_label_properties is deprecated - use set_font_properties instead", DeprecationWarning)
-        self.set_font_properties(*args, **kwargs)
+        warnings.warn("set_label_properties is deprecated - use set_font instead", DeprecationWarning)
+        self.set_font(*args, **kwargs)
 
     @auto_refresh
-    def set_font_properties(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+    def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
 
         if family:
             self._label_fontproperties.set_family(family)

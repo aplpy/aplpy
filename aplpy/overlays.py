@@ -1,8 +1,10 @@
+import warnings
+
 from mpl_toolkits.axes_grid.anchored_artists \
     import AnchoredEllipse, AnchoredSizeBar
 
 from matplotlib.patches import FancyArrowPatch
-
+from matplotlib.font_manager import FontProperties
 import wcs_util
 
 import numpy as np
@@ -146,6 +148,7 @@ class ScaleBar(object):
         self._base_settings = {}
         self._scalebar_settings = {}
         self._label_settings = {}
+        self._label_settings['fontproperties'] = FontProperties()
 
     @auto_refresh
     def show(self, length, label=None, corner=4, frame=False, **kwargs):
@@ -261,20 +264,51 @@ class ScaleBar(object):
         self.set_scalebar_properties(color=color)
         self.set_label_properties(color=color)
 
+
     @auto_refresh
     def set_font_family(self, family):
-        self.set_label_properties(family=family)
+        warnings.warn("scalebar.set_font_family is deprecated - use scalebar.set_font instead", DeprecationWarning)
+        self.set_font(family=family)
 
     @auto_refresh
     def set_font_weight(self, weight):
-        self.set_label_properties(weight=weight)
+        warnings.warn("scalebar.set_font_weight is deprecated - use scalebar.set_font instead", DeprecationWarning)
+        self.set_font(weight=weight)
 
     def set_font_size(self, size):
-        self.set_label_properties(size=size)
+        warnings.warn("scalebar.set_font_size is deprecated - use scalebar.set_font instead", DeprecationWarning)
+        self.set_font(size=size)
 
     @auto_refresh
     def set_font_style(self, style):
-        self.set_style(style=style)
+        warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
+        self.set_font(style=style)
+        
+    @auto_refresh
+    def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+
+        if family:
+            self._label_settings['font'].set_family(family)
+
+        if style:
+            self._label_settings['font'].set_style(style)
+
+        if variant:
+            self._label_settings['font'].set_variant(variant)
+
+        if stretch:
+            self._label_settings['font'].set_stretch(stretch)
+
+        if weight:
+            self._label_settings['font'].set_weight(weight)
+
+        if size:
+            self._label_settings['font'].set_size(size)
+
+        if fontproperties:
+            self._label_settings['font'] = fontproperties
+
+        self._scalebar.txt_label.get_children()[0].set_fontproperties(self._label_settings['font'])
 
     @auto_refresh
     def set_label_properties(self, **kwargs):

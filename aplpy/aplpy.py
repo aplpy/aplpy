@@ -991,6 +991,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_grid(self):
         self.grid._remove()
+        del self.grid
 
     @auto_refresh
     def add_beam(self, *args, **kwargs):
@@ -1002,6 +1003,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_beam(self):
         self.beam._remove()
+        del self.beam
 
     @auto_refresh
     def add_scalebar(self, *args, **kwargs):
@@ -1013,6 +1015,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_scalebar(self):
         self.scalebar._remove()
+        del self.scalebar
 
     @auto_refresh
     def add_colorbar(self, *args, **kwargs):
@@ -1024,3 +1027,4 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_colorbar(self):
         self.colorbar._remove()
+        del self.colorbar
