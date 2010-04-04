@@ -447,7 +447,7 @@ class WCSFormatter(mpl.Formatter):
             else:
                 sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
 
-        ipos = math_util.minloc(np.abs(self.axis.apl_tick_positions_pix-x))
+        ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix-x))
 
         label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
         if hours:

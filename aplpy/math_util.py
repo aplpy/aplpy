@@ -53,12 +53,8 @@ def arange2(xmin, xmax, xstep):
 
 
 def closest(array, a):
-    ipos = minloc(np.abs(a-array))
+    ipos = np.argmin(np.abs(a-array))
     return array[ipos]
-
-
-def minloc(array):
-    return np.where(array == np.min(array))[0][0]
 
 
 def divisors(n, dup = False):
