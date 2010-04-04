@@ -7,6 +7,10 @@ from matplotlib.font_manager import FontProperties
 
 from decorators import auto_refresh
 
+# As of matplotlib 0.99.1.1, any time a colorbar property is updated, the axes
+# need to be removed and re-created. This has been fixed in svn r8213 but we
+# should wait until we up the required version of matplotlib before changing the
+# code here
 
 class Colorbar(object):
 
