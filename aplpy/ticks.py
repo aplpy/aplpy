@@ -138,14 +138,13 @@ class Ticks(object):
         '''
 
         for line in self._ax1.xaxis.get_ticklines():
-            print dir(line)
-            line.set_linewidth(linewidth)
+            line.set_mew(linewidth)
         for line in self._ax1.yaxis.get_ticklines():
-            line.set_linewidth(linewidth)
+            line.set_mew(linewidth)
         for line in self._ax2.xaxis.get_ticklines():
-            line.set_linewidth(linewidth)
+            line.set_mew(linewidth)
         for line in self._ax2.yaxis.get_ticklines():
-            line.set_linewidth(linewidth)
+            line.set_mew(linewidth)
 
     @auto_refresh
     def set_linestyle(self, linestyle):
