@@ -152,6 +152,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Turn off autoscaling
         self._ax1.set_autoscale_on(False)
         self._ax2.set_autoscale_on(False)
+        
+        # Force zorder of parasite axes
+        self._ax2.xaxis.set_zorder(2.5)
+        self._ax2.yaxis.set_zorder(2.5)
 
         # Store WCS in axes
         self._ax1.apl_wcs = self._wcs
