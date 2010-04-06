@@ -144,7 +144,8 @@ class Grid(object):
         self._grid.set_visible(False)
 
     def _update_norefresh(self, *args):
-        self._update(*args, refresh=False)
+        kwargs = {'refresh':False}
+        self._update(*args, **kwargs)
 
     @auto_refresh
     def _update(self, *args):
