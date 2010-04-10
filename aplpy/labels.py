@@ -1,3 +1,4 @@
+import warnings
 import matplotlib.pyplot as mpl
 import wcs_util
 import numpy as np
@@ -94,7 +95,7 @@ class TickLabels(object):
 
         Required Arguments:
 
-            *style*: [ 'colons' | 'plain' | 'latex' ]
+            *style*: [ 'colons' | 'plain' ]
 
                 How to style the tick labels:
 
@@ -110,8 +111,12 @@ class TickLabels(object):
                 the set_labels_latex() method.
         """
 
-        if not style in ['colons', 'plain', 'latex']:
-            raise Exception("Label style should be one of colons/plain/latex")
+        if style is 'latex':
+            warnings.warn("latex has now been merged with plain - whether or not to use LaTeX is controled through set_system_latex")
+            style = 'plain'
+            
+        if not style in ['colons', 'plain']:
+            raise Exception("Label style should be one of colons/plain")
 
         self._ax1.xaxis.apl_labels_style = style
         self._ax1.yaxis.apl_labels_style = style
@@ -278,12 +283,20 @@ class WCSFormatter(mpl.Formatter):
         hours = 'h' in self.axis.apl_label_form
 
         if self.axis.apl_labels_style == 'plain':
-            sep = ('d', 'm', 's')
+            if mpl.rcParams['text.usetex']:
+                label_style = 'plain_tex'
+            else:
+                label_style = 'plain_notex'
+        else:
+            label_style = self.axis.apl_labels_style
+        
+        if label_style == 'plain_notex':
+            sep = (u'\u00b0', u"'", u'"')
             if hours:
                 sep = ('h', 'm', 's')
-        elif self.axis.apl_labels_style == 'colons':
+        elif label_style == 'colons':
             sep = (':', ':', '')
-        elif self.axis.apl_labels_style == 'latex':
+        elif label_style == 'plain_tex':
             if hours:
                 sep = ('^{h}', '^{m}', '^{s}')
             else:
@@ -315,7 +328,7 @@ class WCSFormatter(mpl.Formatter):
                 else:
                     break
 
-        if self.axis.apl_labels_style == 'latex':
+        if mpl.rcParams['text.usetex']:
             return "$"+string.join(label, "")+"$"
         else:
             return string.join(label, "")
