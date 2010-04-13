@@ -876,7 +876,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if self._figure._auto_refresh or force:
             self._figure.canvas.draw()
 
-    def save(self, filename, dpi=None, transparent=False, adjust_bbox=True):
+    def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300):
         '''
         Save the current figure to a file
 
@@ -894,21 +894,27 @@ class FITSFigure(Layers, Regions, Deprecated):
                 the image itself will be rasterized. If the output is a PS or
                 EPS file and no dpi is specified, the dpi is automatically
                 calculated to match the resolution of the image. If this value is
-                larger than 300, then dpi is set to 300.
+                larger than max_dpi, then dpi is set to max_dpi.
 
             *transparent*: [ True | False ]
                 Whether to preserve transparency
 
             *adjust_bbox*: [ True | False ]
                 Auto-adjust the bounding box for the output
-
+                
+            *max_dpi*: [ float ]
+                The maximum resolution to output images at. If no maximum is
+                wanted, enter None or 0.
         '''
 
-        if dpi == None and os.path.splitext(filename)[1] in ['.EPS', '.eps', '.ps', '.PS', '.Eps', '.Ps']:
+        if dpi == None and os.path.splitext(filename)[1].lower() in ['.eps', '.ps', '.pdf']:
             width = self._ax1.get_position().width * self._figure.get_figwidth()
             interval = self._ax1.xaxis.get_view_interval()
             nx = interval[1] - interval[0]
-            dpi = np.minimum(nx / width, 300.)
+            if max_dpi:
+                dpi = np.minimum(nx / width, max_dpi)
+            else:
+                dpi = nx / width
             print "Auto-setting resolution to ", dpi, " dpi"
 
         if adjust_bbox:
