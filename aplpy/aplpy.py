@@ -35,6 +35,7 @@ import image_util
 import header
 import wcs_util
 import shape_util
+import slicer
 
 from layers import Layers
 from grid import Grid
@@ -56,7 +57,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     "A class for plotting FITS files."
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -100,6 +101,11 @@ class FITSFigure(Layers, Regions, Deprecated):
                 in multiple ways. For example, for files with a -CAR
                 projection and CRVAL2=0, this can be set to 'wells' or
                 'calabretta' to choose the appropriate convention.
+                
+            *slices*: [ tuple or list ]
+                If a FITS file with more than two dimensions is specified,
+                then these are the slices to extract. If all extra dimensions
+                only have size 1, then this is not required.
 
         Any additional arguments are passed on to matplotlib's Figure() class.
         For example, to set the figure size, use the figsize=(xsize, ysize)
@@ -117,7 +123,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise Exception("Montage needs to be installed and in the $PATH in order to use the north= option")
 
         self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
-            convention=convention)
+            convention=convention, slices=slices)
 
         # Downsample if requested
         if downsample:
@@ -189,7 +195,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Set default theme
         self.set_theme(theme='pretty')
 
-    def _get_hdu(self, data, hdu, north, convention=None):
+    def _get_hdu(self, data, hdu, north, convention=None, slices=[]):
 
         if type(data) == str:
 
@@ -216,6 +222,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
 
             raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
+
+        # Extract slices
+        hdu = slicer.slice(hdu, slices=slices)
 
         # Reproject to face north if requested
         if north:
@@ -496,7 +505,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(img, extent=self._extent, interpolation=interpolation, origin='upper')
 
     @auto_refresh
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, **kwargs):
+    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, slices=[], **kwargs):
         '''
         Overlay contours on the current plot
 
@@ -542,6 +551,11 @@ class FITSFigure(Layers, Regions, Deprecated):
                 in multiple ways. For example, for files with a -CAR
                 projection and CRVAL2=0, this can be set to 'wells' or
                 'calabretta' to choose the appropriate convention.
+                
+            *slices*: [ tuple or list ]
+                If a FITS file with more than two dimensions is specified,
+                then these are the slices to extract. If all extra dimensions
+                only have size 1, then this is not required.
 
             Additional keyword arguments (such as alpha, linewidths, or
             linestyles) will be passed on directly to matplotlib's contour or
@@ -562,7 +576,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             cmap = mpl.cm.get_cmap('jet', 1000)
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
-            convention=convention)
+            convention=convention, slices=slices)
 
         image_contour = hdu_contour.data
         extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
