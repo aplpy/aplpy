@@ -1,5 +1,4 @@
 import operator
-import numpy as np
 
 
 def slice(hdu, slices=[]):
