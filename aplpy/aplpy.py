@@ -30,6 +30,8 @@ except ImportError:
 
 import contour_util
 
+import convolve_util
+
 import montage
 import image_util
 import header
@@ -57,7 +59,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     "A class for plotting FITS files."
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], smooth=None, kernel='gauss', **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -238,7 +240,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             wcs = pywcs.WCS(hdu.header)
         except:
             raise Exception("An error occured while parsing the WCS information")
-
+        
+        # Convolve method
+        # if smooth:
+        #     hdu.data = convolve_util.convolve(hdu.data, smooth=smooth, kernel=kernel)
+        
         return hdu, wcs
 
     @auto_refresh
@@ -310,7 +316,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_grayscale(self, vmin=None, vmid=None, vmax=None, \
                             pmin=0.25, pmax=99.75, \
-                            stretch='linear', exponent=2, invert='default'):
+                            stretch='linear', exponent=2, invert='default', smooth=None, kernel='gauss'):
         '''
         Show a grayscale image of the FITS file
 
@@ -348,6 +354,17 @@ class FITSFigure(Layers, Regions, Deprecated):
                 Whether to invert the grayscale or not. The default is False,
                 unless set_theme is used, in which case the default depends on
                 the theme.
+            
+            *smooth*: [ integer | tuple ]
+                Default smoothing scale is 3 pixels across. User can define
+                whether they want an NxN kernel (integer), or NxM kernel 
+                (tuple). This argument corresponds to the 'gauss' and 'box' 
+                smoothing kernels.
+            
+            *kernel*: [ 'gauss' | 'box' | numpy.array]
+                Default kernel used for smoothing is 'gauss'. The user can 
+                specify if they would prefer 'gauss', 'box', or a custom
+                kernel. All kernels are normalized to ensure flux retention.
         '''
 
         if invert=='default':
@@ -358,7 +375,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             cmap = 'gray'
 
-        self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax, stretch=stretch, exponent=exponent, cmap=cmap, pmin=pmin, pmax=pmax)
+        self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax, stretch=stretch, exponent=exponent, cmap=cmap, pmin=pmin, pmax=pmax, smooth=smooth, kernel=kernel)
 
     @auto_refresh
     def hide_grayscale(self, *args, **kwargs):
@@ -367,7 +384,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_colorscale(self, vmin=None, vmid=None, vmax=None, \
                              pmin=0.25, pmax=99.75,
-                             stretch='linear', exponent=2, cmap='default'):
+                             stretch='linear', exponent=2, cmap='default', smooth=None, kernel='gauss'):
         '''
         Show a colorscale image of the FITS file
 
@@ -403,6 +420,17 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             *cmap*: [ string ]
                 The name of the colormap to use
+                
+            *smooth*: [ integer | tuple ]
+                Default smoothing scale is 3 pixels across. User can define
+                whether they want an NxN kernel (integer), or NxM kernel 
+                (tuple). This argument corresponds to the 'gauss' and 'box' 
+                smoothing kernels.
+
+            *kernel*: [ 'gauss' | 'box' | numpy.array]
+                Default kernel used for smoothing is 'gauss'. The user can 
+                specify if they would prefer 'gauss', 'box', or a custom
+                kernel. All kernels are normalized to ensure flux retention.
         '''
 
         if cmap=='default':
@@ -448,8 +476,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.set_norm(normalizer)
             self.image.set_cmap(cmap=cmap)
             self.image.origin='lower'
+            self.image.set_data(convolve_util.convolve(self._hdu.data,smooth=smooth,kernel=kernel))
         else:
-            self.image = self._ax1.imshow(self._hdu.data, cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data,smooth=smooth,kernel=kernel), cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
@@ -505,7 +534,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(img, extent=self._extent, interpolation=interpolation, origin='upper')
 
     @auto_refresh
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, slices=[], **kwargs):
+    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, slices=[], smooth=None, kernel='gauss', **kwargs):
         '''
         Overlay contours on the current plot
 
@@ -556,6 +585,17 @@ class FITSFigure(Layers, Regions, Deprecated):
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
                 only have size 1, then this is not required.
+            
+            *smooth*: [ integer | tuple ]
+                Default smoothing scale is 3 pixels across. User can define
+                whether they want an NxN kernel (integer), or NxM kernel 
+                (tuple). This argument corresponds to the 'gauss' and 'box' 
+                smoothing kernels.
+
+            *kernel*: [ 'gauss' | 'box' | numpy.array]
+                Default kernel used for smoothing is 'gauss'. The user can 
+                specify if they would prefer 'gauss', 'box', or a custom
+                kernel. All kernels are normalized to ensure flux retention.
 
             Additional keyword arguments (such as alpha, linewidths, or
             linestyles) will be passed on directly to matplotlib's contour or
@@ -577,8 +617,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
             convention=convention, slices=slices)
-
-        image_contour = hdu_contour.data
+            
+        image_contour = convolve_util.convolve(hdu_contour.data,smooth=smooth,kernel=kernel)
         extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
 
         if type(levels) == int:
