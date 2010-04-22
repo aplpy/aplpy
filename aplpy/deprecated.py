@@ -183,13 +183,15 @@ class Deprecated(object):
     # AXIS LABELS
 
     @auto_refresh
-    def set_axis_labels(self, xlabel='default', ylabel='default', xpad=0, ypad=0):
-        warnings.warn("set_axis_labels has been deprecated - use axis_labels.set_xtext or axis_labels.set_ytext instead", DeprecationWarning)
+    def set_axis_labels(self, xlabel='default', ylabel='default', xpad='default', ypad='default'):
+        warnings.warn("set_axis_labels has been deprecated - use axis_labels.set_xtext, axis_labels.set_ytext, axis_labels.set_xpad, and axis_labels.set_ypad instead", DeprecationWarning)
         if xlabel <> 'default':
             self.axis_labels.set_xtext(xlabel)
+        if xpad <> 'default':
             self.axis_labels.set_xpad(xpad)
         if ylabel <> 'default':
             self.axis_labels.set_ytext(ylabel)
+        if ypad <> 'default':
             self.axis_labels.set_ypad(ypad)
 
     @auto_refresh
