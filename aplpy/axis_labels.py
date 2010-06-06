@@ -1,7 +1,6 @@
 import wcs_util
 from matplotlib.font_manager import FontProperties
-from decorators import auto_refresh
-
+from decorators import auto_refresh, fixdocstring
 
 class AxisLabels(object):
 
@@ -36,71 +35,46 @@ class AxisLabels(object):
             self.set_ytext('Ecliptic Latitude')
 
     @auto_refresh
-    def set_xtext(self, xlabel):
+    def set_xtext(self, label):
         """
         Set the x-axis label text
-
-        Required Arguments:
-
-            *xlabel*: [ string ]
-                The x-axis label.
         """
-        self.xlabel = self._ax1.set_xlabel(xlabel)
+        self.xlabel = self._ax1.set_xlabel(label)
 
     @auto_refresh
-    def set_ytext(self, ylabel):
+    def set_ytext(self, label):
         """
         Set the y-axis label text
-
-        Required Arguments:
-
-            *ylabel*: [ string ]
-                The y-axis label.
         """
-        self.ylabel = self._ax1.set_ylabel(ylabel)
+        self.ylabel = self._ax1.set_ylabel(label)
 
     @auto_refresh
-    def set_xpad(self, xpad):
+    def set_xpad(self, pad):
         """
         Set the x-axis label displacement, in points
         """
-        self.xlabel = self._ax1.set_xlabel(self.xlabel.get_text(), labelpad=xpad)
+        self.xlabel = self._ax1.set_xlabel(self.xlabel.get_text(), labelpad=pad)
 
     @auto_refresh
-    def set_ypad(self, ypad):
+    def set_ypad(self, pad):
         """
         Set the x-axis label displacement, in points
         """
-        self.ylabel = self._ax1.set_ylabel(self.ylabel.get_text(), labelpad=ypad)
+        self.ylabel = self._ax1.set_ylabel(self.ylabel.get_text(), labelpad=pad)
 
     @auto_refresh
+    @fixdocstring
     def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
         """
-        Set the size of the axis labels
-
-        Default values for size/weight/family are set by matplotlib
-        or previously set values if set_font has
-        already been called. Global default values can be set by
-        editing the matplotlibrc file.
+        Set the font of the axis labels
 
         Optional Keyword Arguments:
 
-            *size*: [ size in points | xx-small | x-small | small |
-                      medium | large | x-large | xx-large ]
+        common: family, style, variant, stretch, weight, size, fontproperties
 
-                The size of the axis labels
-
-            *weight*: [ a numeric value in range 0-1000 | ultralight |
-                      light | normal | regular | book | medium |
-                      roman | semibold | demibold | demi | bold |
-                      heavy | extra bold | black ]
-
-                The weight of the axis labels
-
-            *family*: [ serif | sans-serif | cursive | fantasy | monospace ]
-
-                The font family of the axis labels.
-
+        Default values are set by matplotlib or previously set values if
+        set_font has already been called. Global default values can be set by
+        editing the matplotlibrc file.
         """
 
         if family:
@@ -130,7 +104,7 @@ class AxisLabels(object):
     @auto_refresh
     def show(self):
         """
-        Show the axis labels
+        Show the x- and y-axis labels
         """
 
         if self.xlabel:
@@ -141,7 +115,7 @@ class AxisLabels(object):
     @auto_refresh
     def hide(self):
         """
-        Hide the axis labels
+        Hide the x- and y-axis labels
         """
 
         if self.xlabel:
@@ -152,7 +126,7 @@ class AxisLabels(object):
     @auto_refresh
     def show_x(self):
         """
-        Show the x-axis labels
+        Show the x-axis label
         """
 
         if self.xlabel:
@@ -161,7 +135,7 @@ class AxisLabels(object):
     @auto_refresh
     def hide_x(self):
         """
-        Hide the x-axis labels
+        Hide the x-axis label
         """
 
         if self.xlabel:
@@ -170,7 +144,7 @@ class AxisLabels(object):
     @auto_refresh
     def show_y(self):
         """
-        Show the y-axis labels
+        Show the y-axis label
         """
 
         if self.ylabel:
@@ -179,7 +153,7 @@ class AxisLabels(object):
     @auto_refresh
     def hide_y(self):
         """
-        Hide the y-axis labels
+        Hide the y-axis label
         """
 
         if self.ylabel:

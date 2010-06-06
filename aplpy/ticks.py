@@ -39,49 +39,39 @@ class Ticks(object):
         self._ax2.yaxis.set_major_locator(lyt)
 
     @auto_refresh
-    def set_xspacing(self, xspacing):
+    def set_xspacing(self, spacing):
         '''
-        Set the x-axis tick spacing
-
-        Required Arguments:
-
-            *xspacing*: [ float | 'auto' ]
-                The spacing of the ticks on the x-axis, in degrees. To set
-                the tick spacing to be automatically determined, set this to 'auto'
+        Set the x-axis tick spacing, in degrees. To set the tick spacing to be
+        automatically determined, set this to 'auto'.
         '''
 
-        if xspacing == 'auto':
+        if spacing == 'auto':
             self._ax1.xaxis.apl_auto_tick_spacing = True
             self._ax2.xaxis.apl_auto_tick_spacing = True
         else:
             self._ax1.xaxis.apl_auto_tick_spacing = False
             self._ax2.xaxis.apl_auto_tick_spacing = False
-            self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
-            self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = xspacing, latitude=False)
+            self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
+            self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
 
         if hasattr(self, 'grid'):
             self.grid._update()
 
     @auto_refresh
-    def set_yspacing(self, yspacing):
+    def set_yspacing(self, spacing):
         '''
-        Set the y-axis tick spacing
-
-        Required Arguments:
-
-            *yspacing*: [ float | 'auto' ]
-                The spacing of the ticks on the y-axis, in degrees. To set
-                the tick spacing to be automatically determined, set this to 'auto'
+        Set the y-axis tick spacing, in degrees. To set the tick spacing to be
+        automatically determined, set this to 'auto'.
         '''
 
-        if yspacing == 'auto':
+        if spacing == 'auto':
             self._ax1.yaxis.apl_auto_tick_spacing = True
             self._ax2.yaxis.apl_auto_tick_spacing = True
         else:
             self._ax1.yaxis.apl_auto_tick_spacing = False
             self._ax2.yaxis.apl_auto_tick_spacing = False
-            self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
-            self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = yspacing, latitude=True)
+            self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
+            self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
 
         if hasattr(self, 'grid'):
             self.grid._update()
@@ -89,12 +79,7 @@ class Ticks(object):
     @auto_refresh
     def set_color(self, color):
         '''
-        Set the tick color
-
-        Required Arguments:
-
-            *color*: [ string ]
-                The color of the ticks
+        Set the color of the ticks
         '''
 
         for line in self._ax1.xaxis.get_ticklines():
@@ -107,34 +92,24 @@ class Ticks(object):
             line.set_color(color)
 
     @auto_refresh
-    def set_length(self, size):
+    def set_length(self, length):
         '''
-        Set the tick size
-
-        Required Arguments:
-
-            *size*: [ float ]
-                The size of the ticks (in points)
+        Set the length of the ticks (in points)
         '''
 
         for line in self._ax1.xaxis.get_ticklines():
-            line.set_markersize(size)
+            line.set_markersize(length)
         for line in self._ax1.yaxis.get_ticklines():
-            line.set_markersize(size)
+            line.set_markersize(length)
         for line in self._ax2.xaxis.get_ticklines():
-            line.set_markersize(size)
+            line.set_markersize(length)
         for line in self._ax2.yaxis.get_ticklines():
-            line.set_markersize(size)
+            line.set_markersize(length)
 
     @auto_refresh
     def set_linewidth(self, linewidth):
         '''
-        Set the tick linewidth
-
-        Required Arguments:
-
-            *linewidth*: [ float ]
-                The line width of the ticks (in points)
+        Set the linewidth of the ticks (in points)
         '''
 
         for line in self._ax1.xaxis.get_ticklines():
@@ -145,26 +120,6 @@ class Ticks(object):
             line.set_mew(linewidth)
         for line in self._ax2.yaxis.get_ticklines():
             line.set_mew(linewidth)
-
-    @auto_refresh
-    def set_linestyle(self, linestyle):
-        '''
-        Set the tick linestyle
-
-        Required Arguments:
-
-            *linestyle*: [ float ]
-                The line style of the ticks
-        '''
-
-        for line in self._ax1.xaxis.get_ticklines():
-            line.set_linestyle(linestyle)
-        for line in self._ax1.yaxis.get_ticklines():
-            line.set_linestyle(linestyle)
-        for line in self._ax2.xaxis.get_ticklines():
-            line.set_linestyle(linestyle)
-        for line in self._ax2.yaxis.get_ticklines():
-            line.set_linestyle(linestyle)
 
 
 class WCSLocator(Locator):

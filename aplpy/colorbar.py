@@ -5,7 +5,7 @@ import matplotlib.axes as maxes
 
 from matplotlib.font_manager import FontProperties
 
-from decorators import auto_refresh
+from decorators import auto_refresh, fixdocstring
 
 # As of matplotlib 0.99.1.1, any time a colorbar property is updated, the axes
 # need to be removed and re-created. This has been fixed in svn r8213 but we
@@ -22,10 +22,30 @@ class Colorbar(object):
         self._label_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', size='5%', pad=0.05, ticks=None, labels=True):
+    def show(self, location='right', width=0.05, pad=0.05, ticks=None, labels=True):
+        '''
+        Show a colorbar on the side of the image.
+
+        Optional Keyword Arguments:
+
+            *location*: [ string ]
+                Where to place the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
+
+            *width*: [ float ]
+                The width of the colorbar relative to the canvas size.
+
+            *pad*: [ float ]
+                The spacing between the colorbar and the image relative to the canvas size.
+
+            *ticks*: [ None or list ]
+                The position of the ticks on the colorbar.
+
+            *labels*: [ True or False ]
+                Whether to show numerical labels.
+        '''
 
         self._base_settings['location'] = location
-        self._base_settings['size'] = size
+        self._base_settings['width'] = width
         self._base_settings['pad'] = pad
 
         if self._parent.image:
@@ -36,20 +56,20 @@ class Colorbar(object):
             divider = make_axes_locatable(self._parent._ax1)
 
             if location=='right':
-                self._colorbar_axes = divider.new_horizontal(size=size, pad=pad, axes_class=maxes.Axes)
+                self._colorbar_axes = divider.new_horizontal(size=width, pad=pad, axes_class=maxes.Axes)
                 orientation='vertical'
             elif location=='top':
-                self._colorbar_axes = divider.new_vertical(size=size, pad=pad, axes_class=maxes.Axes)
+                self._colorbar_axes = divider.new_vertical(size=width, pad=pad, axes_class=maxes.Axes)
                 orientation='horizontal'
             elif location=='left':
                 warnings.warn("Left colorbar not fully implemented")
-                self._colorbar_axes = divider.new_horizontal(size=size, pad=pad, pack_start=True, axes_class=maxes.Axes)
+                self._colorbar_axes = divider.new_horizontal(size=width, pad=pad, pack_start=True, axes_class=maxes.Axes)
                 locator = divider.new_locator(nx=0, ny=0)
                 self._colorbar_axes.set_axes_locator(locator)
                 orientation='vertical'
             elif location=='bottom':
                 warnings.warn("Bottom colorbar not fully implemented")
-                self._colorbar_axes = divider.new_vertical(size=size, pad=pad, pack_start=True, axes_class=maxes.Axes)
+                self._colorbar_axes = divider.new_vertical(size=width, pad=pad, pack_start=True, axes_class=maxes.Axes)
                 locator = divider.new_locator(nx=0, ny=0)
                 self._colorbar_axes.set_axes_locator(locator)
                 orientation='horizontal'
@@ -102,23 +122,32 @@ class Colorbar(object):
     @auto_refresh
     def _remove(self):
         self._parent._figure.delaxes(self._colorbar_axes)
-            
+
     # LOCATION AND SIZE
 
     @auto_refresh
     def set_location(self, location):
+        '''
+        Set the location of the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
+        '''
         self._base_settings['location'] = location
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._label_fontproperties)
 
     @auto_refresh
-    def set_size(self, size):
-        self._base_settings['size'] = size
+    def set_width(self, width):
+        '''
+        Set the width of the colorbar relative to the canvas size.
+        '''
+        self._base_settings['width'] = width
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._label_fontproperties)
 
     @auto_refresh
     def set_pad(self, pad):
+        '''
+        Set the spacing between the colorbar and the image relative to the canvas size.
+        '''
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._label_fontproperties)
@@ -131,7 +160,19 @@ class Colorbar(object):
         self.set_font(*args, **kwargs)
 
     @auto_refresh
+    @fixdocstring
     def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+        '''
+        Set the font of the tick labels
+
+        Optional Keyword Arguments:
+
+        common: family, style, variant, stretch, weight, size, fontproperties
+
+        Default values are set by matplotlib or previously set values if
+        set_font has already been called. Global default values can be set by
+        editing the matplotlibrc file.
+        '''
 
         if family:
             self._label_fontproperties.set_family(family)
@@ -163,10 +204,16 @@ class Colorbar(object):
 
     @auto_refresh
     def set_frame_linewidth(self, linewidth):
+        '''
+        Set the linewidth of the colorbar frame, in points
+        '''
         for key in self._colorbar_axes.spines:
             self._colorbar_axes.spines[key].set_linewidth(linewidth)
 
     @auto_refresh
     def set_frame_color(self, color):
+        '''
+        Set the color of the colorbar frame, in points
+        '''
         for key in self._colorbar_axes.spines:
             self._colorbar_axes.spines[key].set_edgecolor(color)

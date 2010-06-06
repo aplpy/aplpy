@@ -50,7 +50,7 @@ from colorbar import Colorbar
 from normalize import APLpyNormalize
 from frame import Frame
 
-from decorators import auto_refresh
+from decorators import auto_refresh, fixdocstring
 
 from deprecated import Deprecated
 
@@ -103,7 +103,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 in multiple ways. For example, for files with a -CAR
                 projection and CRVAL2=0, this can be set to 'wells' or
                 'calabretta' to choose the appropriate convention.
-                
+
             *slices*: [ tuple or list ]
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
@@ -160,7 +160,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Turn off autoscaling
         self._ax1.set_autoscale_on(False)
         self._ax2.set_autoscale_on(False)
-        
+
         # Force zorder of parasite axes
         self._ax2.xaxis.set_zorder(2.5)
         self._ax2.yaxis.set_zorder(2.5)
@@ -183,7 +183,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         self.frame = Frame(self)
 
-        self._ax1.format_coord = self.tick_labels.cursor_position
+        self._ax1.format_coord = self.tick_labels._cursor_position
 
         # Initialize layers list
         self._initialize_layers()
@@ -580,7 +580,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 in multiple ways. For example, for files with a -CAR
                 projection and CRVAL2=0, this can be set to 'wells' or
                 'calabretta' to choose the appropriate convention.
-                
+
             *slices*: [ tuple or list ]
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
@@ -887,6 +887,65 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         self._layers[rectangle_set_name] = c
 
+    @auto_refresh
+    @fixdocstring
+    def add_label(self, x, y, text, relative=False, color='black',
+                  family=None, style=None, variant=None, stretch=None,
+                  weight=None, size=None, fontproperties=None,
+                  horizontalalignment='center', verticalalignment='center',
+                  layer=None, **kwargs):
+        '''
+        Add a text label
+
+        Required Arguments:
+
+            *x, y*: [ float ]
+                Coordinates of the text label
+
+            *text*: [ string ]
+                The label
+
+        Optional Keyword Arguments:
+
+            *relative*: [ True | False ]
+                Whether the coordinates are to be interpreted as world
+                coordinates (e.g. RA/Dec or longitude/latitude), or
+                coordinates relative to the axes (where 0.0 is left or bottom
+                and 1.0 is right or top).
+
+        common: color, family, style, variant, stretch, weight, size, fontproperties, horizontalalignment, verticalalignment
+        '''
+
+        if layer:
+            self.remove_layer(layer, raise_exception=False)
+
+        # Can't pass fontproperties=None to text. Only pass it if it is not None.
+        if fontproperties:
+            kwargs['fontproperties'] = fontproperties
+
+        if relative:
+            l = self._ax1.text(x, y, text, color=color,
+                               family=family, style=style, variant=variant,
+                               stretch=stretch, weight=weight, size=size,
+                               horizontalalignment=horizontalalignment,
+                               verticalalignment=verticalalignment,
+                               transform=self._ax1.transAxes, **kwargs)
+        else:
+            xp, yp = wcs_util.world2pix(self._wcs, x, y)
+            l = self._ax1.text(xp, yp, text, color=color,
+                               family=family, style=style, variant=variant,
+                               stretch=stretch, weight=weight, size=size,
+                               horizontalalignment=horizontalalignment,
+                               verticalalignment=verticalalignment, **kwargs)
+
+        if layer:
+            label_name = layer
+        else:
+            self._label_counter += 1
+            label_name = 'label_'+str(self._label_counter)
+
+        self._layers[label_name] = l
+
     def set_auto_refresh(self, refresh):
         '''
         Set whether the display should refresh after each method call
@@ -941,7 +1000,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             *adjust_bbox*: [ True | False ]
                 Auto-adjust the bounding box for the output
-                
+
             *max_dpi*: [ float ]
                 The maximum resolution to output images at. If no maximum is
                 wanted, enter None or 0.
