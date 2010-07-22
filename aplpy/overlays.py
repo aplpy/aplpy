@@ -435,7 +435,7 @@ class Beam(object):
 
             *angle*: [ float ]
                 Position angle of the beam on the sky in degrees (overrides
-                BPA if present)
+                BPA if present) in the anticlockwise direction.
 
             *corner*: [ integer ]
                 The beam location. Acceptable values are 'left','right',
@@ -483,7 +483,7 @@ class Beam(object):
             corner = corners[corner]
 
         self._beam = AnchoredEllipse(self._ax.transData, \
-            width=major, height=minor, angle=angle, \
+            width=minor, height=major, angle=angle, \
             loc=corner, pad=pad, borderpad=borderpad, frameon=frame)
 
         self._ax.add_artist(self._beam)
