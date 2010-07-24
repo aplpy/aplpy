@@ -29,10 +29,12 @@ def convolve(image, smooth=3, kernel='gauss', minpad=True, pad=True):
     if smooth is None:
         return image
         
-    if isnan(image.min()):
+    if sum(isnan(image)) > 0:
         nan_present = True
         index = isnan(image)
         image = nan_to_num(image)
+    else:
+        nan_present = False
         
     if type(smooth) == type(()):
         if kernel == 'gauss':

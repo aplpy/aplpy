@@ -59,7 +59,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     "A class for plotting FITS files."
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], smooth=None, kernel='gauss', **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -240,10 +240,6 @@ class FITSFigure(Layers, Regions, Deprecated):
             wcs = pywcs.WCS(hdu.header)
         except:
             raise Exception("An error occured while parsing the WCS information")
-        
-        # Convolve method
-        # if smooth:
-        #     hdu.data = convolve_util.convolve(hdu.data, smooth=smooth, kernel=kernel)
         
         return hdu, wcs
 
