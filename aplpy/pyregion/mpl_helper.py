@@ -45,7 +45,6 @@ _ds9_to_mpl_colormap = dict(green="lime",
 
 def properties_func_default(shape, saved_attrs):
 
-    print "properties_func_default called"
     attr_list = copy.copy(shape.attr[0])
     attr_dict = copy.copy(shape.attr[1])
 
@@ -142,8 +141,6 @@ def as_mpl_artists(shape_list,
     saved_attrs = None
 
     for shape in shape_list:
-
-        print "as_mpl_artists shape: ",shape
 
         patches = []
 
