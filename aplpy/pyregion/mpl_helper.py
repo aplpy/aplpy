@@ -45,6 +45,7 @@ _ds9_to_mpl_colormap = dict(green="lime",
 
 def properties_func_default(shape, saved_attrs):
 
+    print "properties_func_default called"
     attr_list = copy.copy(shape.attr[0])
     attr_dict = copy.copy(shape.attr[1])
 
@@ -69,6 +70,8 @@ def properties_func_default(shape, saved_attrs):
         kwargs = dict(markeredgecolor=color,
                       markerfacecolor="none",
                       marker=marker,
+                      markersize=int(attr_dict.get("size", 1)),
+                      markeredgewidth=int(attr_dict.get("width", 1)),
                       )
     elif shape.name in ["line", "vector"]:
         font = attr_dict.get("font")
@@ -140,6 +143,8 @@ def as_mpl_artists(shape_list,
 
     for shape in shape_list:
 
+        print "as_mpl_artists shape: ",shape
+
         patches = []
 
         if saved_attrs is None:
@@ -163,7 +168,7 @@ def as_mpl_artists(shape_list,
             saved_attrs = None
 
         # text associated with the shape
-        txt = shape.attr[1].get("text")
+        txt = shape.attr[1].get("text","")
 
 
         if shape.name == "polygon":
