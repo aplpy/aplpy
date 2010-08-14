@@ -69,7 +69,7 @@ def properties_func_default(shape, saved_attrs):
         kwargs = dict(markeredgecolor=color,
                       markerfacecolor="none",
                       marker=marker,
-                      markersize=int(attr_dict.get("size", 1)),
+                      markersize=int(attr_dict.get("size", 6)),
                       markeredgewidth=int(attr_dict.get("width", 1)),
                       )
     elif shape.name in ["line", "vector"]:
