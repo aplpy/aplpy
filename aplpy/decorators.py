@@ -27,36 +27,36 @@ doc = {}
 
 doc['size'] = '''*size*:
     The size of the font. This can either be a numeric value (e.g.
-    12), giving the size in points, or one of ‘xx-small’, ‘x-small’,
-    ‘small’, ‘medium’, ‘large’, ‘x-large’, or ‘xx-large’.
+    12), giving the size in points, or one of 'xx-small', 'x-small',
+    'small', 'medium', 'large', 'x-large', or 'xx-large'.
     '''
 
 doc['weight'] = '''*weight*:
     The weight (or boldness) of the font. This can either be a numeric
-    value in the range 0-1000 or one of ‘ultralight’, ‘light’, ‘normal’,
-    ‘regular’, ‘book’, ‘medium’, ‘roman’, ‘semibold’, ‘demibold’, ‘demi’,
-    ‘bold’, ‘heavy’, ‘extra bold’, ‘black’.
+    value in the range 0-1000 or one of 'ultralight', 'light', 'normal',
+    'regular', 'book', 'medium', 'roman', 'semibold', 'demibold', 'demi',
+    'bold', 'heavy', 'extra bold', 'black'.
     '''
 
 doc['stretch'] = '''*stretch*:
     The stretching (spacing between letters) for the font. This can either
-    be a numeric value in the range 0-1000 or one of ‘ultra-condensed’,
-    ‘extra-condensed’, ‘condensed’, ‘semi-condensed’, ‘normal’,
-    ‘semi-expanded’, ‘expanded’, ‘extra-expanded’ or ‘ultra-expanded’.
+    be a numeric value in the range 0-1000 or one of 'ultra-condensed',
+    'extra-condensed', 'condensed', 'semi-condensed', 'normal',
+    'semi-expanded', 'expanded', 'extra-expanded' or 'ultra-expanded'.
     '''
 
 doc['family'] = '''*family*:
     The family of the font to use. This can either be a generic font
-    family name, either ‘serif’, ‘sans-serif’, ‘cursive’, ‘fantasy’, or
-    ‘monospace’, or a list of font names in decreasing order of priority.
+    family name, either 'serif', 'sans-serif', 'cursive', 'fantasy', or
+    'monospace', or a list of font names in decreasing order of priority.
     '''
 
 doc['style'] = '''*style*:
-    The font style. This can be ‘normal’, ‘italic’ or ‘oblique’.
+    The font style. This can be 'normal', 'italic' or 'oblique'.
     '''
 
 doc['variant'] = '''*variant*:
-    The font variant. This can be ‘normal’ or ‘small-caps’
+    The font variant. This can be 'normal' or 'small-caps'
     '''
 
 def fixdocstring(func):
