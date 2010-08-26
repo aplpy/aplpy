@@ -59,7 +59,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     "A class for plotting FITS files."
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], auto_refresh=True, **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -108,6 +108,11 @@ class FITSFigure(Layers, Regions, Deprecated):
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
                 only have size 1, then this is not required.
+                
+            *auto_refresh*: [ True | False ]
+                Whether to refresh the figure automatically every time a
+                plotting method is called. This can also be set using the
+                set_auto_refresh method.
 
         Any additional arguments are passed on to matplotlib's Figure() class.
         For example, to set the figure size, use the figsize=(xsize, ysize)
@@ -169,7 +174,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._ax1.apl_wcs = self._wcs
         self._ax2.apl_wcs = self._wcs
 
-        self.set_auto_refresh(True)
+        self.set_auto_refresh(auto_refresh)
 
         # Set view to whole FITS file
         self._initialize_view()
@@ -245,7 +250,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def set_system_latex(self, usetex):
-        """
+        '''
         Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
 
         Required Arguments:
@@ -254,7 +259,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 Whether to use a real LaTex installation (True) or the built-in
                 matplotlib LaTeX (False). Note that if the former is chosen, an
                 installation of LaTex is required.
-        """
+        '''
         mpl.rc('text', usetex=usetex)
 
     @auto_refresh
