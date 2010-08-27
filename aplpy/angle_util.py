@@ -1,6 +1,15 @@
 import math
+import struct
+
 import numpy as np
 import math_util
+
+
+def almost_equal(a, b):
+    c = struct.pack("dd", a, b)
+    d = struct.unpack("ll", c)
+    diff = abs(d[1] - d[0])
+    return diff < 100
 
 
 class Angle(object):
@@ -195,6 +204,12 @@ class Angle(object):
 
         return string
 
+    def __str__(self):
+        return self.angle.__str__()
+
+    def __repr__(self):
+        return self.angle.__repr__()
+
     def __add__(self, other):
 
         s = self.angle[2] + other.angle[2]
@@ -220,6 +235,32 @@ class Angle(object):
         s._simplify()
 
         return s
+
+    def __eq__(self, other):
+        return self.angle[0] == other.angle[0] \
+           and self.angle[1] == other.angle[1] \
+           and almost_equal(self.angle[2], other.angle[2])
+
+    def __div__(self, other):
+        '''
+        Divide an angle by another
+
+        This method calculates the division using the angles in degrees, and
+        then corrects for any rouding errors if the division should be exact.
+        '''
+
+        # Find division of angles in degrees
+        div = self.todegrees() / other.todegrees()
+
+        # Find the nearest integer
+        divint = int(round(div))
+
+        # Check whether the denominator multiplied by this number is exactly
+        # the numerator
+        if other * divint == self:
+            return divint
+        else:
+            return div
 
 
 def smart_round_angle(x, latitude=False):
@@ -252,3 +293,42 @@ def smart_round_angle(x, latitude=False):
     a = Angle(sexagesimal=(d, m, s), latitude=latitude)
 
     return a
+
+
+def _check_format_spacing_consistency(format, spacing):
+    '''
+    Check whether the format can correctly show labels with the specified
+    spacing.
+
+    For example, if the tick spacing is set to 1 arcsecond, but the format is
+    set to dd:mm, then the labels cannot be correctly shown. Similarly, if the
+    spacing is set to 1/1000 of a degree, or 3.6", then a format of dd:mm:ss
+    will cause rounding errors, because the spacing includes fractional
+    arcseconds.
+
+    This function will raise a warning if the format and spacing are
+    inconsistent.
+    '''
+
+    # Find base spacing
+    if "mm" in format:
+        if "ss" in format:
+            if "ss.s" in format:
+                n_decimal = len(format.split('.')[1])
+                label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)))
+            else:
+                label_spacing = Angle(sexagesimal=(0, 0, 1))
+        else:
+            label_spacing = Angle(sexagesimal=(0, 1, 0))
+    elif "." in format:
+        ns = len(format.split('.')[1])
+        label_spacing = Angle(degrees=10**(-ns))
+    else:
+        label_spacing = Angle(sexagesimal=(1, 0, 0))
+
+    # Check if hours are used instead of degrees
+    if "hh" in format:
+        label_spacing *= 15
+
+    if type(spacing / label_spacing) <> int:
+        raise Exception('Label format and tick spacing are inconsistent. Make sure that the tick spacing is a multiple of the smallest angle that can be represented by the specified format (currently %s). For example, if the format is dd:mm:ss.s, then the tick spacing has to be a multiple of 0.1". Similarly, if the format is hh:mm:ss, then the tick spacing has to be a multiple of 15"' % format)

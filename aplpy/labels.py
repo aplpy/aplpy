@@ -8,6 +8,8 @@ import string
 from matplotlib.font_manager import FontProperties
 import angle_util as au
 from decorators import auto_refresh, fixdocstring
+import angle_util
+
 
 class TickLabels(object):
 
@@ -237,6 +239,8 @@ class WCSFormatter(mpl.Formatter):
 
     def __call__(self, x, pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
+
+        angle_util._check_format_spacing_consistency(self.axis.apl_label_form, self.axis.apl_tick_spacing)
 
         hours = 'h' in self.axis.apl_label_form
 
