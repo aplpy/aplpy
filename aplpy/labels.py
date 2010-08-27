@@ -61,6 +61,7 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis is left unchanged.
         '''
         self._ax1.xaxis.apl_label_form = format
+        self._ax2.xaxis.apl_label_form = format
 
     @auto_refresh
     def set_yformat(self, format):
@@ -76,6 +77,7 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis is left unchanged.
         '''
         self._ax1.yaxis.apl_label_form = format
+        self._ax2.yaxis.apl_label_form = format
 
     @auto_refresh
     def set_style(self, style):

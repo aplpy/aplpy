@@ -139,7 +139,7 @@ class WCSLocator(Locator):
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
 
         if self.axis.apl_auto_tick_spacing:
-            self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord)
+            self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
 
         px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees(), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
@@ -153,7 +153,7 @@ class WCSLocator(Locator):
         return self.axis.apl_tick_positions_pix
 
 
-def default_spacing(ax, coord):
+def default_spacing(ax, coord, format):
 
     wcs = ax.apl_wcs
 
@@ -164,10 +164,10 @@ def default_spacing(ax, coord):
 
     if coord == 'x':
         wxmin, wxmax = math_util.smart_range(wx)
-        spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False)
+        spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False, hours='hh' in format)
     else:
         wymin, wymax = min(wy), max(wy)
-        spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True)
+        spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True, hours='hh' in format)
 
     return spacing
 

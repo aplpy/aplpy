@@ -263,13 +263,16 @@ class Angle(object):
             return div
 
 
-def smart_round_angle(x, latitude=False):
+def smart_round_angle(x, latitude=False, hours=False):
 
     d, m, s = 0, 0, 0.
 
     divisors_360 = math_util.divisors(360)
     divisors_10 = math_util.divisors(10)
     divisors_60 = math_util.divisors(60)
+
+    if hours:
+        x /= 15.
 
     if x >= 1:
         d = math_util.closest(divisors_360, x)
@@ -291,6 +294,9 @@ def smart_round_angle(x, latitude=False):
                         break
 
     a = Angle(sexagesimal=(d, m, s), latitude=latitude)
+
+    if hours:
+        a *= 15
 
     return a
 
