@@ -1017,8 +1017,12 @@ class FITSFigure(Layers, Regions, Deprecated):
                 dpi = nx / width
             print "Auto-setting resolution to ", dpi, " dpi"
 
+        artists = []
         if adjust_bbox:
-            self._figure.savefig(filename, dpi=dpi, transparent=transparent, bbox_inches='tight')
+            for artist in self._layers.values():
+                if hasattr(artist, 'get_window_extent'):
+                    artists.append(artist)
+            self._figure.savefig(filename, dpi=dpi, transparent=transparent, bbox_inches='tight', bbox_extra_artists=artists)
         else:
             self._figure.savefig(filename, dpi=dpi, transparent=transparent)
 
