@@ -301,20 +301,7 @@ def smart_round_angle(x, latitude=False, hours=False):
     return a
 
 
-def _check_format_spacing_consistency(format, spacing):
-    '''
-    Check whether the format can correctly show labels with the specified
-    spacing.
-
-    For example, if the tick spacing is set to 1 arcsecond, but the format is
-    set to dd:mm, then the labels cannot be correctly shown. Similarly, if the
-    spacing is set to 1/1000 of a degree, or 3.6", then a format of dd:mm:ss
-    will cause rounding errors, because the spacing includes fractional
-    arcseconds.
-
-    This function will raise a warning if the format and spacing are
-    inconsistent.
-    '''
+def _get_label_precision(format):
 
     # Find base spacing
     if "mm" in format:
@@ -336,5 +323,25 @@ def _check_format_spacing_consistency(format, spacing):
     if "hh" in format:
         label_spacing *= 15
 
+    return label_spacing
+
+
+def _check_format_spacing_consistency(format, spacing):
+    '''
+    Check whether the format can correctly show labels with the specified
+    spacing.
+
+    For example, if the tick spacing is set to 1 arcsecond, but the format is
+    set to dd:mm, then the labels cannot be correctly shown. Similarly, if the
+    spacing is set to 1/1000 of a degree, or 3.6", then a format of dd:mm:ss
+    will cause rounding errors, because the spacing includes fractional
+    arcseconds.
+
+    This function will raise a warning if the format and spacing are
+    inconsistent.
+    '''
+
+    label_spacing = _get_label_precision(format)
+
     if type(spacing / label_spacing) <> int:
-        raise Exception('Label format and tick spacing are inconsistent. Make sure that the tick spacing is a multiple of the smallest angle that can be represented by the specified format (currently %s). For example, if the format is dd:mm:ss.s, then the tick spacing has to be a multiple of 0.1". Similarly, if the format is hh:mm:ss, then the tick spacing has to be a multiple of 15"' % format)
+        raise Exception('Label format and tick spacing are inconsistent. Make sure that the tick spacing is a multiple of the smallest angle that can be represented by the specified format (currently %s). For example, if the format is dd:mm:ss.s, then the tick spacing has to be a multiple of 0.1". Similarly, if the format is hh:mm:ss, then the tick spacing has to be a multiple of 15". If you got this error as a result of interactively zooming in to a small region, this means that the default display format for the labels is not accurate enough, so you will need to increase the format precision.' % format)

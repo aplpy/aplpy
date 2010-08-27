@@ -169,7 +169,13 @@ def default_spacing(ax, coord, format):
         wymin, wymax = min(wy), max(wy)
         spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True, hours='hh' in format)
 
-    return spacing
+    # Find minimum spacing allowed by labels
+    min_spacing = au._get_label_precision(format)
+
+    if min_spacing.todegrees() > spacing.todegrees():
+        return min_spacing
+    else:
+        return spacing
 
 ###############################################################
 # find_ticks:      Find positions of ticks along a given axis
