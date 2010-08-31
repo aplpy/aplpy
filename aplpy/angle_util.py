@@ -196,6 +196,12 @@ class Angle(object):
         if 'ss.s' in format:
             string.append(("%0"+str(ns+3)+"."+str(ns)+"f") % tup[2] + sep[2])
 
+        # If style is colons, need to remove trailing colon
+        if sep[0] == ':' and not 'mm' in format:
+            string[0] = string[0][:-1]
+        if sep[1] == ':' and not 'ss' in format:
+            string[1] = string[1][:-1]
+
         if self.latitude:
             if self.negative:
                 string[0] = "-" + string[0]
