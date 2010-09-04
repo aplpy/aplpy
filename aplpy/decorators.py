@@ -1,25 +1,29 @@
 import threading
+from decorator import decorator
+
 
 mydata = threading.local()
 mydata.nesting = 0
 
+
 def auto_refresh(f):
-    def wrapper(*args, **kwargs):
-        if 'refresh' in kwargs:
-            refresh = kwargs.pop('refresh')
-        else:
-            refresh = True
-        mydata.nesting += 1
-        try:
-            f(*args, **kwargs)
-        finally:
-            mydata.nesting -= 1
-            if hasattr(args[0], '_figure'):
-                if refresh and mydata.nesting == 0 and args[0]._figure._auto_refresh:
-                    args[0]._figure.canvas.draw()
-    wrapper.__doc__ = f.__doc__
-    wrapper.__name__ = f.__name__
-    return wrapper
+    return decorator(_auto_refresh, f)
+
+
+def _auto_refresh(f, *args, **kwargs):
+    if 'refresh' in kwargs:
+        refresh = kwargs.pop('refresh')
+    else:
+        refresh = True
+    mydata.nesting += 1
+    try:
+        f(*args, **kwargs)
+    finally:
+        mydata.nesting -= 1
+        if hasattr(args[0], '_figure'):
+            if refresh and mydata.nesting == 0 and args[0]._figure._auto_refresh:
+                args[0]._figure.canvas.draw()
+
 
 import string
 
@@ -59,6 +63,7 @@ doc['variant'] = '''*variant*:
     The font variant. This can be 'normal' or 'small-caps'
     '''
 
+
 def fixdocstring(func):
 
     lines = func.__doc__.split('\n')
@@ -76,7 +81,7 @@ def fixdocstring(func):
     common = []
     for item in lines[i].split(':')[1].split(','):
         if item.strip() in doc:
-            common.append(" " * indent + doc[item.strip()].replace('\n','\n' + " "*indent))
+            common.append(" " * indent + doc[item.strip()].replace('\n', '\n' + " "*indent))
 
     docstring = string.join(header + common + footer, "\n")
 
