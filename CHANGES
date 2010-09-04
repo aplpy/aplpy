@@ -5,16 +5,50 @@ Version 0.9.5 (in progress)
 
     New Features
     ~~~~~~~~~~~~
+
+    - Support for image and contour smoothing
+
+    - Support for slicing of n-dimensional datacubes
+
+    - Support for beam:
+        -> add_beam()
+        -> remove_beam()
+
+    - Support for colorbar:
+        -> add_colorbar()
+        -> remove_colorbar()
+
+    - Support for scalebar:
+        -> add_scalebar()
+        -> remove_scalebar()
+
+    - Support for plotting ds9 region files:
+        -> show_regions()
+
+    - Support for automatic bounding box adjustments when saving
+
+    - New method to set the color to use for NaN values:
+        -> set_nan_color()
+
+    - Auto refreshing has been improved. Figures only refresh once per user
+      command if refreshing is turned on.
+
+    - Ensure tick spacing / label format consistency
+
+    API changes
+    ~~~~~~~~~~~
     
-    - ability to show a scalebar for the observations:
-        -> show_scalebar()
-        -> hide_scalebar()
-        -> set_scalebar_properties()
+    - The API has been majorly overhauled. Methods that have been
+      deprecated will give instructions on the new methods to use.
 
     Bug fixes
     ~~~~~~~~~
 
-    - Fixed filled contours
+    - Fixed a bug with filled contours
+    
+    - Fixed bug with remove_layer
+    
+    - Fixed bug with montage commands
 
 Version 0.9.4
 
