@@ -8,7 +8,6 @@ import string
 from matplotlib.font_manager import FontProperties
 import angle_util as au
 from decorators import auto_refresh, fixdocstring
-import angle_util
 
 
 class TickLabels(object):
@@ -60,6 +59,13 @@ class TickLabels(object):
 
         If one of these arguments is not specified, the format for that axis is left unchanged.
         '''
+        try:
+            if not self._ax1.xaxis.apl_auto_tick_spacing:
+                au._check_format_spacing_consistency(format, self._ax1.xaxis.apl_tick_spacing)
+        except au.InconsistentSpacing:
+            warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
+            return
+
         self._ax1.xaxis.apl_label_form = format
         self._ax2.xaxis.apl_label_form = format
 
@@ -76,6 +82,13 @@ class TickLabels(object):
 
         If one of these arguments is not specified, the format for that axis is left unchanged.
         '''
+        try:
+            if not self._ax1.yaxis.apl_auto_tick_spacing:
+                au._check_format_spacing_consistency(format, self._ax1.yaxis.apl_tick_spacing)
+        except au.InconsistentSpacing:
+            warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
+            return
+        
         self._ax1.yaxis.apl_label_form = format
         self._ax2.yaxis.apl_label_form = format
 
@@ -242,7 +255,7 @@ class WCSFormatter(mpl.Formatter):
     def __call__(self, x, pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
 
-        angle_util._check_format_spacing_consistency(self.axis.apl_label_form, self.axis.apl_tick_spacing)
+        au._check_format_spacing_consistency(self.axis.apl_label_form, self.axis.apl_tick_spacing)
 
         hours = 'h' in self.axis.apl_label_form
 

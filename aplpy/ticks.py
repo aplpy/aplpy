@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 from matplotlib.pyplot import Locator
 import wcs_util
@@ -50,6 +51,11 @@ class Ticks(object):
             self._ax1.xaxis.apl_auto_tick_spacing = True
             self._ax2.xaxis.apl_auto_tick_spacing = True
         else:
+            try:
+                au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees = spacing, latitude=False))
+            except au.InconsistentSpacing:
+                warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                return
             self._ax1.xaxis.apl_auto_tick_spacing = False
             self._ax2.xaxis.apl_auto_tick_spacing = False
             self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
@@ -69,6 +75,11 @@ class Ticks(object):
             self._ax1.yaxis.apl_auto_tick_spacing = True
             self._ax2.yaxis.apl_auto_tick_spacing = True
         else:
+            try:
+                au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees = spacing, latitude=True))
+            except au.InconsistentSpacing:
+                warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                return
             self._ax1.yaxis.apl_auto_tick_spacing = False
             self._ax2.yaxis.apl_auto_tick_spacing = False
             self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
