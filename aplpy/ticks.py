@@ -16,6 +16,7 @@ class Ticks(object):
         self._ax2 = parent._ax2
         self._wcs = parent._wcs
         self._figure = parent._figure
+        self._parent = parent
 
         # Set tick positions
         self._ax1.yaxis.tick_left()
@@ -54,8 +55,8 @@ class Ticks(object):
             self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
             self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
 
-        if hasattr(self, 'grid'):
-            self.grid._update()
+        if hasattr(self._parent, 'grid'):
+            self._parent.grid._update()
 
     @auto_refresh
     def set_yspacing(self, spacing):
@@ -73,8 +74,8 @@ class Ticks(object):
             self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
             self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
 
-        if hasattr(self, 'grid'):
-            self.grid._update()
+        if hasattr(self._parent, 'grid'):
+            self._parent.grid._update()
 
     @auto_refresh
     def set_color(self, color):

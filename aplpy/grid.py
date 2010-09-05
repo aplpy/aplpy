@@ -167,7 +167,7 @@ class Grid(object):
             xspacing = self.x_grid_spacing.todegrees()
 
         if self.y_auto_spacing:
-            if self.ax.xaxis.apl_auto_tick_spacing:
+            if self.ax.yaxis.apl_auto_tick_spacing:
                 yspacing = default_spacing(self.ax, 'y', self.ax.yaxis.apl_label_form).todegrees()
             else:
                 yspacing = self.ax.yaxis.apl_tick_spacing.todegrees()
