@@ -143,12 +143,11 @@ class Grid(object):
     def hide(self):
         self._grid.set_visible(False)
 
-    def _update_norefresh(self, *args):
-        kwargs = {'refresh':False}
-        self._update(*args, **kwargs)
-
     @auto_refresh
     def _update(self, *args):
+        self._update_norefresh(*args)
+
+    def _update_norefresh(self, *args):
 
         if not self._active:
             return self.ax
