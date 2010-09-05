@@ -1,17 +1,19 @@
 try:
     import pyregion
-except ImportError:
-    raise Exception("could not import the pyregion sub-package")
+    pyregion_installed = True
+except:
+    pyregion_installed = False
 
-try:
-    import pyregion.pyparsing
-except ImportError:
-    raise Exception("could not import the pyparsing sub-package")
+
+def _check_pyregion_installed():
+    if not pyregion_installed:
+        raise Exception("The pyregion package is required to load region files")
 
 
 import matplotlib
 
 from decorators import auto_refresh
+
 
 class Regions:
     """
@@ -66,6 +68,8 @@ class Regions:
         call and onto the patchcollections.
         """
 
+        _check_pyregion_installed()
+
         PC, TC = ds9(regionfile, self._hdu.header, **kwargs)
 
         #ffpc = self._ax1.add_collection(PC)
@@ -80,6 +84,7 @@ class Regions:
 
         self._layers[region_set_name] = PC
         self._layers[region_set_name+"_txt"] = TC
+
 
 def ds9(regionfile, header, zorder=3, **kwargs):
     """
