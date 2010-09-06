@@ -76,7 +76,7 @@ class Ticks(object):
             self._ax2.yaxis.apl_auto_tick_spacing = True
         else:
             try:
-                au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees = spacing, latitude=True))
+                au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=True))
             except au.InconsistentSpacing:
                 warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                 return
