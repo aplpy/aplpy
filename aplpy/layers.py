@@ -1,7 +1,7 @@
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
     PatchCollection, CircleCollection
-from regions import ArtistCollection, PatchCollection2
+from regions import ArtistCollection
 
 from decorators import auto_refresh
 
@@ -16,8 +16,6 @@ class Layers(object):
         elif isinstance(self._layers[layer], RegularPolyCollection):
             return 'collection'
         elif isinstance(self._layers[layer], PatchCollection):
-            return 'collection'
-        elif isinstance(self._layers[layer], PatchCollection2):
             return 'collection'
         elif isinstance(self._layers[layer], CircleCollection):
             return 'collection'
