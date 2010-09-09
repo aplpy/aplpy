@@ -22,7 +22,7 @@ class Colorbar(object):
         self._label_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', width=0.05, pad=0.05, ticks=None, labels=True):
+    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True):
         '''
         Show a colorbar on the side of the image.
 
@@ -207,6 +207,7 @@ class Colorbar(object):
         '''
         Set the linewidth of the colorbar frame, in points
         '''
+        warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
             self._colorbar_axes.spines[key].set_linewidth(linewidth)
 
@@ -215,5 +216,6 @@ class Colorbar(object):
         '''
         Set the color of the colorbar frame, in points
         '''
+        warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
             self._colorbar_axes.spines[key].set_edgecolor(color)
