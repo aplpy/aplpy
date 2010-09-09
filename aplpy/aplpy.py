@@ -1161,6 +1161,8 @@ class FITSFigure(Layers, Regions, Deprecated):
     def add_colorbar(self, *args, **kwargs):
         if hasattr(self, 'colorbar'):
             raise Exception("Colorbar already exists")
+        if self.image is None:
+            raise Exception("No image is shown, so a colorbar cannot be displayed")
         try:
             self.colorbar = Colorbar(self)
             self.colorbar.show(*args, **kwargs)
