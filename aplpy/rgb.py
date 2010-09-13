@@ -75,7 +75,7 @@ def make_rgb_image(data, output, \
 
             Minimum pixel value to use for the red, green, and blue channels.
             If set to None for a given channel, the minimum pixel value for
-            that channel is determined using the corresponding pmin_? argument
+            that channel is determined using the corresponding pmin_x argument
             (default).
 
         *vmax_r*: [ None | float ]
@@ -86,7 +86,7 @@ def make_rgb_image(data, output, \
 
             Maximum pixel value to use for the red, green, and blue channels.
             If set to None for a given channel, the maximum pixel value for
-            that channel is determined using the corresponding pmax_? argument
+            that channel is determined using the corresponding pmax_x argument
             (default).
 
         *pmin_r*: [ float ]
@@ -97,7 +97,7 @@ def make_rgb_image(data, output, \
 
             Percentile values used to determine for a given channel the
             minimum pixel value to use for that channel if the corresponding
-            vmin_? is set to None. The default is 0.25% for all channels.
+            vmin_x is set to None. The default is 0.25% for all channels.
 
         *pmax_r*: [ float ]
 
@@ -107,7 +107,7 @@ def make_rgb_image(data, output, \
 
             Percentile values used to determine for a given channel the
             maximum pixel value to use for that channel if the corresponding
-            vmax_? is set to None. The default is 99.75% for all channels.
+            vmax_x is set to None. The default is 99.75% for all channels.
 
         *stretch_r*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
 
@@ -132,7 +132,7 @@ def make_rgb_image(data, output, \
 
         *exponent_b*: [ float ]
 
-            If stretch_? is set to 'power', this is the exponent to use.
+            If stretch_x is set to 'power', this is the exponent to use.
         '''
 
     if not installed_pil:

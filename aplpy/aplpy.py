@@ -108,7 +108,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
                 only have size 1, then this is not required.
-                
+
             *auto_refresh*: [ True | False ]
                 Whether to refresh the figure automatically every time a
                 plotting method is called. This can also be set using the
@@ -245,7 +245,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             wcs = pywcs.WCS(hdu.header)
         except:
             raise Exception("An error occured while parsing the WCS information")
-        
+
         return hdu, wcs
 
     @auto_refresh
@@ -355,15 +355,15 @@ class FITSFigure(Layers, Regions, Deprecated):
                 Whether to invert the grayscale or not. The default is False,
                 unless set_theme is used, in which case the default depends on
                 the theme.
-            
+
             *smooth*: [ integer | tuple ]
                 Default smoothing scale is 3 pixels across. User can define
-                whether they want an NxN kernel (integer), or NxM kernel 
-                (tuple). This argument corresponds to the 'gauss' and 'box' 
+                whether they want an NxN kernel (integer), or NxM kernel
+                (tuple). This argument corresponds to the 'gauss' and 'box'
                 smoothing kernels.
-            
+
             *kernel*: [ 'gauss' | 'box' | numpy.array]
-                Default kernel used for smoothing is 'gauss'. The user can 
+                Default kernel used for smoothing is 'gauss'. The user can
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
         '''
@@ -421,15 +421,15 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             *cmap*: [ string ]
                 The name of the colormap to use
-                
+
             *smooth*: [ integer | tuple ]
                 Default smoothing scale is 3 pixels across. User can define
-                whether they want an NxN kernel (integer), or NxM kernel 
-                (tuple). This argument corresponds to the 'gauss' and 'box' 
+                whether they want an NxN kernel (integer), or NxM kernel
+                (tuple). This argument corresponds to the 'gauss' and 'box'
                 smoothing kernels.
 
             *kernel*: [ 'gauss' | 'box' | numpy.array]
-                Default kernel used for smoothing is 'gauss'. The user can 
+                Default kernel used for smoothing is 'gauss'. The user can
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
         '''
@@ -586,15 +586,15 @@ class FITSFigure(Layers, Regions, Deprecated):
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
                 only have size 1, then this is not required.
-            
+
             *smooth*: [ integer | tuple ]
                 Default smoothing scale is 3 pixels across. User can define
-                whether they want an NxN kernel (integer), or NxM kernel 
-                (tuple). This argument corresponds to the 'gauss' and 'box' 
+                whether they want an NxN kernel (integer), or NxM kernel
+                (tuple). This argument corresponds to the 'gauss' and 'box'
                 smoothing kernels.
 
             *kernel*: [ 'gauss' | 'box' | numpy.array]
-                Default kernel used for smoothing is 'gauss'. The user can 
+                Default kernel used for smoothing is 'gauss'. The user can
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
 
@@ -618,7 +618,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
             convention=convention, slices=slices)
-            
+
         image_contour = convolve_util.convolve(hdu_contour.data,smooth=smooth,kernel=kernel)
         extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
 
@@ -1111,6 +1111,19 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def add_grid(self, *args, **kwargs):
+        '''
+        Add a coordinate to the current figure
+
+        Once this method has been run, a grid attribute becomes availble,
+        and can be used to control the aspect of the grid::
+
+            >>> f = aplpy.FITSFigure(...)
+            >>> ...
+            >>> f.add_grid()
+            >>> f.grid.set_color('white')
+            >>> f.grid.set_alpha(0.5)
+            >>> ...
+        '''
         if hasattr(self, 'grid'):
             raise Exception("Grid already exists")
         try:
@@ -1122,11 +1135,27 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def remove_grid(self):
+        '''
+        Removes the grid from the current figure
+        '''
         self.grid._remove()
         del self.grid
 
     @auto_refresh
     def add_beam(self, *args, **kwargs):
+        '''
+        Add a beam to the current figure
+
+        Once this method has been run, a beam attribute becomes availble,
+        and can be used to control the aspect of the beam::
+
+            >>> f = aplpy.FITSFigure(...)
+            >>> ...
+            >>> f.add_beam()
+            >>> f.beam.set_color('white')
+            >>> f.beam.set_hatch('+')
+            >>> ...
+        '''
         if hasattr(self, 'beam'):
             raise Exception("Beam already exists")
         try:
@@ -1138,11 +1167,27 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def remove_beam(self):
+        '''
+        Removes the beam from the current figure
+        '''
         self.beam._remove()
         del self.beam
 
     @auto_refresh
     def add_scalebar(self, *args, **kwargs):
+        '''
+        Add a scalebar to the current figure
+
+        Once this method has been run, a scalebar attribute becomes
+        availble, and can be used to control the aspect of the scalebar::
+
+            >>> f = aplpy.FITSFigure(...)
+            >>> ...
+            >>> f.add_scalebar()
+            >>> f.scalebar.set_length(0.01)
+            >>> f.scalebar.set_label('100 AU')
+            >>> ...
+        '''
         if hasattr(self, 'scalebar'):
             raise Exception("Scalebar already exists")
         try:
@@ -1154,11 +1199,27 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def remove_scalebar(self):
+        '''
+        Removes the scalebar from the current figure
+        '''
         self.scalebar._remove()
         del self.scalebar
 
     @auto_refresh
     def add_colorbar(self, *args, **kwargs):
+        '''
+        Add a colorbar to the current figure
+
+        Once this method has been run, a colorbar attribute becomes
+        availble, and can be used to control the aspect of the colorbar::
+
+            >>> f = aplpy.FITSFigure(...)
+            >>> ...
+            >>> f.add_colorbar()
+            >>> f.colorbar.set_width(0.3)
+            >>> f.colorbar.set_location('top')
+            >>> ...
+        '''
         if hasattr(self, 'colorbar'):
             raise Exception("Colorbar already exists")
         if self.image is None:
@@ -1172,5 +1233,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def remove_colorbar(self):
+        '''
+        Removes the colorbar from the current figure
+        '''
         self.colorbar._remove()
         del self.colorbar
