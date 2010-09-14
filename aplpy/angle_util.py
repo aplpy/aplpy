@@ -6,8 +6,8 @@ import math_util
 
 
 def almost_equal(a, b):
-    c = struct.pack("dd", a, b)
-    d = struct.unpack("ll", c)
+    c = struct.pack("<dd", a, b)
+    d = struct.unpack("<qq", c)
     diff = abs(d[1] - d[0])
     return diff < 100
 
