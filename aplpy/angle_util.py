@@ -269,7 +269,7 @@ class Angle(object):
             return div
 
 
-def smart_round_angle(x, latitude=False, hours=False):
+def smart_round_angle_sexagesimal(x, latitude=False, hours=False):
 
     d, m, s = 0, 0, 0.
 
@@ -303,6 +303,27 @@ def smart_round_angle(x, latitude=False, hours=False):
 
     if hours:
         a *= 15
+
+    return a
+
+
+def smart_round_angle_decimal(x, latitude=False):
+
+    divisors_360 = math_util.divisors(360)
+    divisors_10 = math_util.divisors(10)
+
+    if x >= 1:
+        d = math_util.closest(divisors_360, x)
+    else:
+        t = 1.
+        while True:
+            t = t * 10.
+            x = x * 10.
+            if x >= 1:
+                d = math_util.closest(divisors_10, x) / t
+                break
+
+    a = Angle(degrees=d, latitude=latitude)
 
     return a
 

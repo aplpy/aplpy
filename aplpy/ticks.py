@@ -176,10 +176,16 @@ def default_spacing(ax, coord, format):
 
     if coord == 'x':
         wxmin, wxmax = math_util.smart_range(wx)
-        spacing = au.smart_round_angle((wxmax-wxmin)/5., latitude=False, hours='hh' in format)
+        if 'd.' in format:
+            spacing = au.smart_round_angle_decimal((wxmax-wxmin)/5., latitude=False)
+        else:
+            spacing = au.smart_round_angle_sexagesimal((wxmax-wxmin)/5., latitude=False, hours='hh' in format)
     else:
         wymin, wymax = min(wy), max(wy)
-        spacing = au.smart_round_angle((wymax-wymin)/5., latitude=True, hours='hh' in format)
+        if 'd.' in format:
+            spacing = au.smart_round_angle_decimal((wymax-wymin)/5., latitude=True)
+        else:
+            spacing = au.smart_round_angle_sexagesimal((wymax-wymin)/5., latitude=True, hours='hh' in format)
 
     # Find minimum spacing allowed by labels
     min_spacing = au._get_label_precision(format)
