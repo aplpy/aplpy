@@ -35,6 +35,8 @@ Version 0.9.5 (in progress)
 
     - Ensure tick spacing / label format consistency
 
+    - New method to overlay polygons
+
     API changes
     ~~~~~~~~~~~
     

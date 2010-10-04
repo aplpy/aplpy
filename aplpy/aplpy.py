@@ -27,6 +27,8 @@ try:
 except ImportError:
     raise Exception("numpy is required for APLpy")
 
+from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon
+from matplotlib.collections import PatchCollection
 
 import contour_util
 
@@ -36,7 +38,6 @@ import montage
 import image_util
 import header
 import wcs_util
-import shape_util
 import slicer
 
 from layers import Layers
@@ -53,6 +54,7 @@ from frame import Frame
 from decorators import auto_refresh, fixdocstring
 
 from deprecated import Deprecated
+
 
 class FITSFigure(Layers, Regions, Deprecated):
 
@@ -701,35 +703,50 @@ class FITSFigure(Layers, Regions, Deprecated):
     # Show circles. Different from markers as this method allows more definitions
     # for the circles.
     @auto_refresh
-    def show_circles(self, xw, yw, r, layer=False, **kwargs):
+    def show_circles(self, xw, yw, radius, layer=False, **kwargs):
         '''
-            Overlay circles on the current plot.
+        Overlay circles on the current plot.
 
-            Required arguments:
+        Required arguments:
 
-                *xw*: [ list | numpy.ndarray ]
-                    The x postions of the circles (in world coordinates)
+            *xw*: [ list | numpy.ndarray ]
+                The x postions of the circles (in world coordinates)
 
-                *yw*: [ list | numpy.ndarray ]
-                    The y positions of the circles (in world coordinates)
+            *yw*: [ list | numpy.ndarray ]
+                The y positions of the circles (in world coordinates)
 
-                *r*: [integer | float | list | numpy.ndarray ]
-                    The radii of the circles in degrees
+            *radius*: [integer | float | list | numpy.ndarray ]
+                The radii of the circles in degrees
 
-            Optional Keyword Arguments:
+        Optional Keyword Arguments:
 
-                *layer*: [ string ]
-                    The name of the circle layer. This is useful for giving
-                    custom names to layers (instead of circle_set_n) and for
-                    replacing existing layers.
+            *layer*: [ string ]
+                The name of the circle layer. This is useful for giving
+                custom names to layers (instead of circle_set_n) and for
+                replacing existing layers.
 
-            Additional keyword arguments (such as facecolor, edgecolor, alpha,
-            or linewidth) can be used to control the appearance of the
-            circles, which are instances of the matplotlib Circle class. For
-            more information on available arguments, see `Circle
-            <http://matplotlib.sourceforge.net/api/
-            artist_api.html#matplotlib.patches.Circle>`_.
-            '''
+        Additional keyword arguments (such as facecolor, edgecolor, alpha,
+        or linewidth) can be used to control the appearance of the circles,
+        which are instances of the matplotlib Circle class. For more
+        information on available arguments, see `Circle
+        <http://matplotlib.sourceforge.net/api/
+        artist_api.html#matplotlib.patches.Circle>`_.
+        '''
+
+        if np.isscalar(xw):
+            xw = np.array([xw])
+        else:
+            xw = np.array(xw)
+
+        if np.isscalar(yw):
+            yw = np.array([yw])
+        else:
+            yw = np.array(yw)
+
+        if np.isscalar(radius):
+            radius = np.repeat(radius, len(xw))
+        else:
+            radius = np.array(radius)
 
         if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
@@ -738,17 +755,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        rp = 3600.0*r/wcs_util.arcperpix(self._wcs)
+        rp = 3600.0*radius/wcs_util.arcperpix(self._wcs)
 
-        try:
-            if len(rp)>1:
-                pass
-        except:
-            general_array = np.zeros(len(xp))+1
-            rp = rp*general_array
+        patches = []
+        for i in range(len(xp)):
+            patches.append(Circle((xp[i], yp[i]), radius=rp[i], **kwargs))
 
-        pcollection = shape_util.make_circles(xp, yp, rp, **kwargs)
-        c = self._ax1.add_collection(pcollection)
+        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
 
         if layer:
             circle_set_name = layer
@@ -761,40 +774,60 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_ellipses(self, xw, yw, width, height, layer=False, **kwargs):
         '''
-           Overlay ellipses on the current plot.
+       Overlay ellipses on the current plot.
 
-           Required arguments:
+       Required arguments:
 
-               *xw*: [ list | numpy.ndarray ]
-                   The x postions of the ellipses (in world coordinates)
+           *xw*: [ list | numpy.ndarray ]
+               The x postions of the ellipses (in world coordinates)
 
-               *yw*: [ list | numpy.ndarray ]
-                   The y positions of the ellipses (in world coordinates)
+           *yw*: [ list | numpy.ndarray ]
+               The y positions of the ellipses (in world coordinates)
 
-               *width*: [integer | float | list | numpy.ndarray ]
-                   The width of the ellipse in degrees
+           *width*: [integer | float | list | numpy.ndarray ]
+               The width of the ellipse in degrees
 
-               *height*: [integer | float | list | numpy.ndarray ]
-                   The height of the ellipse in degrees
+           *height*: [integer | float | list | numpy.ndarray ]
+               The height of the ellipse in degrees
 
-           Optional Keyword Arguments:
+       Optional Keyword Arguments:
 
-               *angle*: [integer | float | list | numpy.ndarray ]
-                   rotation in degrees (anti-clockwise). Default
-                   angle is 0.0.
+           *angle*: [integer | float | list | numpy.ndarray ]
+               rotation in degrees (anti-clockwise). Default
+               angle is 0.0.
 
-               *layer*: [ string ]
-                   The name of the ellipse layer. This is useful for giving
-                   custom names to layers (instead of ellipse_set_n) and for
-                   replacing existing layers.
+           *layer*: [ string ]
+               The name of the ellipse layer. This is useful for giving
+               custom names to layers (instead of ellipse_set_n) and for
+               replacing existing layers.
 
-           Additional keyword arguments (such as facecolor, edgecolor, alpha,
-           or linewidth) can be used to control the appearance of the
-           ellipses, which are instances of the matplotlib Ellipse class. For
-           more information on available arguments, see `Ellipse
-           <http://matplotlib.sourceforge.net/api/
-           artist_api.html#matplotlib.patches.Ellipse>`_.
-           '''
+       Additional keyword arguments (such as facecolor, edgecolor, alpha,
+       or linewidth) can be used to control the appearance of the ellipses,
+       which are instances of the matplotlib Ellipse class. For more
+       information on available arguments, see `Ellipse
+       <http://matplotlib.sourceforge.net/api/
+       artist_api.html#matplotlib.patches.Ellipse>`_.
+       '''
+
+        if np.isscalar(xw):
+            xw = np.array([xw])
+        else:
+            xw = np.array(xw)
+
+        if np.isscalar(yw):
+            yw = np.array([yw])
+        else:
+            yw = np.array(yw)
+
+        if np.isscalar(width):
+            width = np.repeat(width, len(xw))
+        else:
+            width = np.array(width)
+
+        if np.isscalar(height):
+            height = np.repeat(height, len(xw))
+        else:
+            height = np.array(height)
 
         if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
@@ -806,16 +839,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
         hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
 
-        try:
-            if len(wp)>1:
-                pass
-        except:
-            general_array = np.zeros(len(xp))+1
-            wp = wp*general_array
-            hp = hp*general_array
+        patches = []
+        for i in range(len(xp)):
+            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
 
-        pcollection = shape_util.make_ellipses(xp, yp, wp, hp, **kwargs)
-        c = self._ax1.add_collection(pcollection)
+        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
 
         if layer:
             ellipse_set_name = layer
@@ -828,36 +856,56 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_rectangles(self, xw, yw, width, height, layer=False, **kwargs):
         '''
-           Overlay rectangles on the current plot.
+       Overlay rectangles on the current plot.
 
-           Required arguments:
+       Required arguments:
 
-               *xw*: [ list | numpy.ndarray ]
-                   The x postions of the rectangles (in world coordinates)
+           *xw*: [ list | numpy.ndarray ]
+               The x postions of the rectangles (in world coordinates)
 
-               *yw*: [ list | numpy.ndarray ]
-                   The y positions of the rectangles (in world coordinates)
+           *yw*: [ list | numpy.ndarray ]
+               The y positions of the rectangles (in world coordinates)
 
-               *width*: [integer | float | list | numpy.ndarray ]
-                   The width of the rectangle in degrees
+           *width*: [integer | float | list | numpy.ndarray ]
+               The width of the rectangle in degrees
 
-               *height*: [integer | float | list | numpy.ndarray ]
-                   The height of the rectangle in degrees
+           *height*: [integer | float | list | numpy.ndarray ]
+               The height of the rectangle in degrees
 
-           Optional Keyword Arguments:
+       Optional Keyword Arguments:
 
-               *layer*: [ string ]
-                   The name of the rectangle layer. This is useful for giving
-                   custom names to layers (instead of rectangle_set_n) and for
-                   replacing existing layers.
+           *layer*: [ string ]
+               The name of the rectangle layer. This is useful for giving
+               custom names to layers (instead of rectangle_set_n) and for
+               replacing existing layers.
 
-           Additional keyword arguments (such as facecolor, edgecolor, alpha,
-           or linewidth) can be used to control the appearance of the
-           rectangles, which are instances of the matplotlib Rectangle class.
-           For more information on available arguments, see `Rectangle
-           <http://matplotlib.sourceforge.net/api/
-           artist_api.html#matplotlib.patches.Rectangle>`_.
-           '''
+       Additional keyword arguments (such as facecolor, edgecolor, alpha,
+       or linewidth) can be used to control the appearance of the
+       rectangles, which are instances of the matplotlib Rectangle class.
+       For more information on available arguments, see `Rectangle
+       <http://matplotlib.sourceforge.net/api/
+       artist_api.html#matplotlib.patches.Rectangle>`_.
+       '''
+
+        if np.isscalar(xw):
+            xw = np.array([xw])
+        else:
+            xw = np.array(xw)
+
+        if np.isscalar(yw):
+            yw = np.array([yw])
+        else:
+            yw = np.array(yw)
+
+        if np.isscalar(width):
+            width = np.repeat(width, len(xw))
+        else:
+            width = np.array(width)
+
+        if np.isscalar(height):
+            height = np.repeat(height, len(xw))
+        else:
+            height = np.array(height)
 
         if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
@@ -869,16 +917,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
         hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
 
-        try:
-            if len(wp)>1:
-                pass
-        except:
-            general_array = np.zeros(len(xp))+1
-            wp = wp*general_array
-            hp = hp*general_array
+        patches = []
+        xp = xp - wp/2.
+        yp = yp - hp/2.
+        for i in range(len(xp)):
+            patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
 
-        pcollection = shape_util.make_rectangles(xp, yp, wp, hp, **kwargs)
-        c = self._ax1.add_collection(pcollection)
+        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
 
         if layer:
             rectangle_set_name = layer
@@ -887,6 +932,59 @@ class FITSFigure(Layers, Regions, Deprecated):
             rectangle_set_name = 'rectangle_set_'+str(self._rectangle_counter)
 
         self._layers[rectangle_set_name] = c
+
+    @auto_refresh
+    def show_polygons(self, polygon_list, layer=False, **kwargs):
+        '''
+        Overlay polygons on the current plot.
+
+        Required arguments:
+
+            *polygon_list*: [ list ]
+                A list of one or more 2xN numpy arrays which contain
+                the [x,y] positions of the vertices in world coordinates.
+
+        Optional Keyword Arguments:
+
+            *layer*: [ string ]
+                The name of the circle layer. This is useful for giving
+                custom names to layers (instead of circle_set_n) and for
+                replacing existing layers.
+
+        Additional keyword arguments (such as facecolor, edgecolor, alpha,
+        or linewidth) can be used to control the appearance of the circles,
+        which are instances of the matplotlib Polygon class. For more
+        information on available arguments, see `Polygon
+        <http://matplotlib.sourceforge.net/api/
+        artist_api.html#matplotlib.patches.Polygon>`_.
+        '''
+
+        if not kwargs.has_key('facecolor'):
+            kwargs.setdefault('facecolor', 'none')
+
+        if layer:
+            self.remove_layer(layer, raise_exception=False)
+
+        pix_polygon_list = []
+        for i in range(len(polygon_list)):
+            xw = polygon_list[i][:,0]
+            yw = polygon_list[i][:,1]
+            xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
+            pix_polygon_list.append(np.column_stack((xp,yp)))
+
+        patches = []
+        for i in range(len(pix_polygon_list)):
+            patches.append(Polygon(pix_polygon_list[i], **kwargs))
+
+        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
+
+        if layer:
+            poly_set_name = layer
+        else:
+            self._poly_counter += 1
+            poly_set_name = 'poly_set_'+str(self._poly_counter)
+
+        self._layers[poly_set_name] = c
 
     @auto_refresh
     @fixdocstring
