@@ -1212,7 +1212,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Add a coordinate to the current figure
 
-        Once this method has been run, a grid attribute becomes availble,
+        Once this method has been run, a grid attribute becomes available,
         and can be used to control the aspect of the grid::
 
             >>> f = aplpy.FITSFigure(...)
@@ -1244,7 +1244,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Add a beam to the current figure
 
-        Once this method has been run, a beam attribute becomes availble,
+        Once this method has been run, a beam attribute becomes available,
         and can be used to control the aspect of the beam::
 
             >>> f = aplpy.FITSFigure(...)
@@ -1277,7 +1277,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Add a scalebar to the current figure
 
         Once this method has been run, a scalebar attribute becomes
-        availble, and can be used to control the aspect of the scalebar::
+        available, and can be used to control the aspect of the scalebar::
 
             >>> f = aplpy.FITSFigure(...)
             >>> ...
@@ -1308,7 +1308,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Add a colorbar to the current figure
 
         Once this method has been run, a colorbar attribute becomes
-        availble, and can be used to control the aspect of the colorbar::
+        available, and can be used to control the aspect of the colorbar::
 
             >>> f = aplpy.FITSFigure(...)
             >>> ...
