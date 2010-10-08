@@ -1281,8 +1281,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             >>> f = aplpy.FITSFigure(...)
             >>> ...
-            >>> f.add_scalebar()
-            >>> f.scalebar.set_length(0.01)
+            >>> f.add_scalebar(0.01) # length has to be specified
             >>> f.scalebar.set_label('100 AU')
             >>> ...
         '''

@@ -18,8 +18,8 @@ corners['bottom left'] = 3
 corners['bottom right'] = 4
 corners['right'] = 5
 corners['left'] = 6
-corners['bottom '] = 8
-corners['top '] = 9
+corners['bottom'] = 8
+corners['top'] = 9
 
 
 class Compass(object):
