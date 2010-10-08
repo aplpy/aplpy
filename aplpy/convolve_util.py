@@ -19,7 +19,6 @@ def box_kern(size, sizey=None):
         sizey = size
     else:
         sizey = int(sizey)
-    print size, sizey
     return ones((size,sizey))
 
 # Function was adopted and modified from 
