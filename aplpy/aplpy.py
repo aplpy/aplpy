@@ -67,9 +67,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Required arguments:
 
-            *data*: [ string | pyfits PrimaryHDU | pyfits ImageHDU ]
-                Either the filename of the FITS file to open, or a pyfits
-                PrimaryHDU or ImageHDU instance.
+            *data*: [ string | pyfits.PrimaryHDU | pyfits.ImageHDU | pywcs.WCS ]
+                Either the filename of the FITS file to open, a pyfits
+                PrimaryHDU or ImageHDU object, or a pywcs WCS object.
 
         Optional Keyword Arguments:
 
@@ -131,8 +131,17 @@ class FITSFigure(Layers, Regions, Deprecated):
         if north and not montage._installed():
             raise Exception("Montage needs to be installed and in the $PATH in order to use the north= option")
 
-        self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
-            convention=convention, slices=slices)
+        if isinstance(data, pywcs.WCS):
+            self._hdu, self._wcs = pyfits.ImageHDU(np.zeros((data.naxis2, data.naxis1), dtype=float)), data
+            if downsample:
+                warnings.warn("downsample argument is ignored if data passed is a WCS object")
+                downsample = False
+            if north:
+                warnings.warn("north argument is ignored if data passed is a WCS object")
+                north = False
+        else:
+            self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
+                convention=convention, slices=slices)
 
         # Downsample if requested
         if downsample:
@@ -479,9 +488,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.set_norm(normalizer)
             self.image.set_cmap(cmap=cmap)
             self.image.origin='lower'
-            self.image.set_data(convolve_util.convolve(self._hdu.data,smooth=smooth,kernel=kernel))
+            self.image.set_data(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data,smooth=smooth,kernel=kernel), cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
@@ -621,7 +630,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
             convention=convention, slices=slices)
 
-        image_contour = convolve_util.convolve(hdu_contour.data,smooth=smooth,kernel=kernel)
+        image_contour = convolve_util.convolve(hdu_contour.data, smooth=smooth, kernel=kernel)
         extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
 
         if type(levels) == int:
@@ -942,7 +951,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             *polygon_list*: [ list ]
                 A list of one or more 2xN numpy arrays which contain
-                the [x,y] positions of the vertices in world coordinates.
+                the [x, y] positions of the vertices in world coordinates.
 
         Optional Keyword Arguments:
 
@@ -967,10 +976,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         pix_polygon_list = []
         for i in range(len(polygon_list)):
-            xw = polygon_list[i][:,0]
-            yw = polygon_list[i][:,1]
+            xw = polygon_list[i][:, 0]
+            yw = polygon_list[i][:, 1]
             xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-            pix_polygon_list.append(np.column_stack((xp,yp)))
+            pix_polygon_list.append(np.column_stack((xp, yp)))
 
         patches = []
         for i in range(len(pix_polygon_list)):
