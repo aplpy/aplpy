@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from distutils import version
 import os
 import warnings
@@ -30,35 +32,38 @@ except ImportError:
 from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon
 from matplotlib.collections import PatchCollection
 
-import contour_util
-
-import convolve_util
-
 try:
     import montage
     montage_installed = True
 except:
     montage_installed = False
 
-import image_util
-import header
-import wcs_util
-import slicer
+if montage_installed:
+    if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
+        warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
+        montage_installed = False
 
-from layers import Layers
-from grid import Grid
-from ticks import Ticks
-from labels import TickLabels
-from axis_labels import AxisLabels
-from overlays import Beam, ScaleBar
-from regions import Regions
-from colorbar import Colorbar
-from normalize import APLpyNormalize
-from frame import Frame
+import aplpy.contour_util as contour_util
+import aplpy.convolve_util as convolve_util
+import aplpy.image_util as image_util
+import aplpy.header as header
+import aplpy.wcs_util as wcs_util
+import aplpy.slicer as slicer
 
-from decorators import auto_refresh, fixdocstring
+from aplpy.layers import Layers
+from aplpy.grid import Grid
+from aplpy.ticks import Ticks
+from aplpy.labels import TickLabels
+from aplpy.axis_labels import AxisLabels
+from aplpy.overlays import Beam, ScaleBar
+from aplpy.regions import Regions
+from aplpy.colorbar import Colorbar
+from aplpy.normalize import APLpyNormalize
+from aplpy.frame import Frame
 
-from deprecated import Deprecated
+from aplpy.decorators import auto_refresh, fixdocstring
+
+from aplpy.deprecated import Deprecated
 
 
 class FITSFigure(Layers, Regions, Deprecated):
@@ -132,7 +137,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
-            
+
         if isinstance(data, pywcs.WCS):
             self._hdu, self._wcs = pyfits.ImageHDU(np.zeros((data.naxis2, data.naxis1), dtype=float)), data
             if downsample:
