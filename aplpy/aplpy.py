@@ -34,7 +34,12 @@ import contour_util
 
 import convolve_util
 
-import montage
+try:
+    import montage
+    montage_installed = True
+except:
+    montage_installed = False
+
 import image_util
 import header
 import wcs_util
@@ -127,10 +132,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
-
-        if north and not montage._installed():
-            raise Exception("Montage needs to be installed and in the $PATH in order to use the north= option")
-
+            
         if isinstance(data, pywcs.WCS):
             self._hdu, self._wcs = pyfits.ImageHDU(np.zeros((data.naxis2, data.naxis1), dtype=float)), data
             if downsample:
@@ -246,7 +248,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Reproject to face north if requested
         if north:
-            hdu = montage.reproject_north(hdu)
+            if not montage_installed:
+                raise Exception("Both the Montage command-line tools and the Python-montage module are required to use the north= argument")
+            hdu = montage.reproject_hdu(hdu, north_aligned=True)
 
         # Check header
         hdu.header = header.check(hdu.header, convention=convention)

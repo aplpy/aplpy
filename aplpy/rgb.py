@@ -1,3 +1,7 @@
+import os
+import tempfile
+import shutil
+
 import pyfits
 import numpy as np
 
@@ -6,6 +10,12 @@ try:
     installed_pil = True
 except:
     installed_pil = False
+
+try:
+    import montage
+    montage_installed = True
+except:
+    montage_installed = False
 
 import image_util
 import math_util as m
@@ -38,7 +48,7 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
     data = image_util.stretch(image, stretch, exponent=exponent, midpoint=vmid)
 
     data = np.nan_to_num(data)
-    data = np.clip(data*255., 0., 255.)
+    data = np.clip(data * 255., 0., 255.)
 
     return data.astype(np.uint8)
 
@@ -136,14 +146,13 @@ def make_rgb_image(data, output, \
         '''
 
     if not installed_pil:
-        print '''ERROR : The Python Imaging Library (PIL) is not installed but is required for this function'''
-        return
+        raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
 
     if type(data) == str:
         image = pyfits.getdata(data)
-        image_r = image[0,:,:]
-        image_g = image[1,:,:]
-        image_b = image[2,:,:]
+        image_r = image[0, :, :]
+        image_g = image[1, :, :]
+        image_b = image[2, :, :]
     elif (type(data) == list or type(data) == tuple) and len(data) == 3:
         filename_r, filename_g, filename_b = data
         image_r = pyfits.getdata(filename_r)
@@ -179,5 +188,96 @@ def make_rgb_image(data, output, \
     img = Image.merge("RGB", (image_r, image_g, image_b))
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
     img.save(output)
+
+    return
+
+
+def make_rgb_cube(files, output):
+    '''
+    Make an RGB data cube from a list of three FITS images.
+
+    This method can read in three FITS files with different
+    projections/sizes/resolutions and uses Montage to reproject
+    them all to the same projection.
+
+    Required arguments:
+
+        *files* [ tuple | list ]
+            A list of the filenames of three FITS filename to reproject.
+            The order is red, green, blue.
+
+        *output* [ string ]
+            The filename of the output RGB FITS cube.
+
+    '''
+
+    # Check whether the Python montage module is installed. The Python module
+    # checks itself whether the Montage command-line tools are available, and
+    # if they are not then importing the Python module will fail.
+    if not montage_installed:
+        raise Exception("Both the Montage command-line tools and the Python-montage module are required for this function")
+
+    # Check that input files exist
+    for f in files:
+        if not os.path.exists(f):
+            raise Exception("File does not exist : " + f)
+
+    # Create work directory
+    work_dir = tempfile.mkdtemp()
+
+    raw_dir = '%s/raw' % work_dir
+    final_dir = '%s/final' % work_dir
+
+    images_raw_tbl = '%s/images_raw.tbl' % work_dir
+    header_hdr = '%s/header.hdr' % work_dir
+    header_py_hdr = '%s/header_py.hdr' % work_dir
+
+    # Create raw and final directory in work directory
+    os.mkdir(raw_dir)
+    os.mkdir(final_dir)
+
+    # Create symbolic links to input files
+    for i, f in enumerate(files):
+        os.symlink(os.path.abspath(f), '%s/image_%i.fits' % (raw_dir, i))
+
+    # List files and create optimal header
+    montage.mImgtbl(raw_dir, images_raw_tbl, corners=True)
+    montage.mMakeHdr(images_raw_tbl, header_hdr)
+
+    # Write out header without 'END'
+    contents = open(header_hdr).read()
+    open(header_py_hdr, 'wb').write(contents.replace('END\n', ''))
+
+    # Read header in with pyfits
+    header = pyfits.Header()
+    header.fromTxtFile(header_py_hdr, replace=True)
+
+    # Find image dimensions
+    nx = int(header['NAXIS1'])
+    ny = int(header['NAXIS2'])
+
+    # Generate emtpy datacube
+    image_cube = np.zeros((len(files), ny, nx), dtype=np.float32)
+
+    # Loop through files
+    for i in range(len(files)):
+
+        # Reproject channel to optimal header
+        montage.reproject('%s/image_%i.fits' % (raw_dir, i),
+                          '%s/image_%i.fits' % (final_dir, i),
+                          header=header_hdr, exact_size=True, bitpix=-32)
+
+        # Read in and add to datacube
+        image_cube[i, :, :] = pyfits.getdata('%s/image_%i.fits' % (final_dir, i))
+
+    # Write out final cube
+    pyfits.writeto(output, image_cube, header, clobber=True)
+
+    # Write out collapsed version of cube
+    pyfits.writeto(output.replace('.fits', '_2d.fits'), \
+                   np.sum(image_cube, axis=0), header, clobber=True)
+
+    # Remove work directory
+    shutil.rmtree(work_dir)
 
     return
