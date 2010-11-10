@@ -88,7 +88,7 @@ class TickLabels(object):
         except au.InconsistentSpacing:
             warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
             return
-        
+
         self._ax1.yaxis.apl_label_form = format
         self._ax2.yaxis.apl_label_form = format
 
@@ -110,6 +110,8 @@ class TickLabels(object):
 
         self._ax1.xaxis.apl_labels_style = style
         self._ax1.yaxis.apl_labels_style = style
+        self._ax2.xaxis.apl_labels_style = style
+        self._ax2.yaxis.apl_labels_style = style
 
     @auto_refresh
     @fixdocstring
@@ -151,28 +153,26 @@ class TickLabels(object):
             tick.set_fontproperties(self._label_fontproperties)
         for tick in self._ax1.get_yticklabels():
             tick.set_fontproperties(self._label_fontproperties)
+        for tick in self._ax2.get_xticklabels():
+            tick.set_fontproperties(self._label_fontproperties)
+        for tick in self._ax2.get_yticklabels():
+            tick.set_fontproperties(self._label_fontproperties)
 
     @auto_refresh
     def show(self):
         """
         Show the x- and y-axis tick labels
         """
-
-        for tick in self._ax1.get_xticklabels():
-            tick.set_visible(True)
-        for tick in self._ax1.get_yticklabels():
-            tick.set_visible(True)
+        self.show_x()
+        self.show_y()
 
     @auto_refresh
     def hide(self):
         """
         Hide the x- and y-axis tick labels
         """
-
-        for tick in self._ax1.get_xticklabels():
-            tick.set_visible(False)
-        for tick in self._ax1.get_yticklabels():
-            tick.set_visible(False)
+        self.hide_x()
+        self.hide_y()
 
     @auto_refresh
     def show_x(self):
@@ -181,6 +181,8 @@ class TickLabels(object):
         """
 
         for tick in self._ax1.get_xticklabels():
+            tick.set_visible(True)
+        for tick in self._ax2.get_xticklabels():
             tick.set_visible(True)
 
     @auto_refresh
@@ -191,6 +193,8 @@ class TickLabels(object):
 
         for tick in self._ax1.get_xticklabels():
             tick.set_visible(False)
+        for tick in self._ax2.get_xticklabels():
+            tick.set_visible(False)
 
     @auto_refresh
     def show_y(self):
@@ -199,6 +203,8 @@ class TickLabels(object):
         """
 
         for tick in self._ax1.get_yticklabels():
+            tick.set_visible(True)
+        for tick in self._ax2.get_yticklabels():
             tick.set_visible(True)
 
     @auto_refresh
@@ -209,6 +215,40 @@ class TickLabels(object):
 
         for tick in self._ax1.get_yticklabels():
             tick.set_visible(False)
+        for tick in self._ax2.get_yticklabels():
+            tick.set_visible(False)
+
+    @auto_refresh
+    def set_xposition(self, position):
+        "Set the position of the x-axis tick labels ('top' or 'bottom')"
+        if position == 'bottom':
+            fx1 = WCSFormatter(wcs=self._wcs, coord='x')
+            self._ax1.xaxis.set_major_formatter(fx1)
+            fx2 = mpl.NullFormatter()
+            self._ax2.xaxis.set_major_formatter(fx2)
+        elif position == 'top':
+            fx1 = mpl.NullFormatter()
+            self._ax1.xaxis.set_major_formatter(fx1)
+            fx2 = WCSFormatter(wcs=self._wcs, coord='x')
+            self._ax2.xaxis.set_major_formatter(fx2)
+        else:
+            raise Exception("position should be one of 'top' or 'bottom'")
+
+    @auto_refresh
+    def set_yposition(self, position):
+        "Set the position of the y-axis tick labels ('left' or 'right')"
+        if position == 'left':
+            fy1 = WCSFormatter(wcs=self._wcs, coord='y')
+            self._ax1.yaxis.set_major_formatter(fy1)
+            fy2 = mpl.NullFormatter()
+            self._ax2.yaxis.set_major_formatter(fy2)
+        elif position == 'right':
+            fy1 = mpl.NullFormatter()
+            self._ax1.yaxis.set_major_formatter(fy1)
+            fy2 = WCSFormatter(wcs=self._wcs, coord='y')
+            self._ax2.yaxis.set_major_formatter(fy2)
+        else:
+            raise Exception("position should be one of 'left' or 'right'")
 
     def _cursor_position(self, x, y):
 

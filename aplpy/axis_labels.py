@@ -2,6 +2,7 @@ import wcs_util
 from matplotlib.font_manager import FontProperties
 from decorators import auto_refresh, fixdocstring
 
+
 class AxisLabels(object):
 
     def __init__(self, parent):
@@ -34,33 +35,40 @@ class AxisLabels(object):
             self.set_xtext('Ecliptic Longitude')
             self.set_ytext('Ecliptic Latitude')
 
+        self.set_xposition('bottom')
+        self.set_yposition('left')
+
     @auto_refresh
     def set_xtext(self, label):
         """
         Set the x-axis label text
         """
-        self.xlabel = self._ax1.set_xlabel(label)
+        self._xlabel1 = self._ax1.set_xlabel(label)
+        self._xlabel2 = self._ax2.set_xlabel(label)
 
     @auto_refresh
     def set_ytext(self, label):
         """
         Set the y-axis label text
         """
-        self.ylabel = self._ax1.set_ylabel(label)
+        self._ylabel1 = self._ax1.set_ylabel(label)
+        self._ylabel2 = self._ax2.set_ylabel(label)
 
     @auto_refresh
     def set_xpad(self, pad):
         """
         Set the x-axis label displacement, in points
         """
-        self.xlabel = self._ax1.set_xlabel(self.xlabel.get_text(), labelpad=pad)
+        self._xlabel1 = self._ax1.set_xlabel(self._xlabel1.get_text(), labelpad=pad)
+        self._xlabel2 = self._ax2.set_xlabel(self._xlabel2.get_text(), labelpad=pad)
 
     @auto_refresh
     def set_ypad(self, pad):
         """
-        Set the x-axis label displacement, in points
+        Set the y-axis label displacement, in points
         """
-        self.ylabel = self._ax1.set_ylabel(self.ylabel.get_text(), labelpad=pad)
+        self._ylabel1 = self._ax1.set_ylabel(self._ylabel1.get_text(), labelpad=pad)
+        self._ylabel2 = self._ax2.set_ylabel(self._ylabel2.get_text(), labelpad=pad)
 
     @auto_refresh
     @fixdocstring
@@ -98,63 +106,89 @@ class AxisLabels(object):
         if fontproperties:
             self._label_fontproperties = fontproperties
 
-        self.xlabel.set_fontproperties(self._label_fontproperties)
-        self.ylabel.set_fontproperties(self._label_fontproperties)
+        self._xlabel1.set_fontproperties(self._label_fontproperties)
+        self._xlabel2.set_fontproperties(self._label_fontproperties)
+        self._ylabel1.set_fontproperties(self._label_fontproperties)
+        self._ylabel2.set_fontproperties(self._label_fontproperties)
 
     @auto_refresh
     def show(self):
         """
         Show the x- and y-axis labels
         """
-
-        if self.xlabel:
-            self.xlabel.set_visible(True)
-        if self.ylabel:
-            self.ylabel.set_visible(True)
+        self.show_x()
+        self.show_y()
 
     @auto_refresh
     def hide(self):
         """
         Hide the x- and y-axis labels
         """
-
-        if self.xlabel:
-            self.xlabel.set_visible(False)
-        if self.ylabel:
-            self.ylabel.set_visible(False)
+        self.hide_x()
+        self.hide_y()
 
     @auto_refresh
     def show_x(self):
         """
         Show the x-axis label
         """
-
-        if self.xlabel:
-            self.xlabel.set_visible(True)
+        if self._xposition == 'bottom':
+            self._xlabel1.set_visible(True)
+        else:
+            self._xlabel2.set_visible(True)
 
     @auto_refresh
     def hide_x(self):
         """
         Hide the x-axis label
         """
-
-        if self.xlabel:
-            self.xlabel.set_visible(False)
+        if self._xposition == 'bottom':
+            self._xlabel1.set_visible(False)
+        else:
+            self._xlabel2.set_visible(False)
 
     @auto_refresh
     def show_y(self):
         """
         Show the y-axis label
         """
-
-        if self.ylabel:
-            self.ylabel.set_visible(True)
+        if self._yposition == 'left':
+            self._ylabel1.set_visible(True)
+        else:
+            self._ylabel2.set_visible(True)
 
     @auto_refresh
     def hide_y(self):
         """
         Hide the y-axis label
         """
+        if self._yposition == 'left':
+            self._ylabel1.set_visible(False)
+        else:
+            self._ylabel2.set_visible(False)
 
-        if self.ylabel:
-            self.ylabel.set_visible(False)
+    @auto_refresh
+    def set_xposition(self, position):
+        "Set the position of the x-axis label ('top' or 'bottom')"
+        if position == 'bottom':
+            self._xlabel1.set_visible(True)
+            self._xlabel2.set_visible(False)
+        elif position == 'top':
+            self._xlabel1.set_visible(False)
+            self._xlabel2.set_visible(True)
+        else:
+            raise Exception("position should be one of 'top' or 'bottom'")
+        self._xposition = position
+
+    @auto_refresh
+    def set_yposition(self, position):
+        "Set the position of the y-axis label ('left' or 'right')"
+        if position == 'left':
+            self._ylabel1.set_visible(True)
+            self._ylabel2.set_visible(False)
+        elif position == 'right':
+            self._ylabel1.set_visible(False)
+            self._ylabel2.set_visible(True)
+        else:
+            raise Exception("position should be one of 'left' or 'right'")
+        self._yposition = position
