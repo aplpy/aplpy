@@ -77,7 +77,7 @@ If you have easy_install installed, you can install APLpy by simply typing
 Otherwise, you can install APLpy by downloading the latest available
 tar file from 
 
-http://sourceforge.net/projects/aplpy/files/
+https://github.com/aplpy/aplpy/archives/master
 
 and using the standard installation method:
 
