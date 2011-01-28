@@ -28,7 +28,7 @@ class TickLabels(object):
         system, equinox, units = wcs_util.system(self._wcs)
 
         # Set default label format
-        if system == 'celestial':
+        if system == 'equatorial':
             self.set_xformat("hh:mm:ss.ss")
             self.set_yformat("dd:mm:ss.s")
         else:
