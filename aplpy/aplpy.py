@@ -790,7 +790,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[circle_set_name] = c
 
     @auto_refresh
-    def show_ellipses(self, xw, yw, width, height, layer=False, **kwargs):
+    def show_ellipses(self, xw, yw, width, height, layer=False, angle= 0, **kwargs):
         '''
        Overlay ellipses on the current plot.
 
@@ -841,7 +841,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             width = np.repeat(width, len(xw))
         else:
             width = np.array(width)
-
+        
+        if np.isscalar(angle):
+            angle = np.repeat(angle, len(xw))
+        else:
+            angle = np.array(angle)
+            
         if np.isscalar(height):
             height = np.repeat(height, len(xw))
         else:
@@ -856,10 +861,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
         wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
         hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
+        ap = angle
 
         patches = []
         for i in range(len(xp)):
-            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
+            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i],**kwargs))
 
         c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
 
