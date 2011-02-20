@@ -841,12 +841,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             width = np.repeat(width, len(xw))
         else:
             width = np.array(width)
-        
+
         if np.isscalar(angle):
             angle = np.repeat(angle, len(xw))
         else:
             angle = np.array(angle)
-            
+
         if np.isscalar(height):
             height = np.repeat(height, len(xw))
         else:
@@ -1359,3 +1359,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         self.colorbar._remove()
         del self.colorbar
+
+    def close(self):
+        '''
+        Close the figure and free up the memory
+        '''
+        mpl.close(self._figure)
