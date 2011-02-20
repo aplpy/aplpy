@@ -14,7 +14,7 @@ def almost_equal(a, b):
 
 class Angle(object):
 
-    def __init__(self, degrees='none', sexagesimal='none', latitude=False):
+    def __init__(self, degrees='none', sexagesimal='none', latitude=False, userwcs=False):
 
         if degrees <> 'none':
 
@@ -45,6 +45,8 @@ class Angle(object):
         # Whether to keep the angle between 0 and 360 or -90 and 90
         self.latitude = latitude
 
+        self.userwcs = userwcs
+
         self.negative = False
 
         self._simplify()
@@ -71,7 +73,7 @@ class Angle(object):
         # - if degrees are between 90 and 270, angle is invalid
         # - if angle is between 270 and 360, subtract 360 degrees
 
-        if self.latitude and d > 90:
+        if self.latitude and d > 90 and not self.userwcs:
             if d >= 270:
                 self.negative = True
                 d, m, s = 359 - d, 59 - m, 60. - s
@@ -107,7 +109,7 @@ class Angle(object):
 
         s = s / 15. + rm * 4.
 
-        a = Angle(sexagesimal=(h, m, s), latitude=self.latitude)
+        a = Angle(sexagesimal=(h, m, s), latitude=self.latitude, userwcs=self.userwcs)
         a.negative = self.negative
 
         return a
@@ -202,7 +204,7 @@ class Angle(object):
         if sep[1] == ':' and not 'ss' in format:
             string[1] = string[1][:-1]
 
-        if self.latitude:
+        if self.latitude and not self.userwcs:
             if self.negative:
                 string[0] = "-" + string[0]
             else:
@@ -222,7 +224,7 @@ class Angle(object):
         m = self.angle[1] + other.angle[1]
         d = self.angle[0] + other.angle[0]
 
-        s = Angle(sexagesimal=(d, m, s), latitude=self.latitude)
+        s = Angle(sexagesimal=(d, m, s), latitude=self.latitude, userwcs=self.userwcs)
         s._simplify()
 
         return s
@@ -237,7 +239,7 @@ class Angle(object):
         if self.latitude and self.negative:
             d, m, s = -d, -m, -s
 
-        s = Angle(sexagesimal=(d, m, s), latitude=self.latitude)
+        s = Angle(sexagesimal=(d, m, s), latitude=self.latitude, userwcs=self.userwcs)
         s._simplify()
 
         return s
@@ -269,7 +271,7 @@ class Angle(object):
             return div
 
 
-def smart_round_angle_sexagesimal(x, latitude=False, hours=False):
+def smart_round_angle_sexagesimal(x, latitude=False, hours=False, userwcs=False):
 
     d, m, s = 0, 0, 0.
 
@@ -299,7 +301,7 @@ def smart_round_angle_sexagesimal(x, latitude=False, hours=False):
                         s = math_util.closest(divisors_10, x) / t
                         break
 
-    a = Angle(sexagesimal=(d, m, s), latitude=latitude)
+    a = Angle(sexagesimal=(d, m, s), latitude=latitude, userwcs=userwcs)
 
     if hours:
         a *= 15
@@ -307,7 +309,7 @@ def smart_round_angle_sexagesimal(x, latitude=False, hours=False):
     return a
 
 
-def smart_round_angle_decimal(x, latitude=False):
+def smart_round_angle_decimal(x, latitude=False, userwcs=False):
 
     divisors_360 = math_util.divisors(360)
     divisors_10 = math_util.divisors(10)
@@ -323,28 +325,28 @@ def smart_round_angle_decimal(x, latitude=False):
                 d = math_util.closest(divisors_10, x) / t
                 break
 
-    a = Angle(degrees=d, latitude=latitude)
+    a = Angle(degrees=d, latitude=latitude, userwcs=userwcs)
 
     return a
 
 
-def _get_label_precision(format):
+def _get_label_precision(format, userwcs=False):
 
     # Find base spacing
     if "mm" in format:
         if "ss" in format:
             if "ss.s" in format:
                 n_decimal = len(format.split('.')[1])
-                label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)))
+                label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)), userwcs=userwcs)
             else:
-                label_spacing = Angle(sexagesimal=(0, 0, 1))
+                label_spacing = Angle(sexagesimal=(0, 0, 1), userwcs=userwcs)
         else:
-            label_spacing = Angle(sexagesimal=(0, 1, 0))
+            label_spacing = Angle(sexagesimal=(0, 1, 0), userwcs=userwcs)
     elif "." in format:
         ns = len(format.split('.')[1])
-        label_spacing = Angle(degrees=10**(-ns))
+        label_spacing = Angle(degrees=10**(-ns), userwcs=userwcs)
     else:
-        label_spacing = Angle(sexagesimal=(1, 0, 0))
+        label_spacing = Angle(sexagesimal=(1, 0, 0), userwcs=userwcs)
 
     # Check if hours are used instead of degrees
     if "hh" in format:

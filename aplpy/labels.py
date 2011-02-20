@@ -12,7 +12,7 @@ from decorators import auto_refresh, fixdocstring
 
 class TickLabels(object):
 
-    def __init__(self, parent):
+    def __init__(self, parent, userwcs=False):
 
         # Store references to axes
         self._ax1 = parent._ax1
@@ -25,19 +25,27 @@ class TickLabels(object):
 
         self.set_style('plain')
 
-        system, equinox, units = wcs_util.system(self._wcs)
+        self.userwcs = userwcs
+
+        system, equinox, self.units = wcs_util.system(self._wcs,userwcs=userwcs)
 
         # Set default label format
         if system == 'equatorial':
             self.set_xformat("hh:mm:ss.ss")
             self.set_yformat("dd:mm:ss.s")
+        elif system == 'user':
+            self.set_xformat("dd.dd")
+            self.set_yformat("dd.dd")
         else:
             self.set_xformat("ddd.dddd")
             self.set_yformat("dd.dddd")
 
         # Set major tick formatters
-        fx1 = WCSFormatter(wcs=self._wcs, coord='x')
-        fy1 = WCSFormatter(wcs=self._wcs, coord='y')
+        if userwcs: # prevent longitude treatment for user coords
+            fx1 = WCSFormatter(wcs=self._wcs, coord='y', units=self.units)
+        else:
+            fx1 = WCSFormatter(wcs=self._wcs, coord='x', units=self.units)
+        fy1 = WCSFormatter(wcs=self._wcs, coord='y', units=self.units)
         self._ax1.xaxis.set_major_formatter(fx1)
         self._ax1.yaxis.set_major_formatter(fy1)
 
@@ -257,29 +265,35 @@ class TickLabels(object):
 
         xw, yw = wcs_util.pix2world(self._wcs, x, y)
 
-        xw = au.Angle(degrees=xw, latitude=False)
-        yw = au.Angle(degrees=yw, latitude=True)
+        xw = au.Angle(degrees=xw, latitude=False, userwcs=self.userwcs)
+        yw = au.Angle(degrees=yw, latitude=True, userwcs=self.userwcs)
 
         hours = 'h' in xaxis.apl_label_form
 
         if hours:
             xw = xw.tohours()
 
-        if xaxis.apl_labels_style in ['plain', 'latex']:
-            sep = ('d', 'm', 's')
-            if hours:
-                sep = ('h', 'm', 's')
-        elif xaxis.apl_labels_style == 'colons':
-            sep = (':', ':', '')
+        if not self.userwcs:
+            if xaxis.apl_labels_style in ['plain', 'latex']:
+                sep = ('d', 'm', 's')
+                if hours:
+                    sep = ('h', 'm', 's')
+            elif xaxis.apl_labels_style == 'colons':
+                sep = (':', ':', '')
+        else:
+            sep = ('','','')
 
         xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
 
-        if yaxis.apl_labels_style in ['plain', 'latex']:
-            sep = ('d', 'm', 's')
-            if hours:
-                sep = ('h', 'm', 's')
-        elif yaxis.apl_labels_style == 'colons':
-            sep = (':', ':', '')
+        if not self.userwcs:
+            if yaxis.apl_labels_style in ['plain', 'latex']:
+                sep = ('d', 'm', 's')
+                if hours:
+                    sep = ('h', 'm', 's')
+            elif yaxis.apl_labels_style == 'colons':
+                sep = (':', ':', '')
+        else:
+            sep = ('','','')
 
         ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
 
@@ -288,9 +302,10 @@ class TickLabels(object):
 
 class WCSFormatter(mpl.Formatter):
 
-    def __init__(self, wcs=False, coord='x'):
+    def __init__(self, wcs=False, coord='x', units='degrees'):
         self._wcs = wcs
         self.coord = coord
+        self.units = units
 
     def __call__(self, x, pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
@@ -307,17 +322,20 @@ class WCSFormatter(mpl.Formatter):
         else:
             label_style = self.axis.apl_labels_style
 
-        if label_style == 'plain_notex':
-            sep = (u'\u00b0', u"'", u'"')
-            if hours:
-                sep = ('h', 'm', 's')
-        elif label_style == 'colons':
-            sep = (':', ':', '')
-        elif label_style == 'plain_tex':
-            if hours:
-                sep = ('^{h}', '^{m}', '^{s}')
-            else:
-                sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
+        if self.units == 'degrees':
+            if label_style == 'plain_notex':
+                sep = (u'\u00b0', u"'", u'"')
+                if hours:
+                    sep = ('h', 'm', 's')
+            elif label_style == 'colons':
+                sep = (':', ':', '')
+            elif label_style == 'plain_tex':
+                if hours:
+                    sep = ('^{h}', '^{m}', '^{s}')
+                else:
+                    sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
+        else:
+            sep = ('','','')
 
         ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix-x))
 

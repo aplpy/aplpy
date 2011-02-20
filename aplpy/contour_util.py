@@ -2,10 +2,10 @@ import wcs_util
 from matplotlib.path import Path
 import numpy as np
 
-def transform(contours, wcs_in, wcs_out, filled=False):
+def transform(contours, wcs_in, wcs_out, filled=False, userwcs=False):
 
-    system_in, equinox_in, units_in = wcs_util.system(wcs_in)
-    system_out, equinox_out, units_out = wcs_util.system(wcs_out)
+    system_in, equinox_in, units_in = wcs_util.system(wcs_in,userwcs=userwcs)
+    system_out, equinox_out, units_out = wcs_util.system(wcs_out,userwcs=userwcs)
 
     for contour in contours.collections:
 

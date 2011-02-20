@@ -71,7 +71,9 @@ class FITSFigure(Layers, Regions, Deprecated):
     "A class for plotting FITS files."
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], auto_refresh=True, **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None,
+            downsample=False, north=False, convention=None, slices=[],
+            auto_refresh=True, userwcs=False, **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -126,6 +128,12 @@ class FITSFigure(Layers, Regions, Deprecated):
                 plotting method is called. This can also be set using the
                 set_auto_refresh method.
 
+            *userwcs*: [ True | False ]
+                Is the wcs of the .fits file a standard world coordinate, or is
+                it a user-defined coordinate system?  e.g., a .fits file
+                containing models computed in column density - temperature
+                phase space
+
         Any additional arguments are passed on to matplotlib's Figure() class.
         For example, to set the figure size, use the figsize=(xsize, ysize)
         argument (where xsize and ysize are in inches). For more information
@@ -138,6 +146,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
 
+        self.userwcs = userwcs
+
         if isinstance(data, pywcs.WCS):
             self._hdu, self._wcs = pyfits.ImageHDU(np.zeros((data.naxis2, data.naxis1), dtype=float)), data
             if downsample:
@@ -148,7 +158,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 north = False
         else:
             self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
-                convention=convention, slices=slices)
+                convention=convention, slices=slices, userwcs=userwcs)
 
         # Downsample if requested
         if downsample:
@@ -198,11 +208,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._initialize_view()
 
         # Initialize ticks
-        self.ticks = Ticks(self)
+        self.ticks = Ticks(self,userwcs=userwcs)
 
         # Initialize labels
-        self.axis_labels = AxisLabels(self)
-        self.tick_labels = TickLabels(self)
+        self.axis_labels = AxisLabels(self,userwcs=userwcs)
+        self.tick_labels = TickLabels(self,userwcs=userwcs)
 
         self.frame = Frame(self)
 
@@ -220,7 +230,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Set default theme
         self.set_theme(theme='pretty')
 
-    def _get_hdu(self, data, hdu, north, convention=None, slices=[]):
+    def _get_hdu(self, data, hdu, north, convention=None, slices=[], userwcs=False):
 
         if type(data) == str:
 
@@ -258,7 +268,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             hdu = montage.reproject_hdu(hdu, north_aligned=True)
 
         # Check header
-        hdu.header = header.check(hdu.header, convention=convention)
+        hdu.header = header.check(hdu.header, convention=convention, userwcs=userwcs)
 
         # Parse WCS info
         try:
@@ -555,7 +565,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(img, extent=self._extent, interpolation=interpolation, origin='upper')
 
     @auto_refresh
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, slices=[], smooth=None, kernel='gauss', **kwargs):
+    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False,
+            cmap=None, colors=None, returnlevels=False, convention=None,
+            slices=[], smooth=None, kernel='gauss', userwcs=False, **kwargs):
         '''
         Overlay contours on the current plot
 
@@ -618,6 +630,12 @@ class FITSFigure(Layers, Regions, Deprecated):
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
 
+            *userwcs*: [ True | False ]
+                Is the wcs of the .fits file a standard world coordinate, or is
+                it a user-defined coordinate system?  e.g., a .fits file
+                containing models computed in column density - temperature
+                phase space
+                
             Additional keyword arguments (such as alpha, linewidths, or
             linestyles) will be passed on directly to matplotlib's contour or
             contourf methods. For more information on these additional
@@ -637,7 +655,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             cmap = mpl.cm.get_cmap('jet', 1000)
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
-            convention=convention, slices=slices)
+            convention=convention, slices=slices, userwcs=userwcs)
 
         image_contour = convolve_util.convolve(hdu_contour.data, smooth=smooth, kernel=kernel)
         extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
@@ -659,7 +677,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._contour_counter += 1
             contour_set_name = 'contour_set_'+str(self._contour_counter)
 
-        contour_util.transform(c, wcs_contour, self._wcs, filled=filled)
+        contour_util.transform(c, wcs_contour, self._wcs, filled=filled, userwcs=userwcs)
 
         self._layers[contour_set_name] = c
 
@@ -1249,7 +1267,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if hasattr(self, 'grid'):
             raise Exception("Grid already exists")
         try:
-            self.grid = Grid(self)
+            self.grid = Grid(self,userwcs=self.userwcs)
             self.grid.show(*args, **kwargs)
         except:
             del self.grid

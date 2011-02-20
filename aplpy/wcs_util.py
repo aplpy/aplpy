@@ -217,7 +217,7 @@ def fk52gal(ra, dec):
     return l, b
 
 
-def system(wcs):
+def system(wcs,userwcs=False):
 
     xcoord = wcs.wcs.ctype[0][0:4]
     ycoord = wcs.wcs.ctype[1][0:4]
@@ -229,6 +229,8 @@ def system(wcs):
         system = 'galactic'
     elif xcoord == 'ELON' and ycoord == 'ELAT':
         system = 'ecliptic'
+    elif userwcs:
+        system = 'user'
     else:
         print "Warning: cannot determine coordinate system for %s/%s. Assuming equatorial." % (xcoord, ycoord)
         system = 'equatorial'
@@ -246,7 +248,10 @@ def system(wcs):
     else:
         equinox = 'none'
 
-    units = 'degrees'
+    if userwcs: 
+        units = 'user'
+    else:
+        units = 'degrees'
 
     return system, equinox, units
 

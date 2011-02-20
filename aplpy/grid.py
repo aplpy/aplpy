@@ -22,7 +22,9 @@ from decorators import auto_refresh
 class Grid(object):
 
     @auto_refresh
-    def __init__(self, parent):
+    def __init__(self, parent, userwcs=False):
+
+        self.userwcs = userwcs
 
         # Save axes and wcs information
         self.ax = parent._ax1
@@ -64,7 +66,7 @@ class Grid(object):
             self.x_auto_spacing = True
         else:
             self.x_auto_spacing = False
-            self.x_grid_spacing = au.Angle(degrees = xspacing)
+            self.x_grid_spacing = au.Angle(degrees = xspacing, userwcs=self.userwcs)
 
         self._update()
 
@@ -85,7 +87,7 @@ class Grid(object):
             self.y_auto_spacing = True
         else:
             self.y_auto_spacing = False
-            self.y_grid_spacing = au.Angle(degrees = yspacing)
+            self.y_grid_spacing = au.Angle(degrees = yspacing, userwcs=self.userwcs)
 
         self._update()
 

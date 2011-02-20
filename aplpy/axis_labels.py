@@ -5,7 +5,7 @@ from decorators import auto_refresh, fixdocstring
 
 class AxisLabels(object):
 
-    def __init__(self, parent):
+    def __init__(self, parent, userwcs=False):
 
         # Store references to axes
         self._ax1 = parent._ax1
@@ -19,7 +19,7 @@ class AxisLabels(object):
         self._ax2.yaxis.set_label_position('right')
         self._ax2.xaxis.set_label_position('top')
 
-        system, equinox, units = wcs_util.system(self._wcs)
+        system, equinox, units = wcs_util.system(self._wcs,userwcs=userwcs)
 
         if system == 'equatorial':
             if equinox == 'b1950':
@@ -31,6 +31,16 @@ class AxisLabels(object):
         elif system == 'galactic':
             self.set_xtext('Galactic Longitude')
             self.set_ytext('Galactic Latitude')
+        elif userwcs:
+            header = parent._hdu.header
+            xunit = " (%s)" % header.get('CUNIT1') if header.has_key('CUNIT1') else ''
+            yunit = " (%s)" % header.get('CUNIT2') if header.has_key('CUNIT2') else ''
+            if header.has_key('CNAME1') and header.has_key('CNAME2'):
+                self.set_xtext(header.get('CNAME1')+xunit)
+                self.set_ytext(header.get('CNAME2')+yunit)
+            else: 
+                self.set_xtext('User Coordinate 1'+xunit)
+                self.set_ytext('User Coordinate 2'+yunit)
         else:
             self.set_xtext('Ecliptic Longitude')
             self.set_ytext('Ecliptic Latitude')

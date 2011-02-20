@@ -10,7 +10,7 @@ from decorators import auto_refresh
 class Ticks(object):
 
     @auto_refresh
-    def __init__(self, parent):
+    def __init__(self, parent,userwcs=False):
 
         # Store references to axes
         self._ax1 = parent._ax1
@@ -18,6 +18,8 @@ class Ticks(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
         self._parent = parent
+
+        self.userwcs = userwcs
 
         # Set tick positions
         self._ax1.yaxis.tick_left()
@@ -30,14 +32,20 @@ class Ticks(object):
         self.set_yspacing('auto')
 
         # Set major tick locators
-        lx = WCSLocator(wcs=self._wcs, coord='x')
+        if userwcs: # prevent longitude treatment if user coords used
+            lx = WCSLocator(wcs=self._wcs, coord='y', userwcs=self.userwcs)
+        else:
+            lx = WCSLocator(wcs=self._wcs, coord='x', userwcs=self.userwcs)
         self._ax1.xaxis.set_major_locator(lx)
-        ly = WCSLocator(wcs=self._wcs, coord='y')
+        ly = WCSLocator(wcs=self._wcs, coord='y', userwcs=self.userwcs)
         self._ax1.yaxis.set_major_locator(ly)
 
-        lxt = WCSLocator(wcs=self._wcs, coord='x', farside=True)
+        if userwcs:
+            lxt = WCSLocator(wcs=self._wcs, coord='y', farside=True, userwcs=self.userwcs)
+        else:
+            lxt = WCSLocator(wcs=self._wcs, coord='x', farside=True, userwcs=self.userwcs)
         self._ax2.xaxis.set_major_locator(lxt)
-        lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True)
+        lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True, userwcs=self.userwcs)
         self._ax2.yaxis.set_major_locator(lyt)
 
     @auto_refresh
@@ -52,14 +60,14 @@ class Ticks(object):
             self._ax2.xaxis.apl_auto_tick_spacing = True
         else:
             try:
-                au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees = spacing, latitude=False))
+                au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees = spacing, latitude=False, userwcs=self.userwcs))
             except au.InconsistentSpacing:
                 warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                 return
             self._ax1.xaxis.apl_auto_tick_spacing = False
             self._ax2.xaxis.apl_auto_tick_spacing = False
-            self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
-            self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
+            self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False, userwcs=self.userwcs)
+            self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False, userwcs=self.userwcs)
 
         if hasattr(self._parent, 'grid'):
             self._parent.grid._update()
@@ -76,14 +84,14 @@ class Ticks(object):
             self._ax2.yaxis.apl_auto_tick_spacing = True
         else:
             try:
-                au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=True))
+                au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=True, userwcs=self.userwcs))
             except au.InconsistentSpacing:
                 warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                 return
             self._ax1.yaxis.apl_auto_tick_spacing = False
             self._ax2.yaxis.apl_auto_tick_spacing = False
-            self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
-            self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
+            self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True, userwcs=self.userwcs)
+            self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True, userwcs=self.userwcs)
 
         if hasattr(self._parent, 'grid'):
             self._parent.grid._update()
@@ -136,7 +144,7 @@ class Ticks(object):
 
 class WCSLocator(Locator):
 
-    def __init__(self, presets=None, wcs=False, coord='x', farside=False, minor=False):
+    def __init__(self, presets=None, wcs=False, coord='x', farside=False, minor=False, userwcs=False):
         if presets is None:
             self.presets = {}
         else:
@@ -144,6 +152,7 @@ class WCSLocator(Locator):
         self._wcs = wcs
         self.coord = coord
         self.farside = farside
+        self.userwcs = userwcs
 
     def __call__(self):
 
@@ -151,7 +160,7 @@ class WCSLocator(Locator):
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
 
         if self.axis.apl_auto_tick_spacing:
-            self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
+            self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form, userwcs=self.userwcs)
 
         px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees(), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
@@ -165,7 +174,7 @@ class WCSLocator(Locator):
         return self.axis.apl_tick_positions_pix
 
 
-def default_spacing(ax, coord, format):
+def default_spacing(ax, coord, format, userwcs=False):
 
     wcs = ax.apl_wcs
 
@@ -177,18 +186,18 @@ def default_spacing(ax, coord, format):
     if coord == 'x':
         wxmin, wxmax = math_util.smart_range(wx)
         if 'd.' in format:
-            spacing = au.smart_round_angle_decimal((wxmax-wxmin)/5., latitude=False)
+            spacing = au.smart_round_angle_decimal((wxmax-wxmin)/5., latitude=False, userwcs=userwcs)
         else:
-            spacing = au.smart_round_angle_sexagesimal((wxmax-wxmin)/5., latitude=False, hours='hh' in format)
+            spacing = au.smart_round_angle_sexagesimal((wxmax-wxmin)/5., latitude=False, hours='hh' in format, userwcs=userwcs)
     else:
         wymin, wymax = min(wy), max(wy)
         if 'd.' in format:
-            spacing = au.smart_round_angle_decimal((wymax-wymin)/5., latitude=True)
+            spacing = au.smart_round_angle_decimal((wymax-wymin)/5., latitude=True, userwcs=userwcs)
         else:
-            spacing = au.smart_round_angle_sexagesimal((wymax-wymin)/5., latitude=True, hours='hh' in format)
+            spacing = au.smart_round_angle_sexagesimal((wymax-wymin)/5., latitude=True, hours='hh' in format, userwcs=userwcs)
 
     # Find minimum spacing allowed by labels
-    min_spacing = au._get_label_precision(format)
+    min_spacing = au._get_label_precision(format, userwcs=userwcs)
 
     if min_spacing.todegrees() > spacing.todegrees():
         return min_spacing

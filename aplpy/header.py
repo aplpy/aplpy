@@ -1,7 +1,7 @@
 import pywcs
 
 
-def check(header, convention=None):
+def check(header, convention=None, userwcs=False):
 
     wcs = pywcs.WCS(header)
 
@@ -24,11 +24,11 @@ def check(header, convention=None):
     ycp = float(ny / 2)
 
     # Check that the two projections are equal
-    if xproj<>yproj:
+    if xproj<>yproj and not userwcs:
         raise Exception("x and y projections do not agree")
 
     # Check for CRVAL2<>0 for CAR projection
-    if xproj == '-CAR' and crval2 <> 0:
+    if xproj == '-CAR' and crval2 <> 0 and not userwcs:
 
         if convention in ['wells', 'calabretta']:
             if convention=='wells':
