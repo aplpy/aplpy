@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+
+from distutils import version
 import os
 import tempfile
 import shutil
@@ -17,8 +20,13 @@ try:
 except:
     montage_installed = False
 
-import image_util
-import math_util as m
+if montage_installed:
+    if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
+        warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
+        montage_installed = False
+
+import aplpy.image_util
+import aplpy.math_util as m
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
