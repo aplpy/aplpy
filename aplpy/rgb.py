@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from distutils import version
 import os
+import warnings
+
 import tempfile
 import shutil
 
@@ -25,15 +27,15 @@ if montage_installed:
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
         montage_installed = False
 
-import aplpy.image_util
-import aplpy.math_util as m
+import aplpy.image_util as image_util
+import aplpy.math_util as math_util
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
                   stretch='linear', vmid=None, exponent=2):
 
-    min_auto = not m.isnumeric(vmin)
-    max_auto = not m.isnumeric(vmax)
+    min_auto = not math_util.isnumeric(vmin)
+    max_auto = not math_util.isnumeric(vmax)
 
     if min_auto or max_auto:
         auto_v = image_util.percentile_function(image)
