@@ -33,11 +33,11 @@ def resample(array, factor):
     nx, ny = np.shape(array)
     nx_new = nx / factor
     ny_new = ny / factor
-    array2 = np.empty((nx_new, ny))
+    array2 = np.zeros((nx_new, ny))
     for i in range(nx_new-1):
         array2[i,:] = np.sum(array[i*factor:i*factor+1,:], axis=0)
 
-    array3 = np.empty((nx_new, ny_new))
+    array3 = np.zeros((nx_new, ny_new))
     for j in range(ny_new-1):
         array3[:, j] = np.sum(array2[:, j*factor:j*factor+1], axis=1)
 
