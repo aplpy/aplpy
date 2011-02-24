@@ -1040,8 +1040,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         pix_polygon_list = []
         for i in range(len(polygon_list)):
-            xw = polygon_list[i][:, 0]
-            yw = polygon_list[i][:, 1]
+            xw = polygon_list[i][0, :]
+            yw = polygon_list[i][1, :]
             xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
             pix_polygon_list.append(np.column_stack((xp, yp)))
 
