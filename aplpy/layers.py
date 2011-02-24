@@ -1,6 +1,6 @@
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
-    PatchCollection, CircleCollection
+    PatchCollection, CircleCollection, LineCollection
 from regions import ArtistCollection
 
 from decorators import auto_refresh
@@ -19,6 +19,8 @@ class Layers(object):
             return 'collection'
         elif isinstance(self._layers[layer], CircleCollection):
             return 'collection'
+        elif isinstance(self._layers[layer], LineCollection):
+            return 'collection'
         elif isinstance(self._layers[layer], ArtistCollection):
             return 'collection'
         elif hasattr(self._layers[layer], 'remove') and hasattr(self._layers[layer], 'get_visible') and hasattr(self._layers[layer], 'set_visible'):
@@ -35,6 +37,7 @@ class Layers(object):
         self._circle_counter = 0
         self._ellipse_counter = 0
         self._rectangle_counter = 0
+        self._linelist_counter = 0
         self._region_counter = 0
         self._label_counter = 0
         self._poly_counter = 0

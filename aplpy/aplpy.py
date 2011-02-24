@@ -30,7 +30,7 @@ except ImportError:
     raise Exception("numpy is required for APLpy")
 
 from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon
-from matplotlib.collections import PatchCollection
+from matplotlib.collections import PatchCollection, LineCollection
 
 try:
     import montage
@@ -956,6 +956,55 @@ class FITSFigure(Layers, Regions, Deprecated):
             rectangle_set_name = 'rectangle_set_'+str(self._rectangle_counter)
 
         self._layers[rectangle_set_name] = c
+
+    @auto_refresh
+    def show_lines(self, line_list, layer=False, **kwargs):
+        '''
+       Overlay rectangles on the current plot.
+
+       Required arguments:
+
+           *line_list*: [ list ]
+                A list of one or more 2xN numpy arrays which contain
+                the [x, y] positions of the vertices in world coordinates.
+
+       Optional Keyword Arguments:
+
+           *layer*: [ string ]
+               The name of the rectangle layer. This is useful for giving
+               custom names to layers (instead of rectangle_set_n) and for
+               replacing existing layers.
+
+       Additional keyword arguments (such as color, offsets, cmap,
+       or linewidth) can be used to control the appearance of the
+       lines, which is an instances of the matplotlib LineCollection class.
+       For more information on available arguments, see `Rectangle
+       <http://matplotlib.sourceforge.net/api/collections_api.html?
+       highlight=linecollection#matplotlib.collections.LineCollection>`_.
+       '''
+
+
+        if not 'color' in kwargs:
+            kwargs.setdefault('color', 'none')
+
+        if layer:
+            self.remove_layer(layer, raise_exception=False)
+
+        lines = []
+
+        for line in line_list:
+            xp, yp = wcs_util.world2pix(self._wcs, line[0, :],line[1, :])
+            lines.append(np.column_stack((xp, yp)))
+
+        c = self._ax1.add_collection(LineCollection(lines, **kwargs))
+
+        if layer:
+            line_set_name = layer
+        else:
+            self._linelist_counter += 1
+            line_set_name = 'line_set_'+str(self._linelist_counter)
+
+        self._layers[line_set_name] = c
 
     @auto_refresh
     def show_polygons(self, polygon_list, layer=False, **kwargs):
