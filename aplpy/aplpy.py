@@ -972,13 +972,13 @@ class FITSFigure(Layers, Regions, Deprecated):
 
            *layer*: [ string ]
                The name of the rectangle layer. This is useful for giving
-               custom names to layers (instead of rectangle_set_n) and for
+               custom names to layers (instead of line_set_n) and for
                replacing existing layers.
 
        Additional keyword arguments (such as color, offsets, cmap,
        or linewidth) can be used to control the appearance of the
        lines, which is an instances of the matplotlib LineCollection class.
-       For more information on available arguments, see `Rectangle
+       For more information on available arguments, see `LineCollection
        <http://matplotlib.sourceforge.net/api/collections_api.html?
        highlight=linecollection#matplotlib.collections.LineCollection>`_.
        '''
