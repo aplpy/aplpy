@@ -210,6 +210,15 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     projections/sizes/resolutions and uses Montage to reproject
     them all to the same projection.
 
+    Two files are produced by this function. The first is a three-dimensional
+    FITS cube with a filename give by `output`, where the third dimension
+    contains the different channels. The second is a two-dimensional FITS
+    image with a filename given by `output` with a `_2d` suffix. This file
+    contains the mean of the different channels, and is required as input to
+    FITSFigure if show_rgb is subsequently used to show a color image
+    generated from the FITS cube (to provide the correct WCS information to
+    FITSFigure).
+
     Required arguments:
 
         *files* [ tuple | list ]
@@ -300,7 +309,7 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
 
     # Write out collapsed version of cube
     pyfits.writeto(output.replace('.fits', '_2d.fits'), \
-                   np.sum(image_cube, axis=0), header, clobber=True)
+                   np.mean(image_cube, axis=0), header, clobber=True)
 
     # Remove work directory
     shutil.rmtree(work_dir)
