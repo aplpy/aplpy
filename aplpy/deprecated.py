@@ -89,7 +89,7 @@ class Deprecated(object):
     def set_scalebar_properties(self, *args, **kwargs):
         warnings.warn("set_scalebar_properties is deprecated - use scalebar.set instead", DeprecationWarning)
         self.scalebar._set_scalebar_properties(*args, **kwargs)
-        
+
     @auto_refresh
     def set_label_properties(self, *args, **kwargs):
         warnings.warn("set_label_properties is deprecated - use scalebar.set instead", DeprecationWarning)
@@ -185,13 +185,13 @@ class Deprecated(object):
     @auto_refresh
     def set_axis_labels(self, xlabel='default', ylabel='default', xpad='default', ypad='default'):
         warnings.warn("set_axis_labels has been deprecated - use axis_labels.set_xtext, axis_labels.set_ytext, axis_labels.set_xpad, and axis_labels.set_ypad instead", DeprecationWarning)
-        if xlabel <> 'default':
+        if xlabel != 'default':
             self.axis_labels.set_xtext(xlabel)
-        if xpad <> 'default':
+        if xpad != 'default':
             self.axis_labels.set_xpad(xpad)
-        if ylabel <> 'default':
+        if ylabel != 'default':
             self.axis_labels.set_ytext(ylabel)
-        if ypad <> 'default':
+        if ypad != 'default':
             self.axis_labels.set_ypad(ypad)
 
     @auto_refresh
@@ -253,7 +253,7 @@ class Deprecated(object):
     def hide_yaxis_label(self):
         warnings.warn("hide_yaxis_label has been deprecated - use axis_labels.hide_y instead", DeprecationWarning)
         self.axis_labels.hide_y()
-        
+
     # FRAME
 
     @auto_refresh

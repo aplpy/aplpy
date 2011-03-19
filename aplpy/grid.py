@@ -153,7 +153,7 @@ class Grid(object):
             return self.ax
 
         if len(args) == 1:
-            if id(self.ax) <> id(args[0]):
+            if id(self.ax) != id(args[0]):
                 raise Exception("ax ids should match")
 
         lines = []

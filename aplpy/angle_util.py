@@ -16,7 +16,7 @@ class Angle(object):
 
     def __init__(self, degrees='none', sexagesimal='none', latitude=False):
 
-        if degrees <> 'none':
+        if degrees != 'none':
 
             # Find out if the angle is negative
             negative = degrees < 0
@@ -39,7 +39,7 @@ class Angle(object):
             # Set angle to tuple of degrees/minutes/seconds
             self.angle = (d, m, s)
 
-        elif sexagesimal <> 'none':
+        elif sexagesimal != 'none':
             self.angle = sexagesimal
 
         # Whether to keep the angle between 0 and 360 or -90 and 90
@@ -374,5 +374,5 @@ def _check_format_spacing_consistency(format, spacing):
 
     label_spacing = _get_label_precision(format)
 
-    if type(spacing / label_spacing) <> int:
+    if type(spacing / label_spacing) != int:
         raise InconsistentSpacing('Label format and tick spacing are inconsistent. Make sure that the tick spacing is a multiple of the smallest angle that can be represented by the specified format (currently %s). For example, if the format is dd:mm:ss.s, then the tick spacing has to be a multiple of 0.1". Similarly, if the format is hh:mm:ss, then the tick spacing has to be a multiple of 15". If you got this error as a result of interactively zooming in to a small region, this means that the default display format for the labels is not accurate enough, so you will need to increase the format precision.' % format)
