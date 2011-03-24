@@ -6,13 +6,14 @@ import warnings
 
 try:
     import matplotlib
-    import matplotlib.pyplot as mpl
-    import mpl_toolkits.axes_grid.parasite_axes as mpltk
 except ImportError:
     raise Exception("matplotlib 0.99.0 or later is required for APLpy")
 
 if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('0.99.0'):
     raise Exception("matplotlib 0.99.0 or later is required for APLpy")
+
+import matplotlib.pyplot as mpl
+import mpl_toolkits.axes_grid.parasite_axes as mpltk
 
 try:
     import pyfits
