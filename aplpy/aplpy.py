@@ -30,7 +30,7 @@ try:
 except ImportError:
     raise Exception("numpy is required for APLpy")
 
-from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon
+from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
 
 try:
@@ -972,7 +972,7 @@ class FITSFigure(Layers, Regions, Deprecated):
        Optional Keyword Arguments:
 
            *layer*: [ string ]
-               The name of the rectangle layer. This is useful for giving
+               The name of the line(s) layer. This is useful for giving
                custom names to layers (instead of line_set_n) and for
                replacing existing layers.
 
@@ -1004,6 +1004,89 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             self._linelist_counter += 1
             line_set_name = 'line_set_'+str(self._linelist_counter)
+
+        self._layers[line_set_name] = c
+
+    @auto_refresh
+    def show_arrows(self, x, y, dx, dy, width='auto', head_width='auto',
+                    head_length='auto', layer=False, **kwargs):
+        '''
+       Overlay arrows on the current plot.
+
+       Required arguments:
+
+           *x, y, dx, dy*: [ float | list | array ]
+               Origin and displacement of the arrows in world coordinates.
+               These can either be scalars to plot a single arrow, or lists or
+               arrays to plot multiple arrows.
+
+       Optional Keyword Arguments:
+
+           *width*: [ float ]
+               The width of the arrow body, in pixels (default: 2% of the
+               arrow length, or 1 pixel if smaller)
+
+           *head_width*: [ float ]
+               The width of the arrow head, in pixels (default: 5% of the
+               arrow length, or 1 pixel if smaller)
+
+           *head_length*: [ float ]
+               The length of the arrow head, in pixels (default: 5% of the
+               arrow length, or 1 pixel if smaller)
+
+           *layer*: [ string ]
+               The name of the arrow(s) layer. This is useful for giving
+               custom names to layers (instead of line_set_n) and for
+               replacing existing layers.
+
+       Additional keyword arguments (such as color, offsets, cmap,
+       or linewidth) can be used to control the appearance of the
+       arrows, which is an instances of the matplotlib FancyArrow class.
+       For more information on available arguments, see `FancyArrow
+       <http://matplotlib.sourceforge.net/api/artist_api.html?
+       highlight=arrow#matplotlib.patches.FancyArrow>`_.
+       '''
+
+        if 'length_includes_head' not in kwargs:
+            kwargs['length_includes_head'] = True
+
+        if layer:
+            self.remove_layer(layer, raise_exception=False)
+
+        arrows = []
+
+        if np.isscalar(x):
+            x, y, dx, dy = [x], [y], [dx], [dy]
+
+        for i in range(len(x)):
+
+            xp1, yp1 = wcs_util.world2pix(self._wcs, x[i], y[i])
+            xp2, yp2 = wcs_util.world2pix(self._wcs, x[i]+dx[i], y[i]+dy[i])
+
+            if width == 'auto':
+                kwargs['width'] = max(1, 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2))
+            else:
+                kwargs['width'] = width
+
+            if head_width == 'auto':
+                kwargs['head_width'] = max(1, 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2))
+            else:
+                kwargs['head_width'] = head_width
+
+            if head_length == 'auto':
+                kwargs['head_length'] = max(1, 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2))
+            else:
+                kwargs['head_length'] = head_length
+
+            arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1, **kwargs))
+
+        c = self._ax1.add_collection(PatchCollection(arrows, match_original=True))
+
+        if layer:
+            line_set_name = layer
+        else:
+            self._linelist_counter += 1
+            line_set_name = 'arrow_set_'+str(self._linelist_counter)
 
         self._layers[line_set_name] = c
 
