@@ -1024,15 +1024,15 @@ class FITSFigure(Layers, Regions, Deprecated):
 
            *width*: [ float ]
                The width of the arrow body, in pixels (default: 2% of the
-               arrow length, or 1 pixel if smaller)
+               arrow length)
 
            *head_width*: [ float ]
                The width of the arrow head, in pixels (default: 5% of the
-               arrow length, or 1 pixel if smaller)
+               arrow length)
 
            *head_length*: [ float ]
                The length of the arrow head, in pixels (default: 5% of the
-               arrow length, or 1 pixel if smaller)
+               arrow length)
 
            *layer*: [ string ]
                The name of the arrow(s) layer. This is useful for giving
@@ -1064,17 +1064,17 @@ class FITSFigure(Layers, Regions, Deprecated):
             xp2, yp2 = wcs_util.world2pix(self._wcs, x[i]+dx[i], y[i]+dy[i])
 
             if width == 'auto':
-                kwargs['width'] = max(1, 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2))
+                kwargs['width'] = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
             else:
                 kwargs['width'] = width
 
             if head_width == 'auto':
-                kwargs['head_width'] = max(1, 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2))
+                kwargs['head_width'] = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
             else:
                 kwargs['head_width'] = head_width
 
             if head_length == 'auto':
-                kwargs['head_length'] = max(1, 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2))
+                kwargs['head_length'] = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
             else:
                 kwargs['head_length'] = head_length
 
