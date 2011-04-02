@@ -722,7 +722,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     # Show circles. Different from markers as this method allows more definitions
     # for the circles.
     @auto_refresh
-    def show_circles(self, xw, yw, radius, layer=False, **kwargs):
+    def show_circles(self, xw, yw, radius, layer=False, zorder=None, **kwargs):
         '''
         Overlay circles on the current plot.
 
@@ -780,7 +780,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         for i in range(len(xp)):
             patches.append(Circle((xp[i], yp[i]), radius=rp[i], **kwargs))
 
-        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
+        p = PatchCollection(patches, match_original=True)
+        if zorder is not None:
+            p.zorder = zorder
+        c = self._ax1.add_collection(p)
 
         if layer:
             circle_set_name = layer
@@ -791,7 +794,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[circle_set_name] = c
 
     @auto_refresh
-    def show_ellipses(self, xw, yw, width, height, layer=False, angle= 0, **kwargs):
+    def show_ellipses(self, xw, yw, width, height, angle=0, layer=False, zorder=None, **kwargs):
         '''
        Overlay ellipses on the current plot.
 
@@ -868,7 +871,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         for i in range(len(xp)):
             patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i],**kwargs))
 
-        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
+        p = PatchCollection(patches, match_original=True)
+        if zorder is not None:
+            p.zorder = zorder
+        c = self._ax1.add_collection(p)
 
         if layer:
             ellipse_set_name = layer
@@ -879,7 +885,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[ellipse_set_name] = c
 
     @auto_refresh
-    def show_rectangles(self, xw, yw, width, height, layer=False, **kwargs):
+    def show_rectangles(self, xw, yw, width, height, layer=False, zorder=None, **kwargs):
         '''
        Overlay rectangles on the current plot.
 
@@ -948,7 +954,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         for i in range(len(xp)):
             patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
 
-        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
+        p = PatchCollection(patches, match_original=True)
+        if zorder is not None:
+            p.zorder = zorder
+        c = self._ax1.add_collection(p)
 
         if layer:
             rectangle_set_name = layer
@@ -959,7 +968,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[rectangle_set_name] = c
 
     @auto_refresh
-    def show_lines(self, line_list, layer=False, **kwargs):
+    def show_lines(self, line_list, layer=False, zorder=None, **kwargs):
         '''
        Overlay rectangles on the current plot.
 
@@ -997,7 +1006,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             xp, yp = wcs_util.world2pix(self._wcs, line[0, :],line[1, :])
             lines.append(np.column_stack((xp, yp)))
 
-        c = self._ax1.add_collection(LineCollection(lines, **kwargs))
+        l = LineCollection(lines, **kwargs)
+        if zorder is not None:
+            l.zorder = zorder
+        c = self._ax1.add_collection(l)
 
         if layer:
             line_set_name = layer
@@ -1009,7 +1021,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def show_arrows(self, x, y, dx, dy, width='auto', head_width='auto',
-                    head_length='auto', layer=False, **kwargs):
+                    head_length='auto', layer=False, zorder=None, **kwargs):
         '''
        Overlay arrows on the current plot.
 
@@ -1080,7 +1092,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1, **kwargs))
 
-        c = self._ax1.add_collection(PatchCollection(arrows, match_original=True))
+        p = PatchCollection(arrows, match_original=True)
+        if zorder is not None:
+            p.zorder = zorder
+        c = self._ax1.add_collection(p)
 
         if layer:
             line_set_name = layer
@@ -1091,7 +1106,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[line_set_name] = c
 
     @auto_refresh
-    def show_polygons(self, polygon_list, layer=False, **kwargs):
+    def show_polygons(self, polygon_list, layer=False, zorder=None, **kwargs):
         '''
         Overlay polygons on the current plot.
 
@@ -1133,7 +1148,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         for i in range(len(pix_polygon_list)):
             patches.append(Polygon(pix_polygon_list[i], **kwargs))
 
-        c = self._ax1.add_collection(PatchCollection(patches, match_original=True))
+        p = PatchCollection(patches, match_original=True)
+        if zorder is not None:
+            p.zorder = zorder
+        c = self._ax1.add_collection(p)
 
         if layer:
             poly_set_name = layer
