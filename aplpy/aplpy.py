@@ -1428,23 +1428,52 @@ class FITSFigure(Layers, Regions, Deprecated):
             >>> f.beam.set_color('white')
             >>> f.beam.set_hatch('+')
             >>> ...
+
+        If more than one beam is added, the beam object becomes a list. In
+        this case, to control the aspect of one of the beams, you will need tp
+        specify the beam index::
+
+            >>> ...
+            >>> f.beam[2].set_hatch('/')
+            >>> ...
         '''
+
+        # Initalize the beam and set parameters
+        b = Beam(self)
+        b.show(*args, **kwargs)
+
         if hasattr(self, 'beam'):
-            raise Exception("Beam already exists")
-        try:
-            self.beam = Beam(self)
-            self.beam.show(*args, **kwargs)
-        except:
-            del self.beam
-            raise
+            if type(self.beam) is list:
+                self.beam.append(b)
+            else:
+                self.beam = [self.beam, b]
+        else:
+            self.beam = b
 
     @auto_refresh
-    def remove_beam(self):
+    def remove_beam(self, beam_index=None):
         '''
-        Removes the beam from the current figure
+        Removes the beam from the current figure. If more than one beam is
+        present, the index of the beam should be specified using beam_index=
         '''
-        self.beam._remove()
-        del self.beam
+
+        if type(self.beam) is list:
+
+            if beam_index is None:
+                raise Exception("More than one beam present - use beam_index= to specify which one to remove")
+            else:
+                b = self.beam.pop(beam_index)
+                b._remove()
+                del b
+
+            # If only one beam is present, remove containing list
+            if len(self.beam) == 1:
+                self.beam = self.beam[0]
+
+        else:
+
+            self.beam._remove()
+            del self.beam
 
     @auto_refresh
     def add_scalebar(self, *args, **kwargs):
