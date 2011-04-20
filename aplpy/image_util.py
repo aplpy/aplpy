@@ -38,16 +38,14 @@ def resample(array, factor):
 
     array2 = np.zeros((nx_new, ny))
     for i in range(nx_new):
-        array2[i,:] = np.sum(array[i*factor:(i+1)*factor,:], axis=0)
+        array2[i, :] = np.mean(array[i * factor:(i + 1) * factor, :], axis=0)
 
     array3 = np.zeros((nx_new, ny_new))
     for j in range(ny_new):
-        array3[:, j] = np.sum(array2[:, j*factor:(j+1)*factor], axis=1)
+        array3[:, j] = np.mean(array2[:, j * factor:(j + 1) * factor], axis=1)
 
     return array3
 
-#def smooth(array, sigma):
-#    ndimage.gaussian_filter(array, sigma=sigma)
 
 def percentile_function(array):
 
