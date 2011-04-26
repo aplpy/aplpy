@@ -338,7 +338,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_grayscale(self, vmin=None, vmid=None, vmax=None, \
                             pmin=0.25, pmax=99.75, \
-                            stretch='linear', exponent=2, invert='default', smooth=None, kernel='gauss'):
+                            stretch='linear', exponent=2, invert='default', smooth=None, kernel='gauss', interpolation='nearest'):
         '''
         Show a grayscale image of the FITS file
 
@@ -387,6 +387,14 @@ class FITSFigure(Layers, Regions, Deprecated):
                 Default kernel used for smoothing is 'gauss'. The user can
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
+
+            *interpolation*: [ string ]
+                The type of interpolation to use for the image. The default is
+                'nearest'. Other options include 'none' (no interpolation,
+                meaning that if exported to a postscript file, the grayscale
+                will be output at native resolution irrespective of the dpi
+                setting), ‘bilinear’, ‘bicubic’, and many more (see the
+                matplotlib documentation for imshow).
         '''
 
         if invert=='default':
@@ -397,7 +405,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             cmap = 'gray'
 
-        self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax, stretch=stretch, exponent=exponent, cmap=cmap, pmin=pmin, pmax=pmax, smooth=smooth, kernel=kernel)
+        self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax, stretch=stretch, exponent=exponent, cmap=cmap, pmin=pmin, pmax=pmax, smooth=smooth, kernel=kernel, interpolation=interpolation)
 
     @auto_refresh
     def hide_grayscale(self, *args, **kwargs):
@@ -406,7 +414,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_colorscale(self, vmin=None, vmid=None, vmax=None, \
                              pmin=0.25, pmax=99.75,
-                             stretch='linear', exponent=2, cmap='default', smooth=None, kernel='gauss'):
+                             stretch='linear', exponent=2, cmap='default', smooth=None, kernel='gauss', interpolation='nearest'):
         '''
         Show a colorscale image of the FITS file
 
@@ -453,6 +461,14 @@ class FITSFigure(Layers, Regions, Deprecated):
                 Default kernel used for smoothing is 'gauss'. The user can
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
+
+            *interpolation*: [ string ]
+                The type of interpolation to use for the image. The default is
+                'nearest'. Other options include 'none' (no interpolation,
+                meaning that if exported to a postscript file, the colorscale
+                will be output at native resolution irrespective of the dpi
+                setting), ‘bilinear’, ‘bicubic’, and many more (see the
+                matplotlib documentation for imshow).
         '''
 
         if cmap=='default':
@@ -500,7 +516,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.origin='lower'
             self.image.set_data(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation='nearest', origin='lower', extent=self._extent, norm=normalizer)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
