@@ -1309,7 +1309,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         artists = []
         if adjust_bbox:
             for artist in self._layers.values():
-                if hasattr(artist, 'get_window_extent'):
+                if isinstance(artist, matplotlib.text.Text):
                     artists.append(artist)
             self._figure.savefig(filename, dpi=dpi, transparent=transparent, bbox_inches='tight', bbox_extra_artists=artists)
         else:
