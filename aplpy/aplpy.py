@@ -45,6 +45,12 @@ try:
 except:
     pil_installed = False
 
+try:
+    from pyavm import AVM
+    avm_installed = True
+except:
+    avm_installed = False
+
 if montage_installed:
     if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
@@ -86,7 +92,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             *data*: [ string | pyfits.PrimaryHDU | pyfits.ImageHDU | pywcs.WCS ]
                 Either the filename of the FITS file to open, a pyfits
-                PrimaryHDU or ImageHDU object, or a pywcs WCS object.
+                PrimaryHDU or ImageHDU object, or a pywcs WCS object. It is
+                also possible to specify the filename of an RGB image tagged
+                with AVM meta-data.
 
         Optional Keyword Arguments:
 
@@ -145,7 +153,30 @@ class FITSFigure(Layers, Regions, Deprecated):
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
 
+        if type(data) is str and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
+
+            if not pil_installed:
+                raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
+
+            if not avm_installed:
+                raise Exception("PyAVM is required to read in AVM meta-data from RGB images")
+
+            # Find image size
+            nx, ny = Image.open(data).size
+
+            # Now convert AVM information to WCS
+            data = AVM(data).to_wcs()
+
+            # Need to scale CDELT values sometimes the AVM meta-data is only really valid for the full-resolution image
+            data.wcs.cdelt = [data.wcs.cdelt[0] * data.naxis1 / float(nx), data.wcs.cdelt[1] * data.naxis2 / float(ny)]
+            data.wcs.crpix = [data.wcs.crpix[0] / data.naxis1 * float(nx), data.wcs.crpix[1] / data.naxis2 * float(ny)]
+
+            # Update the NAXIS values with the true dimensions of the RGB image
+            data.naxis1 = nx
+            data.naxis2 = ny
+
         if isinstance(data, pywcs.WCS):
+
             self._hdu, self._wcs = pyfits.ImageHDU(np.zeros((data.naxis2, data.naxis1), dtype=float)), data
             if downsample:
                 warnings.warn("downsample argument is ignored if data passed is a WCS object")
