@@ -270,9 +270,28 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             # Read in FITS file
             try:
-                hdu = pyfits.open(filename)[hdu]
+                hdulist = pyfits.open(filename)
             except:
                 raise Exception("An error occured while reading the FITS file")
+
+            # Check whether the HDU specified contains any data, otherwise
+            # cycle through all HDUs to find one that contains valid image data
+            if hdulist[hdu].data is None:
+                found = False
+                for alt_hdu in range(len(hdulist)):
+                    if isinstance(hdulist[alt_hdu], pyfits.PrimaryHDU) or \
+                       isinstance(hdulist[alt_hdu], pyfits.ImageHDU):
+                        if hdulist[alt_hdu].data is not None:
+                            warnings.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
+                            hdu = hdulist[alt_hdu]
+                            found = True
+                            break
+                if not found:
+                    raise Exception("FITS file does not contain any image data")
+
+            else:
+                hdu = hdulist[hdu]
+
 
         elif isinstance(data, pyfits.PrimaryHDU) or isinstance(data, pyfits.ImageHDU):
 
