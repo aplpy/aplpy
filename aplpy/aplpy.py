@@ -504,7 +504,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 'nearest'. Other options include 'none' (no interpolation,
                 meaning that if exported to a postscript file, the colorscale
                 will be output at native resolution irrespective of the dpi
-                setting), ‘bilinear’, ‘bicubic’, and many more (see the
+                setting), 'bilinear', 'bicubic', and many more (see the
                 matplotlib documentation for imshow).
         '''
 
