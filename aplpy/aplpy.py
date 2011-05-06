@@ -39,6 +39,12 @@ try:
 except:
     montage_installed = False
 
+try:
+    import Image
+    pil_installed = True
+except:
+    pil_installed = False
+
 if montage_installed:
     if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
@@ -547,7 +553,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image.set_cmap(cm)
 
     @auto_refresh
-    def show_rgb(self, filename, interpolation='nearest', flip=False):
+    def show_rgb(self, filename, interpolation='nearest', vertical_flip=False, horizontal_flip=False, flip=False):
         '''
         Show a 3-color image instead of the FITS file data
 
@@ -559,17 +565,28 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Optional Arguments:
 
-            *flip*: [ True | False ]
-                Whether to vertically flip the RGB image in case it is the
-                wrong way around.
+            *vertical_flip*: [ True | False ]
+                Whether to vertically flip the RGB image
+
+            *horizontal_flip*: [ True | False ]
+                Whether to horizontally flip the RGB image
         '''
 
-        img = mpl.imread(filename)
+        if not pil_installed:
+            raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
 
         if flip:
-            img = np.flipud(img)
+            warnings.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
 
-        self.image = self._ax1.imshow(img, extent=self._extent, interpolation=interpolation, origin='upper')
+        image = Image.open(filename)
+
+        if vertical_flip:
+            image = image.transpose(Image.FLIP_TOP_BOTTOM)
+
+        if horizontal_flip:
+            image = image.transpose(Image.FLIP_LEFT_RIGHT)
+
+        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
     def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, slices=[], smooth=None, kernel='gauss', **kwargs):
