@@ -22,6 +22,12 @@ try:
 except:
     montage_installed = False
 
+try:
+    from pyavm import AVM
+    avm_installed = True
+except:
+    avm_installed = False
+
 if montage_installed:
     if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
@@ -69,7 +75,8 @@ def make_rgb_image(data, output, \
                    vmin_g=None, vmax_g=None, pmin_g=0.25, pmax_g=99.75, \
                    stretch_g='linear', vmid_g=None, exponent_g=2, \
                    vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75, \
-                   stretch_b='linear', vmid_b=None, exponent_b=2):
+                   stretch_b='linear', vmid_b=None, exponent_b=2, \
+                   embed_avm_tags=False):
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files
 
@@ -159,15 +166,33 @@ def make_rgb_image(data, output, \
         raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
 
     if type(data) == str:
+
         image = pyfits.getdata(data)
         image_r = image[0, :, :]
         image_g = image[1, :, :]
         image_b = image[2, :, :]
+
+        # Read in header
+        header = pyfits.getheader(data)
+
+        # Remove information about third dimension
+        header['NAXIS'] = 2
+        for key in ['NAXIS', 'CTYPE', 'CRPIX', 'CRVAL', 'CUNIT', 'CDELT', 'CROTA']:
+            for coord in range(3, 6):
+                name = key + str(coord)
+                if name in header:
+                    header.__delitem__(name)
+
     elif (type(data) == list or type(data) == tuple) and len(data) == 3:
+
         filename_r, filename_g, filename_b = data
         image_r = pyfits.getdata(filename_r)
         image_g = pyfits.getdata(filename_g)
         image_b = pyfits.getdata(filename_b)
+
+        # Read in header
+        header = pyfits.getheader(filename_r)
+
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
 
@@ -197,7 +222,15 @@ def make_rgb_image(data, output, \
 
     img = Image.merge("RGB", (image_r, image_g, image_b))
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
+
     img.save(output)
+
+    if embed_avm_tags:
+        if not avm_installed:
+            raise Exception("PyAVM needs to be installed in order to be able to embed AVM tags into the RGB image")
+        else:
+            avm = AVM(header)
+            avm.embed(output, output)
 
     return
 

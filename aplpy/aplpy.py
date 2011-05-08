@@ -161,6 +161,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             if not avm_installed:
                 raise Exception("PyAVM is required to read in AVM meta-data from RGB images")
 
+            # Remember image filename
+            self._rgb_image = data
+
             # Find image size
             nx, ny = Image.open(data).size
 
@@ -603,17 +606,17 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image.set_cmap(cm)
 
     @auto_refresh
-    def show_rgb(self, filename, interpolation='nearest', vertical_flip=False, horizontal_flip=False, flip=False):
+    def show_rgb(self, filename=None, interpolation='nearest', vertical_flip=False, horizontal_flip=False, flip=False):
         '''
         Show a 3-color image instead of the FITS file data
 
-        Required Arguments:
+        Optional Arguments:
 
             *filename*
-                The 3-color image should have exactly the same dimensions as the FITS file, and
-                will be shown with exactly the same projection.
-
-        Optional Arguments:
+                The 3-color image should have exactly the same dimensions
+                as the FITS file, and will be shown with exactly the same
+                projection. If FITSFigure was initialized with an
+                AVM-tagged RGB image, the filename is not needed here.
 
             *vertical_flip*: [ True | False ]
                 Whether to vertically flip the RGB image
@@ -628,7 +631,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         if flip:
             warnings.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
 
-        image = Image.open(filename)
+        if filename is None:
+            if hasattr(self, '_rgb_image'):
+                image = Image.open(self._rgb_image)
+            else:
+                raise Exception("Need to specify the filename of an RGB image")
+        else:
+            image = Image.open(filename)
 
         if vertical_flip:
             image = image.transpose(Image.FLIP_TOP_BOTTOM)
