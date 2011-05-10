@@ -35,6 +35,8 @@ from matplotlib.collections import PatchCollection, LineCollection
 
 try:
     import montage
+    if not hasattr(montage, 'reproject_hdu'):
+        raise
     montage_installed = True
 except:
     montage_installed = False
