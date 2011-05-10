@@ -182,7 +182,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if isinstance(data, pywcs.WCS):
 
-            self._hdu, self._wcs = pyfits.ImageHDU(np.zeros((data.naxis2, data.naxis1), dtype=float)), data
+            self._hdu, self._wcs = pyfits.ImageHDU(data=np.zeros((data.naxis2, data.naxis1), dtype=float), header=data.to_header()), data
             if downsample:
                 warnings.warn("downsample argument is ignored if data passed is a WCS object")
                 downsample = False
