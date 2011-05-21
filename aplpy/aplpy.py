@@ -1395,10 +1395,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def _initialize_view(self):
 
-        self._ax1.xaxis.set_view_interval(+0.5, self._wcs.naxis1+0.5)
-        self._ax1.yaxis.set_view_interval(+0.5, self._wcs.naxis2+0.5)
-        self._ax2.xaxis.set_view_interval(+0.5, self._wcs.naxis1+0.5)
-        self._ax2.yaxis.set_view_interval(+0.5, self._wcs.naxis2+0.5)
+        self._ax1.xaxis.set_view_interval(+0.5, self._wcs.naxis1+0.5, ignore=True)
+        self._ax1.yaxis.set_view_interval(+0.5, self._wcs.naxis2+0.5, ignore=True)
+        self._ax2.xaxis.set_view_interval(+0.5, self._wcs.naxis1+0.5, ignore=True)
+        self._ax2.yaxis.set_view_interval(+0.5, self._wcs.naxis2+0.5, ignore=True)
 
         # set the image extent to FITS pixel coordinates
         self._extent = (0.5, self._wcs.naxis1+0.5, 0.5, self._wcs.naxis2+0.5)
