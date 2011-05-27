@@ -101,7 +101,7 @@ class TickLabels(object):
             * 'plain' uses letters and symbols as separators, for example 31h41m59.26s +27º18'28.1"
         """
 
-        if style is 'latex':
+        if style == 'latex':
             warnings.warn("latex has now been merged with plain - whether or not to use LaTeX is controled through set_system_latex")
             style = 'plain'
 

@@ -71,19 +71,19 @@ def percentile_function(array):
 
 def stretch(array, function, exponent=2, midpoint=None):
 
-    if function is 'linear':
+    if function == 'linear':
         return array
-    elif function is 'log':
+    elif function == 'log':
         if not m.isnumeric(midpoint):
             midpoint = 0.05
         return np.log10(array/midpoint+1.) / np.log10(1./midpoint+1.)
-    elif function is 'sqrt':
+    elif function == 'sqrt':
         return np.sqrt(array)
-    elif function is 'arcsinh':
+    elif function == 'arcsinh':
         if not m.isnumeric(midpoint):
             midpoint = -0.033
         return np.arcsinh(array/midpoint) / np.arcsinh(1./midpoint)
-    elif function is 'power':
+    elif function == 'power':
         return np.power(array, exponent)
     else:
         raise Exception("Unknown function : " + function)
