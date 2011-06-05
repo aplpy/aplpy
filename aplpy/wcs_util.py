@@ -264,7 +264,7 @@ def degperpix(wcs):
 
 
 def world2pix(wcs, x_world, y_world):
-    if type(x_world) == float or type(x_world) == np.float32 or type(x_world) == np.float64:
+    if np.isscalar(x_world):
         x_pix, y_pix = wcs.wcs_sky2pix(np.array([x_world]), np.array([y_world]), 1)
         return x_pix[0], y_pix[0]
     elif type(x_world) == list:
@@ -273,11 +273,11 @@ def world2pix(wcs, x_world, y_world):
     elif type(x_world) in [np.ndarray, np.core.records.recarray, np.ma.core.MaskedArray]:
         return wcs.wcs_sky2pix(x_world, y_world, 1)
     else:
-        raise Exception("world2pix should be provided either with two floats, two lists, or two numpy arrays")
+        raise Exception("world2pix should be provided either with two scalars, two lists, or two numpy arrays")
 
 
 def pix2world(wcs, x_pix, y_pix):
-    if type(x_pix) == float or type(x_pix) == np.float32 or type(x_pix) == np.float64:
+    if np.isscalar(x_pix):
         x_world, y_world = wcs.wcs_pix2sky(np.array([x_pix]), np.array([y_pix]), 1)
         return x_world[0], y_world[0]
     elif type(x_pix) == list:
@@ -286,4 +286,4 @@ def pix2world(wcs, x_pix, y_pix):
     elif type(x_pix) in [np.ndarray, np.core.records.recarray, np.ma.core.MaskedArray]:
         return wcs.wcs_pix2sky(x_pix, y_pix, 1)
     else:
-        raise Exception("pix2world should be provided either with two floats, two lists, or two numpy arrays")
+        raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
