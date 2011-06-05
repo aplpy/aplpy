@@ -1292,6 +1292,15 @@ class FITSFigure(Layers, Regions, Deprecated):
         if fontproperties:
             kwargs['fontproperties'] = fontproperties
 
+        if not np.isscalar(x):
+            raise Exception("x should be a single value")
+
+        if not np.isscalar(y):
+            raise Exception("y should be a single value")
+
+        if not np.isscalar(text):
+            raise Exception("text should be a single value")
+
         if relative:
             l = self._ax1.text(x, y, text, color=color,
                                family=family, style=style, variant=variant,
