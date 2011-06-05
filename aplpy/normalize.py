@@ -61,7 +61,6 @@ class APLpyNormalize(Normalize):
         else:
             self.midpoint = (vmid - vmin) / (vmax - vmin)
 
-
     def __call__(self, value, clip=None):
 
         #read in parameters
@@ -96,6 +95,9 @@ class APLpyNormalize(Normalize):
 
             # CUSTOM APLPY CODE
 
+            # Keep track of negative values
+            negative = result < 0.
+
             if self.stretch == 'linear':
 
                 pass
@@ -122,6 +124,10 @@ class APLpyNormalize(Normalize):
 
                 raise Exception("Unknown stretch in APLpyNormalize: %s" %
                                 self.stretch)
+
+            # Now set previously negative values to 0, as these are
+            # different from true NaN values in the FITS image
+            result[negative] = 0.
 
         if vtype == 'scalar':
             result = result[0]
