@@ -575,6 +575,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.set_norm(normalizer)
             self.image.set_cmap(cmap=cmap)
             self.image.origin='lower'
+            self.image.set_interpolation(interpolation)
             self.image.set_data(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel))
         else:
             self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer)
