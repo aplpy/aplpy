@@ -1207,9 +1207,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Required arguments:
 
-            *polygon_list*: [ list ]
-                A list of one or more 2xN numpy arrays which contain
+            *polygon_list*: [ list or tuple ]
+                A list of one or more 2xN or Nx2 Numpy arrays which contain
                 the [x, y] positions of the vertices in world coordinates.
+                Note that N should be greater than 2.
 
         Optional Keyword Arguments:
 
@@ -1232,10 +1233,24 @@ class FITSFigure(Layers, Regions, Deprecated):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
+        if type(polygon_list) not in [list, tuple]:
+            raise Exception("polygon_list should be a list or tuple of Numpy arrays")
+
         pix_polygon_list = []
-        for i in range(len(polygon_list)):
-            xw = polygon_list[i][0, :]
-            yw = polygon_list[i][1, :]
+        for polygon in polygon_list:
+
+            if type(polygon) is not np.ndarray:
+                raise Exception("Polygon should be given as a Numpy array")
+
+            if polygon.shape[0] == 2 and polygon.shape[1] > 2:
+                xw = polygon[0, :]
+                yw = polygon[1, :]
+            elif polygon.shape[0] > 2 and polygon.shape[1] == 2:
+                xw = polygon[:, 0]
+                yw = polygon[:, 1]
+            else:
+                raise Exception("Polygon should have dimensions 2xN or Nx2 with N>2")
+
             xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
             pix_polygon_list.append(np.column_stack((xp, yp)))
 
