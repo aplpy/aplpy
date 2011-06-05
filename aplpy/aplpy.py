@@ -1065,7 +1065,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_lines(self, line_list, layer=False, zorder=None, **kwargs):
         '''
-       Overlay rectangles on the current plot.
+       Overlay lines on the current plot.
 
        Required arguments:
 
