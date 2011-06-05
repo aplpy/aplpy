@@ -539,7 +539,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         max_auto = np.equal(vmax, None)
 
         # The set of available functions
-        cmap = mpl.cm.get_cmap(cmap, 1000)
+        cmap = mpl.cm.get_cmap(cmap)
 
         if min_auto:
             vmin = self._auto_v(pmin)
@@ -728,9 +728,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         if cmap:
-            cmap = mpl.cm.get_cmap(cmap, 1000)
+            cmap = mpl.cm.get_cmap(cmap)
         elif not colors:
-            cmap = mpl.cm.get_cmap('jet', 1000)
+            cmap = mpl.cm.get_cmap('jet')
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
             convention=convention, slices=slices)
@@ -1440,7 +1440,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'jet'
             if self.image:
-                self.image.set_cmap(cmap=mpl.cm.get_cmap('jet', 1000))
+                self.image.set_cmap(cmap=mpl.cm.get_cmap('jet'))
         elif theme=='publication':
             self.frame.set_color('black')
             self.frame.set_linewidth(0.5)
@@ -1449,7 +1449,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
             if self.image:
-                self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg', 1000))
+                self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg'))
 
     def world2pixel(self, xw, yw):
         '''
