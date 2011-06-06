@@ -556,16 +556,12 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Adjust vmin/vmax if auto
         if min_auto:
-            if stretch != 'linear':
-                warnings.warn("Auto-scaling for non-linear stretches may produce slightly different results compared to APLpy 0.9.4")
-            else:
+            if stretch == 'linear':
                 vmin = -0.1 * (vmax - vmin) + vmin
             print "Auto-setting vmin to %10.3e" % vmin
 
         if max_auto:
-            if stretch != 'linear':
-                warnings.warn("Auto-scaling for non-linear stretches may produce slightly different results compared to APLpy 0.9.4")
-            else:
+            if stretch == 'linear':
                 vmax = 0.1 * (vmax - vmin) + vmax
             print "Auto-setting vmax to %10.3e" % vmax
 
