@@ -152,8 +152,9 @@ def make_rgb_image(data, output, \
 
         *vmid_b*: [ None | float ]
 
-            Mid-pixel value used for the log and arcsinh stretches. If
-            set to None, this is set to a sensible value.
+            Baseline values used for the log and arcsinh stretches. If
+            set to None, this is set to zero for log stretches and to
+            vmin - (vmax - vmin) / 30. for arcsinh stretches
 
         *exponent_r*: [ float ]
 

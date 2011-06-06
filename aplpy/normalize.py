@@ -53,13 +53,21 @@ class APLpyNormalize(Normalize):
 
         if np.equal(vmid, None):
             if stretch == 'log':
-                self.midpoint = 0.05
+                if vmin > 0:
+                    self.midpoint = vmax / vmin
+                else:
+                    raise Exception("When using a log stretch, if vmin < 0, then vmid has to be specified")
             elif stretch == 'arcsinh':
-                self.midpoint = -0.033
+                self.midpoint = -1./30.
             else:
                 self.midpoint = None
         else:
-            self.midpoint = (vmid - vmin) / (vmax - vmin)
+            if stretch == 'log':
+                self.midpoint = (vmax - vmid) / (vmin - vmid)
+            elif stretch == 'arcsinh':
+                self.midpoint = (vmid - vmin) / (vmax - vmin)
+            else:
+                self.midpoint = None
 
     def __call__(self, value, clip=None):
 
@@ -104,8 +112,8 @@ class APLpyNormalize(Normalize):
 
             elif self.stretch == 'log':
 
-                result = ma.log10((result/self.midpoint) + 1.) \
-                       / ma.log10((1./self.midpoint) + 1.)
+                result = ma.log10(result * (self.midpoint - 1.) + 1.) \
+                       / ma.log10(self.midpoint)
 
             elif self.stretch == 'sqrt':
 
@@ -156,8 +164,7 @@ class APLpyNormalize(Normalize):
 
         elif self.stretch == 'log':
 
-            val = self.midpoint * \
-                  (ma.power(10., (val*ma.log10(1./self.midpoint+1.))) - 1.)
+            val = (ma.power(10., val * ma.log10(self.midpoint)) - 1.) / (self.midpoint - 1.)
 
         elif self.stretch == 'sqrt':
 

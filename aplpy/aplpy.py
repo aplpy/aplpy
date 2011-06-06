@@ -397,9 +397,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._ax1.set_ylim(ypix-dy_pix, ypix+dy_pix)
 
     @auto_refresh
-    def show_grayscale(self, vmin=None, vmid=None, vmax=None, \
-                            pmin=0.25, pmax=99.75, \
-                            stretch='linear', exponent=2, invert='default', smooth=None, kernel='gauss', interpolation='nearest'):
+    def show_grayscale(self, vmin=None, vmid=None, vmax=None,
+                            pmin=0.25, pmax=99.75,
+                            stretch='linear', exponent=2, invert='default',
+                            smooth=None, kernel='gauss', interpolation='nearest'):
         '''
         Show a grayscale image of the FITS file
 
@@ -427,8 +428,9 @@ class FITSFigure(Layers, Regions, Deprecated):
                 The stretch function to use
 
             *vmid*: [ None | float ]
-                Mid-pixel value used for the log and arcsinh stretches. If
-                set to None, this is set to a sensible value.
+                Baseline value used for the log and arcsinh stretches. If
+                set to None, this is set to zero for log stretches and to
+                vmin - (vmax - vmin) / 30. for arcsinh stretches
 
             *exponent*: [ float ]
                 If stretch is set to 'power', this is the exponent to use
@@ -503,8 +505,9 @@ class FITSFigure(Layers, Regions, Deprecated):
                 The stretch function to use
 
             *vmid*: [ None | float ]
-                Mid-pixel value used for the log and arcsinh stretches. If
-                set to None, this is set to a sensible value.
+                Baseline value used for the log and arcsinh stretches. If
+                set to None, this is set to zero for log stretches and to
+                vmin - (vmax - vmin) / 30. for arcsinh stretches
 
             *exponent*: [ float ]
                 If stretch is set to 'power', this is the exponent to use

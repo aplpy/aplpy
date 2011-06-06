@@ -8,14 +8,19 @@ Version 0.9.6
     New Features
     ~~~~~~~~~~~~
 
+    - support for plotting AVM-tagged images (requires PyAVM)
+
+    - make_rgb_image can now optionally embed AVM Spatial.* meta-data into
+      images (off by default, requires PyAVM)
+
     - added support for multiple beams
 
     - added method to show arrows
 
     - added method to show lines (thanks to Moritz Guenther)
 
-    - added close() method to FITSFigure to free up memory (useful when making
-      many finder charts for example)
+    - added close() method to FITSFigure to free up memory (useful when
+      making many finder charts for example)
 
     - added B1950 <-> J2000 conversion
 
@@ -24,10 +29,15 @@ Version 0.9.6
 
     - now uses python-montage wrapper for reprojection
 
-    - added support for passing a WCS object to FITSFigure instead of a file
+    - added support for passing a WCS object to FITSFigure instead of a
+      file
 
     API changes
     ~~~~~~~~~~~
+
+    - vmid has changed meaning for log image scaling. It is now the baseline
+      value to subtract from pixel values before taking the log (defaults to
+      zero)
 
     - added interpolation= option to show_grayscale and show_colorscale
 
@@ -39,6 +49,8 @@ Version 0.9.6
 
     Bug fixes
     ~~~~~~~~~
+
+    - added a few workaround for matplotlib bugs
 
     - fixed a major bug with downsampling
 
