@@ -47,6 +47,8 @@ class Colorbar(object):
         self._base_settings['location'] = location
         self._base_settings['width'] = width
         self._base_settings['pad'] = pad
+        self._base_settings['ticks'] = ticks
+        self._base_settings['labels'] = labels
 
         if self._parent.image:
 
@@ -86,19 +88,19 @@ class Colorbar(object):
                     tick.tick2On = True
                     tick.label1On = False
                     tick.label2On = labels
-            if location=='top':
+            elif location=='top':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = False
                     tick.label2On = labels
-            if location=='left':
+            elif location=='left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = labels
                     tick.label2On = False
-            if location=='bottom':
+            elif location=='bottom':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
@@ -149,6 +151,24 @@ class Colorbar(object):
         Set the spacing between the colorbar and the image relative to the canvas size.
         '''
         self._base_settings['pad'] = pad
+        self.show(**self._base_settings)
+        self.set_font(fontproperties=self._label_fontproperties)
+
+    @auto_refresh
+    def set_ticks(self, ticks):
+        '''
+        Set the position of the ticks on the colorbar.
+        '''
+        self._base_settings['ticks'] = ticks
+        self.show(**self._base_settings)
+        self.set_font(fontproperties=self._label_fontproperties)
+
+    @auto_refresh
+    def set_labels(self, labels):
+        '''
+        Set whether to show numerical labels.
+        '''
+        self._base_settings['labels'] = labels
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._label_fontproperties)
 
