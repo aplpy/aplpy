@@ -41,6 +41,9 @@ class APLpyNormalize(Normalize):
                 the returned value will be 0 or 1, whichever is closer.
         '''
 
+        if vmax < vmin:
+            raise Exception("vmax should be larger than vmin")
+
         # Call original initalization routine
         Normalize.__init__(self, vmin=vmin, vmax=vmax, clip=clip)
 
@@ -63,6 +66,8 @@ class APLpyNormalize(Normalize):
                 self.midpoint = None
         else:
             if stretch == 'log':
+                if vmin < vmid:
+                    raise Exception("When using a log stretch, vmin should be larger than vmid")
                 self.midpoint = (vmax - vmid) / (vmin - vmid)
             elif stretch == 'arcsinh':
                 self.midpoint = (vmid - vmin) / (vmax - vmin)
