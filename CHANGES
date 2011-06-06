@@ -32,6 +32,8 @@ Version 0.9.6
     - added support for passing a WCS object to FITSFigure instead of a
       file
 
+    - allow a custom box to be specified for the colorbar
+
     API changes
     ~~~~~~~~~~~
 
