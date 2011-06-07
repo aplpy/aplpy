@@ -37,9 +37,9 @@ Version 0.9.6
     API changes
     ~~~~~~~~~~~
 
-    - vmid has changed meaning for log image scaling. It is now the baseline
-      value to subtract from pixel values before taking the log (defaults to
-      zero)
+    - vmid has changed meaning for log image scaling. It is now the
+      baseline value to subtract from pixel values before taking the log
+      (defaults to zero)
 
     - added interpolation= option to show_grayscale and show_colorscale
 

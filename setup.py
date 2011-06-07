@@ -8,13 +8,13 @@ except ImportError:  # Python 2.x
     from distutils.command.build_py import build_py
 
 setup(name='APLpy',
-      version='0.9.5',
+      version='0.9.6',
       description='The Astronomical Plotting Library in Python',
       author='Thomas Robitaille and Eli Bressert',
       author_email='thomas.robitaille@gmail.com, elibre@users.sourceforge.net',
       license='MIT',
       url='http://aplpy.github.com/',
-      download_url='https://github.com/downloads/aplpy/aplpy/APLpy-0.9.5.tar.gz',
+      download_url='https://github.com/downloads/aplpy/aplpy/APLpy-0.9.6.tar.gz',
       packages=['aplpy'],
       provides=['aplpy'],
       requires=['pywcs', 'pyfits', 'numpy', 'matplotlib'],
