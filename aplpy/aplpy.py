@@ -155,7 +155,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
 
-        if type(data) is str and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
+        if isinstance(data, basestring) and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
 
             if not pil_installed:
                 raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
@@ -265,7 +265,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def _get_hdu(self, data, hdu, north, convention=None, slices=[]):
 
-        if type(data) == str:
+        if isinstance(data, basestring):
 
             filename = data
 

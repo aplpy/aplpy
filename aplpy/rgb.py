@@ -168,7 +168,7 @@ def make_rgb_image(data, output, \
     if not installed_pil:
         raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
 
-    if type(data) == str:
+    if isinstance(data, basestring):
 
         image = pyfits.getdata(data)
         image_r = image[0, :, :]

@@ -201,7 +201,7 @@ class ScaleBar(object):
         except:
             pass
 
-        if type(corner) == str:
+        if isinstance(corner, basestring):
             corner = corners[corner]
 
         self._scalebar = AnchoredSizeBar(self._ax.transData, length, label, corner, \
@@ -452,13 +452,13 @@ class Beam(object):
 
         '''
 
-        if type(major) == str:
+        if isinstance(major, basestring):
             major = self._hdu.header[major]
 
-        if type(minor) == str:
+        if isinstance(minor, basestring):
             minor = self._hdu.header[minor]
 
-        if type(angle) == str:
+        if isinstance(angle, basestring):
             angle = self._hdu.header[angle]
 
         degperpix = wcs_util.degperpix(self._wcs)
@@ -479,7 +479,7 @@ class Beam(object):
         except:
             pass
 
-        if type(corner) == str:
+        if isinstance(corner, basestring):
             corner = corners[corner]
 
         self._beam = AnchoredEllipse(self._ax.transData, \
