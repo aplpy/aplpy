@@ -71,7 +71,7 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
     return data.astype(np.uint8)
 
 
-def make_rgb_image(data, output, \
+def make_rgb_image(data, output, indices=(0,1,2), \
                    vmin_r=None, vmax_r=None, pmin_r=0.25, pmax_r=99.75, \
                    stretch_r='linear', vmid_r=None, exponent_r=2, \
                    vmin_g=None, vmax_g=None, pmin_g=0.25, pmax_g=99.75, \
@@ -95,6 +95,12 @@ def make_rgb_image(data, output, \
             the Python Imaging Library can be used.
 
     Optional keyword arguments:
+
+        *indices*: [ tuple ]
+            If data is the filename of a FITS cube, these indices are the
+            positions in the third dimension to use for red, green, and
+            blue respectively. The default is to use the first three
+            indices.
 
         *vmin_r*: [ None | float ]
 
@@ -171,9 +177,9 @@ def make_rgb_image(data, output, \
     if isinstance(data, basestring):
 
         image = pyfits.getdata(data)
-        image_r = image[0, :, :]
-        image_g = image[1, :, :]
-        image_b = image[2, :, :]
+        image_r = image[indices[0], :, :]
+        image_g = image[indices[1], :, :]
+        image_b = image[indices[2], :, :]
 
         # Read in header
         header = pyfits.getheader(data)
