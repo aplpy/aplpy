@@ -158,10 +158,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         if isinstance(data, basestring) and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
 
             if not pil_installed:
-                raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
+                raise ImportError("The Python Imaging Library (PIL) is required to read in RGB images")
 
             if not avm_installed:
-                raise Exception("PyAVM is required to read in AVM meta-data from RGB images")
+                raise ImportError("PyAVM is required to read in AVM meta-data from RGB images")
 
             # Remember image filename
             self._rgb_image = data
