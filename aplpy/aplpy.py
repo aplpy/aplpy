@@ -271,13 +271,13 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             # Check file exists
             if not os.path.exists(filename):
-                raise Exception("File not found: "+filename)
+                raise IOError("File not found: "+filename)
 
             # Read in FITS file
             try:
                 hdulist = pyfits.open(filename)
             except:
-                raise Exception("An error occured while reading the FITS file")
+                raise IOError("An error occured while reading the FITS file")
 
             # Check whether the HDU specified contains any data, otherwise
             # cycle through all HDUs to find one that contains valid image data
