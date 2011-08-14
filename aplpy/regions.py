@@ -51,13 +51,14 @@ class Regions:
     """
 
     @auto_refresh
-    def show_regions(self, regionfile, layer=False, **kwargs):
+    def show_regions(self, region_file, layer=False, **kwargs):
         """
         Overplot regions as specified in the regionsfile
 
         Required Arguments:
-            *regionfile*: [ string ]
-                Path to a ds9 regions file
+            *region_file*: [ string | pyregion.ShapeList ]
+                Path to a ds9 regions file or a ShapeList already read
+                in by pyregion.
 
         Optional Keyword Arguments:
 
@@ -70,7 +71,7 @@ class Regions:
 
         _check_pyregion_installed()
 
-        PC, TC = ds9(regionfile, self._hdu.header, **kwargs)
+        PC, TC = ds9(region_file, self._hdu.header, **kwargs)
 
         #ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)
@@ -86,7 +87,7 @@ class Regions:
         self._layers[region_set_name+"_txt"] = TC
 
 
-def ds9(regionfile, header, zorder=3, **kwargs):
+def ds9(region_file, header, zorder=3, **kwargs):
     """
     Wrapper to return a PatchCollection given a ds9 region file
     and a fits header.
@@ -95,7 +96,12 @@ def ds9(regionfile, header, zorder=3, **kwargs):
     """
 
     # read region file
-    rr = pyregion.open(regionfile)
+    if isinstance(region_file, basestring):
+        rr = pyregion.open(region_file)
+    elif isinstance(region_file, pyregion.ShapeList):
+        rr = region_file
+    else:
+        raise Exception("Invalid type for region_file: %s - should be string or pyregion.ShapeList" % type(region_file))
 
     # convert coordinates to image coordinates
     rrim = rr.as_imagecoord(header)
