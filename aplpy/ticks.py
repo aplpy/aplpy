@@ -34,11 +34,21 @@ class Ticks(object):
         self._ax1.xaxis.set_major_locator(lx)
         ly = WCSLocator(wcs=self._wcs, coord='y')
         self._ax1.yaxis.set_major_locator(ly)
-
         lxt = WCSLocator(wcs=self._wcs, coord='x', farside=True)
         self._ax2.xaxis.set_major_locator(lxt)
         lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True)
         self._ax2.yaxis.set_major_locator(lyt)
+
+        # Set minor tick locators
+        lx = WCSLocator(wcs=self._wcs, coord='x', minor=True)
+        self._ax1.xaxis.set_minor_locator(lx)
+        ly = WCSLocator(wcs=self._wcs, coord='y', minor=True)
+        self._ax1.yaxis.set_minor_locator(ly)
+        lxt = WCSLocator(wcs=self._wcs, coord='x', farside=True, minor=True)
+        self._ax2.xaxis.set_minor_locator(lxt)
+        lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True, minor=True)
+        self._ax2.yaxis.set_minor_locator(lyt)
+
 
     @auto_refresh
     def set_xspacing(self, spacing):
@@ -94,6 +104,7 @@ class Ticks(object):
         Set the color of the ticks
         '''
 
+        # Major ticks
         for line in self._ax1.xaxis.get_ticklines():
             line.set_color(color)
         for line in self._ax1.yaxis.get_ticklines():
@@ -103,12 +114,23 @@ class Ticks(object):
         for line in self._ax2.yaxis.get_ticklines():
             line.set_color(color)
 
+        # Minor ticks
+        for line in self._ax1.xaxis.get_minorticklines():
+            line.set_color(color)
+        for line in self._ax1.yaxis.get_minorticklines():
+            line.set_color(color)
+        for line in self._ax2.xaxis.get_minorticklines():
+            line.set_color(color)
+        for line in self._ax2.yaxis.get_minorticklines():
+            line.set_color(color)
+
     @auto_refresh
-    def set_length(self, length):
+    def set_length(self, length, minor_factor=0.5):
         '''
         Set the length of the ticks (in points)
         '''
 
+        # Major ticks
         for line in self._ax1.xaxis.get_ticklines():
             line.set_markersize(length)
         for line in self._ax1.yaxis.get_ticklines():
@@ -117,6 +139,16 @@ class Ticks(object):
             line.set_markersize(length)
         for line in self._ax2.yaxis.get_ticklines():
             line.set_markersize(length)
+
+        # Minor ticks
+        for line in self._ax1.xaxis.get_minorticklines():
+            line.set_markersize(length * minor_factor)
+        for line in self._ax1.yaxis.get_minorticklines():
+            line.set_markersize(length * minor_factor)
+        for line in self._ax2.xaxis.get_minorticklines():
+            line.set_markersize(length * minor_factor)
+        for line in self._ax2.yaxis.get_minorticklines():
+            line.set_markersize(length * minor_factor)
 
     @auto_refresh
     def set_linewidth(self, linewidth):
@@ -124,6 +156,7 @@ class Ticks(object):
         Set the linewidth of the ticks (in points)
         '''
 
+        # Major ticks
         for line in self._ax1.xaxis.get_ticklines():
             line.set_mew(linewidth)
         for line in self._ax1.yaxis.get_ticklines():
@@ -133,10 +166,30 @@ class Ticks(object):
         for line in self._ax2.yaxis.get_ticklines():
             line.set_mew(linewidth)
 
+        # Minor ticks
+        for line in self._ax1.xaxis.get_minorticklines():
+            line.set_mew(linewidth)
+        for line in self._ax1.yaxis.get_minorticklines():
+            line.set_mew(linewidth)
+        for line in self._ax2.xaxis.get_minorticklines():
+            line.set_mew(linewidth)
+        for line in self._ax2.yaxis.get_minorticklines():
+            line.set_mew(linewidth)
+
+    @auto_refresh
+    def set_minor_frequency(self, frequency):
+        '''
+        Set the number of subticks per major tick. Set to one to hide minor
+        ticks.
+        '''
+        self._ax1.xaxis.get_minor_locator().subticks = frequency
+        self._ax1.yaxis.get_minor_locator().subticks = frequency
+        self._ax2.xaxis.get_minor_locator().subticks = frequency
+        self._ax2.yaxis.get_minor_locator().subticks = frequency
 
 class WCSLocator(Locator):
 
-    def __init__(self, presets=None, wcs=False, coord='x', farside=False, minor=False):
+    def __init__(self, presets=None, wcs=False, coord='x', farside=False, minor=False, subticks=5):
         if presets is None:
             self.presets = {}
         else:
@@ -144,6 +197,8 @@ class WCSLocator(Locator):
         self._wcs = wcs
         self.coord = coord
         self.farside = farside
+        self.minor = minor
+        self.subticks = subticks
 
     def __call__(self):
 
@@ -153,7 +208,13 @@ class WCSLocator(Locator):
         if self.axis.apl_auto_tick_spacing:
             self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
 
-        px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees(), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+        if self.minor:
+            px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees() / float(self.subticks), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+            px, py, wx = np.array(px, float), np.array(py, float), np.array(wx, int)
+            keep = np.mod(wx, self.subticks) > 0
+            px, py, wx = px[keep], py[keep], wx[keep] / float(self.subticks)
+        else:
+            px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees(), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
         self.axis.apl_tick_positions_world = np.array(wx, int)
 
