@@ -46,6 +46,10 @@ class TickLabels(object):
         self._ax2.xaxis.set_major_formatter(fx2)
         self._ax2.yaxis.set_major_formatter(fy2)
 
+        # Cursor display
+        self._ax1._cursor_world = True
+        self._figure.canvas.mpl_connect('key_press_event', self._set_cursor_prefs)
+
     @auto_refresh
     def set_xformat(self, format):
         '''
@@ -250,41 +254,50 @@ class TickLabels(object):
         else:
             raise Exception("position should be one of 'left' or 'right'")
 
+    def _set_cursor_prefs(self, event, **kwargs):
+        if event.key == 'c':
+            self._ax1._cursor_world = not self._ax1._cursor_world
+
     def _cursor_position(self, x, y):
 
         xaxis = self._ax1.xaxis
         yaxis = self._ax1.yaxis
 
-        xw, yw = wcs_util.pix2world(self._wcs, x, y)
+        if self._ax1._cursor_world:
 
-        xw = au.Angle(degrees=xw, latitude=False)
-        yw = au.Angle(degrees=yw, latitude=True)
+            xw, yw = wcs_util.pix2world(self._wcs, x, y)
 
-        hours = 'h' in xaxis.apl_label_form
+            xw = au.Angle(degrees=xw, latitude=False)
+            yw = au.Angle(degrees=yw, latitude=True)
 
-        if hours:
-            xw = xw.tohours()
+            hours = 'h' in xaxis.apl_label_form
 
-        if xaxis.apl_labels_style in ['plain', 'latex']:
-            sep = ('d', 'm', 's')
             if hours:
-                sep = ('h', 'm', 's')
-        elif xaxis.apl_labels_style == 'colons':
-            sep = (':', ':', '')
+                xw = xw.tohours()
 
-        xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
+            if xaxis.apl_labels_style in ['plain', 'latex']:
+                sep = ('d', 'm', 's')
+                if hours:
+                    sep = ('h', 'm', 's')
+            elif xaxis.apl_labels_style == 'colons':
+                sep = (':', ':', '')
 
-        if yaxis.apl_labels_style in ['plain', 'latex']:
-            sep = ('d', 'm', 's')
-            if hours:
-                sep = ('h', 'm', 's')
-        elif yaxis.apl_labels_style == 'colons':
-            sep = (':', ':', '')
+            xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
 
-        ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
+            if yaxis.apl_labels_style in ['plain', 'latex']:
+                sep = ('d', 'm', 's')
+                if hours:
+                    sep = ('h', 'm', 's')
+            elif yaxis.apl_labels_style == 'colons':
+                sep = (':', ':', '')
 
-        return string.join(xlabel, "") + " " + string.join(ylabel, "")
+            ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
 
+            return string.join(xlabel, "") + " " + string.join(ylabel, "") + " (world)"
+
+        else:
+
+            return "%g %g" % (x, y) + " (pixel)"
 
 class WCSFormatter(mpl.Formatter):
 
