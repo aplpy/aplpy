@@ -245,7 +245,7 @@ class ScaleBar(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set where to place the scalebar. Acceptable values are 'left','right',
+        Set where to place the scalebar. Acceptable values are 'left', 'right',
         'top', 'bottom', 'top left', 'top right', 'bottom left' (default), and
         'bottom right'.
         '''
@@ -439,7 +439,7 @@ class Beam(object):
                 BPA if present) in the anticlockwise direction.
 
             *corner*: [ integer ]
-                The beam location. Acceptable values are 'left','right',
+                The beam location. Acceptable values are 'left', 'right',
                 'top', 'bottom', 'top left', 'top right', 'bottom left'
                 (default), and 'bottom right'.
 
@@ -535,7 +535,7 @@ class Beam(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set the beam location. Acceptable values are 'left','right', 'top',
+        Set the beam location. Acceptable values are 'left', 'right', 'top',
         'bottom', 'top left', 'top right', 'bottom left' (default), and
         'bottom right'.
         '''

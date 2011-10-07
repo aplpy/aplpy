@@ -27,7 +27,7 @@ def transform(contours, wcs_in, wcs_out, filled=False):
             xp_out, yp_out = wcs_util.world2pix(wcs_out, xw, yw)
 
             if filled:
-                polygons_out.append(Path(np.array(zip(xp_out, yp_out)),codes=polygon.codes))
+                polygons_out.append(Path(np.array(zip(xp_out, yp_out)), codes=polygon.codes))
             else:
                 polygons_out.append(zip(xp_out, yp_out))
 

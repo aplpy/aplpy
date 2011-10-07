@@ -25,13 +25,16 @@ class AxisLabels(object):
         system, equinox, units = wcs_util.system(self._wcs)
 
         if system == 'equatorial':
+
             if equinox == 'b1950':
                 self.set_xtext('RA (B1950)')
                 self.set_ytext('Dec (B1950)')
             else:
                 self.set_xtext('RA (J2000)')
                 self.set_ytext('Dec (J2000)')
+
         elif system == 'galactic':
+
             self.set_xtext('Galactic Longitude')
             self.set_ytext('Galactic Latitude')
         else:

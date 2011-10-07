@@ -271,7 +271,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             # Check file exists
             if not os.path.exists(filename):
-                raise IOError("File not found: "+filename)
+                raise IOError("File not found: " + filename)
 
             # Read in FITS file
             try:
@@ -393,8 +393,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             raise Exception("Zoom region falls outside the image")
 
-        self._ax1.set_xlim(xpix-dx_pix, xpix+dx_pix)
-        self._ax1.set_ylim(ypix-dy_pix, ypix+dy_pix)
+        self._ax1.set_xlim(xpix - dx_pix, xpix + dx_pix)
+        self._ax1.set_ylim(ypix - dy_pix, ypix + dy_pix)
 
     @auto_refresh
     def show_grayscale(self, vmin=None, vmid=None, vmax=None,
@@ -460,7 +460,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 matplotlib documentation for imshow).
         '''
 
-        if invert=='default':
+        if invert == 'default':
             invert = self._get_invert_default()
 
         if invert:
@@ -535,7 +535,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 matplotlib documentation for imshow).
         '''
 
-        if cmap=='default':
+        if cmap == 'default':
             cmap = self._get_colormap_default()
 
         min_auto = np.equal(vmin, None)
@@ -573,7 +573,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.set_visible(True)
             self.image.set_norm(normalizer)
             self.image.set_cmap(cmap=cmap)
-            self.image.origin='lower'
+            self.image.origin = 'lower'
             self.image.set_interpolation(interpolation)
             self.image.set_data(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel))
         else:
@@ -752,7 +752,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             contour_set_name = layer
         else:
             self._contour_counter += 1
-            contour_set_name = 'contour_set_'+str(self._contour_counter)
+            contour_set_name = 'contour_set_' + str(self._contour_counter)
 
         contour_util.transform(c, wcs_contour, self._wcs, filled=filled)
 
@@ -809,7 +809,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             marker_set_name = layer
         else:
             self._scatter_counter += 1
-            marker_set_name = 'marker_set_'+str(self._scatter_counter)
+            marker_set_name = 'marker_set_' + str(self._scatter_counter)
 
         self._layers[marker_set_name] = s
 
@@ -868,7 +868,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        rp = 3600.0*radius/wcs_util.arcperpix(self._wcs)
+        rp = 3600.0 * radius / wcs_util.arcperpix(self._wcs)
 
         patches = []
         for i in range(len(xp)):
@@ -883,7 +883,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             circle_set_name = layer
         else:
             self._circle_counter += 1
-            circle_set_name = 'circle_set_'+str(self._circle_counter)
+            circle_set_name = 'circle_set_' + str(self._circle_counter)
 
         self._layers[circle_set_name] = c
 
@@ -957,13 +957,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
-        hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
+        wp = 3600.0 * width / wcs_util.arcperpix(self._wcs)
+        hp = 3600.0 * height / wcs_util.arcperpix(self._wcs)
         ap = angle
 
         patches = []
         for i in range(len(xp)):
-            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i],**kwargs))
+            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i], **kwargs))
 
         p = PatchCollection(patches, match_original=True)
         if zorder is not None:
@@ -974,7 +974,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             ellipse_set_name = layer
         else:
             self._ellipse_counter += 1
-            ellipse_set_name = 'ellipse_set_'+str(self._ellipse_counter)
+            ellipse_set_name = 'ellipse_set_' + str(self._ellipse_counter)
 
         self._layers[ellipse_set_name] = c
 
@@ -1039,12 +1039,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        wp = 3600.0*width/wcs_util.arcperpix(self._wcs)
-        hp = 3600.0*height/wcs_util.arcperpix(self._wcs)
+        wp = 3600.0 * width / wcs_util.arcperpix(self._wcs)
+        hp = 3600.0 * height / wcs_util.arcperpix(self._wcs)
 
         patches = []
-        xp = xp - wp/2.
-        yp = yp - hp/2.
+        xp = xp - wp / 2.
+        yp = yp - hp / 2.
         for i in range(len(xp)):
             patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
 
@@ -1057,7 +1057,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             rectangle_set_name = layer
         else:
             self._rectangle_counter += 1
-            rectangle_set_name = 'rectangle_set_'+str(self._rectangle_counter)
+            rectangle_set_name = 'rectangle_set_' + str(self._rectangle_counter)
 
         self._layers[rectangle_set_name] = c
 
@@ -1087,7 +1087,6 @@ class FITSFigure(Layers, Regions, Deprecated):
        highlight=linecollection#matplotlib.collections.LineCollection>`_.
        '''
 
-
         if not 'color' in kwargs:
             kwargs.setdefault('color', 'none')
 
@@ -1097,7 +1096,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         lines = []
 
         for line in line_list:
-            xp, yp = wcs_util.world2pix(self._wcs, line[0, :],line[1, :])
+            xp, yp = wcs_util.world2pix(self._wcs, line[0, :], line[1, :])
             lines.append(np.column_stack((xp, yp)))
 
         l = LineCollection(lines, **kwargs)
@@ -1109,7 +1108,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             line_set_name = layer
         else:
             self._linelist_counter += 1
-            line_set_name = 'line_set_'+str(self._linelist_counter)
+            line_set_name = 'line_set_' + str(self._linelist_counter)
 
         self._layers[line_set_name] = c
 
@@ -1167,7 +1166,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         for i in range(len(x)):
 
             xp1, yp1 = wcs_util.world2pix(self._wcs, x[i], y[i])
-            xp2, yp2 = wcs_util.world2pix(self._wcs, x[i]+dx[i], y[i]+dy[i])
+            xp2, yp2 = wcs_util.world2pix(self._wcs, x[i] + dx[i], y[i] + dy[i])
 
             if width == 'auto':
                 kwargs['width'] = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
@@ -1195,7 +1194,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             line_set_name = layer
         else:
             self._linelist_counter += 1
-            line_set_name = 'arrow_set_'+str(self._linelist_counter)
+            line_set_name = 'arrow_set_' + str(self._linelist_counter)
 
         self._layers[line_set_name] = c
 
@@ -1266,7 +1265,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             poly_set_name = layer
         else:
             self._poly_counter += 1
-            poly_set_name = 'poly_set_'+str(self._poly_counter)
+            poly_set_name = 'poly_set_' + str(self._poly_counter)
 
         self._layers[poly_set_name] = c
 
@@ -1334,7 +1333,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             label_name = layer
         else:
             self._label_counter += 1
-            label_name = 'label_'+str(self._label_counter)
+            label_name = 'label_' + str(self._label_counter)
 
         self._layers[label_name] = l
 
@@ -1446,7 +1445,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 and grid black, and displays the image in inverted grayscale)
        '''
 
-        if theme=='pretty':
+        if theme == 'pretty':
             self.frame.set_color('white')
             self.frame.set_linewidth(0.5)
             self.ticks.set_color('white')
@@ -1455,7 +1454,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_colorscale_cmap_default = 'jet'
             if self.image:
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('jet'))
-        elif theme=='publication':
+        elif theme == 'publication':
             self.frame.set_color('black')
             self.frame.set_linewidth(0.5)
             self.ticks.set_color('black')
@@ -1498,7 +1497,6 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
 
         return wcs_util.pix2world(self._wcs, xp, yp)
-
 
     @auto_refresh
     def add_grid(self, *args, **kwargs):
