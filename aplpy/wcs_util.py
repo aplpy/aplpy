@@ -4,6 +4,77 @@ import numpy as np
 
 import pywcs
 
+
+class WCS(pywcs.WCS):
+
+    def __init__(self, *args, **kwargs):
+
+        if 'slices' in kwargs:
+            self._slices = kwargs.pop('slices')
+
+        if 'dimensions' in kwargs:
+            self._dimensions = kwargs.pop('dimensions')
+
+        pywcs.WCS.__init__(self, *args, **kwargs)
+
+    def __getattr__(self, attribute):
+
+        if attribute[-2:] == '_x':
+            axis = self._dimensions[0]
+        elif attribute[-2:] == '_y':
+            axis = self._dimensions[1]
+        else:
+            raise AttributeError("Attribute %s does not exist" % attribute)
+
+        if attribute[:5] == 'ctype':
+            return self.wcs.ctype[axis]
+        elif attribute[:5] == 'cname':
+            return self.wcs.cname[axis]
+        elif attribute[:5] == 'cunit':
+            return self.wcs.cunit[axis]
+        elif attribute[:5] == 'crval':
+            return self.wcs.crval[axis]
+        elif attribute[:5] == 'crpix':
+            return self.wcs.crpix[axis]
+        else:
+            raise AttributeError("Attribute %s does not exist" % attribute)
+
+    def wcs_sky2pix(self, x, y, origin):
+        if self.naxis == 2:
+            return self.wcs_sky2pix(x, y, origin)
+        else:
+            coords = []
+            s = 0
+            for dim in range(self.naxis):
+                if dim == self._dimensions[0]:
+                    coords.append(x)
+                elif dim == self._dimensions[1]:
+                    coords.append(y)
+                else:
+                    coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
+                    s += 1
+            coords = np.vstack(coords).transpose()
+            result = pywcs.WCS.wcs_sky2pix(self, coords, origin)
+            return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
+
+    def wcs_pix2sky(self, x, y, origin):
+        if self.naxis == 2:
+            return self.wcs_pix2sky(x, y, origin)
+        else:
+            coords = []
+            s = 0
+            for dim in range(self.naxis):
+                if dim == self._dimensions[0]:
+                    coords.append(x)
+                elif dim == self._dimensions[1]:
+                    coords.append(y)
+                else:
+                    coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
+                    s += 1
+            coords = np.vstack(coords).transpose()
+            result = pywcs.WCS.wcs_pix2sky(self, coords, origin)
+            return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
+
 def convert_coords(x, y, input, output):
 
     system_in, equinox_in = input
