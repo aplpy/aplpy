@@ -247,23 +247,23 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._ax1.apl_wcs = self._wcs
         self._ax2.apl_wcs = self._wcs
 
-        if self._wcs.wcs.ctype[dimensions[0]][:4] in ['RA--', 'DEC-'] or \
-           self._wcs.wcs.ctype[dimensions[0]][1:4] in ['LON', 'LAT']:
+        self.set_auto_refresh(auto_refresh)
+
+        if self._wcs.ctype_x[:4] in ['RA--', 'DEC-'] or \
+           self._wcs.ctype_x[1:4] in ['LON', 'LAT']:
             self._ax1.xaxis.coord_type = 'angle'
             self._ax2.xaxis.coord_type = 'angle'
         else:
             self._ax1.xaxis.coord_type = 'scalar'
             self._ax2.xaxis.coord_type = 'scalar'
 
-        if self._wcs.wcs.ctype[dimensions[1]][:4] in ['RA--', 'DEC-'] or \
-           self._wcs.wcs.ctype[dimensions[1]][1:4] in ['LON', 'LAT']:
+        if self._wcs.ctype_y[:4] in ['RA--', 'DEC-'] or \
+           self._wcs.ctype_y[1:4] in ['LON', 'LAT']:
             self._ax1.yaxis.coord_type = 'angle'
             self._ax2.yaxis.coord_type = 'angle'
         else:
             self._ax1.yaxis.coord_type = 'scalar'
             self._ax2.yaxis.coord_type = 'scalar'
-
-        self.set_auto_refresh(auto_refresh)
 
         # Set view to whole FITS file
         self._initialize_view()
