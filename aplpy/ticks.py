@@ -271,7 +271,8 @@ def default_spacing(ax, coord, format):
     px, py, wx, wy = axis_positions(wcs, coord, False, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
     if coord == 'x':
-        if ax.xaxis.coord_type == 'angle':
+        coord_type = ax.xaxis.coord_type
+        if coord_type == 'angle':
             wxmin, wxmax = math_util.smart_range(wx)
             if 'd.' in format:
                 spacing = au.smart_round_angle_decimal((wxmax-wxmin)/5., latitude=False)
@@ -281,7 +282,8 @@ def default_spacing(ax, coord, format):
             wxmin, wxmax = np.min(wx), np.max(wx)
             spacing = su.smart_round_angle_decimal((wxmax - wxmin) / 5.)
     else:
-        if ax.yaxis.coord_type == 'angle':
+        coord_type = ax.yaxis.coord_type
+        if coord_type == 'angle':
             wymin, wymax = min(wy), max(wy)
             if 'd.' in format:
                 spacing = au.smart_round_angle_decimal((wymax - wymin)/5., latitude=True)
@@ -292,7 +294,7 @@ def default_spacing(ax, coord, format):
             spacing = su.smart_round_angle_decimal((wymax - wymin) / 5.)
 
     # Find minimum spacing allowed by labels
-    if ax.yaxis.coord_type == 'angle':
+    if coord_type == 'angle':
         min_spacing = au._get_label_precision(format)
         if min_spacing.todegrees() > spacing.todegrees():
             return min_spacing
