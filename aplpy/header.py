@@ -3,8 +3,8 @@ from __future__ import absolute_import
 
 def check(header, convention=None, dimensions=[0, 1]):
 
-    ix = dimensions[0]
-    iy = dimensions[1]
+    ix = dimensions[0] + 1
+    iy = dimensions[1] + 1
 
     ctypex = header['CTYPE%i' % ix]
     crvaly = header['CRVAL%i' % iy]

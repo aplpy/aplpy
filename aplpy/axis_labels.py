@@ -54,9 +54,9 @@ class AxisLabels(object):
                 self.set_xtext(self._wcs.ctype_x[:4] + xunit)
 
             if len(self._wcs.cname_y) > 0:
-                self.set_ytext(self._wcs.cname_y + xunit)
+                self.set_ytext(self._wcs.cname_y + yunit)
             else:
-                self.set_ytext(self._wcs.ctype_y[:4] + xunit)
+                self.set_ytext(self._wcs.ctype_y[:4] + yunit)
 
         self.set_xposition('bottom')
         self.set_yposition('left')
