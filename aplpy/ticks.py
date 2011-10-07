@@ -275,9 +275,9 @@ def default_spacing(ax, coord, format):
         if coord_type == 'angle':
             wxmin, wxmax = math_util.smart_range(wx)
             if 'd.' in format:
-                spacing = au.smart_round_angle_decimal((wxmax-wxmin)/5., latitude=False)
+                spacing = au.smart_round_angle_decimal((wxmax - wxmin) / 5., latitude=False)
             else:
-                spacing = au.smart_round_angle_sexagesimal((wxmax-wxmin)/5., latitude=False, hours='hh' in format)
+                spacing = au.smart_round_angle_sexagesimal((wxmax - wxmin) / 5., latitude=False, hours='hh' in format)
         else:
             wxmin, wxmax = np.min(wx), np.max(wx)
             spacing = su.smart_round_angle_decimal((wxmax - wxmin) / 5.)
