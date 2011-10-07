@@ -43,6 +43,8 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
             if type(slices) == list:
                 slices = tuple(slices)
             hdu.data = hdu.data[slices[::-1]]
+            if dimensions[1] < dimensions[0]:
+                hdu.data = hdu.data.transpose()
         else:
             message = '''
     Attempted to read in %i-dimensional FITS cube, but
