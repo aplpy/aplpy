@@ -249,18 +249,26 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         self.set_auto_refresh(auto_refresh)
 
-        if self._wcs.ctype_x[:4] in ['RA--', 'DEC-'] or \
-           self._wcs.ctype_x[1:4] in ['LON', 'LAT']:
-            self._ax1.xaxis.coord_type = 'angle'
-            self._ax2.xaxis.coord_type = 'angle'
+        if self._wcs.ctype_x[:4] == 'RA--' or \
+           self._wcs.ctype_x[1:4] == 'LON':
+            self._ax1.xaxis.coord_type = 'longitude'
+            self._ax2.xaxis.coord_type = 'longitude'
+        elif self._wcs.ctype_x[:4] == 'DEC-' or \
+           self._wcs.ctype_x[1:4] == 'LAT':
+            self._ax1.xaxis.coord_type = 'latitude'
+            self._ax2.xaxis.coord_type = 'latitude'
         else:
             self._ax1.xaxis.coord_type = 'scalar'
             self._ax2.xaxis.coord_type = 'scalar'
 
-        if self._wcs.ctype_y[:4] in ['RA--', 'DEC-'] or \
-           self._wcs.ctype_y[1:4] in ['LON', 'LAT']:
-            self._ax1.yaxis.coord_type = 'angle'
-            self._ax2.yaxis.coord_type = 'angle'
+        if self._wcs.ctype_y[:4] == 'RA--' or \
+           self._wcs.ctype_y[1:4] == 'LON':
+            self._ax1.yaxis.coord_type = 'longitude'
+            self._ax2.yaxis.coord_type = 'longitude'
+        elif self._wcs.ctype_y[:4] == 'DEC-' or \
+           self._wcs.ctype_y[1:4] == 'LAT':
+            self._ax1.yaxis.coord_type = 'latitude'
+            self._ax2.yaxis.coord_type = 'latitude'
         else:
             self._ax1.yaxis.coord_type = 'scalar'
             self._ax2.yaxis.coord_type = 'scalar'

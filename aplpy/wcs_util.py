@@ -17,6 +17,33 @@ class WCS(pywcs.WCS):
 
         pywcs.WCS.__init__(self, *args, **kwargs)
 
+        # Now find the values of the coordinates in the slices - only needed if
+        # data has more than two dimensions
+        if len(self._slices) > 0:
+
+            self.nx = args[0]['NAXIS%i' % (self._dimensions[0] + 1)]
+            self.ny = args[0]['NAXIS%i' % (self._dimensions[1] + 1)]
+            xpix = np.arange(self.nx) + 1.
+            ypix = np.arange(self.ny) + 1.
+            xpix, ypix = np.meshgrid(xpix, ypix)
+            xpix, ypix = xpix.reshape(self.nx * self.ny), ypix.reshape(self.nx * self.ny)
+            s = 0
+            coords = []
+            for dim in range(self.naxis):
+                if dim == self._dimensions[0]:
+                    coords.append(xpix)
+                elif dim == self._dimensions[1]:
+                    coords.append(ypix)
+                else:
+                    coords.append(np.repeat(self._slices[s], xpix.shape))
+                    s += 1
+            coords = np.vstack(coords).transpose()
+            result = pywcs.WCS.wcs_pix2sky(self, coords, 1)
+            self._mean_world = np.mean(result, axis=0)
+            # result = result.transpose()
+            # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
+
+
     def __getattr__(self, attribute):
 
         if attribute[-2:] == '_x':
@@ -51,10 +78,18 @@ class WCS(pywcs.WCS):
                 elif dim == self._dimensions[1]:
                     coords.append(y)
                 else:
-                    coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
+                    # The following is an approximation, and will break down if
+                    # the world coordinate changes significantly over the slice
+                    coords.append(np.repeat(self._mean_world[dim], x.shape))
                     s += 1
             coords = np.vstack(coords).transpose()
-            result = pywcs.WCS.wcs_sky2pix(self, coords, origin)
+
+            # Due to a bug in pywcs, we need to loop over each coordinate
+            # result = pywcs.WCS.wcs_sky2pix(self, coords, origin)
+            result = np.zeros(coords.shape)
+            for i in range(result.shape[0]):
+                result[i:i+1, :] = pywcs.WCS.wcs_sky2pix(self, coords[i:i+1, :], origin)
+
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
     def wcs_pix2sky(self, x, y, origin):

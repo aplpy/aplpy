@@ -151,69 +151,48 @@ class Grid(object):
 
         if self.x_auto_spacing:
             if self.ax.xaxis.apl_auto_tick_spacing:
-                xspacing = default_spacing(self.ax, 'x', self.ax.xaxis.apl_label_form).todegrees()
+                xspacing = default_spacing(self.ax, 'x', self.ax.xaxis.apl_label_form)
             else:
-                xspacing = self.ax.xaxis.apl_tick_spacing.todegrees()
+                xspacing = self.ax.xaxis.apl_tick_spacing
         else:
-            xspacing = self.x_grid_spacing.todegrees()
+            xspacing = self.x_grid_spacing
+
+        if self.ax.xaxis.coord_type in ['longitude', 'latitude']:
+            xspacing = xspacing.todegrees()
 
         if self.y_auto_spacing:
             if self.ax.yaxis.apl_auto_tick_spacing:
-                yspacing = default_spacing(self.ax, 'y', self.ax.yaxis.apl_label_form).todegrees()
+                yspacing = default_spacing(self.ax, 'y', self.ax.yaxis.apl_label_form)
             else:
-                yspacing = self.ax.yaxis.apl_tick_spacing.todegrees()
+                yspacing = self.ax.yaxis.apl_tick_spacing
         else:
-            yspacing = self.y_grid_spacing.todegrees()
+            yspacing = self.y_grid_spacing
 
-        # Find longitude lines that intersect with axes
-        lon_i, lat_i = find_intersections(self.wcs, 'x', xspacing)
+        if self.ax.yaxis.coord_type in ['longitude', 'latitude']:
+            yspacing = yspacing.todegrees()
 
-        lon_i_unique = np.array(list(set(lon_i)))
+        # Find x lines that intersect with axes
+        grid_x_i, grid_y_i = find_intersections(self.wcs, 'x', xspacing)
 
-        # Plot those lines
-        for l in lon_i_unique:
-            for line in plot_longitude(self.wcs, lon_i, lat_i, l):
-                lines.append(line)
-
-        # Find longitude lines that don't intersect with axes
-        lon_all = math_util.complete_range(0.0, 360.0, xspacing)
-        lon_ni = np.sort(np.array(list(set(lon_all)-set(lon_i_unique))))
-        lat_ni = np.ones(np.size(lon_ni)) # doesn't matter what value is, is either in or outside
-
-        if np.size(lon_ni) > 0:
-
-            xpix, ypix = wcs_util.world2pix(self.wcs, lon_ni, lat_ni)
-
-            # Plot those lines
-            # for i in range(0, np.size(lon_ni)):
-            #     if(in_plot(wcs, xpix[i], ypix[i])):
-            #         print "Inside longitude : "+str(lon_ni[i])
-            #         plot_longitude(wcs, np.array([]), np.array([]), lon_ni[i])
-
-            # Find latitude lines that intersect with axes
-        lon_i, lat_i = find_intersections(self.wcs, 'y', yspacing)
-
-        lat_i_unique = np.array(list(set(lat_i)))
+        grid_x_i_unique = np.array(list(set(grid_x_i)))
 
         # Plot those lines
-        for l in lat_i_unique:
-            for line in plot_latitude(self.wcs, lon_i, lat_i, l):
+        for gx in grid_x_i_unique:
+            for line in plot_grid_x(self.wcs, grid_x_i, grid_y_i, gx):
                 lines.append(line)
 
-        # Find latitude lines that don't intersect with axes
-        lat_all = math_util.complete_range(-90.0, 90.0, yspacing)
-        lat_ni = np.sort(np.array(list(set(lat_all)-set(lat_i_unique))))
-        lon_ni = np.ones(np.size(lat_ni)) # doesn't matter what value is, is either in or outside
+        # TODO: Once have lines, try ones on either side and if they are in the
+        # plot and if so, continue looking
 
-        if np.size(lat_ni) > 0:
+        # Find y lines that intersect with axes
+        grid_x_i, grid_y_i = find_intersections(self.wcs, 'y', yspacing)
 
-            xpix, ypix = wcs_util.world2pix(self.wcs, lon_ni, lat_ni)
+        grid_y_i_unique = np.array(list(set(grid_y_i)))
 
-            # Plot those lines
-            # for i in range(0, np.size(lat_ni)):
-            #     if(in_plot(wcs, xpix[i], ypix[i])):
-            #         print "Inside latitude : "+str(lat_ni[i])
-            #         plot_latitude(wcs, np.array([]), np.array([]), lat_ni[i])
+        # Plot those lines
+        for l in grid_y_i_unique:
+            for line in plot_grid_y(self.wcs, grid_x_i, grid_y_i, l):
+                lines.append(line)
 
         if self._grid:
             self._grid.set_verts(lines)
@@ -223,113 +202,80 @@ class Grid(object):
 
         return self.ax
 
-##########################################################
-# plot_latitude: plot a single latitude line
-##########################################################
 
-def plot_latitude(wcs, lon, lat, lat0, alpha=0.5):
+def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
+    '''Plot a single grid line in the y direction'''
 
     lines_out = []
-
-    # Check if the point with coordinates (0, lat0) is inside the viewport
-    xpix, ypix = wcs_util.world2pix(wcs, 0., lat0)
-
-    if in_plot(wcs, xpix, ypix):
-        lon_min = 0.
-        inside = True
-    else:
-        inside = False
 
     # Find intersections that correspond to latitude lat0
-    index = np.where(lat==lat0)
+    index = np.where(grid_y == gy)
 
     # Produce sorted array of the longitudes of all intersections
-    lonnew = np.sort(lon[index])
+    grid_x_sorted = np.sort(grid_x[index])
+
+    # Check if the first mid-point with coordinates is inside the viewport
+    xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
+
+    if not in_plot(wcs, xpix, ypix):
+        grid_x_sorted = np.roll(grid_x_sorted, 1)
 
     # Cycle through intersections
-    for l in lonnew:
+    for i in range(0, len(grid_x_sorted), 2):
 
-        # If inside, then current intersection closes arc - plot it
-        if(inside):
-            lon_max = l
-            x_world = math_util.complete_range(lon_min, lon_max, 360) # Plotting every degree, make more general
-            y_world = np.ones(len(x_world)) * lat0
-            x_pix, y_pix = wcs_util.world2pix(wcs, x_world, y_world)
-            lines_out.append(zip(x_pix, y_pix))
-            inside = False
-        else:
-            lon_min = l
-            inside = True
+        grid_x_min = grid_x_sorted[i]
+        grid_x_max = grid_x_sorted[i + 1]
 
-    # If still inside when finished going through intersections, then close at longitude 360
-    if(inside):
-        lon_max = 360.
-        x_world = math_util.complete_range(lon_min, lon_max, 360)
-        y_world = np.ones(len(x_world)) * lat0
+        # TODO: Deal with wraparound if coordinate is longitude/latitude
+
+        x_world = math_util.complete_range(grid_x_min, grid_x_max, 100)
+        y_world = np.repeat(gy, len(x_world))
         x_pix, y_pix = wcs_util.world2pix(wcs, x_world, y_world)
         lines_out.append(zip(x_pix, y_pix))
-        inside = False
 
     return lines_out
 
-##########################################################
-# plot_longitude: plot a single longitude line
-##########################################################
 
-def plot_longitude(wcs, lon, lat, lon0, alpha=0.5):
+def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
+    '''Plot a single longitude line'''
 
     lines_out = []
 
-    # Check if the point with coordinates (10., -90.) is inside the viewport
-    xpix, ypix = wcs_util.world2pix(wcs, 10., -90.)
-
-    if in_plot(wcs, xpix, ypix):
-        lat_min = -90.
-        inside = True
-    else:
-        inside = False
-    # Find intersections that correspond to longitude lon0
-    index = np.where(lon==lon0)
+    # Find intersections that correspond to longitude gx
+    index = np.where(grid_x == gx)
 
     # Produce sorted array of the latitudes of all intersections
-    latnew = np.sort(lat[index])
+    grid_y_sorted = np.sort(grid_y[index])
+
+    # Check if the first mid-point with coordinates is inside the viewport
+    xpix, ypix = wcs_util.world2pix(wcs, gx, (grid_y_sorted[0] + grid_y_sorted[1]) / 2.)
+
+    if not in_plot(wcs, xpix, ypix):
+        grid_y_sorted = np.roll(grid_y_sorted, 1)
 
     # Cycle through intersections
-    for l in latnew:
-        if(inside):
-            lat_max = l
-            y_world = math_util.complete_range(lat_min, lat_max, 360)
-            x_world = np.ones(len(y_world)) * lon0
-            x_pix, y_pix = wcs_util.world2pix(wcs, x_world, y_world)
-            lines_out.append(zip(x_pix, y_pix))
-            inside = False
-        else:
-            lat_min = l
-            inside = True
+    for i in range(0, len(grid_y_sorted), 2):
 
-    if(inside):
-        lat_max = 90.
-        y_world = math_util.complete_range(lat_min, lat_max, 360)
-        x_world = np.ones(len(y_world)) * lon0
+        grid_y_min = grid_y_sorted[i]
+        grid_y_max = grid_y_sorted[i+1]
+
+        # TODO: Deal with wraparound if coordinate is longitude/latitude
+
+        y_world = math_util.complete_range(grid_y_min, grid_y_max, 100)
+        x_world = np.repeat(gx, len(y_world))
         x_pix, y_pix = wcs_util.world2pix(wcs, x_world, y_world)
         lines_out.append(zip(x_pix, y_pix))
-        inside = False
 
     return lines_out
 
-##########################################################
-# in_plot: whether a given point is in a plot
-##########################################################
 
 def in_plot(wcs, x_pix, y_pix):
-    return x_pix > +0.5 and x_pix < wcs.naxis1+0.5 and y_pix > +0.5 and y_pix < wcs.naxis2+0.5
+    '''Check whether a given point is in a plot'''
+    return x_pix > +0.5 and x_pix < wcs.nx+0.5 and y_pix > +0.5 and y_pix < wcs.ny+0.5
 
-##########################################################
-# find_intersections: find intersections of a given
-#                     coordinate with a all axes.
-##########################################################
 
 def find_intersections(wcs, coord, spacing):
+    '''Find intersections of a given coordinate with a all axes'''
 
     # Initialize arrays
     x = []
@@ -360,5 +306,3 @@ def find_intersections(wcs, coord, spacing):
         y.append(world_y[i])
 
     return np.array(x), np.array(y)
-
-    ##########################################################
