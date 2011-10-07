@@ -1225,7 +1225,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         artist_api.html#matplotlib.patches.Polygon>`_.
         '''
 
-        if not kwargs.has_key('facecolor'):
+        if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
 
         if layer:
