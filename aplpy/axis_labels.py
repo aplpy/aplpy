@@ -37,9 +37,26 @@ class AxisLabels(object):
 
             self.set_xtext('Galactic Longitude')
             self.set_ytext('Galactic Latitude')
-        else:
+
+        elif system == 'ecliptic':
+
             self.set_xtext('Ecliptic Longitude')
             self.set_ytext('Ecliptic Latitude')
+
+        elif system == 'unknown':
+
+            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x is not None else ""
+            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y is not None else ""
+
+            if len(self._wcs.cname_x) > 0:
+                self.set_xtext(self._wcs.cname_x + xunit)
+            else:
+                self.set_xtext(self._wcs.ctype_x[:4] + xunit)
+
+            if len(self._wcs.cname_y) > 0:
+                self.set_ytext(self._wcs.cname_y + xunit)
+            else:
+                self.set_ytext(self._wcs.ctype_y[:4] + xunit)
 
         self.set_xposition('bottom')
         self.set_yposition('left')

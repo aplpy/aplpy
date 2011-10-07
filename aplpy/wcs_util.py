@@ -304,11 +304,10 @@ def system(wcs):
     elif xcoord == 'ELON' and ycoord == 'ELAT':
         system = 'ecliptic'
     else:
-        print "Warning: cannot determine coordinate system for %s/%s. Assuming equatorial." % (xcoord, ycoord)
-        system = 'equatorial'
+        system = 'unknown'
 
     if system == 'equatorial':
-        if equinox == '' or np.isnan(equinox):
+        if equinox == '' or np.isnan(equinox) or equinox == 0.:
             print "Warning: cannot determine equinox. Assuming J2000."
             equinox = 'j2000'
         elif equinox == 1950.:
