@@ -347,7 +347,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             hdu = montage.reproject_hdu(hdu, north_aligned=True)
 
         # Check header
-        hdu.header = header.check(hdu.header, convention=convention)
+        hdu.header = header.check(hdu.header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
         wcs = wcs_util.WCS(hdu.header, dimensions=dimensions, slices=slices)
