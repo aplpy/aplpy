@@ -86,7 +86,9 @@ class FITSFigure(Layers, Regions, Deprecated):
     "A class for plotting FITS files."
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None, downsample=False, north=False, convention=None, slices=[], auto_refresh=True, **kwargs):
+    def __init__(self, data, hdu=0, figure=None, subplot=None,
+                 downsample=False, north=False, convention=None,
+                 dimensions=[0, 1], slices=[], auto_refresh=True, **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -133,6 +135,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                 projection and CRVAL2=0, this can be set to 'wells' or
                 'calabretta' to choose the appropriate convention.
 
+            *dimensions*: [ tuple or list]
+                The index of the axes to use if the data has more than three
+                dimensions.
+
             *slices*: [ tuple or list ]
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
@@ -173,16 +179,20 @@ class FITSFigure(Layers, Regions, Deprecated):
             data = AVM(data).to_wcs()
 
             # Need to scale CDELT values sometimes the AVM meta-data is only really valid for the full-resolution image
-            data.wcs.cdelt = [data.wcs.cdelt[0] * data.naxis1 / float(nx), data.wcs.cdelt[1] * data.naxis2 / float(ny)]
-            data.wcs.crpix = [data.wcs.crpix[0] / data.naxis1 * float(nx), data.wcs.crpix[1] / data.naxis2 * float(ny)]
+            data.wcs.cdelt = [data.wcs.cdelt[0] * nx / float(nx), data.wcs.cdelt[1] * ny / float(ny)]
+            data.wcs.crpix = [data.wcs.crpix[0] / nx * float(nx), data.wcs.crpix[1] / ny * float(ny)]
 
             # Update the NAXIS values with the true dimensions of the RGB image
-            data.naxis1 = nx
-            data.naxis2 = ny
+            data.nx = nx
+            data.ny = ny
 
         if isinstance(data, pywcs.WCS):
-
-            self._hdu, self._wcs = pyfits.ImageHDU(data=np.zeros((data.naxis2, data.naxis1), dtype=float), header=data.to_header()), data
+            wcs = data
+            header = wcs.to_header()
+            self._wcs.nx = header['NAXIS%i' % (dimensions[0] + 1)]
+            self._wcs.ny = header['NAXIS%i' % (dimensions[1] + 1)]
+            self._hdu = pyfits.ImageHDU(data=np.zeros((self._wcs.ny, self._wcs.nx), dtype=float), header=header)
+            self._wcs = wcs_util.WCS(wcs, dimensions=dimensions, slices=slices)
             if downsample:
                 warnings.warn("downsample argument is ignored if data passed is a WCS object")
                 downsample = False
@@ -191,15 +201,17 @@ class FITSFigure(Layers, Regions, Deprecated):
                 north = False
         else:
             self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
-                convention=convention, slices=slices)
+                convention=convention, dimensions=dimensions, slices=slices)
+            self._wcs.nx = self._hdu.header['NAXIS%i' % (dimensions[0] + 1)]
+            self._wcs.ny = self._hdu.header['NAXIS%i' % (dimensions[1] + 1)]
 
         # Downsample if requested
         if downsample:
-            naxis1_new = self._wcs.naxis1 - np.mod(self._wcs.naxis1, downsample)
-            naxis2_new = self._wcs.naxis2 - np.mod(self._wcs.naxis2, downsample)
-            self._hdu.data = self._hdu.data[0:naxis2_new, 0:naxis1_new]
+            nx_new = self._wcs.nx - np.mod(self._wcs.nx, downsample)
+            ny_new = self._wcs.ny - np.mod(self._wcs.ny, downsample)
+            self._hdu.data = self._hdu.data[0:ny_new, 0:nx_new]
             self._hdu.data = image_util.resample(self._hdu.data, downsample)
-            self._wcs.naxis1, self._wcs.naxis2 = naxis1_new, naxis2_new
+            self._wcs.nx, self._wcs.ny = nx_new, ny_new
 
         # Open the figure
         if figure:
@@ -263,7 +275,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Set default theme
         self.set_theme(theme='publication')
 
-    def _get_hdu(self, data, hdu, north, convention=None, slices=[]):
+    def _get_hdu(self, data, hdu, north, convention=None, dimensions=[0, 1], slices=[]):
 
         if isinstance(data, basestring):
 
@@ -297,7 +309,6 @@ class FITSFigure(Layers, Regions, Deprecated):
             else:
                 hdu = hdulist[hdu]
 
-
         elif isinstance(data, pyfits.PrimaryHDU) or isinstance(data, pyfits.ImageHDU):
 
             hdu = data
@@ -311,7 +322,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
 
         # Extract slices
-        hdu = slicer.slice(hdu, slices=slices)
+        hdu = slicer.slice_hypercube(hdu, dimensions=dimensions, slices=slices)
 
         # Reproject to face north if requested
         if north:
@@ -323,8 +334,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         hdu.header = header.check(hdu.header, convention=convention)
 
         # Parse WCS info
+        wcs = wcs_util.WCS(hdu.header, dimensions=dimensions, slices=slices)
         try:
-            wcs = pywcs.WCS(hdu.header)
+            wcs = wcs_util.WCS(hdu.header, dimensions=dimensions, slices=slices)
         except:
             raise Exception("An error occured while parsing the WCS information")
 
@@ -650,7 +662,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, slices=[], smooth=None, kernel='gauss', **kwargs):
+    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', **kwargs):
         '''
         Overlay contours on the current plot
 
@@ -697,6 +709,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                 projection and CRVAL2=0, this can be set to 'wells' or
                 'calabretta' to choose the appropriate convention.
 
+            *dimensions*: [ tuple or list]
+                The index of the axes to use if the data has more than three
+                dimensions.
+
             *slices*: [ tuple or list ]
                 If a FITS file with more than two dimensions is specified,
                 then these are the slices to extract. If all extra dimensions
@@ -732,10 +748,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             cmap = mpl.cm.get_cmap('jet')
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
-            convention=convention, slices=slices)
+            convention=convention, dimensions=dimensions, slices=slices)
 
         image_contour = convolve_util.convolve(hdu_contour.data, smooth=smooth, kernel=kernel)
-        extent_contour = (0.5, wcs_contour.naxis1+0.5, 0.5, wcs_contour.naxis2+0.5)
+        extent_contour = (0.5, wcs_contour.nx + 0.5, 0.5, wcs_contour.ny + 0.5)
 
         if type(levels) == int:
             auto_levels = image_util.percentile_function(image_contour)
@@ -1418,13 +1434,13 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def _initialize_view(self):
 
-        self._ax1.xaxis.set_view_interval(+0.5, self._wcs.naxis1+0.5, ignore=True)
-        self._ax1.yaxis.set_view_interval(+0.5, self._wcs.naxis2+0.5, ignore=True)
-        self._ax2.xaxis.set_view_interval(+0.5, self._wcs.naxis1+0.5, ignore=True)
-        self._ax2.yaxis.set_view_interval(+0.5, self._wcs.naxis2+0.5, ignore=True)
+        self._ax1.xaxis.set_view_interval(+0.5, self._wcs.nx + 0.5, ignore=True)
+        self._ax1.yaxis.set_view_interval(+0.5, self._wcs.ny + 0.5, ignore=True)
+        self._ax2.xaxis.set_view_interval(+0.5, self._wcs.nx + 0.5, ignore=True)
+        self._ax2.yaxis.set_view_interval(+0.5, self._wcs.ny + 0.5, ignore=True)
 
         # set the image extent to FITS pixel coordinates
-        self._extent = (0.5, self._wcs.naxis1+0.5, 0.5, self._wcs.naxis2+0.5)
+        self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)
 
     def _get_invert_default(self):
         return self._figure.apl_grayscale_invert_default

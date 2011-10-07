@@ -293,8 +293,8 @@ def fk52gal(ra, dec):
 
 def system(wcs):
 
-    xcoord = wcs.wcs.ctype[0][0:4]
-    ycoord = wcs.wcs.ctype[1][0:4]
+    xcoord = wcs.ctype_x[0:4]
+    ycoord = wcs.ctype_y[0:4]
     equinox = wcs.wcs.equinox
 
     if xcoord == 'RA--' and ycoord == 'DEC-':
