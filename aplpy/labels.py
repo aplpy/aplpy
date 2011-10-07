@@ -40,11 +40,11 @@ class TickLabels(object):
         else:
             self.set_xformat('%g')
 
-        if self._ax1.xaxis.coord_type == 'angle':
+        if self._ax1.yaxis.coord_type == 'angle':
             if system == 'equatorial':
                 self.set_yformat("dd:mm:ss.s")
             else:
-                self.set_yformat("dd.dddd")
+                self.set_yformat("ddd.dddd")
         else:
             self.set_yformat('%g')
 
