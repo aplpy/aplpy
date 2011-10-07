@@ -1,5 +1,7 @@
 # The APLpyNormalize class is largely based on code provided by Sarah Graves.
 
+from __future__ import absolute_import
+
 import numpy as np
 import numpy.ma as ma
 

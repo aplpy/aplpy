@@ -1,23 +1,14 @@
-# Module that looks after plotting a coordinate grid on images
+from __future__ import absolute_import
 
-# To improve, create array with e.g. all declination values, insert values which occur at intersections then
-# remove all array sections with out of bounds pixel values
-
-from ticks import tick_positions
 import numpy as np
 from matplotlib.collections import LineCollection
 
-import math_util
+import aplpy.math_util as math_util
+import aplpy.wcs_util as wcs_util
+import aplpy.angle_util as au
+from aplpy.ticks import tick_positions, default_spacing
+from aplpy.decorators import auto_refresh
 
-import wcs_util
-from ticks import default_spacing
-
-import angle_util as au
-
-from decorators import auto_refresh
-
-# can do coarse search to check if any longitude lines are completely contained inside box.
-# if not, then has to intersect axis, and so can just do the ones that intersect
 
 class Grid(object):
 

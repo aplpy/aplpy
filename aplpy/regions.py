@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 try:
     import pyregion
     pyregion_installed = True
@@ -9,10 +11,7 @@ def _check_pyregion_installed():
     if not pyregion_installed:
         raise Exception("The pyregion package is required to load region files")
 
-
-import matplotlib
-
-from decorators import auto_refresh
+from aplpy.decorators import auto_refresh
 
 
 class Regions:

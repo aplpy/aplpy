@@ -1,5 +1,8 @@
+from __future__ import absolute_import
+
 import numpy as np
 
+import pywcs
 
 def convert_coords(x, y, input, output):
 

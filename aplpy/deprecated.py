@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import warnings
 
-from decorators import auto_refresh
+from aplpy.decorators import auto_refresh
 
 
 class Deprecated(object):

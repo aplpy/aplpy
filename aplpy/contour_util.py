@@ -1,6 +1,9 @@
-import wcs_util
-from matplotlib.path import Path
+from __future__ import absolute_import
+
 import numpy as np
+from matplotlib.path import Path
+
+import aplpy.wcs_util as wcs_util
 
 def transform(contours, wcs_in, wcs_out, filled=False):
 

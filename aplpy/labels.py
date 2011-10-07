@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import warnings
-import matplotlib.pyplot as mpl
-import wcs_util
-import numpy as np
+from __future__ import absolute_import
+
 import string
+import warnings
+
+import numpy as np
+import matplotlib.pyplot as mpl
 from matplotlib.font_manager import FontProperties
-import angle_util as au
-from decorators import auto_refresh, fixdocstring
+
+import aplpy.wcs_util as wcs_util
+import aplpy.angle_util as au
+from aplpy.decorators import auto_refresh, fixdocstring
 
 
 class TickLabels(object):
