@@ -261,7 +261,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = None
 
         # Set default theme
-        self.set_theme(theme='pretty')
+        self.set_theme(theme='publication')
 
     def _get_hdu(self, data, hdu, north, convention=None, slices=[]):
 
@@ -1447,7 +1447,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if theme == 'pretty':
             self.frame.set_color('white')
-            self.frame.set_linewidth(0.5)
+            self.frame.set_linewidth(1.0)
             self.ticks.set_color('white')
             self.ticks.set_length(7)
             self._figure.apl_grayscale_invert_default = False
@@ -1456,7 +1456,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 self.image.set_cmap(cmap=mpl.cm.get_cmap('jet'))
         elif theme == 'publication':
             self.frame.set_color('black')
-            self.frame.set_linewidth(0.5)
+            self.frame.set_linewidth(1.0)
             self.ticks.set_color('black')
             self.ticks.set_length(7)
             self._figure.apl_grayscale_invert_default = True
