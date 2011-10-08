@@ -174,24 +174,69 @@ class Grid(object):
         # Find x lines that intersect with axes
         grid_x_i, grid_y_i = find_intersections(self.wcs, 'x', xspacing)
 
-        grid_x_i_unique = np.array(list(set(grid_x_i)))
+        # If we are dealing with longitude/latitude then can search all
+        # neighboring grid lines to see if there are any closed grid lines
+        if self.wcs.xaxis_coord_type == 'latitude' and self.wcs.yaxis_coord_type == 'longitude':
+
+            gx = grid_x_i.min()
+
+            while True:
+                gx -= xspacing
+                xpix, ypix = wcs_util.world2pix(self.wcs, gx, 0.)
+                if in_plot(self.wcs, xpix, ypix) and gx >= -90.:
+                    grid_x_i = np.hstack([grid_x_i, gx, gx])
+                    grid_y_i = np.hstack([grid_y_i, 0., 360.])
+                else:
+                    break
+
+            gx = grid_x_i.max()
+
+            while True:
+                gx += xspacing
+                xpix, ypix = wcs_util.world2pix(self.wcs, gx, 0.)
+                if in_plot(self.wcs, xpix, ypix) and gx <= +90.:
+                    grid_x_i = np.hstack([grid_x_i, gx, gx])
+                    grid_y_i = np.hstack([grid_y_i, 0., 360.])
+                else:
+                    break
 
         # Plot those lines
-        for gx in grid_x_i_unique:
+        for gx in np.unique(grid_x_i):
             for line in plot_grid_x(self.wcs, grid_x_i, grid_y_i, gx):
                 lines.append(line)
-
-        # TODO: Once have lines, try ones on either side and if they are in the
-        # plot and if so, continue looking
 
         # Find y lines that intersect with axes
         grid_x_i, grid_y_i = find_intersections(self.wcs, 'y', yspacing)
 
-        grid_y_i_unique = np.array(list(set(grid_y_i)))
+        # If we are dealing with longitude/latitude then can search all
+        # neighboring grid lines to see if there are any closed grid lines
+        if self.wcs.xaxis_coord_type == 'longitude' and self.wcs.yaxis_coord_type == 'latitude':
+
+            gy = grid_y_i.min()
+
+            while True:
+                gy -= yspacing
+                xpix, ypix = wcs_util.world2pix(self.wcs, 0., gy)
+                if in_plot(self.wcs, xpix, ypix) and gy >= -90.:
+                    grid_x_i = np.hstack([grid_x_i, 0., 360.])
+                    grid_y_i = np.hstack([grid_y_i, gy, gy])
+                else:
+                    break
+
+            gy = grid_y_i.max()
+
+            while True:
+                gy += yspacing
+                xpix, ypix = wcs_util.world2pix(self.wcs, 0., gy)
+                if in_plot(self.wcs, xpix, ypix) and gy <= +90.:
+                    grid_x_i = np.hstack([grid_x_i, 0., 360.])
+                    grid_y_i = np.hstack([grid_y_i, gy, gy])
+                else:
+                    break
 
         # Plot those lines
-        for l in grid_y_i_unique:
-            for line in plot_grid_y(self.wcs, grid_x_i, grid_y_i, l):
+        for gy in np.unique(grid_y_i):
+            for line in plot_grid_y(self.wcs, grid_x_i, grid_y_i, gy):
                 lines.append(line)
 
         if self._grid:
