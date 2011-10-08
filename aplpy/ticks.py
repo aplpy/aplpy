@@ -275,7 +275,10 @@ def default_spacing(ax, coord, format):
 
     if coord == 'x':
         if coord_type in ['longitude', 'latitude']:
-            wxmin, wxmax = math_util.smart_range(wx)
+            if coord_type == 'longitude':
+                wxmin, wxmax = math_util.smart_range(wx)
+            else:
+                wxmin, wxmax = min(wx), max(wx)
             if 'd.' in format:
                 spacing = au.smart_round_angle_decimal((wxmax - wxmin) / 5., latitude=coord_type == 'latitude')
             else:
@@ -285,7 +288,10 @@ def default_spacing(ax, coord, format):
             spacing = su.smart_round_angle_decimal((wxmax - wxmin) / 5.)
     else:
         if coord_type in ['longitude', 'latitude']:
-            wymin, wymax = min(wy), max(wy)
+            if coord_type == 'longitude':
+                wymin, wymax = math_util.smart_range(wy)
+            else:
+                wymin, wymax = min(wy), max(wy)
             if 'd.' in format:
                 spacing = au.smart_round_angle_decimal((wymax - wymin)/5., latitude=coord_type == 'latitude')
             else:
@@ -371,12 +377,14 @@ def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=Fa
     # Check for 360 degree transition, and if encountered,
     # change the values so that there is continuity
 
-    for i in range(0, len(wx)-1):
-        if(abs(wx[i]-wx[i+1])>180.):
-            if(wx[i] > wx[i+1]):
-                wx[i+1:] = wx[i+1:] + 360.
-            else:
-                wx[i+1:] = wx[i+1:] - 360.
+    if (coord == 'x' and wcs.xaxis_coord_type == 'longitude') or \
+       (coord == 'y' and wcs.yaxis_coord_type == 'longitude'):
+        for i in range(0, len(wx)-1):
+            if(abs(wx[i]-wx[i+1])>180.):
+                if(wx[i] > wx[i+1]):
+                    wx[i+1:] = wx[i+1:] + 360.
+                else:
+                    wx[i+1:] = wx[i+1:] - 360.
 
     # Convert wx to units of the spacing, then ticks are at integer values
     wx = wx / spacing
