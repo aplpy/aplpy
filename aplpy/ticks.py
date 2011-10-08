@@ -405,7 +405,7 @@ def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=Fa
                 wx_out.append(wx_tick)
                 wy_out.append(wy_tick)
 
-    if coord=='y':
+    if coord == 'y':
         wx_out, wy_out = wy_out, wx_out
 
     return px_out, py_out, wx_out, wy_out
