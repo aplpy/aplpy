@@ -93,7 +93,11 @@ class WCS(pywcs.WCS):
 
     def wcs_sky2pix(self, x, y, origin):
         if self.naxis == 2:
-            return pywcs.WCS.wcs_sky2pix(self, x, y, origin)
+            if self._dimensions[1] < self._dimensions[0]:
+                xp, yp = pywcs.WCS.wcs_sky2pix(self, y, x, origin)
+                return yp, xp
+            else:
+                return pywcs.WCS.wcs_sky2pix(self, x, y, origin)
         else:
             coords = []
             s = 0
@@ -119,7 +123,11 @@ class WCS(pywcs.WCS):
 
     def wcs_pix2sky(self, x, y, origin):
         if self.naxis == 2:
-            return pywcs.WCS.wcs_pix2sky(self, x, y, origin)
+            if self._dimensions[1] < self._dimensions[0]:
+                xw, yw = pywcs.WCS.wcs_pix2sky(self, y, x, origin)
+                return yw, xw
+            else:
+                return pywcs.WCS.wcs_pix2sky(self, x, y, origin)
         else:
             coords = []
             s = 0
