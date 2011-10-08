@@ -225,11 +225,13 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
             if in_plot(wcs, xpix, ypix):
                 grid_x_sorted = np.hstack([grid_x_sorted, +90.])
 
-    # Check if the first mid-point with coordinates is inside the viewport
-    xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
-
-    if not in_plot(wcs, xpix, ypix):
-        grid_x_sorted = np.roll(grid_x_sorted, 1)
+    # If coordinate is a longitude, check if the first mid-point with
+    # coordinates is inside the viewport
+    elif wcs.xaxis_coord_type == 'longitude':
+        xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
+        if not in_plot(wcs, xpix, ypix):
+            grid_x_sorted = np.roll(grid_x_sorted, 1)
+            grid_x_sorted[0] -= 360.
 
     # Cycle through intersections
     for i in range(0, len(grid_x_sorted), 2):
@@ -269,6 +271,14 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
             xpix, ypix = wcs_util.world2pix(wcs, gx, min(grid_y_sorted[-1] + 1., +90.))
             if in_plot(wcs, xpix, ypix):
                 grid_y_sorted = np.hstack([grid_y_sorted, +90.])
+
+    # If coordinate is a longitude, check if the first mid-point with
+    # coordinates is inside the viewport
+    elif wcs.yaxis_coord_type == 'longitude':
+        xpix, ypix = wcs_util.world2pix(wcs, gx, (grid_y_sorted[0] + grid_y_sorted[1]) / 2.)
+        if not in_plot(wcs, xpix, ypix):
+            grid_y_sorted = np.roll(grid_y_sorted, 1)
+            grid_y_sorted[0] -= 360.
 
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, gx, (grid_y_sorted[0] + grid_y_sorted[1]) / 2.)
