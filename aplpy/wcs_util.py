@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 
 import numpy as np
-
 import pywcs
+
+from aplpy.logger import logger
 
 
 class WCS(pywcs.WCS):
@@ -156,6 +157,7 @@ class WCS(pywcs.WCS):
             coords = np.vstack(coords).transpose()
             result = pywcs.WCS.wcs_pix2sky(self, coords, origin)
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
+
 
 def convert_coords(x, y, input, output):
 
@@ -407,7 +409,7 @@ def system(wcs):
 
     if system['name'] == 'equatorial':
         if equinox == '' or np.isnan(equinox) or equinox == 0.:
-            print "Warning: cannot determine equinox. Assuming J2000."
+            logger.warning("Cannot determine equinox. Assuming J2000.")
             equinox = 'j2000'
         elif equinox == 1950.:
             equinox = 'b1950'

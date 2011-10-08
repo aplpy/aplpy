@@ -10,6 +10,8 @@ import shutil
 import pyfits
 import numpy as np
 
+from aplpy.logger import logger
+
 try:
     import Image
     installed_pil = True
@@ -50,16 +52,16 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
         vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
 
     if min_auto:
-        print "vmin = %10.3e (auto)" % vmin_auto
+        logger.info("vmin = %10.3e (auto)" % vmin_auto)
         vmin = vmin_auto
     else:
-        print "vmin = %10.3e" % vmin
+        logger.info("vmin = %10.3e" % vmin)
 
     if max_auto:
-        print "vmax = %10.3e (auto)" % vmax_auto
+        logger.info("vmax = %10.3e (auto)" % vmax_auto)
         vmax = vmax_auto
     else:
-        print "vmax = %10.3e" % vmax
+        logger.info("vmax = %10.3e" % vmax)
 
     image = (image - vmin) / (vmax - vmin)
 
@@ -205,7 +207,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
 
-    print "Red:"
+    logger.info("Red:")
     image_r = Image.fromarray(_data_stretch(image_r, \
                                             vmin=vmin_r, vmax=vmax_r, \
                                             pmin=pmin_r, pmax=pmax_r, \
@@ -213,7 +215,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             vmid=vmid_r, \
                                             exponent=exponent_r))
 
-    print "\nGreen:"
+    logger.info("\nGreen:")
     image_g = Image.fromarray(_data_stretch(image_g, \
                                             vmin=vmin_g, vmax=vmax_g, \
                                             pmin=pmin_g, pmax=pmax_g, \
@@ -221,7 +223,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             vmid=vmid_g, \
                                             exponent=exponent_g))
 
-    print "\nBlue:"
+    logger.info("\nBlue:")
     image_b = Image.fromarray(_data_stretch(image_b, \
                                             vmin=vmin_b, vmax=vmax_b, \
                                             pmin=pmin_b, pmax=pmax_b, \
