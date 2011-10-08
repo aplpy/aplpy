@@ -24,39 +24,45 @@ class AxisLabels(object):
 
         system, equinox, units = wcs_util.system(self._wcs)
 
-        if system == 'equatorial':
+        if system['name'] == 'equatorial':
 
             if equinox == 'b1950':
-                self.set_xtext('RA (B1950)')
-                self.set_ytext('Dec (B1950)')
+                xtext = 'RA (B1950)'
+                ytext = 'Dec (B1950)'
             else:
-                self.set_xtext('RA (J2000)')
-                self.set_ytext('Dec (J2000)')
+                xtext = 'RA (J2000)'
+                ytext = 'Dec (J2000)'
 
-        elif system == 'galactic':
+        elif system['name'] == 'galactic':
 
-            self.set_xtext('Galactic Longitude')
-            self.set_ytext('Galactic Latitude')
+            xtext = 'Galactic Longitude'
+            ytext = 'Galactic Latitude'
 
-        elif system == 'ecliptic':
+        elif system['name'] == 'ecliptic':
 
-            self.set_xtext('Ecliptic Longitude')
-            self.set_ytext('Ecliptic Latitude')
+            xtext = 'Ecliptic Longitude'
+            ytext = 'Ecliptic Latitude'
 
-        elif system == 'unknown':
+        elif system['name'] == 'unknown':
 
             xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x is not None else ""
             yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y is not None else ""
 
             if len(self._wcs.cname_x) > 0:
-                self.set_xtext(self._wcs.cname_x + xunit)
+                xtext = self._wcs.cname_x + xunit
             else:
-                self.set_xtext(self._wcs.ctype_x[:4].replace('-', '') + xunit)
+                xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
 
             if len(self._wcs.cname_y) > 0:
-                self.set_ytext(self._wcs.cname_y + yunit)
+                ytext = self._wcs.cname_y + yunit
             else:
-                self.set_ytext(self._wcs.ctype_y[:4].replace('-', '') + yunit)
+                ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+
+        if system['inverted']:
+            xtext, ytext = ytext, xtext
+
+        self.set_xtext(xtext)
+        self.set_ytext(ytext)
 
         self.set_xposition('bottom')
         self.set_yposition('left')

@@ -214,6 +214,17 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
     # Produce sorted array of the longitudes of all intersections
     grid_x_sorted = np.sort(grid_x[index])
 
+    # If coordinate type is a latitude, also need to check if end-points fall inside the plot
+    if wcs.xaxis_coord_type == 'latitude':
+        if not np.any(grid_x_sorted == -90):
+            xpix, ypix = wcs_util.world2pix(wcs, max(grid_x_sorted[0] - 1., -90.), gy)
+            if in_plot(wcs, xpix, ypix):
+                grid_x_sorted = np.hstack([-90., grid_x_sorted])
+        if not np.any(grid_x_sorted == +90):
+            xpix, ypix = wcs_util.world2pix(wcs, min(grid_x_sorted[-1] + 1., +90.), gy)
+            if in_plot(wcs, xpix, ypix):
+                grid_x_sorted = np.hstack([grid_x_sorted, +90.])
+
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
 
@@ -246,6 +257,18 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
 
     # Produce sorted array of the latitudes of all intersections
     grid_y_sorted = np.sort(grid_y[index])
+
+    # If coordinate type is a latitude, also need to check if end-points fall inside the plot
+
+    if wcs.yaxis_coord_type == 'latitude':
+        if not np.any(grid_y_sorted == -90):
+            xpix, ypix = wcs_util.world2pix(wcs, gx, max(grid_y_sorted[0] - 1., -90.))
+            if in_plot(wcs, xpix, ypix):
+                grid_y_sorted = np.hstack([-90., grid_y_sorted])
+        if not np.any(grid_y_sorted == +90):
+            xpix, ypix = wcs_util.world2pix(wcs, gx, min(grid_y_sorted[-1] + 1., +90.))
+            if in_plot(wcs, xpix, ypix):
+                grid_y_sorted = np.hstack([grid_y_sorted, +90.])
 
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, gx, (grid_y_sorted[0] + grid_y_sorted[1]) / 2.)

@@ -68,7 +68,6 @@ class WCS(pywcs.WCS):
             self.yaxis_coord_type = 'scalar'
             self.yaxis_coord_type = 'scalar'
 
-
     def __getattr__(self, attribute):
 
         if attribute[-2:] == '_x':
@@ -151,7 +150,9 @@ def convert_coords(x, y, input, output):
     if input == output:
         return x, y
 
-    if system_in == 'galactic' and system_out == 'equatorial':
+    # Need to take into account inverted coords
+
+    if system_in['name'] == 'galactic' and system_out['name'] == 'equatorial':
 
         if equinox_out == 'j2000':
             x, y = gal2fk5(x, y)
@@ -161,7 +162,7 @@ def convert_coords(x, y, input, output):
         else:
             raise Exception("Cannot convert from galactic to equatorial coordinates for equinox=%s" % equinox_out)
 
-    elif system_in == 'equatorial' and system_out == 'galactic':
+    elif system_in['name'] == 'equatorial' and system_out['name'] == 'galactic':
 
         if equinox_in == 'j2000':
             x, y = fk52gal(x, y)
@@ -171,7 +172,7 @@ def convert_coords(x, y, input, output):
         else:
             raise Exception("Cannot convert from equatorial to equatorial coordinates for equinox=%s" % equinox_in)
 
-    elif system_in == 'equatorial' and system_out == 'equatorial':
+    elif system_in['name'] == 'equatorial' and system_out['name'] == 'equatorial':
 
         if equinox_in == 'b1950' and equinox_out == 'j2000':
             x, y = b1950toj2000(x, y)
@@ -181,7 +182,7 @@ def convert_coords(x, y, input, output):
             raise Exception("Cannot convert between equatorial coordinates for equinoxes %s and %s" % (equinox_in, equinox_out))
 
     else:
-        raise Exception("Cannot (yet) convert between %s, %s and %s, %s" % (system_in, equinox_in, system_out, equinox_out))
+        raise Exception("Cannot (yet) convert between %s, %s and %s, %s" % (system_in['name'], equinox_in, system_out['name'], equinox_out))
 
     return x, y
 
@@ -365,16 +366,31 @@ def system(wcs):
     ycoord = wcs.ctype_y[0:4]
     equinox = wcs.wcs.equinox
 
-    if xcoord == 'RA--' and ycoord == 'DEC-':
-        system = 'equatorial'
-    elif xcoord == 'GLON' and ycoord == 'GLAT':
-        system = 'galactic'
-    elif xcoord == 'ELON' and ycoord == 'ELAT':
-        system = 'ecliptic'
-    else:
-        system = 'unknown'
+    system = {}
 
-    if system == 'equatorial':
+    if xcoord == 'RA--' and ycoord == 'DEC-':
+        system['name'] = 'equatorial'
+        system['inverted'] = False
+    elif ycoord == 'RA--' and xcoord == 'DEC-':
+        system['name'] = 'equatorial'
+        system['inverted'] = True
+    elif xcoord == 'GLON' and ycoord == 'GLAT':
+        system['name'] = 'galactic'
+        system['inverted'] = False
+    elif ycoord == 'GLON' and xcoord == 'GLAT':
+        system['name'] = 'galactic'
+        system['inverted'] = True
+    elif xcoord == 'ELON' and ycoord == 'ELAT':
+        system['name'] = 'ecliptic'
+        system['inverted'] = False
+    elif ycoord == 'ELON' and xcoord == 'ELAT':
+        system['name'] = 'ecliptic'
+        system['inverted'] = True
+    else:
+        system['name'] = 'unknown'
+        system['inverted'] = False
+
+    if system['name'] == 'equatorial':
         if equinox == '' or np.isnan(equinox) or equinox == 0.:
             print "Warning: cannot determine equinox. Assuming J2000."
             equinox = 'j2000'

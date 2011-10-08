@@ -33,7 +33,7 @@ class TickLabels(object):
 
         # Set default label format
         if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
-            if system == 'equatorial':
+            if system['name'] == 'equatorial':
                 if self._wcs.xaxis_coord_type == 'longitude':
                     self.set_xformat("hh:mm:ss.ss")
                 else:
@@ -44,7 +44,7 @@ class TickLabels(object):
             self.set_xformat('%g')
 
         if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
-            if system == 'equatorial':
+            if system['name'] == 'equatorial':
                 if self._wcs.yaxis_coord_type == 'longitude':
                     self.set_yformat("hh:mm:ss.ss")
                 else:
