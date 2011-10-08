@@ -32,9 +32,9 @@ class TickLabels(object):
         system, equinox, units = wcs_util.system(self._wcs)
 
         # Set default label format
-        if self._ax1.xaxis.coord_type in ['longitude', 'latitude']:
+        if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
             if system == 'equatorial':
-                if self._ax1.xaxis.coord_type == 'longitude':
+                if self._wcs.xaxis_coord_type == 'longitude':
                     self.set_xformat("hh:mm:ss.ss")
                 else:
                     self.set_xformat("dd:mm:ss.s")
@@ -43,9 +43,9 @@ class TickLabels(object):
         else:
             self.set_xformat('%g')
 
-        if self._ax1.yaxis.coord_type in ['longitude', 'latitude']:
+        if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
             if system == 'equatorial':
-                if self._ax1.yaxis.coord_type == 'longitude':
+                if self._wcs.yaxis_coord_type == 'longitude':
                     self.set_yformat("hh:mm:ss.ss")
                 else:
                     self.set_yformat("dd:mm:ss.s")
@@ -286,9 +286,9 @@ class TickLabels(object):
 
             xw, yw = wcs_util.pix2world(self._wcs, x, y)
 
-            if xaxis.coord_type in ['longitude', 'latitude']:
+            if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
 
-                xw = au.Angle(degrees=xw, latitude=xaxis.coord_type == 'latitude')
+                xw = au.Angle(degrees=xw, latitude=self._wcs.xaxis_coord_type == 'latitude')
 
                 hours = 'h' in xaxis.apl_label_form
 
@@ -309,9 +309,9 @@ class TickLabels(object):
 
                 xlabel = "%g" % xw
 
-            if yaxis.coord_type in ['longitude', 'latitude']:
+            if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
 
-                yw = au.Angle(degrees=yw, latitude=yaxis.coord_type == 'latitude')
+                yw = au.Angle(degrees=yw, latitude=self._wcs.yaxis_coord_type == 'latitude')
 
                 if yaxis.apl_labels_style in ['plain', 'latex']:
                     sep = ('d', 'm', 's')
@@ -339,11 +339,12 @@ class WCSFormatter(mpl.Formatter):
     def __init__(self, wcs=False, coord='x'):
         self._wcs = wcs
         self.coord = coord
+        self.coord_type = self._wcs.xaxis_coord_type if coord == 'x' else self._wcs.yaxis_coord_type
 
     def __call__(self, x, pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
 
-        if self.axis.coord_type in ['longitude', 'latitude']:
+        if self.coord_type in ['longitude', 'latitude']:
 
             au._check_format_spacing_consistency(self.axis.apl_label_form, self.axis.apl_tick_spacing)
 

@@ -43,6 +43,31 @@ class WCS(pywcs.WCS):
             # result = result.transpose()
             # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
 
+        # Now guess what 'type' of values are on each axis
+        if self.ctype_x[:4] == 'RA--' or \
+           self.ctype_x[1:4] == 'LON':
+            self.xaxis_coord_type = 'longitude'
+            self.xaxis_coord_type = 'longitude'
+        elif self.ctype_x[:4] == 'DEC-' or \
+           self.ctype_x[1:4] == 'LAT':
+            self.xaxis_coord_type = 'latitude'
+            self.xaxis_coord_type = 'latitude'
+        else:
+            self.xaxis_coord_type = 'scalar'
+            self.xaxis_coord_type = 'scalar'
+
+        if self.ctype_y[:4] == 'RA--' or \
+           self.ctype_y[1:4] == 'LON':
+            self.yaxis_coord_type = 'longitude'
+            self.yaxis_coord_type = 'longitude'
+        elif self.ctype_y[:4] == 'DEC-' or \
+           self.ctype_y[1:4] == 'LAT':
+            self.yaxis_coord_type = 'latitude'
+            self.yaxis_coord_type = 'latitude'
+        else:
+            self.yaxis_coord_type = 'scalar'
+            self.yaxis_coord_type = 'scalar'
+
 
     def __getattr__(self, attribute):
 

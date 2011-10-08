@@ -70,17 +70,17 @@ class Ticks(object):
             self._ax1.xaxis.apl_auto_tick_spacing = False
             self._ax2.xaxis.apl_auto_tick_spacing = False
 
-            if self._ax1.xaxis.coord_type in ['longitude', 'latitude']:
+            if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
                 try:
-                    au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._ax1.xaxis.coord_type == 'latitude'))
+                    au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude'))
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
-                self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._ax1.xaxis.coord_type == 'latitude')
-                self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._ax1.xaxis.coord_type == 'latitude')
+                self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
+                self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
             else:
                 try:
-                    su._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._ax1.xaxis.coord_type == 'latitude'))
+                    su._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude'))
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
@@ -105,17 +105,17 @@ class Ticks(object):
             self._ax1.yaxis.apl_auto_tick_spacing = False
             self._ax2.yaxis.apl_auto_tick_spacing = False
 
-            if self._ax1.yaxis.coord_type in ['longitude', 'latitude']:
+            if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
                 try:
-                    au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=self._ax1.yaxis.coord_type == 'latitude'))
+                    au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
-                self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=self._ax1.yaxis.coord_type == 'latitude')
-                self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=self._ax1.yaxis.coord_type == 'latitude')
+                self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+                self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
             else:
                 try:
-                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=self._ax1.yaxis.coord_type == 'latitude'))
+                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
@@ -227,6 +227,7 @@ class WCSLocator(Locator):
         self.farside = farside
         self.minor = minor
         self.subticks = subticks
+        self.coord_type = self._wcs.xaxis_coord_type if coord == 'x' else self._wcs.yaxis_coord_type
 
     def __call__(self):
 
@@ -236,7 +237,7 @@ class WCSLocator(Locator):
         if self.axis.apl_auto_tick_spacing:
             self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
 
-        if self.axis.coord_type in ['longitude', 'latitude']:
+        if self.coord_type in ['longitude', 'latitude']:
             tick_spacing = self.axis.apl_tick_spacing.todegrees()
         else:
             tick_spacing = self.axis.apl_tick_spacing
@@ -270,8 +271,9 @@ def default_spacing(ax, coord, format):
 
     px, py, wx, wy = axis_positions(wcs, coord, False, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
+    coord_type = wcs.xaxis_coord_type if coord == 'x' else wcs.yaxis_coord_type
+
     if coord == 'x':
-        coord_type = ax.xaxis.coord_type
         if coord_type in ['longitude', 'latitude']:
             wxmin, wxmax = math_util.smart_range(wx)
             if 'd.' in format:
@@ -282,7 +284,6 @@ def default_spacing(ax, coord, format):
             wxmin, wxmax = np.min(wx), np.max(wx)
             spacing = su.smart_round_angle_decimal((wxmax - wxmin) / 5.)
     else:
-        coord_type = ax.yaxis.coord_type
         if coord_type in ['longitude', 'latitude']:
             wymin, wymax = min(wy), max(wy)
             if 'd.' in format:

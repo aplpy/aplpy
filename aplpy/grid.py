@@ -157,7 +157,7 @@ class Grid(object):
         else:
             xspacing = self.x_grid_spacing
 
-        if self.ax.xaxis.coord_type in ['longitude', 'latitude']:
+        if self.wcs.xaxis_coord_type in ['longitude', 'latitude']:
             xspacing = xspacing.todegrees()
 
         if self.y_auto_spacing:
@@ -168,7 +168,7 @@ class Grid(object):
         else:
             yspacing = self.y_grid_spacing
 
-        if self.ax.yaxis.coord_type in ['longitude', 'latitude']:
+        if self.wcs.yaxis_coord_type in ['longitude', 'latitude']:
             yspacing = yspacing.todegrees()
 
         # Find x lines that intersect with axes
