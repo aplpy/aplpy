@@ -8,14 +8,17 @@ def check(header, convention=None, dimensions=[0, 1]):
 
     ctypex = header['CTYPE%i' % ix]
     crvaly = header['CRVAL%i' % iy]
-    crpixy = header['CRPIX%i' % iy]
-    cdelty = header['CDELT%i' % iy]
 
     # Check for CRVAL2!=0 for CAR projection
     if ctypex[4:] == '-CAR' and crvaly != 0:
 
         if convention in ['wells', 'calabretta']:
             if convention == 'wells':
+                try:
+                    crpixy = header['CRPIX%i' % iy]
+                    cdelty = header['CDELT%i' % iy]
+                except:
+                    raise Exception("Need CDELT to be present for wells convention")
                 crpixy = crpixy - crvaly / cdelty
                 header.update('CRPIX%i' % iy, crpixy)
                 header.update('CRVAL%i' % iy, 0.0)
