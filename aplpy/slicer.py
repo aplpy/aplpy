@@ -21,6 +21,9 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
 
     elif len(shape) == 2:
 
+        if dimensions[1] < dimensions[0]:
+            hdu.data = hdu.data.transpose()
+
         return hdu
 
     else:
