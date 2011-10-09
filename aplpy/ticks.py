@@ -341,12 +341,14 @@ def tick_positions_v2(wcs, spacing, axis, coord, farside=False, xmin=False, xmax
     # Check for 360 degree transition, and if encountered,
     # change the values so that there is continuity
 
-    for i in range(0, len(warr)-1):
-        if(abs(warr[i]-warr[i+1])>180.):
-            if(warr[i] > warr[i+1]):
-                warr[i+1:] = warr[i+1:] + 360.
-            else:
-                warr[i+1:] = warr[i+1:] - 360.
+    if (coord == 'x' and wcs.xaxis_coord_type == 'longitude') or \
+       (coord == 'y' and wcs.yaxis_coord_type == 'longitude'):
+        for i in range(0, len(warr)-1):
+            if(abs(warr[i]-warr[i+1])>180.):
+                if(warr[i] > warr[i+1]):
+                    warr[i+1:] = warr[i+1:] + 360.
+                else:
+                    warr[i+1:] = warr[i+1:] - 360.
 
     # Convert warr to units of the spacing, then ticks are at integer values
     warr = warr / spacing
