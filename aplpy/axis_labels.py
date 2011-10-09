@@ -45,18 +45,24 @@ class AxisLabels(object):
 
         elif system['name'] == 'unknown':
 
-            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x is not None else ""
-            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y is not None else ""
+            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
+            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
 
             if len(self._wcs.cname_x) > 0:
                 xtext = self._wcs.cname_x + xunit
             else:
-                xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
+                if self._wcs.ctype_x[4] == '-':
+                    xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
+                else:
+                    xtext = self._wcs.ctype_x + xunit
 
             if len(self._wcs.cname_y) > 0:
                 ytext = self._wcs.cname_y + yunit
             else:
-                ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+                if self._wcs.ctype_y[4] == '-':
+                    ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+                else:
+                    ytext = self._wcs.ctype_y + yunit
 
         if system['inverted']:
             xtext, ytext = ytext, xtext
