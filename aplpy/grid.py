@@ -360,25 +360,25 @@ def find_intersections(wcs, coord, spacing):
     y = []
 
     # Bottom X axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=False)
+    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=False, mode='xy')
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
 
     # Top X axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=True)
+    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=True, mode='xy')
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
 
     # Left Y axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=False)
+    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=False, mode='xy')
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
 
     # Right Y axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=True)
+    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=True, mode='xy')
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])

@@ -245,7 +245,7 @@ class WCSLocator(Locator):
         if self.minor:
             tick_spacing /= float(self.subticks)
 
-        px, py, wx = tick_positions_v2(self._wcs, tick_spacing, self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+        px, py, wx = tick_positions(self._wcs, tick_spacing, self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, mode='xscaled')
         px, py, wx = np.array(px, float), np.array(py, float), np.array(wx, int)
 
         if self.minor:
@@ -329,14 +329,14 @@ def default_spacing(ax, coord, format):
 # Find wx in units of spacing, then search for pixel position of integer wx/spacing
 # To plot labels, convert to an int and multiply by spacing in sexagesimal space
 
-def tick_positions_v2(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False):
+def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False, mode='xscaled'):
 
     (px, py, wx, wy) = axis_positions(wcs, axis, farside, xmin, xmax, ymin, ymax)
 
     if coord=='x':
-        warr = wx
+        warr, walt = wx, wy
     else:
-        warr = wy
+        warr, walt = wy, wx
 
     # Check for 360 degree transition, and if encountered,
     # change the values so that there is continuity
@@ -354,63 +354,45 @@ def tick_positions_v2(wcs, spacing, axis, coord, farside=False, xmin=False, xmax
     warr = warr / spacing
 
     # Create empty arrays for tick positions
-    px_out = []
-    py_out = []
-    warr_out = []
+    iall = []
+    wall = []
 
+    # Loop over ticks which lie in the range covered by the axis
     for w in np.arange(np.floor(min(warr)), np.ceil(max(warr)), 1.):
-        for i in range(len(px)-1):
-            if (warr[i] <= w and warr[i+1] > w) or (warr[i] > w and warr[i+1] <= w):
-                px_out.append(px[i] + (px[i+1]-px[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
-                py_out.append(py[i] + (py[i+1]-py[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
-                warr_out.append(w)
 
+        # Find all the positions at which to interpolate
+        inter = np.where(((warr[:-1] <= w) & (warr[1:] > w)) | ((warr[:-1] > w) & (warr[1:] <= w)))[0]
 
-    return px_out, py_out, warr_out
+        # If there are any intersections, keep the indices, and the position
+        # of the interpolation
+        if len(inter) > 0:
+            iall.append(inter.astype(int))
+            wall.append(np.repeat(w, len(inter)).astype(float))
 
+    if len(iall) > 0:
+        iall = np.hstack(iall)
+        wall = np.hstack(wall)
+    else:
+        if mode == 'xscaled':
+            return [], [], []
+        else:
+            return [], [], [], []
 
-def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False):
+    # Now we can interpolate as needed
+    dwarr = warr[1:] - warr[:-1]
+    px_out = px[:-1][iall] + (px[1:][iall] - px[:-1][iall]) * (wall - warr[:-1][iall]) / dwarr[iall]
+    py_out = py[:-1][iall] + (py[1:][iall] - py[:-1][iall]) * (wall - warr[:-1][iall]) / dwarr[iall]
 
-    (px, py, wx, wy) = axis_positions(wcs, axis, farside, xmin, xmax, ymin, ymax)
-
-    if coord=='y':
-        wx, wy = wy, wx
-
-    # Check for 360 degree transition, and if encountered,
-    # change the values so that there is continuity
-
-    if (coord == 'x' and wcs.xaxis_coord_type == 'longitude') or \
-       (coord == 'y' and wcs.yaxis_coord_type == 'longitude'):
-        for i in range(0, len(wx)-1):
-            if(abs(wx[i]-wx[i+1])>180.):
-                if(wx[i] > wx[i+1]):
-                    wx[i+1:] = wx[i+1:] + 360.
-                else:
-                    wx[i+1:] = wx[i+1:] - 360.
-
-    # Convert wx to units of the spacing, then ticks are at integer values
-    wx = wx / spacing
-
-    # Create empty arrays for tick positions
-    px_out = []
-    py_out = []
-    wx_out = []
-    wy_out = []
-
-    for w in np.arange(np.floor(min(wx)), np.ceil(max(wx)), 1.):
-        for i in range(len(px)-1):
-            if (wx[i] <= w and wx[i+1] > w) or (wx[i] > w and wx[i+1] <= w):
-                px_out.append(px[i] + (px[i+1]-px[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
-                py_out.append(py[i] + (py[i+1]-py[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
-                wx_tick = w * spacing
-                wy_tick = (wy[i] + (wy[i+1]-wy[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
-                wx_out.append(wx_tick)
-                wy_out.append(wy_tick)
-
-    if coord == 'y':
-        wx_out, wy_out = wy_out, wx_out
-
-    return px_out, py_out, wx_out, wy_out
+    if mode == 'xscaled':
+        warr_out = wall
+        return px_out, py_out, warr_out
+    elif mode == 'xy':
+        warr_out = wall * spacing
+        walt_out = walt[:-1][iall] + (walt[1:][iall] - walt[:-1][iall]) * (wall - warr[:-1][iall]) / dwarr[iall]
+        if coord == 'x':
+            return px_out, py_out, warr_out, walt_out
+        else:
+            return px_out, py_out, walt_out, warr_out
 
 ###############################################################
 # axis_positions:  pixel and world positions of all pixels
