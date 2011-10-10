@@ -54,7 +54,6 @@ class Ticks(object):
         lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True, minor=True)
         self._ax2.yaxis.set_minor_locator(lyt)
 
-
     @auto_refresh
     def set_xspacing(self, spacing):
         '''
@@ -107,15 +106,15 @@ class Ticks(object):
 
             if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
                 try:
-                    au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
+                    au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
-                self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
-                self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+                self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+                self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
             else:
                 try:
-                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
+                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
@@ -254,7 +253,7 @@ class WCSLocator(Locator):
 
         self.axis.apl_tick_positions_world = np.array(wx, int)
 
-        if self.coord=='x':
+        if self.coord == 'x':
             self.axis.apl_tick_positions_pix = px
         else:
             self.axis.apl_tick_positions_pix = py
@@ -293,9 +292,9 @@ def default_spacing(ax, coord, format):
             else:
                 wymin, wymax = min(wy), max(wy)
             if 'd.' in format:
-                spacing = au.smart_round_angle_decimal((wymax - wymin)/5., latitude=coord_type == 'latitude')
+                spacing = au.smart_round_angle_decimal((wymax - wymin) / 5., latitude=coord_type == 'latitude')
             else:
-                spacing = au.smart_round_angle_sexagesimal((wymax - wymin)/5., latitude=coord_type == 'latitude', hours='hh' in format)
+                spacing = au.smart_round_angle_sexagesimal((wymax - wymin) / 5., latitude=coord_type == 'latitude', hours='hh' in format)
         else:
             wymin, wymax = np.min(wy), np.max(wy)
             spacing = su.smart_round_angle_decimal((wymax - wymin) / 5.)
@@ -315,25 +314,44 @@ def default_spacing(ax, coord, format):
             return spacing
 
 
-###############################################################
-# find_ticks:      Find positions of ticks along a given axis
-#                  axes. This function takes one argument:
-#
-#             wcs: wcs header of FITS file (pywcs class)
-#
-#                  the function returns:
-#     x_min, x_max: range of x values along all axes
-#     y_min, y_max: range of y values along all axes
-###############################################################
+def tick_positions(wcs, spacing, axis, coord, farside=False,
+                   xmin=False, xmax=False, ymin=False, ymax=False,
+                   mode='xscaled'):
+    '''
+    Find positions of ticks along a given axis.
 
-# Find wx in units of spacing, then search for pixel position of integer wx/spacing
-# To plot labels, convert to an int and multiply by spacing in sexagesimal space
+    Required arguments
 
-def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False, mode='xscaled'):
+        *wcs*: [ wcs_util.WCS instance ]
+            The WCS instance for the image.
+
+        *spacing*: [ float ]
+            The spacing along the axis.
+
+        *axis*: [ 'x' or 'y' ]
+            The axis along which we are looking for ticks.
+
+        *coord*: [ 'x' or 'y' ]
+            The coordinate for which we are looking for ticks.
+
+    Optional keyword arguments
+
+        *farside*: [ bool ]
+            Whether we are looking on the left or bottom axes (False) or the
+            right or top axes (True).
+
+        *xmin, xmax, ymin, ymax*: [ float ]
+            The range of pixel values covered by the image.
+
+        *mode*: [ 'xy' or 'xscaled' ]
+            If set to 'xy' the function returns the world coordinates of the
+            ticks. If 'xscaled', then only the coordinate requested is
+            returned, in units of the tick spacing.
+    '''
 
     (px, py, wx, wy) = axis_positions(wcs, axis, farside, xmin, xmax, ymin, ymax)
 
-    if coord=='x':
+    if coord == 'x':
         warr, walt = wx, wy
     else:
         warr, walt = wy, wx
@@ -343,12 +361,12 @@ def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=Fa
 
     if (coord == 'x' and wcs.xaxis_coord_type == 'longitude') or \
        (coord == 'y' and wcs.yaxis_coord_type == 'longitude'):
-        for i in range(0, len(warr)-1):
-            if(abs(warr[i]-warr[i+1])>180.):
-                if(warr[i] > warr[i+1]):
-                    warr[i+1:] = warr[i+1:] + 360.
+        for i in range(0, len(warr) - 1):
+            if(abs(warr[i] - warr[i + 1]) > 180.):
+                if(warr[i] > warr[i + 1]):
+                    warr[i + 1:] = warr[i + 1:] + 360.
                 else:
-                    warr[i+1:] = warr[i+1:] - 360.
+                    warr[i + 1:] = warr[i + 1:] - 360.
 
     # Convert warr to units of the spacing, then ticks are at integer values
     warr = warr / spacing
@@ -394,38 +412,44 @@ def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=Fa
         else:
             return px_out, py_out, walt_out, warr_out
 
-###############################################################
-# axis_positions:  pixel and world positions of all pixels
-#                  along a given axis. This function takes
-#                  three arguments:
-#
-#             wcs: wcs header of FITS file (pywcs class)
-#            axis: x or y axis
-#         farside: if true, use top instead of bottom
-#                  axis, or right instead of left.
-#
-#                  the function returns:
-#     x_pix, y_pix: pixel coordinates of pixels along axis
-# x_world, y_world: world coordinates of pixels along axis
-###############################################################
 
-def axis_positions(wcs, axis, farside, xmin=False, xmax=False, ymin=False, \
-    ymax=False):
+def axis_positions(wcs, axis, farside, xmin=False, xmax=False,
+                                       ymin=False, ymax=False):
+    '''
+    Find the world coordinates of all pixels along an axis.
+
+    Required arguments
+
+       *wcs*: [ wcs_util.WCS instance ]
+           The WCS instance for the image.
+
+       *axis*: [ 'x' or 'y' ]
+           The axis along which we are computing world coordinates.
+
+    Optional keyword arguments
+
+       *farside*: [ bool ]
+           Whether we are looking on the left or bottom axes (False) or the
+           right or top axes (True).
+
+       *xmin, xmax, ymin, ymax*: [ float ]
+           The range of pixel values covered by the image
+    '''
 
     if not xmin:
         xmin = 0.5
     if not xmax:
-        xmax = 0.5+wcs.nx
+        xmax = 0.5 + wcs.nx
     if not ymin:
         ymin = 0.5
     if not ymax:
-        ymax = 0.5+wcs.ny
+        ymax = 0.5 + wcs.ny
 
     # Check options
-    assert axis=='x' or axis=='y', "The axis= argument should be set to x or y"
+    assert axis == 'x' or axis == 'y', "The axis= argument should be set to x or y"
 
     # Generate an array of pixel values for the x-axis
-    if axis=='x':
+    if axis == 'x':
         x_pix = math_util.arange2(xmin, xmax, 1.)
         y_pix = np.ones(np.shape(x_pix))
         if(farside):
@@ -445,18 +469,16 @@ def axis_positions(wcs, axis, farside, xmin=False, xmax=False, ymin=False, \
 
     return x_pix, y_pix, x_world, y_world
 
-###############################################################
-# coord_range:     Range of coordinates that intersect the
-#                  axes. This function takes one argument:
-#
-#             wcs: wcs header of FITS file (pywcs class)
-#
-#                  the function returns:
-#     x_min, x_max: range of x values along all axes
-#     y_min, y_max: range of y values along all axes
-###############################################################
 
 def coord_range(wcs):
+    '''
+    Find the range of coordinates that intersect the axes.
+
+    Required arguments
+
+        *wcs*: [ wcs_util.WCS instance ]
+            The WCS instance for the image.
+    '''
 
     x_pix, y_pix, x_world_1, y_world_1 = axis_positions(wcs, 'x', farside=False)
     x_pix, y_pix, x_world_2, y_world_2 = axis_positions(wcs, 'x', farside=True)
