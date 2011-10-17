@@ -301,7 +301,7 @@ def default_spacing(ax, coord, format):
 
     # Find minimum spacing allowed by labels
     if coord_type in ['longitude', 'latitude']:
-        min_spacing = au._get_label_precision(format)
+        min_spacing = au._get_label_precision(format, latitude=coord_type == 'latitude')
         if min_spacing.todegrees() > spacing.todegrees():
             return min_spacing
         else:
