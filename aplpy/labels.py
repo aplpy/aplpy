@@ -313,6 +313,11 @@ class TickLabels(object):
 
                 yw = au.Angle(degrees=yw, latitude=self._wcs.yaxis_coord_type == 'latitude')
 
+                hours = 'h' in yaxis.apl_label_form
+
+                if hours:
+                    yw = yw.tohours()
+
                 if yaxis.apl_labels_style in ['plain', 'latex']:
                     sep = ('d', 'm', 's')
                     if hours:
