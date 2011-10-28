@@ -88,7 +88,8 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def __init__(self, data, hdu=0, figure=None, subplot=None,
                  downsample=False, north=False, convention=None,
-                 dimensions=[0, 1], slices=[], auto_refresh=True, **kwargs):
+                 dimensions=[0, 1], slices=[], auto_refresh=True,
+                 **kwargs):
         '''
         Create a FITSFigure instance
 
@@ -412,7 +413,8 @@ class FITSFigure(Layers, Regions, Deprecated):
     def show_grayscale(self, vmin=None, vmid=None, vmax=None,
                             pmin=0.25, pmax=99.75,
                             stretch='linear', exponent=2, invert='default',
-                            smooth=None, kernel='gauss', interpolation='nearest'):
+                            smooth=None, kernel='gauss', aspect='equal',
+                            interpolation='nearest'):
         '''
         Show a grayscale image of the FITS file
 
@@ -463,6 +465,11 @@ class FITSFigure(Layers, Regions, Deprecated):
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
 
+            *aspect*: ['auto', 'equal']
+                Whether to change the aspect ratio of the image to match that
+                of the axes ('auto') or to change the aspect ratio of the axes
+                to match that of the data ('equal'; default)
+
             *interpolation*: [ string ]
                 The type of interpolation to use for the image. The default is
                 'nearest'. Other options include 'none' (no interpolation,
@@ -480,7 +487,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             cmap = 'gray'
 
-        self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax, stretch=stretch, exponent=exponent, cmap=cmap, pmin=pmin, pmax=pmax, smooth=smooth, kernel=kernel, interpolation=interpolation)
+        self.show_colorscale(vmin=vmin, vmid=vmid, vmax=vmax,
+                             pmin=pmin, pmax=pmax,
+                             stretch=stretch, exponent=exponent, cmap=cmap,
+                             smooth=smooth, kernel=kernel, aspect=aspect,
+                             interpolation=interpolation)
 
     @auto_refresh
     def hide_grayscale(self, *args, **kwargs):
@@ -489,7 +500,9 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_colorscale(self, vmin=None, vmid=None, vmax=None, \
                              pmin=0.25, pmax=99.75,
-                             stretch='linear', exponent=2, cmap='default', smooth=None, kernel='gauss', interpolation='nearest'):
+                             stretch='linear', exponent=2, cmap='default',
+                             smooth=None, kernel='gauss', aspect='equal',
+                             interpolation='nearest'):
         '''
         Show a colorscale image of the FITS file
 
@@ -537,6 +550,11 @@ class FITSFigure(Layers, Regions, Deprecated):
                 Default kernel used for smoothing is 'gauss'. The user can
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
+
+            *aspect*: ['auto', 'equal']
+                Whether to change the aspect ratio of the image to match that
+                of the axes ('auto') or to change the aspect ratio of the axes
+                to match that of the data ('equal'; default)
 
             *interpolation*: [ string ]
                 The type of interpolation to use for the image. The default is
@@ -587,9 +605,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.set_cmap(cmap=cmap)
             self.image.origin = 'lower'
             self.image.set_interpolation(interpolation)
-            self.image.set_data(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel))
+            self.image.set_data(convolve_util.convolve(self._hdu.data,
+                                                       smooth=smooth,
+                                                       kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer, aspect=aspect)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
