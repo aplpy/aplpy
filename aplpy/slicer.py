@@ -62,8 +62,9 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
             for i in range(1, len(shape) + 1):
 
                 message += " " * 10
-                message += " %s %i\n" % (hdu.header["CTYPE%i" % i],
-                                         hdu.header["NAXIS%i" % i])
+                message += " %i %s %i\n" % (i - 1,
+                                            hdu.header["CTYPE%i" % i],
+                                            hdu.header["NAXIS%i" % i])
 
             raise Exception(message)
 
