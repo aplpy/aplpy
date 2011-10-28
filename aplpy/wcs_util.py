@@ -17,6 +17,9 @@ class WCS(pywcs.WCS):
 
         pywcs.WCS.__init__(self, *args, **kwargs)
 
+        # Fix common non-standard units
+        self.wcs.unitfix()
+
         # Now find the values of the coordinates in the slices - only needed if
         # data has more than two dimensions
         if len(self._slices) > 0:
