@@ -749,6 +749,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
             convention=convention, dimensions=dimensions, slices=slices)
+        wcs_contour.nx = hdu_contour.header['NAXIS%i' % (dimensions[0] + 1)]
+        wcs_contour.ny = hdu_contour.header['NAXIS%i' % (dimensions[1] + 1)]
 
         image_contour = convolve_util.convolve(hdu_contour.data, smooth=smooth, kernel=kernel)
         extent_contour = (0.5, wcs_contour.nx + 0.5, 0.5, wcs_contour.ny + 0.5)
