@@ -51,7 +51,7 @@ class AxisLabels(object):
             if len(self._wcs.cname_x) > 0:
                 xtext = self._wcs.cname_x + xunit
             else:
-                if self._wcs.ctype_x[4] == '-':
+                if len(self._wcs.ctype_x) == 8 and self._wcs.ctype_x[4] == '-':
                     xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
                 else:
                     xtext = self._wcs.ctype_x + xunit
@@ -59,7 +59,7 @@ class AxisLabels(object):
             if len(self._wcs.cname_y) > 0:
                 ytext = self._wcs.cname_y + yunit
             else:
-                if self._wcs.ctype_y[4] == '-':
+                if len(self._wcs.ctype_y) == 8 and self._wcs.ctype_y[4] == '-':
                     ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
                 else:
                     ytext = self._wcs.ctype_y + yunit
