@@ -140,7 +140,7 @@ class APLpyNormalize(Normalize):
 
             # Now set previously negative values to 0, as these are
             # different from true NaN values in the FITS image
-            result[negative] = 0.
+            result[negative] = -np.inf
 
         if vtype == 'scalar':
             result = result[0]
