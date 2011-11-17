@@ -344,6 +344,32 @@ class FITSFigure(Layers, Regions, Deprecated):
         return hdu, wcs
 
     @auto_refresh
+    def set_xaxis_coord_type(self, coord_type):
+        '''
+        Set the type of x coordinate.
+
+        Options are:
+
+        * ``scalar``: treat the values are normal decimal scalar values
+        * ``longitude``: treat the values as a longitude in the 0 to 360 range
+        * ``latitude``: treat the values as a latitude in the -90 to 90 range
+        '''
+        self._wcs.set_xaxis_coord_type(coord_type)
+
+    @auto_refresh
+    def set_yaxis_coord_type(self, coord_type):
+        '''
+        Set the type of y coordinate.
+
+        Options are:
+
+        * ``scalar``: treat the values are normal decimal scalar values
+        * ``longitude``: treat the values as a longitude in the 0 to 360 range
+        * ``latitude``: treat the values as a latitude in the -90 to 90 range
+        '''
+        self._wcs.set_yaxis_coord_type(coord_type)
+
+    @auto_refresh
     def set_system_latex(self, usetex):
         '''
         Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX

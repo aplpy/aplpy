@@ -226,9 +226,10 @@ class WCSLocator(Locator):
         self.farside = farside
         self.minor = minor
         self.subticks = subticks
-        self.coord_type = self._wcs.xaxis_coord_type if coord == 'x' else self._wcs.yaxis_coord_type
 
     def __call__(self):
+
+        self.coord_type = self._wcs.xaxis_coord_type if self.coord == 'x' else self._wcs.yaxis_coord_type
 
         ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()

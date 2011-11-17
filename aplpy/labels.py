@@ -344,10 +344,11 @@ class WCSFormatter(mpl.Formatter):
     def __init__(self, wcs=False, coord='x'):
         self._wcs = wcs
         self.coord = coord
-        self.coord_type = self._wcs.xaxis_coord_type if coord == 'x' else self._wcs.yaxis_coord_type
 
     def __call__(self, x, pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
+
+        self.coord_type = self._wcs.xaxis_coord_type if self.coord == 'x' else self._wcs.yaxis_coord_type
 
         if self.coord_type in ['longitude', 'latitude']:
 
