@@ -263,7 +263,7 @@ class WCSLocator(Locator):
 
 def default_spacing(ax, coord, format):
 
-    wcs = ax.apl_wcs
+    wcs = ax._wcs
 
     xmin, xmax = ax.xaxis.get_view_interval()
     ymin, ymax = ax.yaxis.get_view_interval()

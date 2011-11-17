@@ -245,8 +245,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._ax2.yaxis.set_zorder(2.5)
 
         # Store WCS in axes
-        self._ax1.apl_wcs = self._wcs
-        self._ax2.apl_wcs = self._wcs
+        self._ax1._wcs = self._wcs
+        self._ax2._wcs = self._wcs
 
         self.set_auto_refresh(auto_refresh)
 
