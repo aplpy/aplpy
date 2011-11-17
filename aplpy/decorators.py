@@ -1,5 +1,8 @@
+from __future__ import absolute_import
+
 import threading
-from decorator import decorator
+
+from aplpy.decorator import decorator
 
 
 mydata = threading.local()

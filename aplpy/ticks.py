@@ -1,10 +1,15 @@
+from __future__ import absolute_import
+
 import warnings
+
 import numpy as np
 from matplotlib.pyplot import Locator
-import wcs_util
-import angle_util as au
-import math_util
-from decorators import auto_refresh
+
+import aplpy.wcs_util as wcs_util
+import aplpy.angle_util as au
+import aplpy.scalar_util as su
+import aplpy.math_util as math_util
+from aplpy.decorators import auto_refresh
 
 
 class Ticks(object):
@@ -49,7 +54,6 @@ class Ticks(object):
         lyt = WCSLocator(wcs=self._wcs, coord='y', farside=True, minor=True)
         self._ax2.yaxis.set_minor_locator(lyt)
 
-
     @auto_refresh
     def set_xspacing(self, spacing):
         '''
@@ -61,15 +65,26 @@ class Ticks(object):
             self._ax1.xaxis.apl_auto_tick_spacing = True
             self._ax2.xaxis.apl_auto_tick_spacing = True
         else:
-            try:
-                au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees = spacing, latitude=False))
-            except au.InconsistentSpacing:
-                warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                return
+
             self._ax1.xaxis.apl_auto_tick_spacing = False
             self._ax2.xaxis.apl_auto_tick_spacing = False
-            self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
-            self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=False)
+
+            if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
+                try:
+                    au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude'))
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
+                self._ax1.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
+                self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
+            else:
+                try:
+                    su._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude'))
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
+                self._ax1.xaxis.apl_tick_spacing = spacing
+                self._ax2.xaxis.apl_tick_spacing = spacing
 
         if hasattr(self._parent, 'grid'):
             self._parent.grid._update()
@@ -85,15 +100,26 @@ class Ticks(object):
             self._ax1.yaxis.apl_auto_tick_spacing = True
             self._ax2.yaxis.apl_auto_tick_spacing = True
         else:
-            try:
-                au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees = spacing, latitude=True))
-            except au.InconsistentSpacing:
-                warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                return
+
             self._ax1.yaxis.apl_auto_tick_spacing = False
             self._ax2.yaxis.apl_auto_tick_spacing = False
-            self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
-            self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees = spacing, latitude=True)
+
+            if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
+                try:
+                    au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
+                self._ax1.yaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+                self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+            else:
+                try:
+                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
+                self._ax1.yaxis.apl_tick_spacing = spacing
+                self._ax2.yaxis.apl_tick_spacing = spacing
 
         if hasattr(self._parent, 'grid'):
             self._parent.grid._update()
@@ -187,6 +213,7 @@ class Ticks(object):
         self._ax2.xaxis.get_minor_locator().subticks = frequency
         self._ax2.yaxis.get_minor_locator().subticks = frequency
 
+
 class WCSLocator(Locator):
 
     def __init__(self, presets=None, wcs=False, coord='x', farside=False, minor=False, subticks=5):
@@ -202,23 +229,32 @@ class WCSLocator(Locator):
 
     def __call__(self):
 
+        self.coord_type = self._wcs.xaxis_coord_type if self.coord == 'x' else self._wcs.yaxis_coord_type
+
         ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
         xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
 
         if self.axis.apl_auto_tick_spacing:
             self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
 
+        if self.coord_type in ['longitude', 'latitude']:
+            tick_spacing = self.axis.apl_tick_spacing.todegrees()
+        else:
+            tick_spacing = self.axis.apl_tick_spacing
+
         if self.minor:
-            px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees() / float(self.subticks), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
-            px, py, wx = np.array(px, float), np.array(py, float), np.array(wx, int)
+            tick_spacing /= float(self.subticks)
+
+        px, py, wx = tick_positions(self._wcs, tick_spacing, self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, mode='xscaled')
+        px, py, wx = np.array(px, float), np.array(py, float), np.array(wx, int)
+
+        if self.minor:
             keep = np.mod(wx, self.subticks) > 0
             px, py, wx = px[keep], py[keep], wx[keep] / float(self.subticks)
-        else:
-            px, py, wx = tick_positions_v2(self._wcs, self.axis.apl_tick_spacing.todegrees(), self.coord, self.coord, farside=self.farside, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
         self.axis.apl_tick_positions_world = np.array(wx, int)
 
-        if self.coord=='x':
+        if self.coord == 'x':
             self.axis.apl_tick_positions_pix = px
         else:
             self.axis.apl_tick_positions_pix = py
@@ -228,163 +264,193 @@ class WCSLocator(Locator):
 
 def default_spacing(ax, coord, format):
 
-    wcs = ax.apl_wcs
+    wcs = ax._wcs
 
     xmin, xmax = ax.xaxis.get_view_interval()
     ymin, ymax = ax.yaxis.get_view_interval()
 
     px, py, wx, wy = axis_positions(wcs, coord, False, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
+    coord_type = wcs.xaxis_coord_type if coord == 'x' else wcs.yaxis_coord_type
+
     if coord == 'x':
-        wxmin, wxmax = math_util.smart_range(wx)
-        if 'd.' in format:
-            spacing = au.smart_round_angle_decimal((wxmax-wxmin)/5., latitude=False)
+        if coord_type in ['longitude', 'latitude']:
+            if coord_type == 'longitude':
+                wxmin, wxmax = math_util.smart_range(wx)
+            else:
+                wxmin, wxmax = min(wx), max(wx)
+            if 'd.' in format:
+                spacing = au.smart_round_angle_decimal((wxmax - wxmin) / 5., latitude=coord_type == 'latitude')
+            else:
+                spacing = au.smart_round_angle_sexagesimal((wxmax - wxmin) / 5., latitude=coord_type == 'latitude', hours='hh' in format)
         else:
-            spacing = au.smart_round_angle_sexagesimal((wxmax-wxmin)/5., latitude=False, hours='hh' in format)
+            wxmin, wxmax = np.min(wx), np.max(wx)
+            spacing = su.smart_round_angle_decimal((wxmax - wxmin) / 5.)
     else:
-        wymin, wymax = min(wy), max(wy)
-        if 'd.' in format:
-            spacing = au.smart_round_angle_decimal((wymax-wymin)/5., latitude=True)
+        if coord_type in ['longitude', 'latitude']:
+            if coord_type == 'longitude':
+                wymin, wymax = math_util.smart_range(wy)
+            else:
+                wymin, wymax = min(wy), max(wy)
+            if 'd.' in format:
+                spacing = au.smart_round_angle_decimal((wymax - wymin) / 5., latitude=coord_type == 'latitude')
+            else:
+                spacing = au.smart_round_angle_sexagesimal((wymax - wymin) / 5., latitude=coord_type == 'latitude', hours='hh' in format)
         else:
-            spacing = au.smart_round_angle_sexagesimal((wymax-wymin)/5., latitude=True, hours='hh' in format)
+            wymin, wymax = np.min(wy), np.max(wy)
+            spacing = su.smart_round_angle_decimal((wymax - wymin) / 5.)
 
     # Find minimum spacing allowed by labels
-    min_spacing = au._get_label_precision(format)
-
-    if min_spacing.todegrees() > spacing.todegrees():
-        return min_spacing
+    if coord_type in ['longitude', 'latitude']:
+        min_spacing = au._get_label_precision(format, latitude=coord_type == 'latitude')
+        if min_spacing.todegrees() > spacing.todegrees():
+            return min_spacing
+        else:
+            return spacing
     else:
-        return spacing
+        min_spacing = su._get_label_precision(format)
+        if min_spacing > spacing:
+            return min_spacing
+        else:
+            return spacing
 
-###############################################################
-# find_ticks:      Find positions of ticks along a given axis
-#                  axes. This function takes one argument:
-#
-#             wcs: wcs header of FITS file (pywcs class)
-#
-#                  the function returns:
-#     x_min, x_max: range of x values along all axes
-#     y_min, y_max: range of y values along all axes
-###############################################################
 
-# Find wx in units of spacing, then search for pixel position of integer wx/spacing
-# To plot labels, convert to an int and multiply by spacing in sexagesimal space
+def tick_positions(wcs, spacing, axis, coord, farside=False,
+                   xmin=False, xmax=False, ymin=False, ymax=False,
+                   mode='xscaled'):
+    '''
+    Find positions of ticks along a given axis.
 
-def tick_positions_v2(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False):
+    Required arguments
+
+        *wcs*: [ wcs_util.WCS instance ]
+            The WCS instance for the image.
+
+        *spacing*: [ float ]
+            The spacing along the axis.
+
+        *axis*: [ 'x' or 'y' ]
+            The axis along which we are looking for ticks.
+
+        *coord*: [ 'x' or 'y' ]
+            The coordinate for which we are looking for ticks.
+
+    Optional keyword arguments
+
+        *farside*: [ bool ]
+            Whether we are looking on the left or bottom axes (False) or the
+            right or top axes (True).
+
+        *xmin, xmax, ymin, ymax*: [ float ]
+            The range of pixel values covered by the image.
+
+        *mode*: [ 'xy' or 'xscaled' ]
+            If set to 'xy' the function returns the world coordinates of the
+            ticks. If 'xscaled', then only the coordinate requested is
+            returned, in units of the tick spacing.
+    '''
 
     (px, py, wx, wy) = axis_positions(wcs, axis, farside, xmin, xmax, ymin, ymax)
 
-    if coord=='x':
-        warr = wx
+    if coord == 'x':
+        warr, walt = wx, wy
     else:
-        warr = wy
+        warr, walt = wy, wx
 
     # Check for 360 degree transition, and if encountered,
     # change the values so that there is continuity
 
-    for i in range(0, len(warr)-1):
-        if(abs(warr[i]-warr[i+1])>180.):
-            if(warr[i] > warr[i+1]):
-                warr[i+1:] = warr[i+1:] + 360.
-            else:
-                warr[i+1:] = warr[i+1:] - 360.
+    if (coord == 'x' and wcs.xaxis_coord_type == 'longitude') or \
+       (coord == 'y' and wcs.yaxis_coord_type == 'longitude'):
+        for i in range(0, len(warr) - 1):
+            if(abs(warr[i] - warr[i + 1]) > 180.):
+                if(warr[i] > warr[i + 1]):
+                    warr[i + 1:] = warr[i + 1:] + 360.
+                else:
+                    warr[i + 1:] = warr[i + 1:] - 360.
 
     # Convert warr to units of the spacing, then ticks are at integer values
     warr = warr / spacing
 
     # Create empty arrays for tick positions
-    px_out = []
-    py_out = []
-    warr_out = []
+    iall = []
+    wall = []
 
+    # Loop over ticks which lie in the range covered by the axis
     for w in np.arange(np.floor(min(warr)), np.ceil(max(warr)), 1.):
-        for i in range(len(px)-1):
-            if (warr[i] <= w and warr[i+1] > w) or (warr[i] > w and warr[i+1] <= w):
-                px_out.append(px[i] + (px[i+1]-px[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
-                py_out.append(py[i] + (py[i+1]-py[i]) * (w - warr[i]) / (warr[i+1]-warr[i]))
-                warr_out.append(w)
+
+        # Find all the positions at which to interpolate
+        inter = np.where(((warr[:-1] <= w) & (warr[1:] > w)) | ((warr[:-1] > w) & (warr[1:] <= w)))[0]
+
+        # If there are any intersections, keep the indices, and the position
+        # of the interpolation
+        if len(inter) > 0:
+            iall.append(inter.astype(int))
+            wall.append(np.repeat(w, len(inter)).astype(float))
+
+    if len(iall) > 0:
+        iall = np.hstack(iall)
+        wall = np.hstack(wall)
+    else:
+        if mode == 'xscaled':
+            return [], [], []
+        else:
+            return [], [], [], []
+
+    # Now we can interpolate as needed
+    dwarr = warr[1:] - warr[:-1]
+    px_out = px[:-1][iall] + (px[1:][iall] - px[:-1][iall]) * (wall - warr[:-1][iall]) / dwarr[iall]
+    py_out = py[:-1][iall] + (py[1:][iall] - py[:-1][iall]) * (wall - warr[:-1][iall]) / dwarr[iall]
+
+    if mode == 'xscaled':
+        warr_out = wall
+        return px_out, py_out, warr_out
+    elif mode == 'xy':
+        warr_out = wall * spacing
+        walt_out = walt[:-1][iall] + (walt[1:][iall] - walt[:-1][iall]) * (wall - warr[:-1][iall]) / dwarr[iall]
+        if coord == 'x':
+            return px_out, py_out, warr_out, walt_out
+        else:
+            return px_out, py_out, walt_out, warr_out
 
 
-    return px_out, py_out, warr_out
+def axis_positions(wcs, axis, farside, xmin=False, xmax=False,
+                                       ymin=False, ymax=False):
+    '''
+    Find the world coordinates of all pixels along an axis.
 
+    Required arguments
 
-def tick_positions(wcs, spacing, axis, coord, farside=False, xmin=False, xmax=False, ymin=False, ymax=False):
+       *wcs*: [ wcs_util.WCS instance ]
+           The WCS instance for the image.
 
-    (px, py, wx, wy) = axis_positions(wcs, axis, farside, xmin, xmax, ymin, ymax)
+       *axis*: [ 'x' or 'y' ]
+           The axis along which we are computing world coordinates.
 
-    if coord=='y':
-        wx, wy = wy, wx
+    Optional keyword arguments
 
-    # Check for 360 degree transition, and if encountered,
-    # change the values so that there is continuity
+       *farside*: [ bool ]
+           Whether we are looking on the left or bottom axes (False) or the
+           right or top axes (True).
 
-    for i in range(0, len(wx)-1):
-        if(abs(wx[i]-wx[i+1])>180.):
-            if(wx[i] > wx[i+1]):
-                wx[i+1:] = wx[i+1:] + 360.
-            else:
-                wx[i+1:] = wx[i+1:] - 360.
-
-    # Convert wx to units of the spacing, then ticks are at integer values
-    wx = wx / spacing
-
-    # Create empty arrays for tick positions
-    px_out = []
-    py_out = []
-    wx_out = []
-    wy_out = []
-
-    for w in np.arange(np.floor(min(wx)), np.ceil(max(wx)), 1.):
-        for i in range(len(px)-1):
-            if (wx[i] <= w and wx[i+1] > w) or (wx[i] > w and wx[i+1] <= w):
-                px_out.append(px[i] + (px[i+1]-px[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
-                py_out.append(py[i] + (py[i+1]-py[i]) * (w - wx[i]) / (wx[i+1]-wx[i]))
-                wx_tick = w*spacing % 360.
-                wy_tick = (wy[i] + (wy[i+1]-wy[i]) * (w - wx[i]) / (wx[i+1]-wx[i])) % 360
-                wx_out.append(wx_tick)
-                wy_out.append(wy_tick)
-
-    if coord=='y':
-        wx_out, wy_out = wy_out, wx_out
-
-    for i in range(0, np.size(wy_out)):
-        if wy_out[i] > 90.:
-            wy_out[i] = wy_out[i] - 360.
-
-    return px_out, py_out, wx_out, wy_out
-
-###############################################################
-# axis_positions:  pixel and world positions of all pixels
-#                  along a given axis. This function takes
-#                  three arguments:
-#
-#             wcs: wcs header of FITS file (pywcs class)
-#            axis: x or y axis
-#         farside: if true, use top instead of bottom
-#                  axis, or right instead of left.
-#
-#                  the function returns:
-#     x_pix, y_pix: pixel coordinates of pixels along axis
-# x_world, y_world: world coordinates of pixels along axis
-###############################################################
-
-def axis_positions(wcs, axis, farside, xmin=False, xmax=False, ymin=False, \
-    ymax=False):
+       *xmin, xmax, ymin, ymax*: [ float ]
+           The range of pixel values covered by the image
+    '''
 
     if not xmin:
         xmin = 0.5
     if not xmax:
-        xmax = 0.5+wcs.naxis1
+        xmax = 0.5 + wcs.nx
     if not ymin:
         ymin = 0.5
     if not ymax:
-        ymax = 0.5+wcs.naxis2
+        ymax = 0.5 + wcs.ny
 
     # Check options
-    assert axis=='x' or axis=='y', "The axis= argument should be set to x or y"
+    assert axis == 'x' or axis == 'y', "The axis= argument should be set to x or y"
 
     # Generate an array of pixel values for the x-axis
-    if axis=='x':
+    if axis == 'x':
         x_pix = math_util.arange2(xmin, xmax, 1.)
         y_pix = np.ones(np.shape(x_pix))
         if(farside):
@@ -404,18 +470,16 @@ def axis_positions(wcs, axis, farside, xmin=False, xmax=False, ymin=False, \
 
     return x_pix, y_pix, x_world, y_world
 
-###############################################################
-# coord_range:     Range of coordinates that intersect the
-#                  axes. This function takes one argument:
-#
-#             wcs: wcs header of FITS file (pywcs class)
-#
-#                  the function returns:
-#     x_min, x_max: range of x values along all axes
-#     y_min, y_max: range of y values along all axes
-###############################################################
 
 def coord_range(wcs):
+    '''
+    Find the range of coordinates that intersect the axes.
+
+    Required arguments
+
+        *wcs*: [ wcs_util.WCS instance ]
+            The WCS instance for the image.
+    '''
 
     x_pix, y_pix, x_world_1, y_world_1 = axis_positions(wcs, 'x', farside=False)
     x_pix, y_pix, x_world_2, y_world_2 = axis_positions(wcs, 'x', farside=True)

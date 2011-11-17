@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import math
 import struct
 
 import numpy as np
-import math_util
+import aplpy.math_util as math_util
 
 
 def almost_equal(a, b):
@@ -328,23 +330,23 @@ def smart_round_angle_decimal(x, latitude=False):
     return a
 
 
-def _get_label_precision(format):
+def _get_label_precision(format, latitude=False):
 
     # Find base spacing
     if "mm" in format:
         if "ss" in format:
             if "ss.s" in format:
                 n_decimal = len(format.split('.')[1])
-                label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)))
+                label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)), latitude=latitude)
             else:
-                label_spacing = Angle(sexagesimal=(0, 0, 1))
+                label_spacing = Angle(sexagesimal=(0, 0, 1), latitude=latitude)
         else:
-            label_spacing = Angle(sexagesimal=(0, 1, 0))
+            label_spacing = Angle(sexagesimal=(0, 1, 0), latitude=latitude)
     elif "." in format:
         ns = len(format.split('.')[1])
-        label_spacing = Angle(degrees=10**(-ns))
+        label_spacing = Angle(degrees=10**(-ns), latitude=latitude)
     else:
-        label_spacing = Angle(sexagesimal=(1, 0, 0))
+        label_spacing = Angle(sexagesimal=(1, 0, 0), latitude=latitude)
 
     # Check if hours are used instead of degrees
     if "hh" in format:

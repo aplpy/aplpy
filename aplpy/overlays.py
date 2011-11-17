@@ -1,15 +1,16 @@
+from __future__ import absolute_import
+
 import warnings
 
 from mpl_toolkits.axes_grid.anchored_artists \
     import AnchoredEllipse, AnchoredSizeBar
 
+import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
-import wcs_util
 
-import numpy as np
-
-from decorators import auto_refresh
+import aplpy.wcs_util as wcs_util
+from aplpy.decorators import auto_refresh
 
 corners = {}
 corners['top right'] = 1
@@ -244,7 +245,7 @@ class ScaleBar(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set where to place the scalebar. Acceptable values are 'left','right',
+        Set where to place the scalebar. Acceptable values are 'left', 'right',
         'top', 'bottom', 'top left', 'top right', 'bottom left' (default), and
         'bottom right'.
         '''
@@ -438,7 +439,7 @@ class Beam(object):
                 BPA if present) in the anticlockwise direction.
 
             *corner*: [ integer ]
-                The beam location. Acceptable values are 'left','right',
+                The beam location. Acceptable values are 'left', 'right',
                 'top', 'bottom', 'top left', 'top right', 'bottom left'
                 (default), and 'bottom right'.
 
@@ -534,7 +535,7 @@ class Beam(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set the beam location. Acceptable values are 'left','right', 'top',
+        Set the beam location. Acceptable values are 'left', 'right', 'top',
         'bottom', 'top left', 'top right', 'bottom left' (default), and
         'bottom right'.
         '''

@@ -1,13 +1,17 @@
+from __future__ import absolute_import
+
 import operator
 
 
-def slice(hdu, slices=[]):
+def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
     '''
     Extract a slice from an n-dimensional FITS HDU, and return an HDU
     '''
 
     if type(slices) == int:
         slices = (slices, )
+    else:
+        slices = slices[:]
 
     shape = hdu.data.shape
 
@@ -17,48 +21,51 @@ def slice(hdu, slices=[]):
 
     elif len(shape) == 2:
 
+        if dimensions[1] < dimensions[0]:
+            hdu.data = hdu.data.transpose()
+
         return hdu
 
     else:
 
         n_total = reduce(operator.mul, shape)
-        n_image = reduce(operator.mul, shape[-2:])
+        n_image = shape[dimensions[0]] * shape[dimensions[1]]
 
         if n_total == n_image:
-            slices = tuple([0 for i in range(1, len(shape)-1)])
-            hdu.data = hdu.data[slices]
-        elif slices:
+            slices = [0 for i in range(1, len(shape) - 1)]
+
+        if slices:
+
+            if dimensions[0] < dimensions[1]:
+                slices.insert(dimensions[0], slice(None, None, None))
+                slices.insert(dimensions[1], slice(None, None, None))
+            else:
+                slices.insert(dimensions[1], slice(None, None, None))
+                slices.insert(dimensions[0], slice(None, None, None))
+
             if type(slices) == list:
                 slices = tuple(slices)
-            hdu.data = hdu.data[slices]
+
+            hdu.data = hdu.data[slices[::-1]]
+
+            if dimensions[1] < dimensions[0]:
+                hdu.data = hdu.data.transpose()
+
         else:
+
             message = '''
     Attempted to read in %i-dimensional FITS cube, but
-    slices were not specified. Please specify slices
-    using the slices= argument. The extra dimensions are:\n
-                       ''' % len(shape)
-            for i in range(3, len(shape)+1):
-                name = "CTYPE%i" % i
-                message += " %s %i\n" % (hdu.header["CTYPE%i" % i],
-                                         hdu.header["NAXIS%i" % i])
+    dimensions and slices were not specified. Please specify these
+    using the dimensions= and slices= argument. The cube dimensions
+    are:\n\n''' % len(shape)
+
+            for i in range(1, len(shape) + 1):
+
+                message += " " * 10
+                message += " %i %s %i\n" % (i - 1,
+                                            hdu.header["CTYPE%i" % i],
+                                            hdu.header["NAXIS%i" % i])
 
             raise Exception(message)
-
-        # Remove any extra coordinates
-        for key in ['CTYPE', 'CRPIX', 'CRVAL', 'CUNIT', 'CDELT', 'CROTA',
-                    'NAXIS']:
-            for i in range(3, len(shape)+1):
-                name = "%s%i" % (key, i)
-                if name in hdu.header:
-                    hdu.header.__delitem__(name)
-
-        for i in range(1, len(shape)+1):
-            for j in range(1, len(shape)+1):
-                if i > 2 or j > 2:
-                    name = "CD%i_%i" % (i, j)
-                    if name in hdu.header:
-                        hdu.header.__delitem__(name)
-
-        hdu.header.update('NAXIS', 2)
 
         return hdu

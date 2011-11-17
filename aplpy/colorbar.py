@@ -1,11 +1,12 @@
+from __future__ import absolute_import
+
 import warnings
 
-from mpl_toolkits.axes_grid import make_axes_locatable
 import matplotlib.axes as maxes
-
+from mpl_toolkits.axes_grid import make_axes_locatable
 from matplotlib.font_manager import FontProperties
 
-from decorators import auto_refresh, fixdocstring
+from aplpy.decorators import auto_refresh, fixdocstring
 
 # As of matplotlib 0.99.1.1, any time a colorbar property is updated, the axes
 # need to be removed and re-created. This has been fixed in svn r8213 but we

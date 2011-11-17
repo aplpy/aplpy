@@ -1,6 +1,9 @@
-import wcs_util
+from __future__ import absolute_import
+
 from matplotlib.font_manager import FontProperties
-from decorators import auto_refresh, fixdocstring
+
+import aplpy.wcs_util as wcs_util
+from aplpy.decorators import auto_refresh, fixdocstring
 
 
 class AxisLabels(object):
@@ -21,19 +24,51 @@ class AxisLabels(object):
 
         system, equinox, units = wcs_util.system(self._wcs)
 
-        if system == 'equatorial':
+        if system['name'] == 'equatorial':
+
             if equinox == 'b1950':
-                self.set_xtext('RA (B1950)')
-                self.set_ytext('Dec (B1950)')
+                xtext = 'RA (B1950)'
+                ytext = 'Dec (B1950)'
             else:
-                self.set_xtext('RA (J2000)')
-                self.set_ytext('Dec (J2000)')
-        elif system == 'galactic':
-            self.set_xtext('Galactic Longitude')
-            self.set_ytext('Galactic Latitude')
-        else:
-            self.set_xtext('Ecliptic Longitude')
-            self.set_ytext('Ecliptic Latitude')
+                xtext = 'RA (J2000)'
+                ytext = 'Dec (J2000)'
+
+        elif system['name'] == 'galactic':
+
+            xtext = 'Galactic Longitude'
+            ytext = 'Galactic Latitude'
+
+        elif system['name'] == 'ecliptic':
+
+            xtext = 'Ecliptic Longitude'
+            ytext = 'Ecliptic Latitude'
+
+        elif system['name'] == 'unknown':
+
+            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
+            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
+
+            if len(self._wcs.cname_x) > 0:
+                xtext = self._wcs.cname_x + xunit
+            else:
+                if len(self._wcs.ctype_x) == 8 and self._wcs.ctype_x[4] == '-':
+                    xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
+                else:
+                    xtext = self._wcs.ctype_x + xunit
+
+            if len(self._wcs.cname_y) > 0:
+                ytext = self._wcs.cname_y + yunit
+            else:
+                if len(self._wcs.ctype_y) == 8 and self._wcs.ctype_y[4] == '-':
+                    ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+                else:
+                    ytext = self._wcs.ctype_y + yunit
+
+        if system['inverted']:
+            xtext, ytext = ytext, xtext
+
+        self.set_xtext(xtext)
+        self.set_ytext(ytext)
 
         self.set_xposition('bottom')
         self.set_yposition('left')
