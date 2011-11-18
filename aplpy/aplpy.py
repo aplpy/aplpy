@@ -196,10 +196,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._hdu = pyfits.ImageHDU(data=np.zeros((self._wcs.ny, self._wcs.nx), dtype=float), header=header)
             self._wcs = wcs_util.WCS(wcs, dimensions=dimensions, slices=slices)
             if downsample:
-                warnings.warn("downsample argument is ignored if data passed is a WCS object")
+                logger.warn("downsample argument is ignored if data passed is a WCS object")
                 downsample = False
             if north:
-                warnings.warn("north argument is ignored if data passed is a WCS object")
+                logger.warn("north argument is ignored if data passed is a WCS object")
                 north = False
         else:
             self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
@@ -301,7 +301,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                     if isinstance(hdulist[alt_hdu], pyfits.PrimaryHDU) or \
                        isinstance(hdulist[alt_hdu], pyfits.ImageHDU):
                         if hdulist[alt_hdu].data is not None:
-                            warnings.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
+                            logger.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
                             hdu = hdulist[alt_hdu]
                             found = True
                             break
