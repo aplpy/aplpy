@@ -236,6 +236,10 @@ class WCSLocator(Locator):
 
         if self.axis.apl_auto_tick_spacing:
             self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
+            if self.axis.apl_tick_spacing is None:
+                self.axis.apl_tick_positions_pix = []
+                self.axis.apl_tick_positions_world = []
+                return []
 
         if self.coord_type in ['longitude', 'latitude']:
             tick_spacing = self.axis.apl_tick_spacing.todegrees()
@@ -271,9 +275,28 @@ def default_spacing(ax, coord, format):
 
     px, py, wx, wy = axis_positions(wcs, coord, False, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
+    # Keep only pixels that fall inside the sky. This will only really work
+    # for PyWCS 0.11 or more recent
+    keep = ~np.isnan(wx) & ~np.isnan(wy)
+
+    if np.sum(keep) == 0:
+        return None
+    else:
+        px = px[keep]
+        py = py[keep]
+        wx = wx[keep]
+        wy = wy[keep]
+
     coord_type = wcs.xaxis_coord_type if coord == 'x' else wcs.yaxis_coord_type
 
     if coord == 'x':
+
+        # The following is required because PyWCS 0.10 and earlier did not return
+        # NaNs for positions outside the sky, but instead returned an array with
+        # all the same world coordinates regardless of input pixel coordinates.
+        if len(wx) > 1 and len(np.unique(wx)) == 1:
+            return None
+
         if coord_type in ['longitude', 'latitude']:
             if coord_type == 'longitude':
                 wxmin, wxmax = math_util.smart_range(wx)
@@ -287,6 +310,13 @@ def default_spacing(ax, coord, format):
             wxmin, wxmax = np.min(wx), np.max(wx)
             spacing = su.smart_round_angle_decimal((wxmax - wxmin) / 5.)
     else:
+
+        # The following is required because PyWCS 0.10 and earlier did not return
+        # NaNs for positions outside the sky, but instead returned an array with
+        # all the same world coordinates regardless of input pixel coordinates.
+        if len(wy) > 1 and len(np.unique(wy)) == 1:
+            return None
+
         if coord_type in ['longitude', 'latitude']:
             if coord_type == 'longitude':
                 wymin, wymax = math_util.smart_range(wy)
