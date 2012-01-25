@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import warnings
+
 import numpy as np
 from matplotlib.collections import LineCollection
 
@@ -157,6 +159,10 @@ class Grid(object):
         else:
             xspacing = self.x_grid_spacing
 
+        if xspacing is None:
+            warnings.warn("Could not determine x tick spacing - grid cannot be drawn")
+            return
+
         if self.wcs.xaxis_coord_type in ['longitude', 'latitude']:
             xspacing = xspacing.todegrees()
 
@@ -168,6 +174,10 @@ class Grid(object):
         else:
             yspacing = self.y_grid_spacing
 
+        if yspacing is None:
+            warnings.warn("Could not determine y tick spacing - grid cannot be drawn")
+            return
+
         if self.wcs.yaxis_coord_type in ['longitude', 'latitude']:
             yspacing = yspacing.todegrees()
 
@@ -176,7 +186,7 @@ class Grid(object):
 
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed grid lines
-        if self.wcs.xaxis_coord_type == 'latitude' and self.wcs.yaxis_coord_type == 'longitude':
+        if self.wcs.xaxis_coord_type == 'latitude' and self.wcs.yaxis_coord_type == 'longitude' and len(grid_x_i) > 0:
 
             gx = grid_x_i.min()
 
@@ -210,7 +220,7 @@ class Grid(object):
 
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed grid lines
-        if self.wcs.xaxis_coord_type == 'longitude' and self.wcs.yaxis_coord_type == 'latitude':
+        if self.wcs.xaxis_coord_type == 'longitude' and self.wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0:
 
             gy = grid_y_i.min()
 
@@ -278,6 +288,11 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
             grid_x_sorted = np.roll(grid_x_sorted, 1)
             grid_x_sorted[0] -= 360.
 
+    # Check that number of grid points is even
+    if len(grid_x_sorted) % 2 == 1:
+        warnings.warn("Unexpected number of grid points - x grid lines cannot be drawn")
+        return []
+
     # Cycle through intersections
     for i in range(0, len(grid_x_sorted), 2):
 
@@ -330,6 +345,11 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
 
     if not in_plot(wcs, xpix, ypix):
         grid_y_sorted = np.roll(grid_y_sorted, 1)
+
+    # Check that number of grid points is even
+    if len(grid_y_sorted) % 2 == 1:
+        warnings.warn("Unexpected number of grid points - y grid lines cannot be drawn")
+        return []
 
     # Cycle through intersections
     for i in range(0, len(grid_y_sorted), 2):
