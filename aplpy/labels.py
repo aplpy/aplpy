@@ -398,7 +398,7 @@ class WCSFormatter(mpl.Formatter):
                 else:
                     sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
 
-            ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix-x))
+            ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix - x))
 
             label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
             if hours:
@@ -410,7 +410,7 @@ class WCSFormatter(mpl.Formatter):
             else:
                 comp_ipos = ipos + 1
 
-            if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix)-1:
+            if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix) - 1:
 
                 comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
                 if hours:
@@ -431,6 +431,6 @@ class WCSFormatter(mpl.Formatter):
             label = self.axis.apl_label_form % label
 
         if mpl.rcParams['text.usetex']:
-            return "$"+string.join(label, "")+"$"
+            return "$" + string.join(label, "") + "$"
         else:
             return string.join(label, "")

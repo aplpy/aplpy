@@ -63,7 +63,7 @@ class APLpyNormalize(Normalize):
                 else:
                     raise Exception("When using a log stretch, if vmin < 0, then vmid has to be specified")
             elif stretch == 'arcsinh':
-                self.midpoint = -1./30.
+                self.midpoint = -1. / 30.
             else:
                 self.midpoint = None
         else:
@@ -99,14 +99,14 @@ class APLpyNormalize(Normalize):
         vmin, vmax = self.vmin, self.vmax
         if vmin > vmax:
             raise ValueError("minvalue must be less than or equal to maxvalue")
-        elif vmin==vmax:
+        elif vmin == vmax:
             return 0.0 * val
         else:
             if clip:
                 mask = ma.getmask(val)
                 val = ma.array(np.clip(val.filled(vmax), vmin, vmax),
                                 mask=mask)
-            result = (val-vmin) * (1.0/(vmax-vmin))
+            result = (val - vmin) * (1.0 / (vmax - vmin))
 
             # CUSTOM APLPY CODE
 
@@ -128,8 +128,8 @@ class APLpyNormalize(Normalize):
 
             elif self.stretch == 'arcsinh':
 
-                result = ma.arcsinh(result/self.midpoint) \
-                       / ma.arcsinh(1./self.midpoint)
+                result = ma.arcsinh(result / self.midpoint) \
+                       / ma.arcsinh(1. / self.midpoint)
 
             elif self.stretch == 'power':
 
@@ -180,11 +180,11 @@ class APLpyNormalize(Normalize):
         elif self.stretch == 'arcsinh':
 
             val = self.midpoint * \
-                  ma.sinh(val*ma.arcsinh(1./self.midpoint))
+                  ma.sinh(val * ma.arcsinh(1. / self.midpoint))
 
         elif self.stretch == 'power':
 
-            val = ma.power(val, (1./self.exponent))
+            val = ma.power(val, (1. / self.exponent))
 
         else:
 

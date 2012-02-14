@@ -22,10 +22,10 @@ class interp1d(object):
             if ipos == 0:
                 ipos = 1
             if ipos == len(self.x):
-                ipos = len(self.x)-1
+                ipos = len(self.x) - 1
         else:
             ipos[ipos == 0] = 1
-            ipos[ipos == len(self.x)] = len(self.x)-1
+            ipos[ipos == len(self.x)] = len(self.x) - 1
 
         ipos = ipos - 1
 
@@ -53,8 +53,8 @@ def resample(array, factor):
 def percentile_function(array):
 
     array = array.ravel()
-    array = array[np.where(np.isnan(array)==False)]
-    array = array[np.where(np.isinf(array)==False)]
+    array = array[np.where(np.isnan(array) == False)]
+    array = array[np.where(np.isinf(array) == False)]
 
     n_total = np.shape(array)[0]
     array = np.sort(array)
@@ -79,13 +79,13 @@ def stretch(array, function, exponent=2, midpoint=None):
     elif function == 'log':
         if not m.isnumeric(midpoint):
             midpoint = 0.05
-        return np.log10(array/midpoint+1.) / np.log10(1./midpoint+1.)
+        return np.log10(array / midpoint + 1.) / np.log10(1. / midpoint + 1.)
     elif function == 'sqrt':
         return np.sqrt(array)
     elif function == 'arcsinh':
         if not m.isnumeric(midpoint):
             midpoint = -0.033
-        return np.arcsinh(array/midpoint) / np.arcsinh(1./midpoint)
+        return np.arcsinh(array / midpoint) / np.arcsinh(1. / midpoint)
     elif function == 'power':
         return np.power(array, exponent)
     else:

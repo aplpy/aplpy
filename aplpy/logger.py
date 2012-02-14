@@ -18,6 +18,7 @@ if config.has_option('logging', 'color'):
 else:
     color = True
 
+
 def add_coloring_to_emit_ansi(fn):
     def new(*args):
         levelno = args[1].levelno

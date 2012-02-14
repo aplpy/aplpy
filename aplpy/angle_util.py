@@ -28,7 +28,7 @@ class Angle(object):
 
             # Decompose angle into degrees, minutes, seconds
             m, d = math.modf(degrees)
-            s, m = math.modf(m*60.)
+            s, m = math.modf(m * 60.)
             s = s * 60.
 
             # Express degrees and minutes as integers
@@ -92,7 +92,7 @@ class Angle(object):
 
     def todegrees(self):
         d, m, s = self.angle
-        degrees = d + m/60. + s/3600.
+        degrees = d + m / 60. + s / 3600.
         if self.negative:
             degrees = - degrees
         return degrees
@@ -128,7 +128,7 @@ class Angle(object):
         if rval < 2:
             n = int(round((rval - 1.) * 100))
             d = round(d + m / 60. + s / 3600., n)
-            if n==0:
+            if n == 0:
                 d = int(d)
             return d
         elif rval < 3:
@@ -165,8 +165,8 @@ class Angle(object):
         if '.d' in format:
             r = 1
             pos = format.find('.')
-            nd = len(format[pos+1:])
-            r = r + nd/100.
+            nd = len(format[pos + 1:])
+            r = r + nd / 100.
         if 'mm' in format:
             r = 2
         if 'ss' in format:
@@ -174,8 +174,8 @@ class Angle(object):
         if '.s' in format:
             r = 4
             pos = format.find('.')
-            ns = len(format[pos+1:])
-            r = r + ns/100.
+            ns = len(format[pos + 1:])
+            r = r + ns / 100.
 
         tup = self.toround(rval=r)
         if type(tup) == tuple:
@@ -187,7 +187,7 @@ class Angle(object):
 
         if 'dd' in format:
             if '.d' in format:
-                string.append(("%0"+str(nd+3)+"."+str(nd)+"f") % \
+                string.append(("%0" + str(nd + 3) + "." + str(nd) + "f") % \
                     tup[0] + sep[0])
             else:
                 string.append("%i" % tup[0] + sep[0])
@@ -196,7 +196,7 @@ class Angle(object):
         if 'ss' in format and not '.s' in format:
             string.append("%02i" % tup[2] + sep[2])
         if 'ss.s' in format:
-            string.append(("%0"+str(ns+3)+"."+str(ns)+"f") % tup[2] + sep[2])
+            string.append(("%0" + str(ns + 3) + "." + str(ns) + "f") % tup[2] + sep[2])
 
         # If style is colons, need to remove trailing colon
         if len(string) >= 1 and sep[0] == ':' and not 'mm' in format:
@@ -337,14 +337,14 @@ def _get_label_precision(format, latitude=False):
         if "ss" in format:
             if "ss.s" in format:
                 n_decimal = len(format.split('.')[1])
-                label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)), latitude=latitude)
+                label_spacing = Angle(sexagesimal=(0, 0, 10 ** (-n_decimal)), latitude=latitude)
             else:
                 label_spacing = Angle(sexagesimal=(0, 0, 1), latitude=latitude)
         else:
             label_spacing = Angle(sexagesimal=(0, 1, 0), latitude=latitude)
     elif "." in format:
         ns = len(format.split('.')[1])
-        label_spacing = Angle(degrees=10**(-ns), latitude=latitude)
+        label_spacing = Angle(degrees=10 ** (-ns), latitude=latitude)
     else:
         label_spacing = Angle(sexagesimal=(1, 0, 0), latitude=latitude)
 

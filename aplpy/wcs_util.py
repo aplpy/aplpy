@@ -132,7 +132,7 @@ class WCS(pywcs.WCS):
             # result = pywcs.WCS.wcs_sky2pix(self, coords, origin)
             result = np.zeros(coords.shape)
             for i in range(result.shape[0]):
-                result[i:i+1, :] = pywcs.WCS.wcs_sky2pix(self, coords[i:i+1, :], origin)
+                result[i:i + 1, :] = pywcs.WCS.wcs_sky2pix(self, coords[i:i + 1, :], origin)
 
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 

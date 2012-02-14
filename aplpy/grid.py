@@ -57,7 +57,7 @@ class Grid(object):
             self.x_auto_spacing = True
         else:
             self.x_auto_spacing = False
-            self.x_grid_spacing = au.Angle(degrees = xspacing)
+            self.x_grid_spacing = au.Angle(degrees=xspacing)
 
         self._update()
 
@@ -78,7 +78,7 @@ class Grid(object):
             self.y_auto_spacing = True
         else:
             self.y_auto_spacing = False
-            self.y_grid_spacing = au.Angle(degrees = yspacing)
+            self.y_grid_spacing = au.Angle(degrees=yspacing)
 
         self._update()
 
@@ -355,7 +355,7 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
     for i in range(0, len(grid_y_sorted), 2):
 
         grid_y_min = grid_y_sorted[i]
-        grid_y_max = grid_y_sorted[i+1]
+        grid_y_max = grid_y_sorted[i + 1]
 
         # TODO: Deal with wraparound if coordinate is longitude/latitude
 
@@ -369,7 +369,7 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
 
 def in_plot(wcs, x_pix, y_pix):
     '''Check whether a given point is in a plot'''
-    return x_pix > +0.5 and x_pix < wcs.nx+0.5 and y_pix > +0.5 and y_pix < wcs.ny+0.5
+    return x_pix > +0.5 and x_pix < wcs.nx + 0.5 and y_pix > +0.5 and y_pix < wcs.ny + 0.5
 
 
 def find_intersections(wcs, coord, spacing):

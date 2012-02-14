@@ -77,14 +77,14 @@ def fixdocstring(func):
 
     header = lines[:i]
 
-    footer = lines[i+1:]
+    footer = lines[i + 1:]
 
     indent = lines[i].index('common:') + 4
 
     common = []
     for item in lines[i].split(':')[1].split(','):
         if item.strip() in doc:
-            common.append(" " * indent + doc[item.strip()].replace('\n', '\n' + " "*indent))
+            common.append(" " * indent + doc[item.strip()].replace('\n', '\n' + " " * indent))
 
     docstring = string.join(header + common + footer, "\n")
 

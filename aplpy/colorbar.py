@@ -13,6 +13,7 @@ from aplpy.decorators import auto_refresh, fixdocstring
 # should wait until we up the required version of matplotlib before changing the
 # code here
 
+
 class Colorbar(object):
 
     def __init__(self, parent):
@@ -71,24 +72,24 @@ class Colorbar(object):
 
                 divider = make_axes_locatable(self._parent._ax1)
 
-                if location=='right':
+                if location == 'right':
                     self._colorbar_axes = divider.new_horizontal(size=width, pad=pad, axes_class=maxes.Axes)
-                    orientation='vertical'
-                elif location=='top':
+                    orientation = 'vertical'
+                elif location == 'top':
                     self._colorbar_axes = divider.new_vertical(size=width, pad=pad, axes_class=maxes.Axes)
-                    orientation='horizontal'
-                elif location=='left':
+                    orientation = 'horizontal'
+                elif location == 'left':
                     warnings.warn("Left colorbar not fully implemented")
                     self._colorbar_axes = divider.new_horizontal(size=width, pad=pad, pack_start=True, axes_class=maxes.Axes)
                     locator = divider.new_locator(nx=0, ny=0)
                     self._colorbar_axes.set_axes_locator(locator)
-                    orientation='vertical'
-                elif location=='bottom':
+                    orientation = 'vertical'
+                elif location == 'bottom':
                     warnings.warn("Bottom colorbar not fully implemented")
                     self._colorbar_axes = divider.new_vertical(size=width, pad=pad, pack_start=True, axes_class=maxes.Axes)
                     locator = divider.new_locator(nx=0, ny=0)
                     self._colorbar_axes.set_axes_locator(locator)
-                    orientation='horizontal'
+                    orientation = 'horizontal'
                 else:
                     raise Exception("location should be one of: right/top")
 
@@ -101,25 +102,25 @@ class Colorbar(object):
 
             self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes, orientation=orientation, ticks=ticks)
 
-            if location=='right':
+            if location == 'right':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = False
                     tick.label2On = labels
-            elif location=='top':
+            elif location == 'top':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = False
                     tick.label2On = labels
-            elif location=='left':
+            elif location == 'left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = labels
                     tick.label2On = False
-            elif location=='bottom':
+            elif location == 'bottom':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True

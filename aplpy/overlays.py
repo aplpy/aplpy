@@ -37,7 +37,7 @@ class Compass(object):
         self._ax1.callbacks.connect('ylim_changed', self.update_compass)
 
     @auto_refresh
-    def show_compass(self, color='red', length = 0.1, corner=4, frame=True):
+    def show_compass(self, color='red', length=0.1, corner=4, frame=True):
         '''
         Display a scalebar
 
@@ -75,15 +75,15 @@ class Compass(object):
 
         w = 2 * length
 
-        pos = {1: (1-w, 1-w),
-               2: (w, 1-w),
+        pos = {1: (1 - w, 1 - w),
+               2: (w, 1 - w),
                3: (w, w),
-               4: (1-w, w),
-               5: (1-w, 0.5),
+               4: (1 - w, w),
+               5: (1 - w, 0.5),
                6: (w, 0.5),
-               7: (1-w, 0.5),
+               7: (1 - w, 0.5),
                8: (0.5, w),
-               9: (0.5, 1-w)}
+               9: (0.5, 1 - w)}
 
         self._compass_position = pos[corner]
         self._compass_length = length
@@ -398,6 +398,7 @@ class ScaleBar(object):
     def set_font_style(self, style):
         warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
         self.set_font(style=style)
+
 
 class Beam(object):
 

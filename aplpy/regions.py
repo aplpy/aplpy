@@ -80,10 +80,10 @@ class Regions:
             region_set_name = layer
         else:
             self._region_counter += 1
-            region_set_name = 'region_set_'+str(self._region_counter)
+            region_set_name = 'region_set_' + str(self._region_counter)
 
         self._layers[region_set_name] = PC
-        self._layers[region_set_name+"_txt"] = TC
+        self._layers[region_set_name + "_txt"] = TC
 
 
 def ds9(region_file, header, zorder=3, **kwargs):
@@ -120,7 +120,7 @@ def ds9(region_file, header, zorder=3, **kwargs):
     # grab the shapes to overplot
     pp, aa = rrim.get_mpl_patches_texts(text_offset=text_offset)
 
-    PC = ArtistCollection(pp, **kwargs) # preserves line style (dashed)
+    PC = ArtistCollection(pp, **kwargs)  # preserves line style (dashed)
     TC = ArtistCollection(aa, **kwargs)
     PC.set_zorder(zorder)
     TC.set_zorder(zorder)

@@ -7,6 +7,7 @@ from matplotlib.collections import RegularPolyCollection, \
 from aplpy.regions import ArtistCollection
 from aplpy.decorators import auto_refresh
 
+
 class Layers(object):
 
     def __init__(self):
@@ -66,16 +67,16 @@ class Layers(object):
         if n_layers == 0:
             print "\n  There are no layers in this figure"
         else:
-            if n_layers==1:
+            if n_layers == 1:
                 print "\n  There is one layer in this figure:\n"
             else:
                 print "\n  There are " + str(n_layers) + \
                     " layers in this figure:\n"
             for layer in layers_list:
                 if layer['visible']:
-                    print "   -> "+layer['name']
+                    print "   -> " + layer['name']
                 else:
-                    print "   -> "+layer['name']+" (hidden)"
+                    print "   -> " + layer['name'] + " (hidden)"
 
     @auto_refresh
     def remove_layer(self, layer, raise_exception=True):
@@ -99,14 +100,14 @@ class Layers(object):
             elif layer_type == 'collection':
                 self._layers[layer].remove()
                 self._layers.pop(layer)
-                if self._layers.has_key(layer+'_txt'):
-                    self._layers[layer+'_txt'].remove()
-                    self._layers.pop(layer+'_txt')
+                if (layer + '_txt') in self._layers:
+                    self._layers[layer + '_txt'].remove()
+                    self._layers.pop(layer + '_txt')
 
         else:
 
             if raise_exception:
-                raise Exception("Layer "+layer+" does not exist")
+                raise Exception("Layer " + layer + " does not exist")
 
     @auto_refresh
     def hide_layer(self, layer, raise_exception=True):
@@ -134,7 +135,7 @@ class Layers(object):
         else:
 
             if raise_exception:
-                raise Exception("Layer "+layer+" does not exist")
+                raise Exception("Layer " + layer + " does not exist")
 
     @auto_refresh
     def show_layer(self, layer, raise_exception=True):
@@ -160,7 +161,7 @@ class Layers(object):
 
         else:
             if raise_exception:
-                raise Exception("Layer "+layer+" does not exist")
+                raise Exception("Layer " + layer + " does not exist")
 
     def get_layer(self, layer, raise_exception=True):
         '''
@@ -175,4 +176,4 @@ class Layers(object):
             return self._layers[layer]
         else:
             if raise_exception:
-                raise Exception("Layer "+layer+" does not exist")
+                raise Exception("Layer " + layer + " does not exist")

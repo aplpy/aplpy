@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from aplpy.decorators import auto_refresh
 
+
 class Frame(object):
 
     @auto_refresh
