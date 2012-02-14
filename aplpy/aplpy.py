@@ -191,10 +191,14 @@ class FITSFigure(Layers, Regions, Deprecated):
         if isinstance(data, pywcs.WCS):
             wcs = data
             header = wcs.to_header()
-            self._wcs.nx = header['NAXIS%i' % (dimensions[0] + 1)]
-            self._wcs.ny = header['NAXIS%i' % (dimensions[1] + 1)]
-            self._hdu = pyfits.ImageHDU(data=np.zeros((self._wcs.ny, self._wcs.nx), dtype=float), header=header)
-            self._wcs = wcs_util.WCS(wcs, dimensions=dimensions, slices=slices)
+            for i in range(wcs.naxis):
+                header.update('NAXIS%i' % (i + 1), wcs.__getattribute__('naxis%i' % (i + 1)))
+            nx = header['NAXIS%i' % (dimensions[0] + 1)]
+            ny = header['NAXIS%i' % (dimensions[1] + 1)]
+            self._hdu = pyfits.ImageHDU(data=np.zeros((ny, nx), dtype=float), header=header)
+            self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices)
+            self._wcs.nx = nx
+            self._wcs.ny = ny
             if downsample:
                 logger.warn("downsample argument is ignored if data passed is a WCS object")
                 downsample = False
