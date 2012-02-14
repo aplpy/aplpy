@@ -1,6 +1,42 @@
 CHANGES
 --------
 
+Version 0.9.7
+
+    This version sees the re-write of the WCS support to enable plotting of
+    FITS files with arbitrary coordinates rather than just sky coordinates,
+    and to allow slicing of multi-dimensional data cubes. It is now very easy
+    for example to make position-velocity plots from a 3D FITS cube.
+
+    See http://aplpy.github.com/documentation/slicing.html for details.
+
+    New features
+    ~~~~~~~~~~~~
+
+    - added the ability to plot arbitrary coordinate systems rather than just
+      sky coordinates.
+
+    - added the ability to slice multi-dimensional data cubes.
+
+    - added minor ticks.
+
+    - pressing 'c' toggles between showing world and pixel coordinates in the
+      bottom of the interactive window.
+
+    - added the ability to specify slice indices for 3D FITS cubes in
+      make_rgb_image.
+
+    - allow pyregion.ShapeList instance to be passed to show_regions.
+
+    - a proper logger is now used for any stdout output.
+
+    Changes
+    ~~~~~~~
+
+    - the default 'theme' is now 'publication', which sets the frame and tick
+      color to be black.
+
+
 Version 0.9.6
 
     APLpy is now released under an MIT license
