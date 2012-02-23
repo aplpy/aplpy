@@ -6,7 +6,6 @@ from aplpy.decorator import decorator
 
 
 mydata = threading.local()
-mydata.nesting = 0
 
 
 def auto_refresh(f):
@@ -18,7 +17,10 @@ def _auto_refresh(f, *args, **kwargs):
         refresh = kwargs.pop('refresh')
     else:
         refresh = True
-    mydata.nesting += 1
+    # The following is necessary rather than using mydata.nesting = 0 at the
+    # start of the file, because doing the latter caused issues with the Django
+    # development server.
+    mydata.nesting = getattr(mydata, 'nesting', 0) + 1
     try:
         f(*args, **kwargs)
     finally:
