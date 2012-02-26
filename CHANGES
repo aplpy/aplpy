@@ -30,6 +30,11 @@ Version 0.9.7
 
     - a proper logger is now used for any stdout output.
 
+    - added an overlap= argument to show_contour to force only contours with
+      at least one point in the image to be shown. This can result in
+      significantly improved performance, and smaller files, when large FITS
+      files are used to display contours.
+
     Changes
     ~~~~~~~
 
