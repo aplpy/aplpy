@@ -713,7 +713,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', **kwargs):
+    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
         '''
         Overlay contours on the current plot
 
@@ -780,6 +780,12 @@ class FITSFigure(Layers, Regions, Deprecated):
                 specify if they would prefer 'gauss', 'box', or a custom
                 kernel. All kernels are normalized to ensure flux retention.
 
+            *overlap* [ True | False ]
+                Whether to include only contours that overlap with the image
+                area. This significantly speeds up the drawing of contours and
+                reduces file size when using a file for the contours covering
+                a much larger area than the image.
+
             Additional keyword arguments (such as alpha, linewidths, or
             linestyles) will be passed on directly to matplotlib's contour or
             contourf methods. For more information on these additional
@@ -823,7 +829,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._contour_counter += 1
             contour_set_name = 'contour_set_' + str(self._contour_counter)
 
-        contour_util.transform(c, wcs_contour, self._wcs, filled=filled)
+        contour_util.transform(c, wcs_contour, self._wcs, filled=filled, overlap=overlap)
 
         self._layers[contour_set_name] = c
 
