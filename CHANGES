@@ -38,8 +38,8 @@ Version 0.9.7
     Changes
     ~~~~~~~
 
-    - the default 'theme' is now 'publication', which sets the frame and tick
-      color to be black.
+    - the default frame color for the 'pretty' theme (the default) is now
+      black
 
 
 Version 0.9.6
