@@ -16,7 +16,7 @@ def setup_module(module):
 
     # Read in header
     header = pyfits.Header()
-    header.fromTxtFile('data/cube.hdr')
+    header.fromTxtFile('data/3d_fits/cube.hdr')
 
     # Find shape of array
     shape = []
