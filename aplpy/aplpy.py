@@ -279,7 +279,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = None
 
         # Set default theme
-        self.set_theme(theme='publication')
+        self.set_theme(theme='pretty')
 
     def _get_hdu(self, data, hdu, north, convention=None, dimensions=[0, 1], slices=[]):
 
@@ -1521,7 +1521,7 @@ class FITSFigure(Layers, Regions, Deprecated):
        '''
 
         if theme == 'pretty':
-            self.frame.set_color('white')
+            self.frame.set_color('black')
             self.frame.set_linewidth(1.0)
             self.ticks.set_color('white')
             self.ticks.set_length(7)
