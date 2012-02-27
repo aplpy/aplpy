@@ -1,9 +1,9 @@
 SIMPLE  =                    T / Written by IDL:  Fri Oct 27 10:49:59 2006
 BITPIX  =                  -32 / bits per data value
 NAXIS   =                    3 / number of axes
-NAXIS1  =                  105
-NAXIS2  =                  105
-NAXIS3  =                  602
+NAXIS1  =                   11
+NAXIS2  =                   12
+NAXIS3  =                   32
 EXTEND  =                    T /file may contain extensions
 CRVAL1  =        57.6599999999 /
 CRPIX1  =       -799.000000000 /

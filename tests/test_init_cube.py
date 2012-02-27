@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 import numpy as np
 import pyfits
 import aplpy
@@ -42,6 +45,9 @@ def test_file_init_valid(tmpdir, dimensions):
     filename = str(tmpdir) + '/' + 'valid.fits'
     hdu.writeto(filename)
     f = aplpy.FITSFigure(filename, dimensions=dimensions, slices=[100])
+    f.show_grayscale()
+    f.add_grid()
+    f.close()
 
 
 @pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
@@ -55,6 +61,9 @@ def test_file_init_invalid(tmpdir, dimensions):
 @pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
 def test_hdu_init_valid(dimensions):
     f = aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[100])
+    f.show_grayscale()
+    f.add_grid()
+    f.close()
 
 
 @pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
@@ -66,6 +75,9 @@ def test_hdu_init_invalid(dimensions):
 @pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
 def test_wcs_init_valid(dimensions):
     f = aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[100])
+    f.show_grayscale()
+    f.add_grid()
+    f.close()
 
 
 @pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
