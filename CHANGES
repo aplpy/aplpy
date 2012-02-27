@@ -28,7 +28,7 @@ Version 0.9.7
 
     - allow pyregion.ShapeList instance to be passed to show_regions.
 
-    - a proper logger is now used for any stdout output.
+    - the 'logging' module is now used for any stdout output.
 
     - added an overlap= argument to show_contour to force only contours with
       at least one point in the image to be shown. This can result in
