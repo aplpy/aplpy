@@ -1,86 +1,77 @@
 import matplotlib
 matplotlib.use('Agg')
 
-import numpy as np
 import pyfits
 import aplpy
 import pytest
-import pywcs
+
+from helpers import generate_file, generate_hdu, generate_wcs
 
 # The tests in this file check that the initialization and basic plotting do
 # not crash for FITS files with 3+ dimensions. No reference images are
 # required here.
 
+HEADERS = ['data/3d_fits/cube.hdr']
 
-def setup_module(module):
-
-    # Read in header
-    header = pyfits.Header()
-    header.fromTxtFile('data/3d_fits/cube.hdr')
-
-    # Find shape of array
-    shape = []
-    for i in range(header['NAXIS']):
-        shape.append(header['NAXIS%i' % (i + 1)])
-
-    # Generate data array
-    data = np.zeros(shape[::-1])
-
-    # Generate primary HDU
-    hdu = pyfits.PrimaryHDU(data=data, header=header)
-
-    # Make available to all tests
-    module.hdu = hdu
-    module.data = data
-    module.header = header
-    module.wcs = pywcs.WCS(header)
 
 VALID_DIMENSIONS = [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1)]
 INVALID_DIMENSIONS = [None, (1,), (0, 3), (-4, 2), (1, 1), (2, 2), (3, 3),
                       (1, 2, 3), (3, 5, 3, 2)]
 
+valid_parameters = []
+for h in HEADERS:
+    for d in VALID_DIMENSIONS:
+        valid_parameters.append((h, d))
 
-@pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
-def test_file_init_valid(tmpdir, dimensions):
-    filename = str(tmpdir) + '/' + 'valid.fits'
-    hdu.writeto(filename)
-    f = aplpy.FITSFigure(filename, dimensions=dimensions, slices=[100])
+invalid_parameters = []
+for h in HEADERS:
+    for d in INVALID_DIMENSIONS:
+        invalid_parameters.append((h, d))
+
+
+@pytest.mark.parametrize(('header', 'dimensions'), valid_parameters)
+def test_file_init_valid(tmpdir, header, dimensions):
+    filename = generate_file(header, str(tmpdir))
+    f = aplpy.FITSFigure(filename, dimensions=dimensions, slices=[5])
     f.show_grayscale()
     f.add_grid()
     f.close()
 
 
-@pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
-def test_file_init_invalid(tmpdir, dimensions):
-    filename = str(tmpdir) + '/' + 'invalid.fits'
-    hdu.writeto(filename)
+@pytest.mark.parametrize(('header', 'dimensions'), invalid_parameters)
+def test_file_init_invalid(tmpdir, header, dimensions):
+    filename = generate_file(header, str(tmpdir))
     with pytest.raises(Exception):
-        f = aplpy.FITSFigure(filename, dimensions=dimensions, slices=[100])
+        aplpy.FITSFigure(filename, dimensions=dimensions, slices=[5])
 
 
-@pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
-def test_hdu_init_valid(dimensions):
-    f = aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[100])
+@pytest.mark.parametrize(('header', 'dimensions'), valid_parameters)
+def test_hdu_init_valid(header, dimensions):
+    hdu = generate_hdu(header)
+    f = aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[5])
     f.show_grayscale()
     f.add_grid()
     f.close()
 
 
-@pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
-def test_hdu_init_invalid(dimensions):
+@pytest.mark.parametrize(('header', 'dimensions'), invalid_parameters)
+def test_hdu_init_invalid(header, dimensions):
+    hdu = generate_hdu(header)
     with pytest.raises(Exception):
-        f = aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[100])
+        aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[5])
 
 
-@pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
-def test_wcs_init_valid(dimensions):
-    f = aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[100])
+@pytest.mark.parametrize(('header', 'dimensions'), valid_parameters)
+def test_wcs_init_valid(header, dimensions):
+    wcs = generate_wcs(header)
+    f = aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[5])
     f.show_grayscale()
     f.add_grid()
     f.close()
 
 
-@pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
-def test_wcs_init_invalid(dimensions):
+@pytest.mark.parametrize(('header', 'dimensions'), invalid_parameters)
+def test_wcs_init_invalid(header, dimensions):
+    wcs = generate_wcs(header)
     with pytest.raises(Exception):
-        f = aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[100])
+        aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[5])
