@@ -195,9 +195,11 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if isinstance(data, pywcs.WCS):
             wcs = data
+            if wcs.naxis != 2:
+                raise ValueError("FITSFigure initialization via WCS objects can only be done with 2-dimensional WCS objects")
             header = wcs.to_header()
-            for i in range(wcs.naxis):
-                header.update('NAXIS%i' % (i + 1), wcs.__getattribute__('naxis%i' % (i + 1)))
+            header.update('NAXIS1', wcs.naxis1)
+            header.update('NAXIS2', wcs.naxis2)
             nx = header['NAXIS%i' % (dimensions[0] + 1)]
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
             self._hdu = pyfits.ImageHDU(data=np.zeros((ny, nx), dtype=float), header=header)

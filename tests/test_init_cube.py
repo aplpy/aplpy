@@ -39,12 +39,11 @@ def test_hdu_init():
     f.close()
 
 
-# Test initialization through a WCS object
+# Test initialization through a WCS object (should not work)
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    f = aplpy.FITSFigure(wcs, slices=[5])
-    f.show_grayscale()
-    f.close()
+    with pytest.raises(ValueError):
+        aplpy.FITSFigure(wcs, slices=[5])
 
 
 # Test that initialization without specifying slices raises an exception
