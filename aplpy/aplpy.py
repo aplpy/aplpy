@@ -86,6 +86,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     "A class for plotting FITS files."
 
+    _auto_refresh = True
+
     @auto_refresh
     def __init__(self, data, hdu=0, figure=None, subplot=None,
                  downsample=False, north=False, convention=None,
@@ -159,6 +161,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         <http://matplotlib.sourceforge.net/api/figure_api.html?
         #matplotlib.figure.Figure>`_
         '''
+
+        # Set whether to automatically refresh the display
+        self.set_auto_refresh(auto_refresh)
 
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
@@ -252,8 +257,6 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Store WCS in axes
         self._ax1._wcs = self._wcs
         self._ax2._wcs = self._wcs
-
-        self.set_auto_refresh(auto_refresh)
 
         # Set view to whole FITS file
         self._initialize_view()
@@ -1424,7 +1427,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 the display can be refreshed manually using the refresh()
                 method
         '''
-        self._figure._auto_refresh = refresh
+        self._auto_refresh = refresh
 
     def refresh(self, force=True):
         '''
@@ -1438,7 +1441,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 refreshed whatever the auto refresh setting is set to.
                 The default is True.
         '''
-        if self._figure._auto_refresh or force:
+        if self._auto_refresh or force:
             self._figure.canvas.draw()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300):
