@@ -32,7 +32,7 @@ def test_file_init(tmpdir):
 
 
 # Test initialization through an HDU object
-def test_hdu_init_valid():
+def test_hdu_init():
     hdu = generate_hdu(REFERENCE)
     f = aplpy.FITSFigure(hdu, slices=[5])
     f.show_grayscale()
@@ -40,7 +40,7 @@ def test_hdu_init_valid():
 
 
 # Test initialization through a WCS object
-def test_wcs_init_valid():
+def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
     f = aplpy.FITSFigure(wcs, slices=[5])
     f.show_grayscale()
@@ -71,7 +71,7 @@ def test_init_dimensions_valid(dimensions):
 @pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
 def test_init_dimensions_invalid(dimensions):
     hdu = generate_hdu(REFERENCE)
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[5])
 
 

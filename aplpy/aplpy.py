@@ -330,6 +330,16 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
 
+        # Check dimensions= argument
+        if type(dimensions) not in [list, tuple]:
+            raise ValueError('dimensions= should be a list or a tuple')
+        if len(set(dimensions)) != 2 or len(dimensions) != 2:
+            raise ValueError("dimensions= should be a tuple of two different values")
+        if dimensions[0] < 0 or dimensions[0] > hdu.header['NAXIS'] - 1:
+            raise ValueError('values of dimensions= should be between %i and %i' % (0, hdu.header['NAXIS'] - 1))
+        if dimensions[1] < 0 or dimensions[1] > hdu.header['NAXIS'] - 1:
+            raise ValueError('values of dimensions= should be between %i and %i' % (0, hdu.header['NAXIS'] - 1))
+
         # Extract slices
         hdu = slicer.slice_hypercube(hdu, dimensions=dimensions, slices=slices)
 
