@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 matplotlib.use('Agg')
 
@@ -10,38 +12,40 @@ from helpers import generate_file, generate_hdu, generate_wcs
 # not crash for FITS files with 2 dimensions. No reference images are
 # required here.
 
-HEADERS = ['data/2d_fits/1904-66_AIR.hdr',
-           'data/2d_fits/1904-66_AIT.hdr',
-           'data/2d_fits/1904-66_ARC.hdr',
-           'data/2d_fits/1904-66_AZP.hdr',
-           'data/2d_fits/1904-66_BON.hdr',
-           'data/2d_fits/1904-66_CAR.hdr',
-           'data/2d_fits/1904-66_CEA.hdr',
-           'data/2d_fits/1904-66_COD.hdr',
-           'data/2d_fits/1904-66_COE.hdr',
-           'data/2d_fits/1904-66_COO.hdr',
-           'data/2d_fits/1904-66_COP.hdr',
-           'data/2d_fits/1904-66_CSC.hdr',
-           'data/2d_fits/1904-66_CYP.hdr',
-           'data/2d_fits/1904-66_HPX.hdr',
-           'data/2d_fits/1904-66_MER.hdr',
-           'data/2d_fits/1904-66_MOL.hdr',
-           'data/2d_fits/1904-66_NCP.hdr',
-           'data/2d_fits/1904-66_PAR.hdr',
-           'data/2d_fits/1904-66_PCO.hdr',
-           'data/2d_fits/1904-66_QSC.hdr',
-           'data/2d_fits/1904-66_SFL.hdr',
-           'data/2d_fits/1904-66_SIN.hdr',
-           'data/2d_fits/1904-66_STG.hdr',
-           'data/2d_fits/1904-66_SZP.hdr',
-           'data/2d_fits/1904-66_TAN.hdr',
-           'data/2d_fits/1904-66_TSC.hdr',
-           'data/2d_fits/1904-66_ZEA.hdr',
-           'data/2d_fits/1904-66_ZPN.hdr']
+header_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits')
 
-REFERENCE = 'data/2d_fits/1904-66_TAN.hdr'
+HEADERS = [os.path.join(header_dir, '1904-66_AIR.hdr'),
+           os.path.join(header_dir, '1904-66_AIT.hdr'),
+           os.path.join(header_dir, '1904-66_ARC.hdr'),
+           os.path.join(header_dir, '1904-66_AZP.hdr'),
+           os.path.join(header_dir, '1904-66_BON.hdr'),
+           os.path.join(header_dir, '1904-66_CAR.hdr'),
+           os.path.join(header_dir, '1904-66_CEA.hdr'),
+           os.path.join(header_dir, '1904-66_COD.hdr'),
+           os.path.join(header_dir, '1904-66_COE.hdr'),
+           os.path.join(header_dir, '1904-66_COO.hdr'),
+           os.path.join(header_dir, '1904-66_COP.hdr'),
+           os.path.join(header_dir, '1904-66_CSC.hdr'),
+           os.path.join(header_dir, '1904-66_CYP.hdr'),
+           os.path.join(header_dir, '1904-66_HPX.hdr'),
+           os.path.join(header_dir, '1904-66_MER.hdr'),
+           os.path.join(header_dir, '1904-66_MOL.hdr'),
+           os.path.join(header_dir, '1904-66_NCP.hdr'),
+           os.path.join(header_dir, '1904-66_PAR.hdr'),
+           os.path.join(header_dir, '1904-66_PCO.hdr'),
+           os.path.join(header_dir, '1904-66_QSC.hdr'),
+           os.path.join(header_dir, '1904-66_SFL.hdr'),
+           os.path.join(header_dir, '1904-66_SIN.hdr'),
+           os.path.join(header_dir, '1904-66_STG.hdr'),
+           os.path.join(header_dir, '1904-66_SZP.hdr'),
+           os.path.join(header_dir, '1904-66_TAN.hdr'),
+           os.path.join(header_dir, '1904-66_TSC.hdr'),
+           os.path.join(header_dir, '1904-66_ZEA.hdr'),
+           os.path.join(header_dir, '1904-66_ZPN.hdr')]
 
-CAR_REFERENCE = 'data/2d_fits/1904-66_CAR.hdr'
+REFERENCE = os.path.join(header_dir, '1904-66_TAN.hdr')
+
+CAR_REFERENCE = os.path.join(header_dir, '1904-66_CAR.hdr')
 
 VALID_DIMENSIONS = [(0, 1), (1, 0)]
 INVALID_DIMENSIONS = [None, (1,), (0, 2), (-4, 2), (1, 1), (2, 2), (1, 2, 3)]
@@ -113,4 +117,4 @@ def test_init_extensive_wcs(header, dimensions):
 def test_init_car_invalid(dimensions):
     hdu = generate_hdu(CAR_REFERENCE)
     with pytest.raises(Exception):
-        f = aplpy.FITSFigure(hdu, dimensions=dimensions)
+        aplpy.FITSFigure(hdu, dimensions=dimensions)

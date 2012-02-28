@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 matplotlib.use('Agg')
 
@@ -10,9 +12,11 @@ from helpers import generate_file, generate_hdu, generate_wcs
 # not crash for FITS files with 3+ dimensions. No reference images are
 # required here.
 
-HEADERS = ['data/3d_fits/cube.hdr']
+header_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/3d_fits')
 
-REFERENCE = 'data/3d_fits/cube.hdr'
+HEADERS = [os.path.join(header_dir, 'cube.hdr')]
+
+REFERENCE = os.path.join(header_dir, 'cube.hdr')
 
 VALID_DIMENSIONS = [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1)]
 INVALID_DIMENSIONS = [None, (1,), (0, 3), (-4, 2), (1, 1), (2, 2), (3, 3),
