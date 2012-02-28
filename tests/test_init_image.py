@@ -46,11 +46,6 @@ CAR_REFERENCE = 'data/2d_fits/1904-66_CAR.hdr'
 VALID_DIMENSIONS = [(0, 1), (1, 0)]
 INVALID_DIMENSIONS = [None, (1,), (0, 2), (-4, 2), (1, 1), (2, 2), (1, 2, 3)]
 
-# For invalid dimensions, no need to test for all headers, only do the first
-invalid_parameters = []
-for d in INVALID_DIMENSIONS:
-    invalid_parameters.append((HEADERS[0], d))
-
 
 # Test initialization through a filename
 def test_file_init(tmpdir):
@@ -75,8 +70,8 @@ def test_wcs_init_valid():
     f.show_grayscale()
     f.close()
 
-# Now check initialization with valid and invalid slices. We just need to test
-# with HDU objects since we already tested that reading from files is ok.
+# Now check initialization with valid and invalid dimensions. We just need to
+# tes with HDU objects since we already tested that reading from files is ok.
 
 # Test initialization with valid dimensions
 @pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
@@ -93,8 +88,8 @@ def test_init_dimensions_invalid(dimensions):
     with pytest.raises(Exception):
         aplpy.FITSFigure(hdu, dimensions=dimensions)
 
-# Now check initialization of different WCS projections, and we check both
-# combinations of valid dimensions
+# Now check initialization of different WCS projections, and we check only
+# valid dimensions
 
 valid_parameters = []
 for h in HEADERS:

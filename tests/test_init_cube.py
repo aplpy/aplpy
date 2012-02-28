@@ -1,7 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
 
-import pyfits
 import aplpy
 import pytest
 
@@ -13,63 +12,77 @@ from helpers import generate_file, generate_hdu, generate_wcs
 
 HEADERS = ['data/3d_fits/cube.hdr']
 
+REFERENCE = 'data/3d_fits/cube.hdr'
 
 VALID_DIMENSIONS = [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1)]
 INVALID_DIMENSIONS = [None, (1,), (0, 3), (-4, 2), (1, 1), (2, 2), (3, 3),
                       (1, 2, 3), (3, 5, 3, 2)]
 
-# For valid dimensions, test the plotting of all files
-valid_parameters = []
-for h in HEADERS:
-    for d in VALID_DIMENSIONS:
-        valid_parameters.append((h, d))
 
-# For invalid dimensions, no need to test for all headers, only do the first
-invalid_parameters = []
-for d in INVALID_DIMENSIONS:
-    invalid_parameters.append((HEADERS[0], d))
-
-
-@pytest.mark.parametrize(('header', 'dimensions'), valid_parameters)
-def test_file_init_valid(tmpdir, header, dimensions):
-    filename = generate_file(header, str(tmpdir))
-    f = aplpy.FITSFigure(filename, dimensions=dimensions, slices=[5])
+# Test initialization through a filename
+def test_file_init(tmpdir):
+    filename = generate_file(REFERENCE, str(tmpdir))
+    f = aplpy.FITSFigure(filename, slices=[5])
     f.show_grayscale()
     f.close()
 
 
-@pytest.mark.parametrize(('header', 'dimensions'), invalid_parameters)
-def test_file_init_invalid(tmpdir, header, dimensions):
-    filename = generate_file(header, str(tmpdir))
+# Test initialization through an HDU object
+def test_hdu_init_valid():
+    hdu = generate_hdu(REFERENCE)
+    f = aplpy.FITSFigure(hdu, slices=[5])
+    f.show_grayscale()
+    f.close()
+
+
+# Test initialization through a WCS object
+def test_wcs_init_valid():
+    wcs = generate_wcs(REFERENCE)
+    f = aplpy.FITSFigure(wcs, slices=[5])
+    f.show_grayscale()
+    f.close()
+
+
+# Test that initialization without specifying slices raises an exception
+def test_hdu_noslices():
+    hdu = generate_hdu(REFERENCE)
     with pytest.raises(Exception):
-        aplpy.FITSFigure(filename, dimensions=dimensions, slices=[5])
+        aplpy.FITSFigure(hdu)
 
 
-@pytest.mark.parametrize(('header', 'dimensions'), valid_parameters)
-def test_hdu_init_valid(header, dimensions):
-    hdu = generate_hdu(header)
+# Now check initialization with valid and invalid dimensions. We just need to
+# tes with HDU objects since we already tested that reading from files is ok.
+
+
+# Test initialization with valid dimensions
+@pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
+def test_init_dimensions_valid(dimensions):
+    hdu = generate_hdu(REFERENCE)
     f = aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[5])
     f.show_grayscale()
     f.close()
 
 
-@pytest.mark.parametrize(('header', 'dimensions'), invalid_parameters)
-def test_hdu_init_invalid(header, dimensions):
-    hdu = generate_hdu(header)
+# Test initialization with invalid dimensions
+@pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
+def test_init_dimensions_invalid(dimensions):
+    hdu = generate_hdu(REFERENCE)
     with pytest.raises(Exception):
         aplpy.FITSFigure(hdu, dimensions=dimensions, slices=[5])
 
 
+# Now check initialization of different WCS projections, and we check only
+# valid dimensions
+
+valid_parameters = []
+for h in HEADERS:
+    for d in VALID_DIMENSIONS:
+        valid_parameters.append((h, d))
+
+
 @pytest.mark.parametrize(('header', 'dimensions'), valid_parameters)
-def test_wcs_init_valid(header, dimensions):
-    wcs = generate_wcs(header)
-    f = aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[5])
+def test_init_extensive_wcs(tmpdir, header, dimensions):
+    filename = generate_file(header, str(tmpdir))
+    f = aplpy.FITSFigure(filename, dimensions=dimensions, slices=[5])
     f.show_grayscale()
     f.close()
-
-
-@pytest.mark.parametrize(('header', 'dimensions'), invalid_parameters)
-def test_wcs_init_invalid(header, dimensions):
-    wcs = generate_wcs(header)
-    with pytest.raises(Exception):
-        aplpy.FITSFigure(wcs, dimensions=dimensions, slices=[5])
