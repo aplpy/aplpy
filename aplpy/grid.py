@@ -184,6 +184,16 @@ class Grid(object):
         # Find x lines that intersect with axes
         grid_x_i, grid_y_i = find_intersections(self.wcs, 'x', xspacing)
 
+        if self.wcs.xaxis_coord_type == 'longitude':
+            grid_x_i = np.mod(grid_x_i, 360.)
+        elif self.wcs.xaxis_coord_type == 'latitude':
+            grid_x_i = np.mod(grid_x_i + 90., 180.) - 90.
+
+        if self.wcs.yaxis_coord_type == 'longitude':
+            grid_y_i = np.mod(grid_y_i, 360.)
+        elif self.wcs.yaxis_coord_type == 'latitude':
+            grid_y_i = np.mod(grid_y_i + 90., 180.) - 90.
+
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed grid lines
         if self.wcs.xaxis_coord_type == 'latitude' and self.wcs.yaxis_coord_type == 'longitude' and len(grid_x_i) > 0:
@@ -217,6 +227,16 @@ class Grid(object):
 
         # Find y lines that intersect with axes
         grid_x_i, grid_y_i = find_intersections(self.wcs, 'y', yspacing)
+
+        if self.wcs.xaxis_coord_type == 'longitude':
+            grid_x_i = np.mod(grid_x_i, 360.)
+        elif self.wcs.xaxis_coord_type == 'latitude':
+            grid_x_i = np.mod(grid_x_i + 90., 180.) - 90.
+
+        if self.wcs.yaxis_coord_type == 'longitude':
+            grid_y_i = np.mod(grid_y_i, 360.)
+        elif self.wcs.yaxis_coord_type == 'latitude':
+            grid_y_i = np.mod(grid_y_i + 90., 180.) - 90.
 
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed grid lines
