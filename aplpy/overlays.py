@@ -406,7 +406,7 @@ class Beam(object):
 
         # Retrieve info from parent figure
         self._figure = parent._figure
-        self._hdu = parent._hdu
+        self._header = parent._header
         self._ax = parent._ax1
         self._wcs = parent._wcs
 
@@ -455,13 +455,13 @@ class Beam(object):
         '''
 
         if isinstance(major, basestring):
-            major = self._hdu.header[major]
+            major = self._header[major]
 
         if isinstance(minor, basestring):
-            minor = self._hdu.header[minor]
+            minor = self._header[minor]
 
         if isinstance(angle, basestring):
-            angle = self._hdu.header[angle]
+            angle = self._header[angle]
 
         degperpix = wcs_util.degperpix(self._wcs)
 

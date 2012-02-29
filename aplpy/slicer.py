@@ -3,9 +3,10 @@ from __future__ import absolute_import
 import operator
 
 
-def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
+def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
     '''
-    Extract a slice from an n-dimensional FITS HDU, and return an HDU
+    Extract a slice from an n-dimensional HDU data/header pair, and return the
+    new data (without changing the header).
     '''
 
     if type(slices) == int:
@@ -13,7 +14,7 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
     else:
         slices = slices[:]
 
-    shape = hdu.data.shape
+    shape = data.shape
 
     if len(shape) < 2:
 
@@ -22,9 +23,9 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
     elif len(shape) == 2:
 
         if dimensions[1] < dimensions[0]:
-            hdu.data = hdu.data.transpose()
+            data = data.transpose()
 
-        return hdu
+        return data
 
     else:
 
@@ -46,10 +47,10 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
             if type(slices) == list:
                 slices = tuple(slices)
 
-            hdu.data = hdu.data[slices[::-1]]
+            data = data[slices[::-1]]
 
             if dimensions[1] < dimensions[0]:
-                hdu.data = hdu.data.transpose()
+                data = data.transpose()
 
         else:
 
@@ -63,9 +64,9 @@ def slice_hypercube(hdu, dimensions=[0, 1], slices=[]):
 
                 message += " " * 10
                 message += " %i %s %i\n" % (i - 1,
-                                            hdu.header["CTYPE%i" % i],
-                                            hdu.header["NAXIS%i" % i])
+                                            header["CTYPE%i" % i],
+                                            header["NAXIS%i" % i])
 
             raise Exception(message)
 
-        return hdu
+        return data

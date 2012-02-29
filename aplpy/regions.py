@@ -70,7 +70,7 @@ class Regions:
 
         _check_pyregion_installed()
 
-        PC, TC = ds9(region_file, self._hdu.header, **kwargs)
+        PC, TC = ds9(region_file, self._header, **kwargs)
 
         #ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)

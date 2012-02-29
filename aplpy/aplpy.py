@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from distutils import version
 import os
 import warnings
+from copy import deepcopy
 
 try:
     import matplotlib
@@ -61,7 +62,7 @@ if montage_installed:
 import aplpy.contour_util as contour_util
 import aplpy.convolve_util as convolve_util
 import aplpy.image_util as image_util
-import aplpy.header as header
+import aplpy.header as header_util
 import aplpy.wcs_util as wcs_util
 import aplpy.slicer as slicer
 
@@ -202,7 +203,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             header.update('NAXIS2', wcs.naxis2)
             nx = header['NAXIS%i' % (dimensions[0] + 1)]
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
-            self._hdu = pyfits.ImageHDU(data=np.zeros((ny, nx), dtype=float), header=header)
+            self._data = np.zeros((ny, nx), dtype=float)
+            self._header = header
             self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices)
             self._wcs.nx = nx
             self._wcs.ny = ny
@@ -213,17 +215,17 @@ class FITSFigure(Layers, Regions, Deprecated):
                 logger.warn("north argument is ignored if data passed is a WCS object")
                 north = False
         else:
-            self._hdu, self._wcs = self._get_hdu(data, hdu, north, \
+            self._data, self._header, self._wcs = self._get_hdu(data, hdu, north, \
                 convention=convention, dimensions=dimensions, slices=slices)
-            self._wcs.nx = self._hdu.header['NAXIS%i' % (dimensions[0] + 1)]
-            self._wcs.ny = self._hdu.header['NAXIS%i' % (dimensions[1] + 1)]
+            self._wcs.nx = self._header['NAXIS%i' % (dimensions[0] + 1)]
+            self._wcs.ny = self._header['NAXIS%i' % (dimensions[1] + 1)]
 
         # Downsample if requested
         if downsample:
             nx_new = self._wcs.nx - np.mod(self._wcs.nx, downsample)
             ny_new = self._wcs.ny - np.mod(self._wcs.ny, downsample)
-            self._hdu.data = self._hdu.data[0:ny_new, 0:nx_new]
-            self._hdu.data = image_util.resample(self._hdu.data, downsample)
+            self._data = self._data[0:ny_new, 0:nx_new]
+            self._data = image_util.resample(self._data, downsample)
             self._wcs.nx, self._wcs.ny = nx_new, ny_new
 
         # Open the figure
@@ -278,7 +280,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._initialize_layers()
 
         # Find generating function for vmin/vmax
-        self._auto_v = image_util.percentile_function(self._hdu.data)
+        self._auto_v = image_util.percentile_function(self._data)
 
         # Set image holder to be empty
         self.image = None
@@ -346,26 +348,33 @@ class FITSFigure(Layers, Regions, Deprecated):
         if dimensions[1] < 0 or dimensions[1] > hdu.header['NAXIS'] - 1:
             raise ValueError('values of dimensions= should be between %i and %i' % (0, hdu.header['NAXIS'] - 1))
 
-        # Extract slices
-        hdu = slicer.slice_hypercube(hdu, dimensions=dimensions, slices=slices)
-
         # Reproject to face north if requested
         if north:
             if not montage_installed:
                 raise Exception("Both the Montage command-line tools and the Python-montage module are required to use the north= argument")
             hdu = montage.reproject_hdu(hdu, north_aligned=True)
 
+        # Now copy the data and header to new objects, since in PyFITS the two
+        # attributes are linked, which can lead to confusing behavior. We just
+        # need to copy the header to avoid memory issues - as long as one item
+        # is copied, the two variables are decoupled.
+        data = hdu.data
+        header = deepcopy(hdu.header)
+        del hdu
+
+        # Extract slices
+        data = slicer.slice_hypercube(data, header, dimensions=dimensions, slices=slices)
+
         # Check header
-        hdu.header = header.check(hdu.header, convention=convention, dimensions=dimensions)
+        header = header_util.check(header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
-        wcs = wcs_util.WCS(hdu.header, dimensions=dimensions, slices=slices)
         try:
-            wcs = wcs_util.WCS(hdu.header, dimensions=dimensions, slices=slices)
+            wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices)
         except:
             raise Exception("An error occured while parsing the WCS information")
 
-        return hdu, wcs
+        return data, header, wcs
 
     @auto_refresh
     def set_xaxis_coord_type(self, coord_type):
@@ -655,11 +664,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.image.set_cmap(cmap=cmap)
             self.image.origin = 'lower'
             self.image.set_interpolation(interpolation)
-            self.image.set_data(convolve_util.convolve(self._hdu.data,
+            self.image.set_data(convolve_util.convolve(self._data,
                                                        smooth=smooth,
                                                        kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._hdu.data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer, aspect=aspect)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer, aspect=aspect)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
@@ -823,12 +832,12 @@ class FITSFigure(Layers, Regions, Deprecated):
         elif not colors:
             cmap = mpl.cm.get_cmap('jet')
 
-        hdu_contour, wcs_contour = self._get_hdu(data, hdu, False, \
+        data_contour, header_contour, wcs_contour = self._get_hdu(data, hdu, False, \
             convention=convention, dimensions=dimensions, slices=slices)
-        wcs_contour.nx = hdu_contour.header['NAXIS%i' % (dimensions[0] + 1)]
-        wcs_contour.ny = hdu_contour.header['NAXIS%i' % (dimensions[1] + 1)]
+        wcs_contour.nx = header_contour['NAXIS%i' % (dimensions[0] + 1)]
+        wcs_contour.ny = header_contour['NAXIS%i' % (dimensions[1] + 1)]
 
-        image_contour = convolve_util.convolve(hdu_contour.data, smooth=smooth, kernel=kernel)
+        image_contour = convolve_util.convolve(data_contour, smooth=smooth, kernel=kernel)
         extent_contour = (0.5, wcs_contour.nx + 0.5, 0.5, wcs_contour.ny + 0.5)
 
         if type(levels) == int:
