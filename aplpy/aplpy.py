@@ -98,7 +98,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Required arguments:
 
-            *data*: [ string | pyfits.PrimaryHDU | pyfits.ImageHDU | pywcs.WCS ]
+            *data*: [ string | pyfits.PrimaryHDU | pyfits.ImageHDU | pywcs.WCS | np.ndarray ]
                 Either the filename of the FITS file to open, a pyfits
                 PrimaryHDU or ImageHDU object, or a pywcs WCS object. It is
                 also possible to specify the filename of an RGB image tagged
@@ -320,6 +320,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             else:
                 hdu = hdulist[hdu]
 
+        elif type(data) == np.ndarray:
+
+            hdu = pyfits.ImageHDU(data)
+
         elif isinstance(data, pyfits.PrimaryHDU) or isinstance(data, pyfits.ImageHDU):
 
             hdu = data
@@ -330,7 +334,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         else:
 
-            raise Exception("data argument should either be a filename, or an HDU instance from pyfits.")
+            raise Exception("data argument should either be a filename, an HDU instance from pyfits, a pywcs.WCS object, or a Numpy array.")
 
         # Check dimensions= argument
         if type(dimensions) not in [list, tuple]:

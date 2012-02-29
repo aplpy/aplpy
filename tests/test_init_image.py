@@ -5,6 +5,8 @@ matplotlib.use('Agg')
 
 import aplpy
 import pytest
+import numpy as np
+import pyfits
 
 from helpers import generate_file, generate_hdu, generate_wcs
 
@@ -73,6 +75,24 @@ def test_wcs_init():
     f = aplpy.FITSFigure(wcs)
     f.show_grayscale()
     f.close()
+
+
+# Test initialization through an HDU object (no WCS)
+def test_hdu_nowcs_init():
+    data = np.zeros((16, 16))
+    hdu = pyfits.PrimaryHDU(data)
+    f = aplpy.FITSFigure(hdu)
+    f.show_grayscale()
+    f.close()
+
+
+# Test initalization through a Numpy array (no WCS)
+def test_numpy_nowcs_init():
+    data = np.zeros((16, 16))
+    f = aplpy.FITSFigure(data)
+    f.show_grayscale()
+    f.close()
+
 
 # Now check initialization with valid and invalid dimensions. We just need to
 # tes with HDU objects since we already tested that reading from files is ok.

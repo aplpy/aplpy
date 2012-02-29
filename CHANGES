@@ -1,6 +1,16 @@
 CHANGES
 --------
 
+Version 0.9.8
+
+    New features
+    ~~~~~~~~~~~~
+
+    - FITSFigure can now be initialized with files or HDUs with missing WCS
+      information.
+
+    - FITSFigure can now be initialized directly with Numpy arrays
+
 Version 0.9.7
 
     This version sees the re-write of the WCS support to enable plotting of
