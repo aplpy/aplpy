@@ -3,13 +3,33 @@ CHANGES
 
 Version 0.9.8
 
+    This version fixes issues that occurred when using APLpy with PyFITS
+    3.0.5. This version also contains the first unit/regression tests (which
+    we will include many more of in future).
+
     New features
     ~~~~~~~~~~~~
+
+    - APLpy now includes regression tests that can be run with:
+
+        python setup.py test
 
     - FITSFigure can now be initialized with files or HDUs with missing WCS
       information.
 
     - FITSFigure can now be initialized directly with Numpy arrays
+
+    Bug fixes
+    ~~~~~~~~~
+
+    - Fixed a major bug that prevented data cube slicing with PyFITS 3.0.5
+
+    - Fixed a few bugs that occurred when plotting a grid for a few specific
+      projections.
+
+    - Fixed a bug that cause the error:
+
+        'Figure' object has no attribute '_auto_refresh'
 
 Version 0.9.7
 
