@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from distutils import version
 import os
 import warnings
-from copy import deepcopy
 
 try:
     import matplotlib
@@ -359,7 +358,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         # need to copy the header to avoid memory issues - as long as one item
         # is copied, the two variables are decoupled.
         data = hdu.data
-        header = deepcopy(hdu.header)
+        header = hdu.header.copy()
         del hdu
 
         # Extract slices
