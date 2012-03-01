@@ -24,6 +24,9 @@ class TickLabels(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Set font
         self._label_fontproperties = FontProperties()
 
@@ -277,7 +280,7 @@ class TickLabels(object):
             fx2 = WCSFormatter(wcs=self._wcs, coord='x')
             self._ax2.xaxis.set_major_formatter(fx2)
         else:
-            raise Exception("position should be one of 'top' or 'bottom'")
+            raise ValueError("position should be one of 'top' or 'bottom'")
 
     @auto_refresh
     def set_yposition(self, position):
@@ -293,7 +296,7 @@ class TickLabels(object):
             fy2 = WCSFormatter(wcs=self._wcs, coord='y')
             self._ax2.yaxis.set_major_formatter(fy2)
         else:
-            raise Exception("position should be one of 'left' or 'right'")
+            raise ValueError("position should be one of 'left' or 'right'")
 
     def _set_cursor_prefs(self, event, **kwargs):
         if event.key == 'c':

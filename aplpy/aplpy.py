@@ -81,12 +81,17 @@ from aplpy.decorators import auto_refresh, fixdocstring
 
 from aplpy.deprecated import Deprecated
 
+class Parameters():
+    '''
+    A class to contain the current plotting parameters
+    '''
+    pass
 
 class FITSFigure(Layers, Regions, Deprecated):
 
     "A class for plotting FITS files."
 
-    _auto_refresh = True
+    _parameters = Parameters()
 
     @auto_refresh
     def __init__(self, data, hdu=0, figure=None, subplot=None,
@@ -1451,7 +1456,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 the display can be refreshed manually using the refresh()
                 method
         '''
-        self._auto_refresh = refresh
+        self._parameters.auto_refresh = refresh
 
     def refresh(self, force=True):
         '''
@@ -1465,7 +1470,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 refreshed whatever the auto refresh setting is set to.
                 The default is True.
         '''
-        if self._auto_refresh or force:
+        if self._parameters.auto_refresh or force:
             self._figure.canvas.draw()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300):
@@ -1694,7 +1699,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             del self.beam
 
     @auto_refresh
-    def add_scalebar(self, *args, **kwargs):
+    def add_scalebar(self, length, *args, **kwargs):
         '''
         Add a scalebar to the current figure
 
@@ -1711,7 +1716,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise Exception("Scalebar already exists")
         try:
             self.scalebar = ScaleBar(self)
-            self.scalebar.show(*args, **kwargs)
+            self.scalebar.show(length, *args, **kwargs)
         except:
             del self.scalebar
             raise

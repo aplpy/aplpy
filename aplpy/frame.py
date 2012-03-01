@@ -7,9 +7,13 @@ class Frame(object):
 
     @auto_refresh
     def __init__(self, parent):
+
         self._ax1 = parent._ax1
         self._ax2 = parent._ax2
         self._figure = parent._figure
+
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
 
     @auto_refresh
     def set_linewidth(self, linewidth):

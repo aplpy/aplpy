@@ -20,6 +20,10 @@ class Colorbar(object):
         self._figure = parent._figure
         self._colorbar_axes = None
         self._parent = parent
+
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         self._base_settings = {}
         self._label_fontproperties = FontProperties()
 

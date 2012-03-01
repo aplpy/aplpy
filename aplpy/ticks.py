@@ -24,6 +24,9 @@ class Ticks(object):
         self._figure = parent._figure
         self._parent = parent
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Set tick positions
         self._ax1.yaxis.tick_left()
         self._ax1.xaxis.tick_bottom()

@@ -16,6 +16,9 @@ class AxisLabels(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Set font
         self._label_fontproperties = FontProperties()
 
@@ -212,7 +215,7 @@ class AxisLabels(object):
             self._xlabel1.set_visible(False)
             self._xlabel2.set_visible(True)
         else:
-            raise Exception("position should be one of 'top' or 'bottom'")
+            raise ValueError("position should be one of 'top' or 'bottom'")
         self._xposition = position
 
     @auto_refresh
@@ -225,5 +228,5 @@ class AxisLabels(object):
             self._ylabel1.set_visible(False)
             self._ylabel2.set_visible(True)
         else:
-            raise Exception("position should be one of 'left' or 'right'")
+            raise ValueError("position should be one of 'left' or 'right'")
         self._yposition = position

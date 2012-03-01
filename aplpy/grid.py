@@ -22,6 +22,9 @@ class Grid(object):
         self.wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Initialize grid container
         self._grid = None
         self._active = False

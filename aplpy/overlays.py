@@ -148,6 +148,9 @@ class ScaleBar(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Initialize settings
         self._base_settings = {}
         self._scalebar_settings = {}
