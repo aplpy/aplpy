@@ -106,6 +106,8 @@ def test_init_dimensions_valid(dimensions):
     f.close()
 
 # Test initialization with invalid dimensions
+
+
 @pytest.mark.parametrize(('dimensions'), INVALID_DIMENSIONS)
 def test_init_dimensions_invalid(dimensions):
     hdu = generate_hdu(REFERENCE)
@@ -133,6 +135,8 @@ def test_init_extensive_wcs(header, dimensions):
     f.close()
 
 # Check that for CAR projections, an exception is raised if no convention is specified
+
+
 @pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
 def test_init_car_invalid(dimensions):
     hdu = generate_hdu(CAR_REFERENCE)

@@ -58,8 +58,8 @@ def test_grid_alpha():
     f.grid.set_alpha(0.3)
     f.grid.set_alpha(1.0)
     f.close()
-    
-    
+
+
 def test_grid_linestyle():
     data = np.zeros((16, 16))
     f = aplpy.FITSFigure(data)
@@ -70,7 +70,6 @@ def test_grid_linestyle():
     f.close()
 
 
-
 def test_grid_linewidth():
     data = np.zeros((16, 16))
     f = aplpy.FITSFigure(data)
@@ -79,4 +78,3 @@ def test_grid_linewidth():
     f.grid.set_linewidth(2)
     f.grid.set_linewidth(5)
     f.close()
-

@@ -23,4 +23,3 @@ def test_frame_color():
     f.frame.set_color('#003344')
     f.frame.set_color((1.0, 0.4, 0.3))
     f.close()
-

@@ -13,6 +13,7 @@ def test_scalebar_add_invalid():
     with pytest.raises(TypeError):
         f.add_scalebar()
 
+
 def test_scalebar_addremove():
     data = np.zeros((16, 16))
     f = aplpy.FITSFigure(data)

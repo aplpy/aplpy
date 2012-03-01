@@ -60,7 +60,7 @@ def test_hdu_nowcs_init():
 
 # Test initalization through a Numpy array (no WCS)
 def test_numpy_nowcs_init():
-    data = np.zeros((16, 16 ,16))
+    data = np.zeros((16, 16, 16))
     f = aplpy.FITSFigure(data, slices=[5])
     f.show_grayscale()
     f.close()
