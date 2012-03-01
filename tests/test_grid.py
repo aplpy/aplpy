@@ -29,10 +29,14 @@ def test_grid_spacing():
     data = np.zeros((16, 16))
     f = aplpy.FITSFigure(data)
     f.add_grid()
-    f.grid.set_xspacing(0.1)
-    f.grid.set_xspacing('auto')
-    f.grid.set_yspacing(0.2)
-    f.grid.set_yspacing('auto')
+    f.grid.set_xspacing(1.)
+    f.grid.set_xspacing('tick')
+    with pytest.raises(ValueError):
+        f.grid.set_xspacing('auto')
+    f.grid.set_yspacing(2.)
+    f.grid.set_yspacing('tick')
+    with pytest.raises(ValueError):
+        f.grid.set_yspacing('auto')
     f.close()
 
 

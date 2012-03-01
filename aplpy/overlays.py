@@ -44,7 +44,7 @@ class Compass(object):
         Required Arguments:
 
             *length*:[ float ]
-                The length of the scalebar, in degrees
+                The length of the scalebar
 
         Optional Keyword Arguments:
 
@@ -113,9 +113,9 @@ class Compass(object):
 
         len_pix = length * (ymax - ymin)
 
-        degperpix = wcs_util.degperpix(self._wcs)
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
 
-        len_deg = len_pix * degperpix
+        len_deg = len_pix * pixel_scale
 
         # Should really only do tiny displacement then magnify the vectors - important if there is curvature
 
@@ -167,7 +167,7 @@ class ScaleBar(object):
         Required Arguments:
 
             *length*:[ float ]
-                The length of the scalebar, in degrees
+                The length of the scalebar
 
         Optional Keyword Arguments:
 
@@ -196,9 +196,10 @@ class ScaleBar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        degperpix = wcs_util.degperpix(self._wcs)
 
-        length = length / degperpix
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
+
+        length = length / pixel_scale
 
         try:
             self._scalebar.remove()
@@ -232,7 +233,7 @@ class ScaleBar(object):
     @auto_refresh
     def set_length(self, length):
         '''
-        Set the length of the scale bar, in degrees.
+        Set the length of the scale bar.
         '''
         self.show(length, **self._base_settings)
         self._set_scalebar_properties(**self._scalebar_settings)
@@ -466,7 +467,7 @@ class Beam(object):
         if isinstance(angle, basestring):
             angle = self._header[angle]
 
-        degperpix = wcs_util.degperpix(self._wcs)
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
 
         self._base_settings['minor'] = minor
         self._base_settings['major'] = major
@@ -476,8 +477,8 @@ class Beam(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        minor /= degperpix
-        major /= degperpix
+        minor /= pixel_scale
+        major /= pixel_scale
 
         try:
             self._beam.remove()

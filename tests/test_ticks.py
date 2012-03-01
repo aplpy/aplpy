@@ -10,10 +10,10 @@ import aplpy
 def test_ticks_spacing():
     data = np.zeros((16, 16))
     f = aplpy.FITSFigure(data)
-    f.ticks.set_xspacing(0.01)
-    f.ticks.set_xspacing(0.1)
-    f.ticks.set_yspacing(0.01)
-    f.ticks.set_yspacing(0.1)
+    f.ticks.set_xspacing(0.5)
+    f.ticks.set_xspacing(1.)
+    f.ticks.set_yspacing(0.5)
+    f.ticks.set_yspacing(1.)
     f.close()
 
 

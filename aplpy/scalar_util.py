@@ -26,7 +26,9 @@ def _get_label_precision(format):
         elif "f" in format:
             return 10. ** (-len((format % 1).split('.')[1]))
         elif "e" in format:
-            return 0.  # need to figure this out
+            return None  # need to figure this out
+        else:
+            return None  # need to figure this out
     elif "." in format:
         return 10 ** (-len(format.split('.')[1]))
     else:
@@ -54,5 +56,8 @@ def _check_format_spacing_consistency(format, spacing):
 
     label_spacing = _get_label_precision(format)
 
-    if type(spacing / label_spacing) != int:
+    if label_spacing is None:
+        return  # can't determine minimum spacing, so can't check
+
+    if spacing % label_spacing != 0.:
         raise InconsistentSpacing('Label format and tick spacing are inconsistent. Make sure that the tick spacing is a multiple of the smallest angle that can be represented by the specified format (currently %s). For example, if the format is dd:mm:ss.s, then the tick spacing has to be a multiple of 0.1". Similarly, if the format is hh:mm:ss, then the tick spacing has to be a multiple of 15". If you got this error as a result of interactively zooming in to a small region, this means that the default display format for the labels is not accurate enough, so you will need to increase the format precision.' % format)

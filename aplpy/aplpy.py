@@ -427,38 +427,35 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Required Arguments:
 
-            *x*: [ float ]
-                Longitude of the position to center on (degrees)
-
-            *y*: [ float ]
-                Latitude of the position to center on (degrees)
+            *x, y*: [ float ]
+                Coordinates to center on
 
         Optional Keyword Arguments:
 
             Either the radius or width/heigh arguments should be specified.
 
             *radius*: [ float ]
-                Radius of the region to view (degrees). This produces a square plot.
+                Radius of the region to view. This produces a square plot.
 
             *width*: [ float ]
-                Width of the region to view (degrees). This should be given in
+                Width of the region to view. This should be given in
                 conjunction with the height argument.
 
             *height*: [ float ]
-                Height of the region to view (degrees). This should be given in
+                Height of the region to view. This should be given in
                 conjunction with the width argument.
         '''
 
         xpix, ypix = wcs_util.world2pix(self._wcs, x, y)
 
-        degperpix = wcs_util.degperpix(self._wcs)
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
 
         if radius:
-            dx_pix = radius / degperpix
-            dy_pix = radius / degperpix
+            dx_pix = radius / pixel_scale
+            dy_pix = radius / pixel_scale
         elif width and height:
-            dx_pix = width / degperpix / 2.
-            dy_pix = height / degperpix / 2.
+            dx_pix = width / pixel_scale / 2.
+            dy_pix = height / pixel_scale / 2.
         else:
             raise Exception("Need to specify either radius= or width= and height= arguments")
 
@@ -936,7 +933,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 The y positions of the circles (in world coordinates)
 
             *radius*: [integer | float | list | numpy.ndarray ]
-                The radii of the circles in degrees
+                The radii of the circles (in world coordinates)
 
         Optional Keyword Arguments:
 
@@ -1008,10 +1005,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                The y positions of the ellipses (in world coordinates)
 
            *width*: [integer | float | list | numpy.ndarray ]
-               The width of the ellipse in degrees
+               The width of the ellipse (in world coordinates)
 
            *height*: [integer | float | list | numpy.ndarray ]
-               The height of the ellipse in degrees
+               The height of the ellipse (in world coordinates)
 
        Optional Keyword Arguments:
 
@@ -1099,10 +1096,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                The y positions of the rectangles (in world coordinates)
 
            *width*: [integer | float | list | numpy.ndarray ]
-               The width of the rectangle in degrees
+               The width of the rectangle (in world coordinates)
 
            *height*: [integer | float | list | numpy.ndarray ]
-               The height of the rectangle in degrees
+               The height of the rectangle (in world coordinates)
 
        Optional Keyword Arguments:
 

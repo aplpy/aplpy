@@ -426,10 +426,10 @@ def system(wcs):
 
 
 def arcperpix(wcs):
-    return degperpix(wcs) * 3600.
+    return pixel_scale(wcs) * 3600.
 
 
-def degperpix(wcs):
+def pixel_scale(wcs):
     try:
         pscale = np.sqrt(wcs.wcs.cd[0, 0] ** 2 + wcs.wcs.cd[1, 0] ** 2)
     except AttributeError:

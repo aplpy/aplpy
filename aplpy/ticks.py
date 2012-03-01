@@ -82,7 +82,7 @@ class Ticks(object):
                 self._ax2.xaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
             else:
                 try:
-                    su._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude'))
+                    su._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, spacing)
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return
@@ -117,7 +117,7 @@ class Ticks(object):
                 self._ax2.yaxis.apl_tick_spacing = au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
             else:
                 try:
-                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
+                    su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, spacing)
                 except au.InconsistentSpacing:
                     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                     return

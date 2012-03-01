@@ -19,7 +19,7 @@ class Grid(object):
 
         # Save axes and wcs information
         self.ax = parent._ax1
-        self.wcs = parent._wcs
+        self._wcs = parent._wcs
         self._figure = parent._figure
 
         # Save plotting parameters (required for @auto_refresh)
@@ -51,16 +51,19 @@ class Grid(object):
         Required Arguments:
 
             *xspacing*: [ float | 'tick' ]
-                The spacing in the longitudinal direction, in degrees.
-                To set the spacing to be the same as the ticks, set this
-                to 'tick'
+                The spacing in the longitudinal direction. To set the spacing
+                to be the same as the ticks, set this to 'tick'
         '''
-
         if xspacing == 'tick':
             self.x_auto_spacing = True
-        else:
+        elif np.isreal(xspacing):
             self.x_auto_spacing = False
-            self.x_grid_spacing = au.Angle(degrees=xspacing)
+            if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
+                self.x_grid_spacing = au.Angle(degrees=xspacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
+            else:
+                self.x_grid_spacing = xspacing
+        else:
+            raise ValueError("Grid spacing should be a scalar or 'tick'")
 
         self._update()
 
@@ -72,16 +75,20 @@ class Grid(object):
         Required Arguments:
 
             *yspacing*: [ float | 'tick' ]
-                The spacing in the latitudinal direction, in degrees.
-                To set the spacing to be the same as the ticks, set this
-                to 'tick'
+                The spacing in the latitudinal direction. To set the spacing
+                to be the same as the ticks, set this to 'tick'
         '''
 
         if yspacing == 'tick':
             self.y_auto_spacing = True
-        else:
+        elif np.isreal(yspacing):
             self.y_auto_spacing = False
-            self.y_grid_spacing = au.Angle(degrees=yspacing)
+            if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
+                self.y_grid_spacing = au.Angle(degrees=yspacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+            else:
+                self.y_grid_spacing = yspacing
+        else:
+            raise ValueError("Grid spacing should be a scalar or 'tick'")
 
         self._update()
 
@@ -166,7 +173,7 @@ class Grid(object):
             warnings.warn("Could not determine x tick spacing - grid cannot be drawn")
             return
 
-        if self.wcs.xaxis_coord_type in ['longitude', 'latitude']:
+        if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
             xspacing = xspacing.todegrees()
 
         if self.y_auto_spacing:
@@ -181,32 +188,32 @@ class Grid(object):
             warnings.warn("Could not determine y tick spacing - grid cannot be drawn")
             return
 
-        if self.wcs.yaxis_coord_type in ['longitude', 'latitude']:
+        if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
             yspacing = yspacing.todegrees()
 
         # Find x lines that intersect with axes
-        grid_x_i, grid_y_i = find_intersections(self.wcs, 'x', xspacing)
+        grid_x_i, grid_y_i = find_intersections(self._wcs, 'x', xspacing)
 
-        if self.wcs.xaxis_coord_type == 'longitude':
+        if self._wcs.xaxis_coord_type == 'longitude':
             grid_x_i = np.mod(grid_x_i, 360.)
-        elif self.wcs.xaxis_coord_type == 'latitude':
+        elif self._wcs.xaxis_coord_type == 'latitude':
             grid_x_i = np.mod(grid_x_i + 90., 180.) - 90.
 
-        if self.wcs.yaxis_coord_type == 'longitude':
+        if self._wcs.yaxis_coord_type == 'longitude':
             grid_y_i = np.mod(grid_y_i, 360.)
-        elif self.wcs.yaxis_coord_type == 'latitude':
+        elif self._wcs.yaxis_coord_type == 'latitude':
             grid_y_i = np.mod(grid_y_i + 90., 180.) - 90.
 
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed grid lines
-        if self.wcs.xaxis_coord_type == 'latitude' and self.wcs.yaxis_coord_type == 'longitude' and len(grid_x_i) > 0:
+        if self._wcs.xaxis_coord_type == 'latitude' and self._wcs.yaxis_coord_type == 'longitude' and len(grid_x_i) > 0:
 
             gx = grid_x_i.min()
 
             while True:
                 gx -= xspacing
-                xpix, ypix = wcs_util.world2pix(self.wcs, gx, 0.)
-                if in_plot(self.wcs, xpix, ypix) and gx >= -90.:
+                xpix, ypix = wcs_util.world2pix(self._wcs, gx, 0.)
+                if in_plot(self._wcs, xpix, ypix) and gx >= -90.:
                     grid_x_i = np.hstack([grid_x_i, gx, gx])
                     grid_y_i = np.hstack([grid_y_i, 0., 360.])
                 else:
@@ -216,8 +223,8 @@ class Grid(object):
 
             while True:
                 gx += xspacing
-                xpix, ypix = wcs_util.world2pix(self.wcs, gx, 0.)
-                if in_plot(self.wcs, xpix, ypix) and gx <= +90.:
+                xpix, ypix = wcs_util.world2pix(self._wcs, gx, 0.)
+                if in_plot(self._wcs, xpix, ypix) and gx <= +90.:
                     grid_x_i = np.hstack([grid_x_i, gx, gx])
                     grid_y_i = np.hstack([grid_y_i, 0., 360.])
                 else:
@@ -225,32 +232,32 @@ class Grid(object):
 
         # Plot those lines
         for gx in np.unique(grid_x_i):
-            for line in plot_grid_x(self.wcs, grid_x_i, grid_y_i, gx):
+            for line in plot_grid_x(self._wcs, grid_x_i, grid_y_i, gx):
                 lines.append(line)
 
         # Find y lines that intersect with axes
-        grid_x_i, grid_y_i = find_intersections(self.wcs, 'y', yspacing)
+        grid_x_i, grid_y_i = find_intersections(self._wcs, 'y', yspacing)
 
-        if self.wcs.xaxis_coord_type == 'longitude':
+        if self._wcs.xaxis_coord_type == 'longitude':
             grid_x_i = np.mod(grid_x_i, 360.)
-        elif self.wcs.xaxis_coord_type == 'latitude':
+        elif self._wcs.xaxis_coord_type == 'latitude':
             grid_x_i = np.mod(grid_x_i + 90., 180.) - 90.
 
-        if self.wcs.yaxis_coord_type == 'longitude':
+        if self._wcs.yaxis_coord_type == 'longitude':
             grid_y_i = np.mod(grid_y_i, 360.)
-        elif self.wcs.yaxis_coord_type == 'latitude':
+        elif self._wcs.yaxis_coord_type == 'latitude':
             grid_y_i = np.mod(grid_y_i + 90., 180.) - 90.
 
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed grid lines
-        if self.wcs.xaxis_coord_type == 'longitude' and self.wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0:
+        if self._wcs.xaxis_coord_type == 'longitude' and self._wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0:
 
             gy = grid_y_i.min()
 
             while True:
                 gy -= yspacing
-                xpix, ypix = wcs_util.world2pix(self.wcs, 0., gy)
-                if in_plot(self.wcs, xpix, ypix) and gy >= -90.:
+                xpix, ypix = wcs_util.world2pix(self._wcs, 0., gy)
+                if in_plot(self._wcs, xpix, ypix) and gy >= -90.:
                     grid_x_i = np.hstack([grid_x_i, 0., 360.])
                     grid_y_i = np.hstack([grid_y_i, gy, gy])
                 else:
@@ -260,8 +267,8 @@ class Grid(object):
 
             while True:
                 gy += yspacing
-                xpix, ypix = wcs_util.world2pix(self.wcs, 0., gy)
-                if in_plot(self.wcs, xpix, ypix) and gy <= +90.:
+                xpix, ypix = wcs_util.world2pix(self._wcs, 0., gy)
+                if in_plot(self._wcs, xpix, ypix) and gy <= +90.:
                     grid_x_i = np.hstack([grid_x_i, 0., 360.])
                     grid_y_i = np.hstack([grid_y_i, gy, gy])
                 else:
@@ -269,7 +276,7 @@ class Grid(object):
 
         # Plot those lines
         for gy in np.unique(grid_y_i):
-            for line in plot_grid_y(self.wcs, grid_x_i, grid_y_i, gy):
+            for line in plot_grid_y(self._wcs, grid_x_i, grid_y_i, gy):
                 lines.append(line)
 
         if self._grid:
