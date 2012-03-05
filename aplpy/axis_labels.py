@@ -1,6 +1,9 @@
-import wcs_util
+from __future__ import absolute_import
+
 from matplotlib.font_manager import FontProperties
-from decorators import auto_refresh, fixdocstring
+
+import aplpy.wcs_util as wcs_util
+from aplpy.decorators import auto_refresh, fixdocstring
 
 
 class AxisLabels(object):
@@ -13,6 +16,9 @@ class AxisLabels(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Set font
         self._label_fontproperties = FontProperties()
 
@@ -21,11 +27,13 @@ class AxisLabels(object):
 
         system, equinox, units = wcs_util.system(self._wcs,userwcs=userwcs)
 
-        if system == 'equatorial':
+        if system['name'] == 'equatorial':
+
             if equinox == 'b1950':
-                self.set_xtext('RA (B1950)')
-                self.set_ytext('Dec (B1950)')
+                xtext = 'RA (B1950)'
+                ytext = 'Dec (B1950)'
             else:
+<<<<<<< HEAD
                 self.set_xtext('RA (J2000)')
                 self.set_ytext('Dec (J2000)')
         elif system == 'galactic':
@@ -44,6 +52,47 @@ class AxisLabels(object):
         else:
             self.set_xtext('Ecliptic Longitude')
             self.set_ytext('Ecliptic Latitude')
+=======
+                xtext = 'RA (J2000)'
+                ytext = 'Dec (J2000)'
+
+        elif system['name'] == 'galactic':
+
+            xtext = 'Galactic Longitude'
+            ytext = 'Galactic Latitude'
+
+        elif system['name'] == 'ecliptic':
+
+            xtext = 'Ecliptic Longitude'
+            ytext = 'Ecliptic Latitude'
+
+        elif system['name'] == 'unknown':
+
+            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
+            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
+
+            if len(self._wcs.cname_x) > 0:
+                xtext = self._wcs.cname_x + xunit
+            else:
+                if len(self._wcs.ctype_x) == 8 and self._wcs.ctype_x[4] == '-':
+                    xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
+                else:
+                    xtext = self._wcs.ctype_x + xunit
+
+            if len(self._wcs.cname_y) > 0:
+                ytext = self._wcs.cname_y + yunit
+            else:
+                if len(self._wcs.ctype_y) == 8 and self._wcs.ctype_y[4] == '-':
+                    ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+                else:
+                    ytext = self._wcs.ctype_y + yunit
+
+        if system['inverted']:
+            xtext, ytext = ytext, xtext
+
+        self.set_xtext(xtext)
+        self.set_ytext(ytext)
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
         self.set_xposition('bottom')
         self.set_yposition('left')
@@ -187,7 +236,7 @@ class AxisLabels(object):
             self._xlabel1.set_visible(False)
             self._xlabel2.set_visible(True)
         else:
-            raise Exception("position should be one of 'top' or 'bottom'")
+            raise ValueError("position should be one of 'top' or 'bottom'")
         self._xposition = position
 
     @auto_refresh
@@ -200,5 +249,5 @@ class AxisLabels(object):
             self._ylabel1.set_visible(False)
             self._ylabel2.set_visible(True)
         else:
-            raise Exception("position should be one of 'left' or 'right'")
+            raise ValueError("position should be one of 'left' or 'right'")
         self._yposition = position

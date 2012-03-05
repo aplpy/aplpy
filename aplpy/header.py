@@ -1,58 +1,77 @@
-import pywcs
+from __future__ import absolute_import
 
+from aplpy.logger import logger
 
+<<<<<<< HEAD
 def check(header, convention=None, userwcs=False):
+=======
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
-    wcs = pywcs.WCS(header)
+def check(header, convention=None, dimensions=[0, 1]):
 
-    xproj = header['CTYPE1']
-    yproj = header['CTYPE2']
+    ix = dimensions[0] + 1
+    iy = dimensions[1] + 1
 
-    xproj = xproj[4:8]
-    yproj = yproj[4:8]
+    # If header does not contain CTYPE keywords, assume that the WCS is
+    # missing or incomplete, and replace it with a 1-to-1 pixel mapping
+    if 'CTYPE%i' % ix not in header or 'CTYPE%i' % iy not in header:
+        logger.warn("No WCS information found in header - using pixel coordinates")
+        header.update('CTYPE%i' % ix, 'PIXEL')
+        header.update('CTYPE%i' % iy, 'PIXEL')
+        header.update('CRVAL%i' % ix, 0.)
+        header.update('CRVAL%i' % iy, 0.)
+        header.update('CRPIX%i' % ix, 0.)
+        header.update('CRPIX%i' % iy, 0.)
+        header.update('CDELT%i' % ix, 1.)
+        header.update('CDELT%i' % iy, 1.)
 
-    crpix1 = float(header['CRPIX1'])
-    crpix2 = float(header['CRPIX2'])
+    if header['CTYPE%i' % ix][4:] == '-CAR' and header['CTYPE%i' % iy][4:] == '-CAR':
 
-    crval1 = float(header['CRVAL1'])
-    crval2 = float(header['CRVAL2'])
+        if header['CTYPE%i' % ix][:4] == 'DEC-' or header['CTYPE%i' % ix][1:4] == 'LAT':
+            ilon = iy
+            ilat = ix
+        elif header['CTYPE%i' % iy][:4] == 'DEC-' or header['CTYPE%i' % iy][1:4] == 'LAT':
+            ilon = ix
+            ilat = iy
+        else:
+            ilon = None
+            ilat = None
 
-    nx = int(header['NAXIS1'])
-    ny = int(header['NAXIS1'])
-
-    xcp = float(nx / 2)
-    ycp = float(ny / 2)
-
+<<<<<<< HEAD
     # Check that the two projections are equal
     if xproj<>yproj and not userwcs:
         raise Exception("x and y projections do not agree")
 
     # Check for CRVAL2<>0 for CAR projection
     if xproj == '-CAR' and crval2 <> 0 and not userwcs:
+=======
+        if ilat is not None and header['CRVAL%i' % ilat] != 0:
 
-        if convention in ['wells', 'calabretta']:
-            if convention=='wells':
-                cdelt2 = float(header['CDELT2'])
-                crpix2 = crpix2 - crval2 / cdelt2
-                header.update('CRPIX2', crpix2)
-                header.update('CRVAL2', 0.0)
+            if convention == 'calabretta':
+                pass  # we don't need to do anything
+            elif convention == 'wells':
+                if 'CDELT%i' % ilat not in header:
+                    raise Exception("Need CDELT%i to be present for wells convention" % ilat)
+                crpix = header['CRPIX%i' % ilat]
+                crval = header['CRVAL%i' % ilat]
+                cdelt = header['CDELT%i' % ilat]
+                crpix = crpix - crval / cdelt
+                try:
+                    header['CRPIX%i' % ilat] = crpix
+                    header['CRVAL%i' % ilat] = 0.
+                except:  # older versions of PyFITS
+                    header.update('CRPIX%i' % ilat, crpix)
+                    header.update('CRVAL%i' % ilon, 0.)
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
+
             else:
-                pass
-        else:
-            raise Exception('''WARNING: projection is Plate Caree (-CAR) and
-            CRVAL2 is not zero. This can be intepreted either according to
-            Wells (1981) or Calabretta (2002). The former defines the
-            projection as rectilinear regardless of the value of CRVAL2,
-            whereas the latter defines the projection as rectilinear only when
-            CRVAL2 is zero. You will need to specify the convention to assume
-            by setting either convention='wells' or convention='calabretta'
-            when initializing the FITSFigure instance. ''')
-
-    # Remove any extra coordinates
-    for key in ['CTYPE', 'CRPIX', 'CRVAL', 'CUNIT', 'CDELT', 'CROTA']:
-        for coord in range(3, 6):
-            name = key + str(coord)
-            if name in header:
-                header.__delitem__(name)
+                raise Exception('''WARNING: projection is Plate Caree (-CAR) and
+                CRVALy is not zero. This can be intepreted either according to
+                Wells (1981) or Calabretta (2002). The former defines the
+                projection as rectilinear regardless of the value of CRVALy,
+                whereas the latter defines the projection as rectilinear only when
+                CRVALy is zero. You will need to specify the convention to assume
+                by setting either convention='wells' or convention='calabretta'
+                when initializing the FITSFigure instance. ''')
 
     return header

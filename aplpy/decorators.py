@@ -1,9 +1,11 @@
+from __future__ import absolute_import
+
 import threading
-from decorator import decorator
+
+from aplpy.decorator import decorator
 
 
 mydata = threading.local()
-mydata.nesting = 0
 
 
 def auto_refresh(f):
@@ -15,13 +17,16 @@ def _auto_refresh(f, *args, **kwargs):
         refresh = kwargs.pop('refresh')
     else:
         refresh = True
-    mydata.nesting += 1
+    # The following is necessary rather than using mydata.nesting = 0 at the
+    # start of the file, because doing the latter caused issues with the Django
+    # development server.
+    mydata.nesting = getattr(mydata, 'nesting', 0) + 1
     try:
         f(*args, **kwargs)
     finally:
         mydata.nesting -= 1
         if hasattr(args[0], '_figure'):
-            if refresh and mydata.nesting == 0 and args[0]._figure._auto_refresh:
+            if refresh and mydata.nesting == 0 and args[0]._parameters.auto_refresh:
                 args[0]._figure.canvas.draw()
 
 
@@ -74,14 +79,14 @@ def fixdocstring(func):
 
     header = lines[:i]
 
-    footer = lines[i+1:]
+    footer = lines[i + 1:]
 
     indent = lines[i].index('common:') + 4
 
     common = []
     for item in lines[i].split(':')[1].split(','):
         if item.strip() in doc:
-            common.append(" " * indent + doc[item.strip()].replace('\n', '\n' + " "*indent))
+            common.append(" " * indent + doc[item.strip()].replace('\n', '\n' + " " * indent))
 
     docstring = string.join(header + common + footer, "\n")
 

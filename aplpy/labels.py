@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import warnings
-import matplotlib.pyplot as mpl
-import wcs_util
-import numpy as np
+from __future__ import absolute_import
+
 import string
+import warnings
+
+import numpy as np
+import matplotlib.pyplot as mpl
 from matplotlib.font_manager import FontProperties
-import angle_util as au
-from decorators import auto_refresh, fixdocstring
+
+import aplpy.wcs_util as wcs_util
+import aplpy.angle_util as au
+from aplpy.decorators import auto_refresh, fixdocstring
 
 
 class TickLabels(object):
@@ -20,6 +24,9 @@ class TickLabels(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Set font
         self._label_fontproperties = FontProperties()
 
@@ -30,15 +37,36 @@ class TickLabels(object):
         system, equinox, self.units = wcs_util.system(self._wcs,userwcs=userwcs)
 
         # Set default label format
+<<<<<<< HEAD
         if system == 'equatorial':
             self.set_xformat("hh:mm:ss.ss")
             self.set_yformat("dd:mm:ss.s")
         elif system == 'user':
             self.set_xformat("dd.dd")
             self.set_yformat("dd.dd")
+=======
+        if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
+            if system['name'] == 'equatorial':
+                if self._wcs.xaxis_coord_type == 'longitude':
+                    self.set_xformat("hh:mm:ss.ss")
+                else:
+                    self.set_xformat("dd:mm:ss.s")
+            else:
+                self.set_xformat("ddd.dddd")
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
         else:
-            self.set_xformat("ddd.dddd")
-            self.set_yformat("dd.dddd")
+            self.set_xformat('%g')
+
+        if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
+            if system['name'] == 'equatorial':
+                if self._wcs.yaxis_coord_type == 'longitude':
+                    self.set_yformat("hh:mm:ss.ss")
+                else:
+                    self.set_yformat("dd:mm:ss.s")
+            else:
+                self.set_yformat("ddd.dddd")
+        else:
+            self.set_yformat('%g')
 
         # Set major tick formatters
         if userwcs: # prevent longitude treatment for user coords
@@ -54,10 +82,15 @@ class TickLabels(object):
         self._ax2.xaxis.set_major_formatter(fx2)
         self._ax2.yaxis.set_major_formatter(fy2)
 
+        # Cursor display
+        self._ax1._cursor_world = True
+        self._figure.canvas.mpl_connect('key_press_event', self._set_cursor_prefs)
+
     @auto_refresh
     def set_xformat(self, format):
         '''
-        Set the format of the x-axis tick labels:
+        Set the format of the x-axis tick labels. If the x-axis type is
+        ``longitude`` or ``latitude``, then the options are:
 
             * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
             * ``hh`` or ``dd`` - hours (or degrees)
@@ -65,14 +98,24 @@ class TickLabels(object):
             * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
             * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.
 
-        If one of these arguments is not specified, the format for that axis is left unchanged.
+        If the x-axis type is ``scalar``, then the format should be a valid
+        python string format beginning with a ``%``.
+
+        If one of these arguments is not specified, the format for that axis
+        is left unchanged.
         '''
-        try:
-            if not self._ax1.xaxis.apl_auto_tick_spacing:
-                au._check_format_spacing_consistency(format, self._ax1.xaxis.apl_tick_spacing)
-        except au.InconsistentSpacing:
-            warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
-            return
+        if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
+            if format.startswith('%'):
+                raise Exception("Cannot specify Python format for longitude or latitude")
+            try:
+                if not self._ax1.xaxis.apl_auto_tick_spacing:
+                    au._check_format_spacing_consistency(format, self._ax1.xaxis.apl_tick_spacing)
+            except au.InconsistentSpacing:
+                warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
+                return
+        else:
+            if not format.startswith('%'):
+                raise Exception("For scalar tick labels, format should be a Python format beginning with %")
 
         self._ax1.xaxis.apl_label_form = format
         self._ax2.xaxis.apl_label_form = format
@@ -80,7 +123,8 @@ class TickLabels(object):
     @auto_refresh
     def set_yformat(self, format):
         '''
-        Set the format of the y-axis tick labels:
+        Set the format of the y-axis tick labels. If the y-axis type is
+        ``longitude`` or ``latitude``, then the options are:
 
             * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
             * ``hh`` or ``dd`` - hours (or degrees)
@@ -88,14 +132,24 @@ class TickLabels(object):
             * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
             * ``hh:mm:ss.ss`` or ``dd:mm:ss.ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds), where the number of decimal places can be varied.
 
-        If one of these arguments is not specified, the format for that axis is left unchanged.
+        If the y-axis type is ``scalar``, then the format should be a valid
+        python string format beginning with a ``%``.
+
+        If one of these arguments is not specified, the format for that axis
+        is left unchanged.
         '''
-        try:
-            if not self._ax1.yaxis.apl_auto_tick_spacing:
-                au._check_format_spacing_consistency(format, self._ax1.yaxis.apl_tick_spacing)
-        except au.InconsistentSpacing:
-            warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
-            return
+        if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
+            if format.startswith('%'):
+                raise Exception("Cannot specify Python format for longitude or latitude")
+            try:
+                if not self._ax1.yaxis.apl_auto_tick_spacing:
+                    au._check_format_spacing_consistency(format, self._ax1.yaxis.apl_tick_spacing)
+            except au.InconsistentSpacing:
+                warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
+                return
+        else:
+            if not format.startswith('%'):
+                raise Exception("For scalar tick labels, format should be a Python format beginning with %")
 
         self._ax1.yaxis.apl_label_form = format
         self._ax2.yaxis.apl_label_form = format
@@ -109,7 +163,7 @@ class TickLabels(object):
             * 'plain' uses letters and symbols as separators, for example 31h41m59.26s +27º18'28.1"
         """
 
-        if style is 'latex':
+        if style == 'latex':
             warnings.warn("latex has now been merged with plain - whether or not to use LaTeX is controled through set_system_latex")
             style = 'plain'
 
@@ -240,7 +294,7 @@ class TickLabels(object):
             fx2 = WCSFormatter(wcs=self._wcs, coord='x')
             self._ax2.xaxis.set_major_formatter(fx2)
         else:
-            raise Exception("position should be one of 'top' or 'bottom'")
+            raise ValueError("position should be one of 'top' or 'bottom'")
 
     @auto_refresh
     def set_yposition(self, position):
@@ -256,23 +310,31 @@ class TickLabels(object):
             fy2 = WCSFormatter(wcs=self._wcs, coord='y')
             self._ax2.yaxis.set_major_formatter(fy2)
         else:
-            raise Exception("position should be one of 'left' or 'right'")
+            raise ValueError("position should be one of 'left' or 'right'")
+
+    def _set_cursor_prefs(self, event, **kwargs):
+        if event.key == 'c':
+            self._ax1._cursor_world = not self._ax1._cursor_world
 
     def _cursor_position(self, x, y):
 
         xaxis = self._ax1.xaxis
         yaxis = self._ax1.yaxis
 
-        xw, yw = wcs_util.pix2world(self._wcs, x, y)
+        if self._ax1._cursor_world:
 
+<<<<<<< HEAD
         xw = au.Angle(degrees=xw, latitude=False, userwcs=self.userwcs)
         yw = au.Angle(degrees=yw, latitude=True, userwcs=self.userwcs)
+=======
+            xw, yw = wcs_util.pix2world(self._wcs, x, y)
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
-        hours = 'h' in xaxis.apl_label_form
+            if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
 
-        if hours:
-            xw = xw.tohours()
+                xw = au.Angle(degrees=xw, latitude=self._wcs.xaxis_coord_type == 'latitude')
 
+<<<<<<< HEAD
         if not self.userwcs:
             if xaxis.apl_labels_style in ['plain', 'latex']:
                 sep = ('d', 'm', 's')
@@ -282,9 +344,14 @@ class TickLabels(object):
                 sep = (':', ':', '')
         else:
             sep = ('','','')
+=======
+                hours = 'h' in xaxis.apl_label_form
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
-        xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
+                if hours:
+                    xw = xw.tohours()
 
+<<<<<<< HEAD
         if not self.userwcs:
             if yaxis.apl_labels_style in ['plain', 'latex']:
                 sep = ('d', 'm', 's')
@@ -294,10 +361,50 @@ class TickLabels(object):
                 sep = (':', ':', '')
         else:
             sep = ('','','')
+=======
+                if xaxis.apl_labels_style in ['plain', 'latex']:
+                    sep = ('d', 'm', 's')
+                    if hours:
+                        sep = ('h', 'm', 's')
+                elif xaxis.apl_labels_style == 'colons':
+                    sep = (':', ':', '')
 
-        ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
+                xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
+                xlabel = string.join(xlabel, "")
 
-        return string.join(xlabel, "") + " " + string.join(ylabel, "")
+            else:
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
+
+                xlabel = xaxis.apl_label_form % xw
+
+            if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
+
+                yw = au.Angle(degrees=yw, latitude=self._wcs.yaxis_coord_type == 'latitude')
+
+                hours = 'h' in yaxis.apl_label_form
+
+                if hours:
+                    yw = yw.tohours()
+
+                if yaxis.apl_labels_style in ['plain', 'latex']:
+                    sep = ('d', 'm', 's')
+                    if hours:
+                        sep = ('h', 'm', 's')
+                elif yaxis.apl_labels_style == 'colons':
+                    sep = (':', ':', '')
+
+                ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
+                ylabel = string.join(ylabel, "")
+
+            else:
+
+                ylabel = yaxis.apl_label_form % yw
+
+            return  "%s %s (world)" % (xlabel, ylabel)
+
+        else:
+
+            return "%g %g (pixel)" % (x, y)
 
 
 class WCSFormatter(mpl.Formatter):
@@ -310,18 +417,35 @@ class WCSFormatter(mpl.Formatter):
     def __call__(self, x, pos=None):
         'Return the format for tick val x at position pos; pos=None indicated unspecified'
 
-        au._check_format_spacing_consistency(self.axis.apl_label_form, self.axis.apl_tick_spacing)
+        self.coord_type = self._wcs.xaxis_coord_type if self.coord == 'x' else self._wcs.yaxis_coord_type
 
-        hours = 'h' in self.axis.apl_label_form
+        if self.coord_type in ['longitude', 'latitude']:
 
-        if self.axis.apl_labels_style == 'plain':
-            if mpl.rcParams['text.usetex']:
-                label_style = 'plain_tex'
+            au._check_format_spacing_consistency(self.axis.apl_label_form, self.axis.apl_tick_spacing)
+
+            hours = 'h' in self.axis.apl_label_form
+
+            if self.axis.apl_labels_style == 'plain':
+                if mpl.rcParams['text.usetex']:
+                    label_style = 'plain_tex'
+                else:
+                    label_style = 'plain_notex'
             else:
-                label_style = 'plain_notex'
-        else:
-            label_style = self.axis.apl_labels_style
+                label_style = self.axis.apl_labels_style
 
+            if label_style == 'plain_notex':
+                sep = (u'\u00b0', u"'", u'"')
+                if hours:
+                    sep = ('h', 'm', 's')
+            elif label_style == 'colons':
+                sep = (':', ':', '')
+            elif label_style == 'plain_tex':
+                if hours:
+                    sep = ('^{h}', '^{m}', '^{s}')
+                else:
+                    sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
+
+<<<<<<< HEAD
         if self.units == 'degrees':
             if label_style == 'plain_notex':
                 sep = (u'\u00b0', u"'", u'"')
@@ -336,34 +460,41 @@ class WCSFormatter(mpl.Formatter):
                     sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
         else:
             sep = ('','','')
+=======
+            ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix - x))
 
-        ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix-x))
-
-        label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
-        if hours:
-            label = label.tohours()
-        label = label.tostringlist(format=self.axis.apl_label_form, sep=sep)
-
-        if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
-            comp_ipos = ipos - 1
-        else:
-            comp_ipos = ipos + 1
-
-        if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix)-1:
-
-            comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
+            label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
             if hours:
-                comp_label = comp_label.tohours()
-            comp_label = comp_label.tostringlist(format=self.axis.apl_label_form, sep=sep)
+                label = label.tohours()
+            label = label.tostringlist(format=self.axis.apl_label_form, sep=sep)
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
-            for iter in range(len(label)):
-                if comp_label[0] == label[0]:
-                    label.pop(0)
-                    comp_label.pop(0)
-                else:
-                    break
+            if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
+                comp_ipos = ipos - 1
+            else:
+                comp_ipos = ipos + 1
+
+            if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix) - 1:
+
+                comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
+                if hours:
+                    comp_label = comp_label.tohours()
+                comp_label = comp_label.tostringlist(format=self.axis.apl_label_form, sep=sep)
+
+                for iter in range(len(label)):
+                    if comp_label[0] == label[0]:
+                        label.pop(0)
+                        comp_label.pop(0)
+                    else:
+                        break
+
+        else:
+
+            ipos = np.argmin(np.abs(self.axis.apl_tick_positions_pix - x))
+            label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[ipos]
+            label = self.axis.apl_label_form % label
 
         if mpl.rcParams['text.usetex']:
-            return "$"+string.join(label, "")+"$"
+            return "$" + string.join(label, "") + "$"
         else:
             return string.join(label, "")

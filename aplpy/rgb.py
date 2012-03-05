@@ -1,9 +1,16 @@
+from __future__ import absolute_import
+
+from distutils import version
 import os
+import warnings
+
 import tempfile
 import shutil
 
 import pyfits
 import numpy as np
+
+from aplpy.logger import logger
 
 try:
     import Image
@@ -13,35 +20,48 @@ except:
 
 try:
     import montage
+    if not hasattr(montage, 'reproject_hdu'):
+        raise
     montage_installed = True
 except:
     montage_installed = False
 
-import image_util
-import math_util as m
+try:
+    from pyavm import AVM
+    avm_installed = True
+except:
+    avm_installed = False
+
+if montage_installed:
+    if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
+        warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
+        montage_installed = False
+
+import aplpy.image_util as image_util
+import aplpy.math_util as math_util
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
                   stretch='linear', vmid=None, exponent=2):
 
-    min_auto = not m.isnumeric(vmin)
-    max_auto = not m.isnumeric(vmax)
+    min_auto = not math_util.isnumeric(vmin)
+    max_auto = not math_util.isnumeric(vmax)
 
     if min_auto or max_auto:
         auto_v = image_util.percentile_function(image)
         vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
 
     if min_auto:
-        print "vmin = %10.3e (auto)" % vmin_auto
+        logger.info("vmin = %10.3e (auto)" % vmin_auto)
         vmin = vmin_auto
     else:
-        print "vmin = %10.3e" % vmin
+        logger.info("vmin = %10.3e" % vmin)
 
     if max_auto:
-        print "vmax = %10.3e (auto)" % vmax_auto
+        logger.info("vmax = %10.3e (auto)" % vmax_auto)
         vmax = vmax_auto
     else:
-        print "vmax = %10.3e" % vmax
+        logger.info("vmax = %10.3e" % vmax)
 
     image = (image - vmin) / (vmax - vmin)
 
@@ -53,13 +73,14 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
     return data.astype(np.uint8)
 
 
-def make_rgb_image(data, output, \
+def make_rgb_image(data, output, indices=(0, 1, 2), \
                    vmin_r=None, vmax_r=None, pmin_r=0.25, pmax_r=99.75, \
                    stretch_r='linear', vmid_r=None, exponent_r=2, \
                    vmin_g=None, vmax_g=None, pmin_g=0.25, pmax_g=99.75, \
                    stretch_g='linear', vmid_g=None, exponent_g=2, \
                    vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75, \
-                   stretch_b='linear', vmid_b=None, exponent_b=2):
+                   stretch_b='linear', vmid_b=None, exponent_b=2, \
+                   embed_avm_tags=False):
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files
 
@@ -76,6 +97,12 @@ def make_rgb_image(data, output, \
             the Python Imaging Library can be used.
 
     Optional keyword arguments:
+
+        *indices*: [ tuple ]
+            If data is the filename of a FITS cube, these indices are the
+            positions in the third dimension to use for red, green, and
+            blue respectively. The default is to use the first three
+            indices.
 
         *vmin_r*: [ None | float ]
 
@@ -133,8 +160,9 @@ def make_rgb_image(data, output, \
 
         *vmid_b*: [ None | float ]
 
-            Mid-pixel value used for the log and arcsinh stretches. If
-            set to None, this is set to a sensible value.
+            Baseline values used for the log and arcsinh stretches. If
+            set to None, this is set to zero for log stretches and to
+            vmin - (vmax - vmin) / 30. for arcsinh stretches
 
         *exponent_r*: [ float ]
 
@@ -148,20 +176,38 @@ def make_rgb_image(data, output, \
     if not installed_pil:
         raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
 
-    if type(data) == str:
+    if isinstance(data, basestring):
+
         image = pyfits.getdata(data)
-        image_r = image[0, :, :]
-        image_g = image[1, :, :]
-        image_b = image[2, :, :]
+        image_r = image[indices[0], :, :]
+        image_g = image[indices[1], :, :]
+        image_b = image[indices[2], :, :]
+
+        # Read in header
+        header = pyfits.getheader(data)
+
+        # Remove information about third dimension
+        header['NAXIS'] = 2
+        for key in ['NAXIS', 'CTYPE', 'CRPIX', 'CRVAL', 'CUNIT', 'CDELT', 'CROTA']:
+            for coord in range(3, 6):
+                name = key + str(coord)
+                if name in header:
+                    header.__delitem__(name)
+
     elif (type(data) == list or type(data) == tuple) and len(data) == 3:
+
         filename_r, filename_g, filename_b = data
         image_r = pyfits.getdata(filename_r)
         image_g = pyfits.getdata(filename_g)
         image_b = pyfits.getdata(filename_b)
+
+        # Read in header
+        header = pyfits.getheader(filename_r)
+
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
 
-    print "Red:"
+    logger.info("Red:")
     image_r = Image.fromarray(_data_stretch(image_r, \
                                             vmin=vmin_r, vmax=vmax_r, \
                                             pmin=pmin_r, pmax=pmax_r, \
@@ -169,7 +215,7 @@ def make_rgb_image(data, output, \
                                             vmid=vmid_r, \
                                             exponent=exponent_r))
 
-    print "\nGreen:"
+    logger.info("\nGreen:")
     image_g = Image.fromarray(_data_stretch(image_g, \
                                             vmin=vmin_g, vmax=vmax_g, \
                                             pmin=pmin_g, pmax=pmax_g, \
@@ -177,7 +223,7 @@ def make_rgb_image(data, output, \
                                             vmid=vmid_g, \
                                             exponent=exponent_g))
 
-    print "\nBlue:"
+    logger.info("\nBlue:")
     image_b = Image.fromarray(_data_stretch(image_b, \
                                             vmin=vmin_b, vmax=vmax_b, \
                                             pmin=pmin_b, pmax=pmax_b, \
@@ -187,18 +233,35 @@ def make_rgb_image(data, output, \
 
     img = Image.merge("RGB", (image_r, image_g, image_b))
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
+
     img.save(output)
+
+    if embed_avm_tags:
+        if not avm_installed:
+            raise Exception("PyAVM needs to be installed in order to be able to embed AVM tags into the RGB image")
+        else:
+            avm = AVM(header)
+            avm.embed(output, output)
 
     return
 
 
-def make_rgb_cube(files, output):
+def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     '''
     Make an RGB data cube from a list of three FITS images.
 
     This method can read in three FITS files with different
     projections/sizes/resolutions and uses Montage to reproject
     them all to the same projection.
+
+    Two files are produced by this function. The first is a three-dimensional
+    FITS cube with a filename give by `output`, where the third dimension
+    contains the different channels. The second is a two-dimensional FITS
+    image with a filename given by `output` with a `_2d` suffix. This file
+    contains the mean of the different channels, and is required as input to
+    FITSFigure if show_rgb is subsequently used to show a color image
+    generated from the FITS cube (to provide the correct WCS information to
+    FITSFigure).
 
     Required arguments:
 
@@ -209,6 +272,21 @@ def make_rgb_cube(files, output):
         *output* [ string ]
             The filename of the output RGB FITS cube.
 
+    Optional Keyword Arguments:
+
+        *north* [ True | False ]
+            By default, the FITS header generated by Montage represents the
+            best fit to the images, often resulting in a slight rotation. If
+            you want north to be straight up in your final mosaic, you should
+            use this option.
+
+        *system* [ string ]
+            Specifies the system for the header (default is EQUJ).
+            Possible values are: EQUJ EQUB ECLJ ECLB GAL SGAL
+
+        *equinox* [ string ]
+            If a coordinate system is specified, the equinox can also be given
+            in the form YYYY. Default is J2000.
     '''
 
     # Check whether the Python montage module is installed. The Python module
@@ -242,7 +320,7 @@ def make_rgb_cube(files, output):
 
     # List files and create optimal header
     montage.mImgtbl(raw_dir, images_raw_tbl, corners=True)
-    montage.mMakeHdr(images_raw_tbl, header_hdr)
+    montage.mMakeHdr(images_raw_tbl, header_hdr, north_aligned=north, system=system, equinox=equinox)
 
     # Write out header without 'END'
     contents = open(header_hdr).read()
@@ -275,7 +353,7 @@ def make_rgb_cube(files, output):
 
     # Write out collapsed version of cube
     pyfits.writeto(output.replace('.fits', '_2d.fits'), \
-                   np.sum(image_cube, axis=0), header, clobber=True)
+                   np.mean(image_cube, axis=0), header, clobber=True)
 
     # Remove work directory
     shutil.rmtree(work_dir)

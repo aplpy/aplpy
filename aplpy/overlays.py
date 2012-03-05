@@ -1,15 +1,16 @@
+from __future__ import absolute_import
+
 import warnings
 
 from mpl_toolkits.axes_grid.anchored_artists \
     import AnchoredEllipse, AnchoredSizeBar
 
+import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
-import wcs_util
 
-import numpy as np
-
-from decorators import auto_refresh
+import aplpy.wcs_util as wcs_util
+from aplpy.decorators import auto_refresh
 
 corners = {}
 corners['top right'] = 1
@@ -36,14 +37,14 @@ class Compass(object):
         self._ax1.callbacks.connect('ylim_changed', self.update_compass)
 
     @auto_refresh
-    def show_compass(self, color='red', length = 0.1, corner=4, frame=True):
+    def show_compass(self, color='red', length=0.1, corner=4, frame=True):
         '''
         Display a scalebar
 
         Required Arguments:
 
             *length*:[ float ]
-                The length of the scalebar, in degrees
+                The length of the scalebar
 
         Optional Keyword Arguments:
 
@@ -74,15 +75,15 @@ class Compass(object):
 
         w = 2 * length
 
-        pos = {1: (1-w, 1-w),
-               2: (w, 1-w),
+        pos = {1: (1 - w, 1 - w),
+               2: (w, 1 - w),
                3: (w, w),
-               4: (1-w, w),
-               5: (1-w, 0.5),
+               4: (1 - w, w),
+               5: (1 - w, 0.5),
                6: (w, 0.5),
-               7: (1-w, 0.5),
+               7: (1 - w, 0.5),
                8: (0.5, w),
-               9: (0.5, 1-w)}
+               9: (0.5, 1 - w)}
 
         self._compass_position = pos[corner]
         self._compass_length = length
@@ -112,9 +113,9 @@ class Compass(object):
 
         len_pix = length * (ymax - ymin)
 
-        degperpix = wcs_util.degperpix(self._wcs)
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
 
-        len_deg = len_pix * degperpix
+        len_deg = len_pix * pixel_scale
 
         # Should really only do tiny displacement then magnify the vectors - important if there is curvature
 
@@ -147,6 +148,9 @@ class ScaleBar(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Initialize settings
         self._base_settings = {}
         self._scalebar_settings = {}
@@ -163,7 +167,7 @@ class ScaleBar(object):
         Required Arguments:
 
             *length*:[ float ]
-                The length of the scalebar, in degrees
+                The length of the scalebar
 
         Optional Keyword Arguments:
 
@@ -192,16 +196,17 @@ class ScaleBar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        degperpix = wcs_util.degperpix(self._wcs)
 
-        length = length / degperpix
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
+
+        length = length / pixel_scale
 
         try:
             self._scalebar.remove()
         except:
             pass
 
-        if type(corner) == str:
+        if isinstance(corner, basestring):
             corner = corners[corner]
 
         self._scalebar = AnchoredSizeBar(self._ax.transData, length, label, corner, \
@@ -228,7 +233,7 @@ class ScaleBar(object):
     @auto_refresh
     def set_length(self, length):
         '''
-        Set the length of the scale bar, in degrees.
+        Set the length of the scale bar.
         '''
         self.show(length, **self._base_settings)
         self._set_scalebar_properties(**self._scalebar_settings)
@@ -244,7 +249,7 @@ class ScaleBar(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set where to place the scalebar. Acceptable values are 'left','right',
+        Set where to place the scalebar. Acceptable values are 'left', 'right',
         'top', 'bottom', 'top left', 'top right', 'bottom left' (default), and
         'bottom right'.
         '''
@@ -398,13 +403,14 @@ class ScaleBar(object):
         warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
         self.set_font(style=style)
 
+
 class Beam(object):
 
     def __init__(self, parent):
 
         # Retrieve info from parent figure
         self._figure = parent._figure
-        self._hdu = parent._hdu
+        self._header = parent._header
         self._ax = parent._ax1
         self._wcs = parent._wcs
 
@@ -438,7 +444,7 @@ class Beam(object):
                 BPA if present) in the anticlockwise direction.
 
             *corner*: [ integer ]
-                The beam location. Acceptable values are 'left','right',
+                The beam location. Acceptable values are 'left', 'right',
                 'top', 'bottom', 'top left', 'top right', 'bottom left'
                 (default), and 'bottom right'.
 
@@ -452,16 +458,16 @@ class Beam(object):
 
         '''
 
-        if type(major) == str:
-            major = self._hdu.header[major]
+        if isinstance(major, basestring):
+            major = self._header[major]
 
-        if type(minor) == str:
-            minor = self._hdu.header[minor]
+        if isinstance(minor, basestring):
+            minor = self._header[minor]
 
-        if type(angle) == str:
-            angle = self._hdu.header[angle]
+        if isinstance(angle, basestring):
+            angle = self._header[angle]
 
-        degperpix = wcs_util.degperpix(self._wcs)
+        pixel_scale = wcs_util.pixel_scale(self._wcs)
 
         self._base_settings['minor'] = minor
         self._base_settings['major'] = major
@@ -471,15 +477,15 @@ class Beam(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        minor /= degperpix
-        major /= degperpix
+        minor /= pixel_scale
+        major /= pixel_scale
 
         try:
             self._beam.remove()
         except:
             pass
 
-        if type(corner) == str:
+        if isinstance(corner, basestring):
             corner = corners[corner]
 
         self._beam = AnchoredEllipse(self._ax.transData, \
@@ -534,7 +540,7 @@ class Beam(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set the beam location. Acceptable values are 'left','right', 'top',
+        Set the beam location. Acceptable values are 'left', 'right', 'top',
         'bottom', 'top left', 'top right', 'bottom left' (default), and
         'bottom right'.
         '''

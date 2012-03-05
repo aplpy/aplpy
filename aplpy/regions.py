@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 try:
     import pyregion
     pyregion_installed = True
@@ -9,10 +11,7 @@ def _check_pyregion_installed():
     if not pyregion_installed:
         raise Exception("The pyregion package is required to load region files")
 
-
-import matplotlib
-
-from decorators import auto_refresh
+from aplpy.decorators import auto_refresh
 
 
 class Regions:
@@ -51,13 +50,14 @@ class Regions:
     """
 
     @auto_refresh
-    def show_regions(self, regionfile, layer=False, **kwargs):
+    def show_regions(self, region_file, layer=False, **kwargs):
         """
         Overplot regions as specified in the regionsfile
 
         Required Arguments:
-            *regionfile*: [ string ]
-                Path to a ds9 regions file
+            *region_file*: [ string | pyregion.ShapeList ]
+                Path to a ds9 regions file or a ShapeList already read
+                in by pyregion.
 
         Optional Keyword Arguments:
 
@@ -70,7 +70,7 @@ class Regions:
 
         _check_pyregion_installed()
 
-        PC, TC = ds9(regionfile, self._hdu.header, **kwargs)
+        PC, TC = ds9(region_file, self._header, **kwargs)
 
         #ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)
@@ -80,13 +80,13 @@ class Regions:
             region_set_name = layer
         else:
             self._region_counter += 1
-            region_set_name = 'region_set_'+str(self._region_counter)
+            region_set_name = 'region_set_' + str(self._region_counter)
 
         self._layers[region_set_name] = PC
-        self._layers[region_set_name+"_txt"] = TC
+        self._layers[region_set_name + "_txt"] = TC
 
 
-def ds9(regionfile, header, zorder=3, **kwargs):
+def ds9(region_file, header, zorder=3, **kwargs):
     """
     Wrapper to return a PatchCollection given a ds9 region file
     and a fits header.
@@ -95,7 +95,12 @@ def ds9(regionfile, header, zorder=3, **kwargs):
     """
 
     # read region file
-    rr = pyregion.open(regionfile)
+    if isinstance(region_file, basestring):
+        rr = pyregion.open(region_file)
+    elif isinstance(region_file, pyregion.ShapeList):
+        rr = region_file
+    else:
+        raise Exception("Invalid type for region_file: %s - should be string or pyregion.ShapeList" % type(region_file))
 
     # convert coordinates to image coordinates
     rrim = rr.as_imagecoord(header)
@@ -115,7 +120,7 @@ def ds9(regionfile, header, zorder=3, **kwargs):
     # grab the shapes to overplot
     pp, aa = rrim.get_mpl_patches_texts(text_offset=text_offset)
 
-    PC = ArtistCollection(pp, **kwargs) # preserves line style (dashed)
+    PC = ArtistCollection(pp, **kwargs)  # preserves line style (dashed)
     TC = ArtistCollection(aa, **kwargs)
     PC.set_zorder(zorder)
     TC.set_zorder(zorder)

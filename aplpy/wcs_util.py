@@ -1,4 +1,162 @@
+from __future__ import absolute_import
+
 import numpy as np
+import pywcs
+
+from aplpy.logger import logger
+
+
+class WCS(pywcs.WCS):
+
+    def __init__(self, *args, **kwargs):
+
+        if 'slices' in kwargs:
+            self._slices = kwargs.pop('slices')
+
+        if 'dimensions' in kwargs:
+            self._dimensions = kwargs.pop('dimensions')
+
+        pywcs.WCS.__init__(self, *args, **kwargs)
+
+        # Fix common non-standard units
+        self.wcs.unitfix()
+
+        # Now find the values of the coordinates in the slices - only needed if
+        # data has more than two dimensions
+        if len(self._slices) > 0:
+
+            self.nx = args[0]['NAXIS%i' % (self._dimensions[0] + 1)]
+            self.ny = args[0]['NAXIS%i' % (self._dimensions[1] + 1)]
+            xpix = np.arange(self.nx) + 1.
+            ypix = np.arange(self.ny) + 1.
+            xpix, ypix = np.meshgrid(xpix, ypix)
+            xpix, ypix = xpix.reshape(self.nx * self.ny), ypix.reshape(self.nx * self.ny)
+            s = 0
+            coords = []
+            for dim in range(self.naxis):
+                if dim == self._dimensions[0]:
+                    coords.append(xpix)
+                elif dim == self._dimensions[1]:
+                    coords.append(ypix)
+                else:
+                    coords.append(np.repeat(self._slices[s], xpix.shape))
+                    s += 1
+            coords = np.vstack(coords).transpose()
+            result = pywcs.WCS.wcs_pix2sky(self, coords, 1)
+            self._mean_world = np.mean(result, axis=0)
+            # result = result.transpose()
+            # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
+
+        # Now guess what 'type' of values are on each axis
+        if self.ctype_x[:4] == 'RA--' or \
+           self.ctype_x[1:4] == 'LON':
+            self.set_xaxis_coord_type('longitude')
+            self.set_xaxis_coord_type('longitude')
+        elif self.ctype_x[:4] == 'DEC-' or \
+           self.ctype_x[1:4] == 'LAT':
+            self.set_xaxis_coord_type('latitude')
+            self.set_xaxis_coord_type('latitude')
+        else:
+            self.set_xaxis_coord_type('scalar')
+            self.set_xaxis_coord_type('scalar')
+
+        if self.ctype_y[:4] == 'RA--' or \
+           self.ctype_y[1:4] == 'LON':
+            self.set_yaxis_coord_type('longitude')
+            self.set_yaxis_coord_type('longitude')
+        elif self.ctype_y[:4] == 'DEC-' or \
+           self.ctype_y[1:4] == 'LAT':
+            self.set_yaxis_coord_type('latitude')
+            self.set_yaxis_coord_type('latitude')
+        else:
+            self.set_yaxis_coord_type('scalar')
+            self.set_yaxis_coord_type('scalar')
+
+    def set_xaxis_coord_type(self, coord_type):
+        if coord_type in ['longitude', 'latitude', 'scalar']:
+            self.xaxis_coord_type = coord_type
+        else:
+            raise Exception("coord_type should be one of longitude/latitude/scalar")
+
+    def set_yaxis_coord_type(self, coord_type):
+        if coord_type in ['longitude', 'latitude', 'scalar']:
+            self.yaxis_coord_type = coord_type
+        else:
+            raise Exception("coord_type should be one of longitude/latitude/scalar")
+
+    def __getattr__(self, attribute):
+
+        if attribute[-2:] == '_x':
+            axis = self._dimensions[0]
+        elif attribute[-2:] == '_y':
+            axis = self._dimensions[1]
+        else:
+            raise AttributeError("Attribute %s does not exist" % attribute)
+
+        if attribute[:5] == 'ctype':
+            return self.wcs.ctype[axis]
+        elif attribute[:5] == 'cname':
+            return self.wcs.cname[axis]
+        elif attribute[:5] == 'cunit':
+            return self.wcs.cunit[axis]
+        elif attribute[:5] == 'crval':
+            return self.wcs.crval[axis]
+        elif attribute[:5] == 'crpix':
+            return self.wcs.crpix[axis]
+        else:
+            raise AttributeError("Attribute %s does not exist" % attribute)
+
+    def wcs_sky2pix(self, x, y, origin):
+        if self.naxis == 2:
+            if self._dimensions[1] < self._dimensions[0]:
+                xp, yp = pywcs.WCS.wcs_sky2pix(self, y, x, origin)
+                return yp, xp
+            else:
+                return pywcs.WCS.wcs_sky2pix(self, x, y, origin)
+        else:
+            coords = []
+            s = 0
+            for dim in range(self.naxis):
+                if dim == self._dimensions[0]:
+                    coords.append(x)
+                elif dim == self._dimensions[1]:
+                    coords.append(y)
+                else:
+                    # The following is an approximation, and will break down if
+                    # the world coordinate changes significantly over the slice
+                    coords.append(np.repeat(self._mean_world[dim], x.shape))
+                    s += 1
+            coords = np.vstack(coords).transpose()
+
+            # Due to a bug in pywcs, we need to loop over each coordinate
+            # result = pywcs.WCS.wcs_sky2pix(self, coords, origin)
+            result = np.zeros(coords.shape)
+            for i in range(result.shape[0]):
+                result[i:i + 1, :] = pywcs.WCS.wcs_sky2pix(self, coords[i:i + 1, :], origin)
+
+            return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
+
+    def wcs_pix2sky(self, x, y, origin):
+        if self.naxis == 2:
+            if self._dimensions[1] < self._dimensions[0]:
+                xw, yw = pywcs.WCS.wcs_pix2sky(self, y, x, origin)
+                return yw, xw
+            else:
+                return pywcs.WCS.wcs_pix2sky(self, x, y, origin)
+        else:
+            coords = []
+            s = 0
+            for dim in range(self.naxis):
+                if dim == self._dimensions[0]:
+                    coords.append(x)
+                elif dim == self._dimensions[1]:
+                    coords.append(y)
+                else:
+                    coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
+                    s += 1
+            coords = np.vstack(coords).transpose()
+            result = pywcs.WCS.wcs_pix2sky(self, coords, origin)
+            return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
 
 def convert_coords(x, y, input, output):
@@ -9,7 +167,9 @@ def convert_coords(x, y, input, output):
     if input == output:
         return x, y
 
-    if system_in == 'galactic' and system_out == 'equatorial':
+    # Need to take into account inverted coords
+
+    if system_in['name'] == 'galactic' and system_out['name'] == 'equatorial':
 
         if equinox_out == 'j2000':
             x, y = gal2fk5(x, y)
@@ -19,7 +179,7 @@ def convert_coords(x, y, input, output):
         else:
             raise Exception("Cannot convert from galactic to equatorial coordinates for equinox=%s" % equinox_out)
 
-    elif system_in == 'equatorial' and system_out == 'galactic':
+    elif system_in['name'] == 'equatorial' and system_out['name'] == 'galactic':
 
         if equinox_in == 'j2000':
             x, y = fk52gal(x, y)
@@ -29,7 +189,7 @@ def convert_coords(x, y, input, output):
         else:
             raise Exception("Cannot convert from equatorial to equatorial coordinates for equinox=%s" % equinox_in)
 
-    elif system_in == 'equatorial' and system_out == 'equatorial':
+    elif system_in['name'] == 'equatorial' and system_out['name'] == 'equatorial':
 
         if equinox_in == 'b1950' and equinox_out == 'j2000':
             x, y = b1950toj2000(x, y)
@@ -39,7 +199,7 @@ def convert_coords(x, y, input, output):
             raise Exception("Cannot convert between equatorial coordinates for equinoxes %s and %s" % (equinox_in, equinox_out))
 
     else:
-        raise Exception("Cannot (yet) convert between %s, %s and %s, %s" % (system_in, equinox_in, system_out, equinox_out))
+        raise Exception("Cannot (yet) convert between %s, %s and %s, %s" % (system_in['name'], equinox_in, system_out['name'], equinox_out))
 
     return x, y
 
@@ -219,25 +379,43 @@ def fk52gal(ra, dec):
 
 def system(wcs,userwcs=False):
 
-    xcoord = wcs.wcs.ctype[0][0:4]
-    ycoord = wcs.wcs.ctype[1][0:4]
+    xcoord = wcs.ctype_x[0:4]
+    ycoord = wcs.ctype_y[0:4]
     equinox = wcs.wcs.equinox
 
+    system = {}
+
     if xcoord == 'RA--' and ycoord == 'DEC-':
-        system = 'equatorial'
+        system['name'] = 'equatorial'
+        system['inverted'] = False
+    elif ycoord == 'RA--' and xcoord == 'DEC-':
+        system['name'] = 'equatorial'
+        system['inverted'] = True
     elif xcoord == 'GLON' and ycoord == 'GLAT':
-        system = 'galactic'
+        system['name'] = 'galactic'
+        system['inverted'] = False
+    elif ycoord == 'GLON' and xcoord == 'GLAT':
+        system['name'] = 'galactic'
+        system['inverted'] = True
     elif xcoord == 'ELON' and ycoord == 'ELAT':
+<<<<<<< HEAD
         system = 'ecliptic'
     elif userwcs:
         system = 'user'
+=======
+        system['name'] = 'ecliptic'
+        system['inverted'] = False
+    elif ycoord == 'ELON' and xcoord == 'ELAT':
+        system['name'] = 'ecliptic'
+        system['inverted'] = True
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
     else:
-        print "Warning: cannot determine coordinate system for %s/%s. Assuming equatorial." % (xcoord, ycoord)
-        system = 'equatorial'
+        system['name'] = 'unknown'
+        system['inverted'] = False
 
-    if system == 'equatorial':
-        if equinox == '' or np.isnan(equinox):
-            print "Warning: cannot determine equinox. Assuming J2000."
+    if system['name'] == 'equatorial':
+        if equinox == '' or np.isnan(equinox) or equinox == 0.:
+            logger.warning("Cannot determine equinox. Assuming J2000.")
             equinox = 'j2000'
         elif equinox == 1950.:
             equinox = 'b1950'
@@ -257,10 +435,10 @@ def system(wcs,userwcs=False):
 
 
 def arcperpix(wcs):
-    return degperpix(wcs) * 3600.
+    return pixel_scale(wcs) * 3600.
 
 
-def degperpix(wcs):
+def pixel_scale(wcs):
     try:
         pscale = np.sqrt(wcs.wcs.cd[0, 0] ** 2 + wcs.wcs.cd[1, 0] ** 2)
     except AttributeError:
@@ -269,7 +447,7 @@ def degperpix(wcs):
 
 
 def world2pix(wcs, x_world, y_world):
-    if type(x_world) == float or type(x_world) == np.float32 or type(x_world) == np.float64:
+    if np.isscalar(x_world):
         x_pix, y_pix = wcs.wcs_sky2pix(np.array([x_world]), np.array([y_world]), 1)
         return x_pix[0], y_pix[0]
     elif type(x_world) == list:
@@ -278,11 +456,11 @@ def world2pix(wcs, x_world, y_world):
     elif type(x_world) in [np.ndarray, np.core.records.recarray, np.ma.core.MaskedArray]:
         return wcs.wcs_sky2pix(x_world, y_world, 1)
     else:
-        raise Exception("world2pix should be provided either with two floats, two lists, or two numpy arrays")
+        raise Exception("world2pix should be provided either with two scalars, two lists, or two numpy arrays")
 
 
 def pix2world(wcs, x_pix, y_pix):
-    if type(x_pix) == float or type(x_pix) == np.float32 or type(x_pix) == np.float64:
+    if np.isscalar(x_pix):
         x_world, y_world = wcs.wcs_pix2sky(np.array([x_pix]), np.array([y_pix]), 1)
         return x_world[0], y_world[0]
     elif type(x_pix) == list:
@@ -291,4 +469,4 @@ def pix2world(wcs, x_pix, y_pix):
     elif type(x_pix) in [np.ndarray, np.core.records.recarray, np.ma.core.MaskedArray]:
         return wcs.wcs_pix2sky(x_pix, y_pix, 1)
     else:
-        raise Exception("pix2world should be provided either with two floats, two lists, or two numpy arrays")
+        raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")

@@ -1,5 +1,8 @@
+from __future__ import absolute_import
+
 import numpy as np
-import math_util as m
+
+import aplpy.math_util as m
 
 
 class interp1d(object):
@@ -19,10 +22,10 @@ class interp1d(object):
             if ipos == 0:
                 ipos = 1
             if ipos == len(self.x):
-                ipos = len(self.x)-1
+                ipos = len(self.x) - 1
         else:
             ipos[ipos == 0] = 1
-            ipos[ipos == len(self.x)] = len(self.x)-1
+            ipos[ipos == len(self.x)] = len(self.x) - 1
 
         ipos = ipos - 1
 
@@ -30,27 +33,28 @@ class interp1d(object):
 
 
 def resample(array, factor):
+
     nx, ny = np.shape(array)
+
     nx_new = nx / factor
     ny_new = ny / factor
-    array2 = np.empty((nx_new, ny))
-    for i in range(nx_new-1):
-        array2[i,:] = np.sum(array[i*factor:i*factor+1,:], axis=0)
 
-    array3 = np.empty((nx_new, ny_new))
-    for j in range(ny_new-1):
-        array3[:, j] = np.sum(array2[:, j*factor:j*factor+1], axis=1)
+    array2 = np.zeros((nx_new, ny))
+    for i in range(nx_new):
+        array2[i, :] = np.mean(array[i * factor:(i + 1) * factor, :], axis=0)
+
+    array3 = np.zeros((nx_new, ny_new))
+    for j in range(ny_new):
+        array3[:, j] = np.mean(array2[:, j * factor:(j + 1) * factor], axis=1)
 
     return array3
 
-#def smooth(array, sigma):
-#    ndimage.gaussian_filter(array, sigma=sigma)
 
 def percentile_function(array):
 
     array = array.ravel()
-    array = array[np.where(np.isnan(array)==False)]
-    array = array[np.where(np.isinf(array)==False)]
+    array = array[np.where(np.isnan(array) == False)]
+    array = array[np.where(np.isinf(array) == False)]
 
     n_total = np.shape(array)[0]
     array = np.sort(array)
@@ -70,19 +74,19 @@ def percentile_function(array):
 
 def stretch(array, function, exponent=2, midpoint=None):
 
-    if function is 'linear':
+    if function == 'linear':
         return array
-    elif function is 'log':
+    elif function == 'log':
         if not m.isnumeric(midpoint):
             midpoint = 0.05
-        return np.log10(array/midpoint+1.) / np.log10(1./midpoint+1.)
-    elif function is 'sqrt':
+        return np.log10(array / midpoint + 1.) / np.log10(1. / midpoint + 1.)
+    elif function == 'sqrt':
         return np.sqrt(array)
-    elif function is 'arcsinh':
+    elif function == 'arcsinh':
         if not m.isnumeric(midpoint):
             midpoint = -0.033
-        return np.arcsinh(array/midpoint) / np.arcsinh(1./midpoint)
-    elif function is 'power':
+        return np.arcsinh(array / midpoint) / np.arcsinh(1. / midpoint)
+    elif function == 'power':
         return np.power(array, exponent)
     else:
         raise Exception("Unknown function : " + function)

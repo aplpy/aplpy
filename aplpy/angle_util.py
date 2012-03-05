@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import math
 import struct
 
 import numpy as np
-import math_util
+import aplpy.math_util as math_util
 
 
 def almost_equal(a, b):
@@ -16,7 +18,7 @@ class Angle(object):
 
     def __init__(self, degrees='none', sexagesimal='none', latitude=False, userwcs=False):
 
-        if degrees <> 'none':
+        if degrees != 'none':
 
             # Find out if the angle is negative
             negative = degrees < 0
@@ -26,7 +28,7 @@ class Angle(object):
 
             # Decompose angle into degrees, minutes, seconds
             m, d = math.modf(degrees)
-            s, m = math.modf(m*60.)
+            s, m = math.modf(m * 60.)
             s = s * 60.
 
             # Express degrees and minutes as integers
@@ -39,7 +41,7 @@ class Angle(object):
             # Set angle to tuple of degrees/minutes/seconds
             self.angle = (d, m, s)
 
-        elif sexagesimal <> 'none':
+        elif sexagesimal != 'none':
             self.angle = sexagesimal
 
         # Whether to keep the angle between 0 and 360 or -90 and 90
@@ -92,7 +94,7 @@ class Angle(object):
 
     def todegrees(self):
         d, m, s = self.angle
-        degrees = d + m/60. + s/3600.
+        degrees = d + m / 60. + s / 3600.
         if self.negative:
             degrees = - degrees
         return degrees
@@ -128,7 +130,7 @@ class Angle(object):
         if rval < 2:
             n = int(round((rval - 1.) * 100))
             d = round(d + m / 60. + s / 3600., n)
-            if n==0:
+            if n == 0:
                 d = int(d)
             return d
         elif rval < 3:
@@ -165,8 +167,8 @@ class Angle(object):
         if '.d' in format:
             r = 1
             pos = format.find('.')
-            nd = len(format[pos+1:])
-            r = r + nd/100.
+            nd = len(format[pos + 1:])
+            r = r + nd / 100.
         if 'mm' in format:
             r = 2
         if 'ss' in format:
@@ -174,8 +176,8 @@ class Angle(object):
         if '.s' in format:
             r = 4
             pos = format.find('.')
-            ns = len(format[pos+1:])
-            r = r + ns/100.
+            ns = len(format[pos + 1:])
+            r = r + ns / 100.
 
         tup = self.toround(rval=r)
         if type(tup) == tuple:
@@ -187,7 +189,7 @@ class Angle(object):
 
         if 'dd' in format:
             if '.d' in format:
-                string.append(("%0"+str(nd+3)+"."+str(nd)+"f") % \
+                string.append(("%0" + str(nd + 3) + "." + str(nd) + "f") % \
                     tup[0] + sep[0])
             else:
                 string.append("%i" % tup[0] + sep[0])
@@ -196,12 +198,12 @@ class Angle(object):
         if 'ss' in format and not '.s' in format:
             string.append("%02i" % tup[2] + sep[2])
         if 'ss.s' in format:
-            string.append(("%0"+str(ns+3)+"."+str(ns)+"f") % tup[2] + sep[2])
+            string.append(("%0" + str(ns + 3) + "." + str(ns) + "f") % tup[2] + sep[2])
 
         # If style is colons, need to remove trailing colon
-        if sep[0] == ':' and not 'mm' in format:
+        if len(string) >= 1 and sep[0] == ':' and not 'mm' in format:
             string[0] = string[0][:-1]
-        if sep[1] == ':' and not 'ss' in format:
+        if len(string) >= 2 and sep[1] == ':' and not 'ss' in format:
             string[1] = string[1][:-1]
 
         if self.latitude and not self.userwcs:
@@ -330,13 +332,18 @@ def smart_round_angle_decimal(x, latitude=False, userwcs=False):
     return a
 
 
+<<<<<<< HEAD
 def _get_label_precision(format, userwcs=False):
+=======
+def _get_label_precision(format, latitude=False):
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
     # Find base spacing
     if "mm" in format:
         if "ss" in format:
             if "ss.s" in format:
                 n_decimal = len(format.split('.')[1])
+<<<<<<< HEAD
                 label_spacing = Angle(sexagesimal=(0, 0, 10**(-n_decimal)), userwcs=userwcs)
             else:
                 label_spacing = Angle(sexagesimal=(0, 0, 1), userwcs=userwcs)
@@ -347,6 +354,18 @@ def _get_label_precision(format, userwcs=False):
         label_spacing = Angle(degrees=10**(-ns), userwcs=userwcs)
     else:
         label_spacing = Angle(sexagesimal=(1, 0, 0), userwcs=userwcs)
+=======
+                label_spacing = Angle(sexagesimal=(0, 0, 10 ** (-n_decimal)), latitude=latitude)
+            else:
+                label_spacing = Angle(sexagesimal=(0, 0, 1), latitude=latitude)
+        else:
+            label_spacing = Angle(sexagesimal=(0, 1, 0), latitude=latitude)
+    elif "." in format:
+        ns = len(format.split('.')[1])
+        label_spacing = Angle(degrees=10 ** (-ns), latitude=latitude)
+    else:
+        label_spacing = Angle(sexagesimal=(1, 0, 0), latitude=latitude)
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
     # Check if hours are used instead of degrees
     if "hh" in format:
@@ -376,5 +395,5 @@ def _check_format_spacing_consistency(format, spacing):
 
     label_spacing = _get_label_precision(format)
 
-    if type(spacing / label_spacing) <> int:
+    if type(spacing / label_spacing) != int:
         raise InconsistentSpacing('Label format and tick spacing are inconsistent. Make sure that the tick spacing is a multiple of the smallest angle that can be represented by the specified format (currently %s). For example, if the format is dd:mm:ss.s, then the tick spacing has to be a multiple of 0.1". Similarly, if the format is hh:mm:ss, then the tick spacing has to be a multiple of 15". If you got this error as a result of interactively zooming in to a small region, this means that the default display format for the labels is not accurate enough, so you will need to increase the format precision.' % format)

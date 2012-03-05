@@ -1,8 +1,16 @@
-import wcs_util
-from matplotlib.path import Path
-import numpy as np
+from __future__ import absolute_import
 
+import numpy as np
+from matplotlib.path import Path
+
+<<<<<<< HEAD
 def transform(contours, wcs_in, wcs_out, filled=False, userwcs=False):
+=======
+import aplpy.wcs_util as wcs_util
+
+
+def transform(contours, wcs_in, wcs_out, filled=False, overlap=False):
+>>>>>>> 25e718cacf533205bc5829f723fe1cff72dfb8d9
 
     system_in, equinox_in, units_in = wcs_util.system(wcs_in,userwcs=userwcs)
     system_out, equinox_out, units_out = wcs_util.system(wcs_out,userwcs=userwcs)
@@ -23,8 +31,13 @@ def transform(contours, wcs_in, wcs_out, filled=False, userwcs=False):
 
             xp_out, yp_out = wcs_util.world2pix(wcs_out, xw, yw)
 
+            if overlap:
+                if np.all(xp_out < 0) or np.all(yp_out < 0) or \
+                   np.all(xp_out > wcs_out.nx) or np.all(yp_out > wcs_out.ny):
+                    continue
+
             if filled:
-                polygons_out.append(Path(np.array(zip(xp_out, yp_out)),codes=polygon.codes))
+                polygons_out.append(Path(np.array(zip(xp_out, yp_out)), codes=polygon.codes))
             else:
                 polygons_out.append(zip(xp_out, yp_out))
 
