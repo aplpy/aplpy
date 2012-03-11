@@ -75,7 +75,7 @@ def test_hdu_noslices():
 
 # Test that initialization without specifying slices does *not* raise an
 # exception if the remaining dimensions have size 1.
-def test_hdu_noslices():
+def test_hdu_noslices_2d():
     data = np.zeros((1, 16, 16))
     f = aplpy.FITSFigure(data)
     f.show_grayscale()
