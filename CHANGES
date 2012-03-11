@@ -33,6 +33,7 @@ Version 0.9.8
 
         'Figure' object has no attribute '_auto_refresh'
 
+
 Version 0.9.7
 
     This version sees the re-write of the WCS support to enable plotting of
