@@ -19,6 +19,8 @@ Version 0.9.8
 
     - FITSFigure can now be initialized directly with Numpy arrays
 
+    - Added methods to show/hide ticks
+
     Bug fixes
     ~~~~~~~~~
 
