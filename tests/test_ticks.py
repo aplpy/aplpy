@@ -7,6 +7,18 @@ import pytest
 import aplpy
 
 
+def test_ticks_show_hide():
+    data = np.zeros((16, 16))
+    f = aplpy.FITSFigure(data)
+    f.ticks.hide()
+    f.ticks.show()
+    f.ticks.hide_x()
+    f.ticks.show_x()
+    f.ticks.hide_y()
+    f.ticks.show_y()
+    f.close()
+
+
 def test_ticks_spacing():
     data = np.zeros((16, 16))
     f = aplpy.FITSFigure(data)

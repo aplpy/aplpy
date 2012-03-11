@@ -216,6 +216,79 @@ class Ticks(object):
         self._ax2.xaxis.get_minor_locator().subticks = frequency
         self._ax2.yaxis.get_minor_locator().subticks = frequency
 
+    @auto_refresh
+    def show(self):
+        """
+        Show the x- and y-axis ticks
+        """
+        self.show_x()
+        self.show_y()
+
+    @auto_refresh
+    def hide(self):
+        """
+        Hide the x- and y-axis ticks
+        """
+        self.hide_x()
+        self.hide_y()
+
+    @auto_refresh
+    def show_x(self):
+        """
+        Show the x-axis ticks
+        """
+        for line in self._ax1.xaxis.get_ticklines():
+            line.set_visible(True)
+        for line in self._ax2.xaxis.get_ticklines():
+            line.set_visible(True)
+        for line in self._ax1.xaxis.get_minorticklines():
+            line.set_visible(True)
+        for line in self._ax2.xaxis.get_minorticklines():
+            line.set_visible(True)
+
+    @auto_refresh
+    def hide_x(self):
+        """
+        Hide the x-axis ticks
+        """
+        for line in self._ax1.xaxis.get_ticklines():
+            line.set_visible(False)
+        for line in self._ax2.xaxis.get_ticklines():
+            line.set_visible(False)
+        for line in self._ax1.xaxis.get_minorticklines():
+            line.set_visible(False)
+        for line in self._ax2.xaxis.get_minorticklines():
+            line.set_visible(False)
+
+    @auto_refresh
+    def show_y(self):
+        """
+        Show the y-axis ticks
+        """
+        for line in self._ax1.yaxis.get_ticklines():
+            line.set_visible(True)
+        for line in self._ax2.yaxis.get_ticklines():
+            line.set_visible(True)
+        for line in self._ax1.yaxis.get_minorticklines():
+            line.set_visible(True)
+        for line in self._ax2.yaxis.get_minorticklines():
+            line.set_visible(True)
+
+    @auto_refresh
+    def hide_y(self):
+        """
+        Hide the y-axis ticks
+        """
+        for line in self._ax1.yaxis.get_ticklines():
+            line.set_visible(False)
+        for line in self._ax2.yaxis.get_ticklines():
+            line.set_visible(False)
+        for line in self._ax1.yaxis.get_minorticklines():
+            line.set_visible(False)
+        for line in self._ax2.yaxis.get_minorticklines():
+            line.set_visible(False)
+
+
 
 class WCSLocator(Locator):
 
