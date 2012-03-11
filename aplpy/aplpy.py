@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from distutils import version
 import os
 import warnings
+import operator
 
 try:
     import matplotlib
@@ -365,6 +366,17 @@ class FITSFigure(Layers, Regions, Deprecated):
         data = hdu.data
         header = hdu.header.copy()
         del hdu
+
+        # If slices wasn't specified, check if we can guess
+        shape = data.shape
+        if len(shape) > 2:
+            n_total = reduce(operator.mul, shape)
+            n_image = shape[len(shape) - 1 - dimensions[0]] \
+                    * shape[len(shape) - 1 - dimensions[1]]
+            if n_total == n_image:
+                slices = [0 for i in range(1, len(shape) - 1)]
+                logger.info("Setting slices=%s" % str(slices))
+
 
         # Extract slices
         data = slicer.slice_hypercube(data, header, dimensions=dimensions, slices=slices)

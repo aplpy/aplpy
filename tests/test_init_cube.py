@@ -66,12 +66,20 @@ def test_numpy_nowcs_init():
     f.close()
 
 
-# Test that initialization without specifying slices raises an exception
+# Test that initialization without specifying slices raises an exception for a
+# true 3D cube
 def test_hdu_noslices():
     hdu = generate_hdu(REFERENCE)
     with pytest.raises(Exception):
         aplpy.FITSFigure(hdu)
 
+# Test that initialization without specifying slices does *not* raise an
+# exception if the remaining dimensions have size 1.
+def test_hdu_noslices():
+    data = np.zeros((1, 16, 16))
+    f = aplpy.FITSFigure(data)
+    f.show_grayscale()
+    f.close()
 
 # Now check initialization with valid and invalid dimensions. We just need to
 # tes with HDU objects since we already tested that reading from files is ok.
