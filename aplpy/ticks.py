@@ -287,7 +287,6 @@ class Ticks(object):
             line.set_visible(False)
 
 
-
 class WCSLocator(Locator):
 
     def __init__(self, presets=None, wcs=False, coord='x', farside=False, minor=False, subticks=5):

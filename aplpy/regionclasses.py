@@ -1,4 +1,5 @@
 
+
 class ArtistCollection():
     """
     Matplotlib collections can't handle Text.

@@ -80,11 +80,13 @@ from .decorators import auto_refresh, fixdocstring
 
 from .deprecated import Deprecated
 
+
 class Parameters():
     '''
     A class to contain the current plotting parameters
     '''
     pass
+
 
 class FITSFigure(Layers, Regions, Deprecated):
 
@@ -374,7 +376,6 @@ class FITSFigure(Layers, Regions, Deprecated):
             if n_total == n_image:
                 slices = [0 for i in range(1, len(shape) - 1)]
                 logger.info("Setting slices=%s" % str(slices))
-
 
         # Extract slices
         data = slicer.slice_hypercube(data, header, dimensions=dimensions, slices=slices)

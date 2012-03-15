@@ -194,7 +194,6 @@ class ScaleBar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-
         pixel_scale = wcs_util.pixel_scale(self._wcs)
 
         length = length / pixel_scale

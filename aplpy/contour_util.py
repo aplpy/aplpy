@@ -3,6 +3,7 @@ from matplotlib.path import Path
 
 from . import wcs_util
 
+
 def transform(contours, wcs_in, wcs_out, filled=False, overlap=False):
 
     system_in, equinox_in, units_in = wcs_util.system(wcs_in)

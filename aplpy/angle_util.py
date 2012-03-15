@@ -4,6 +4,7 @@ import struct
 import numpy as np
 from . import math_util
 
+
 def almost_equal(a, b):
     c = struct.pack("<dd", a, b)
     d = struct.unpack("<qq", c)

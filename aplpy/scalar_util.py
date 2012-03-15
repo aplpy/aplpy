@@ -2,6 +2,7 @@ import numpy as np
 
 from . import math_util
 
+
 def smart_round_angle_decimal(x, latitude=False):
 
     x = np.log10(x)

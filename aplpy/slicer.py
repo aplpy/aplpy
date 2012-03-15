@@ -1,4 +1,5 @@
 
+
 def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
     '''
     Extract a slice from an n-dimensional HDU data/header pair, and return the
