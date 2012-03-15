@@ -18,7 +18,6 @@ Dependencies
   - pywcs 1.8.1-4.4.4 or later
     https://trac.assembla.com/astrolib
 
-
   Optional
 
   - Montage 3.0 or later
