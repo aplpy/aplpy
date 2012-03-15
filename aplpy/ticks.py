@@ -1,15 +1,13 @@
-from __future__ import absolute_import
-
 import warnings
 
 import numpy as np
 from matplotlib.pyplot import Locator
 
-import aplpy.wcs_util as wcs_util
-import aplpy.angle_util as au
-import aplpy.scalar_util as su
-import aplpy.math_util as math_util
-from aplpy.decorators import auto_refresh
+from . import wcs_util
+from . import angle_util as au
+from . import scalar_util as su
+from . import math_util
+from .decorators import auto_refresh
 
 
 class Ticks(object):

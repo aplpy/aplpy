@@ -1,11 +1,9 @@
-from __future__ import absolute_import
-
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
     PatchCollection, CircleCollection, LineCollection
 
-from aplpy.regions import ArtistCollection
-from aplpy.decorators import auto_refresh
+from .regions import ArtistCollection
+from .decorators import auto_refresh
 
 
 class Layers(object):

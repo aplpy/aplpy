@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 
 def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
     '''

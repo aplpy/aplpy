@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from distutils import version
 import os
 import warnings
@@ -59,28 +57,28 @@ if montage_installed:
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
         montage_installed = False
 
-import aplpy.contour_util as contour_util
-import aplpy.convolve_util as convolve_util
-import aplpy.image_util as image_util
-import aplpy.header as header_util
-import aplpy.wcs_util as wcs_util
-import aplpy.slicer as slicer
+from . import contour_util
+from . import convolve_util
+from . import image_util
+from . import header as header_util
+from . import wcs_util
+from . import slicer
 
-from aplpy.layers import Layers
-from aplpy.grid import Grid
-from aplpy.ticks import Ticks
-from aplpy.labels import TickLabels
-from aplpy.axis_labels import AxisLabels
-from aplpy.overlays import Beam, ScaleBar
-from aplpy.regions import Regions
-from aplpy.colorbar import Colorbar
-from aplpy.normalize import APLpyNormalize
-from aplpy.frame import Frame
-from aplpy.logger import logger
+from .layers import Layers
+from .grid import Grid
+from .ticks import Ticks
+from .labels import TickLabels
+from .axis_labels import AxisLabels
+from .overlays import Beam, ScaleBar
+from .regions import Regions
+from .colorbar import Colorbar
+from .normalize import APLpyNormalize
+from .frame import Frame
+from .logger import logger
 
-from aplpy.decorators import auto_refresh, fixdocstring
+from .decorators import auto_refresh, fixdocstring
 
-from aplpy.deprecated import Deprecated
+from .deprecated import Deprecated
 
 class Parameters():
     '''

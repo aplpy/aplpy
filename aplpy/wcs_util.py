@@ -1,9 +1,7 @@
-from __future__ import absolute_import
-
 import numpy as np
 import pywcs
 
-from aplpy.logger import logger
+from .logger import logger
 
 
 class WCS(pywcs.WCS):

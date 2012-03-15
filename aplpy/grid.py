@@ -1,15 +1,13 @@
-from __future__ import absolute_import
-
 import warnings
 
 import numpy as np
 from matplotlib.collections import LineCollection
 
-import aplpy.math_util as math_util
-import aplpy.wcs_util as wcs_util
-import aplpy.angle_util as au
-from aplpy.ticks import tick_positions, default_spacing
-from aplpy.decorators import auto_refresh
+from . import math_util
+from . import wcs_util
+from . import angle_util as au
+from .ticks import tick_positions, default_spacing
+from .decorators import auto_refresh
 
 
 class Grid(object):

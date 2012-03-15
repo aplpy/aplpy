@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import warnings
 
 from mpl_toolkits.axes_grid.anchored_artists \
@@ -9,8 +7,8 @@ import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
 
-import aplpy.wcs_util as wcs_util
-from aplpy.decorators import auto_refresh
+from . import wcs_util
+from .decorators import auto_refresh
 
 corners = {}
 corners['top right'] = 1

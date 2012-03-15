@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from distutils import version
 import os
 import warnings
@@ -10,7 +8,7 @@ import shutil
 import pyfits
 import numpy as np
 
-from aplpy.logger import logger
+from .logger import logger
 
 try:
     import Image
@@ -37,9 +35,8 @@ if montage_installed:
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
         montage_installed = False
 
-import aplpy.image_util as image_util
-import aplpy.math_util as math_util
-
+from . import image_util
+from . import math_util
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
                   stretch='linear', vmid=None, exponent=2):
