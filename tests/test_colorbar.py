@@ -4,19 +4,19 @@ matplotlib.use('Agg')
 import numpy as np
 import pytest
 
-import aplpy
+from aplpy import FITSFigure
 
 
 def test_colorbar_invalid():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     with pytest.raises(Exception):
         f.add_colorbar()  # no grayscale/colorscale was shown
 
 
 def test_colorbar_addremove():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
     f.remove_colorbar()
@@ -26,7 +26,7 @@ def test_colorbar_addremove():
 
 def test_colorbar_showhide():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.hide()
@@ -36,7 +36,7 @@ def test_colorbar_showhide():
 
 def test_colorbar_location():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_location('top')
@@ -48,7 +48,7 @@ def test_colorbar_location():
 
 def test_colorbar_width():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_width(0.1)
@@ -59,7 +59,7 @@ def test_colorbar_width():
 
 def test_colorbar_pad():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_pad(0.1)
@@ -70,7 +70,7 @@ def test_colorbar_pad():
 
 def test_colorbar_font():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_font(size='small', weight='bold', stretch='normal',

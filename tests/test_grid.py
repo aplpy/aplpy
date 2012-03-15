@@ -4,12 +4,12 @@ matplotlib.use('Agg')
 import numpy as np
 import pytest
 
-import aplpy
+from aplpy import FITSFigure
 
 
 def test_grid_addremove():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.remove_grid()
     f.add_grid()
@@ -18,7 +18,7 @@ def test_grid_addremove():
 
 def test_grid_showhide():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.grid.hide()
     f.grid.show()
@@ -27,7 +27,7 @@ def test_grid_showhide():
 
 def test_grid_spacing():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.grid.set_xspacing(1.)
     f.grid.set_xspacing('tick')
@@ -42,7 +42,7 @@ def test_grid_spacing():
 
 def test_grid_color():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.grid.set_color('black')
     f.grid.set_color('#003344')
@@ -52,7 +52,7 @@ def test_grid_color():
 
 def test_grid_alpha():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.grid.set_alpha(0.0)
     f.grid.set_alpha(0.3)
@@ -62,7 +62,7 @@ def test_grid_alpha():
 
 def test_grid_linestyle():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.grid.set_linestyle('solid')
     f.grid.set_linestyle('dashed')
@@ -72,7 +72,7 @@ def test_grid_linestyle():
 
 def test_grid_linewidth():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.add_grid()
     f.grid.set_linewidth(0)
     f.grid.set_linewidth(2)

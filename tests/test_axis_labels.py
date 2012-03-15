@@ -4,12 +4,12 @@ matplotlib.use('Agg')
 import numpy as np
 import pytest
 
-import aplpy
+from aplpy import FITSFigure
 
 
 def test_axis_labels_show_hide():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.axis_labels.hide()
     f.axis_labels.show()
     f.axis_labels.hide_x()
@@ -21,7 +21,7 @@ def test_axis_labels_show_hide():
 
 def test_axis_labels_text():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.axis_labels.set_xtext('x')
     f.axis_labels.set_ytext('y')
     f.close()
@@ -29,7 +29,7 @@ def test_axis_labels_text():
 
 def test_axis_labels_pad():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.axis_labels.set_xpad(-1.)
     f.axis_labels.set_ypad(0.5)
     f.close()
@@ -37,7 +37,7 @@ def test_axis_labels_pad():
 
 def test_axis_labels_position():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.axis_labels.set_xposition('top')
     f.axis_labels.set_xposition('bottom')
     f.axis_labels.set_yposition('right')
@@ -47,7 +47,7 @@ def test_axis_labels_position():
 
 def test_axis_labels_position_invalid():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     with pytest.raises(ValueError):
         f.axis_labels.set_xposition('right')
     with pytest.raises(ValueError):
@@ -61,7 +61,7 @@ def test_axis_labels_position_invalid():
 
 def test_axis_labels_font():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.axis_labels.set_font(size='small', weight='bold', stretch='normal',
                            family='serif', style='normal', variant='normal')
     f.close()
