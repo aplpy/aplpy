@@ -411,6 +411,9 @@ class Beam(object):
         self._ax = parent._ax1
         self._wcs = parent._wcs
 
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
+
         # Initialize settings
         self._base_settings = {}
         self._beam_settings = {}
