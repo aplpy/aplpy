@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from numpy.fft import fft2, ifft2
 from numpy import log, exp, mgrid, array, mod, ones, isnan, nan_to_num, nan, sum
 

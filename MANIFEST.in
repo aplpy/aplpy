@@ -1,2 +1,2 @@
-include INSTALL LICENSE CHANGES README
-
+include INSTALL LICENSE CHANGES README runtests.py
+recursive-include tests *.py *.hdr

@@ -1,10 +1,8 @@
-from __future__ import absolute_import
-
 import math
 import struct
 
 import numpy as np
-import aplpy.math_util as math_util
+from . import math_util
 
 
 def almost_equal(a, b):

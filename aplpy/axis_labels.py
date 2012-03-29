@@ -1,9 +1,7 @@
-from __future__ import absolute_import
-
 from matplotlib.font_manager import FontProperties
 
-import aplpy.wcs_util as wcs_util
-from aplpy.decorators import auto_refresh, fixdocstring
+from . import wcs_util
+from .decorators import auto_refresh, fixdocstring
 
 
 class AxisLabels(object):

@@ -1,8 +1,6 @@
-from __future__ import absolute_import
-
 import numpy as np
 
-import aplpy.math_util as math_util
+from . import math_util
 
 
 def smart_round_angle_decimal(x, latitude=False):

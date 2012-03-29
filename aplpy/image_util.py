@@ -1,8 +1,6 @@
-from __future__ import absolute_import
-
 import numpy as np
 
-import aplpy.math_util as m
+from . import math_util as m
 
 
 class interp1d(object):

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import warnings
 
 from mpl_toolkits.axes_grid.anchored_artists \
@@ -9,8 +7,8 @@ import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
 
-import aplpy.wcs_util as wcs_util
-from aplpy.decorators import auto_refresh
+from . import wcs_util
+from .decorators import auto_refresh
 
 corners = {}
 corners['top right'] = 1
@@ -195,7 +193,6 @@ class ScaleBar(object):
         self._base_settings['frame'] = frame
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
-
 
         pixel_scale = wcs_util.pixel_scale(self._wcs)
 
@@ -413,6 +410,9 @@ class Beam(object):
         self._header = parent._header
         self._ax = parent._ax1
         self._wcs = parent._wcs
+
+        # Save plotting parameters (required for @auto_refresh)
+        self._parameters = parent._parameters
 
         # Initialize settings
         self._base_settings = {}

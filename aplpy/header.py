@@ -1,6 +1,4 @@
-from __future__ import absolute_import
-
-from aplpy.logger import logger
+from .logger import logger
 
 
 def check(header, convention=None, dimensions=[0, 1]):

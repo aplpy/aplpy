@@ -3,7 +3,7 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 
-import aplpy
+from aplpy import FITSFigure
 import pytest
 import numpy as np
 import pyfits
@@ -56,7 +56,7 @@ INVALID_DIMENSIONS = [None, (1,), (0, 2), (-4, 2), (1, 1), (2, 2), (1, 2, 3)]
 # Test initialization through a filename
 def test_file_init(tmpdir):
     filename = generate_file(REFERENCE, str(tmpdir))
-    f = aplpy.FITSFigure(filename)
+    f = FITSFigure(filename)
     f.show_grayscale()
     f.close()
 
@@ -64,7 +64,7 @@ def test_file_init(tmpdir):
 # Test initialization through an HDU object
 def test_hdu_init():
     hdu = generate_hdu(REFERENCE)
-    f = aplpy.FITSFigure(hdu)
+    f = FITSFigure(hdu)
     f.show_grayscale()
     f.close()
 
@@ -72,7 +72,7 @@ def test_hdu_init():
 # Test initialization through a WCS object
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    f = aplpy.FITSFigure(wcs)
+    f = FITSFigure(wcs)
     f.show_grayscale()
     f.close()
 
@@ -81,7 +81,7 @@ def test_wcs_init():
 def test_hdu_nowcs_init():
     data = np.zeros((16, 16))
     hdu = pyfits.PrimaryHDU(data)
-    f = aplpy.FITSFigure(hdu)
+    f = FITSFigure(hdu)
     f.show_grayscale()
     f.close()
 
@@ -89,7 +89,7 @@ def test_hdu_nowcs_init():
 # Test initalization through a Numpy array (no WCS)
 def test_numpy_nowcs_init():
     data = np.zeros((16, 16))
-    f = aplpy.FITSFigure(data)
+    f = FITSFigure(data)
     f.show_grayscale()
     f.close()
 
@@ -101,7 +101,7 @@ def test_numpy_nowcs_init():
 @pytest.mark.parametrize(('dimensions'), VALID_DIMENSIONS)
 def test_init_dimensions_valid(dimensions):
     hdu = generate_hdu(REFERENCE)
-    f = aplpy.FITSFigure(hdu, dimensions=dimensions)
+    f = FITSFigure(hdu, dimensions=dimensions)
     f.show_grayscale()
     f.close()
 
@@ -112,7 +112,7 @@ def test_init_dimensions_valid(dimensions):
 def test_init_dimensions_invalid(dimensions):
     hdu = generate_hdu(REFERENCE)
     with pytest.raises(ValueError):
-        aplpy.FITSFigure(hdu, dimensions=dimensions)
+        FITSFigure(hdu, dimensions=dimensions)
 
 # Now check initialization of different WCS projections, and we check only
 # valid dimensions
@@ -127,9 +127,9 @@ for h in HEADERS:
 def test_init_extensive_wcs(header, dimensions):
     hdu = generate_hdu(header)
     if 'CAR' in header:
-        f = aplpy.FITSFigure(hdu, dimensions=dimensions, convention='calabretta')
+        f = FITSFigure(hdu, dimensions=dimensions, convention='calabretta')
     else:
-        f = aplpy.FITSFigure(hdu, dimensions=dimensions)
+        f = FITSFigure(hdu, dimensions=dimensions)
     f.show_grayscale()
     f.add_grid()
     f.close()
@@ -141,4 +141,4 @@ def test_init_extensive_wcs(header, dimensions):
 def test_init_car_invalid(dimensions):
     hdu = generate_hdu(CAR_REFERENCE)
     with pytest.raises(Exception):
-        aplpy.FITSFigure(hdu, dimensions=dimensions)
+        FITSFigure(hdu, dimensions=dimensions)

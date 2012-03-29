@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-
-import operator
 
 
 def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
@@ -28,12 +25,6 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
         return data
 
     else:
-
-        n_total = reduce(operator.mul, shape)
-        n_image = shape[dimensions[0]] * shape[dimensions[1]]
-
-        if n_total == n_image:
-            slices = [0 for i in range(1, len(shape) - 1)]
 
         if slices:
 

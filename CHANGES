@@ -19,6 +19,8 @@ Version 0.9.8
 
     - FITSFigure can now be initialized directly with Numpy arrays
 
+    - Added methods to show/hide ticks
+
     Bug fixes
     ~~~~~~~~~
 
@@ -30,6 +32,7 @@ Version 0.9.8
     - Fixed a bug that cause the error:
 
         'Figure' object has no attribute '_auto_refresh'
+
 
 Version 0.9.7
 
