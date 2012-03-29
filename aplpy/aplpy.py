@@ -1786,27 +1786,38 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if self.image:
             slmin = Slider(mpl.axes([0.1,0.02,0.8,0.02]), 'Min', self._auto_v(1e-3),
-                self._auto_v(1-1e-3), valinit=self.image.norm.vmin)
-            slmid = Slider(mpl.axes([0.1,0.045,0.8,0.02]), 'Mid', self._auto_v(1e-3),
-                self._auto_v(1-1e-3), valinit=self.image.norm.midpoint, slidermin=slmin)
-            slmax = Slider(mpl.axes([0.1,0.07,0.8,0.02]), 'Max', self._auto_v(1e-3),
-                self._auto_v(1-1e-3), valinit=self.image.norm.vmax, slidermin=slmid)
+                self._auto_v(100-1e-3), valinit=self.image.norm.vmin)
 
-            slmin.slidermax = slmid
-            slmid.slidermax = slmax
+            if self.image.norm.midpoint is not None:
+                midinit = self.image.norm.midpoint
+                slmid = Slider(mpl.axes([0.1,0.045,0.8,0.02]), 'Mid', self._auto_v(1e-3),
+                    self._auto_v(100-1e-3), valinit=midinit, slidermin=slmin)
+            else:
+                slmid=None
+
+            slmax = Slider(mpl.axes([0.1,0.07,0.8,0.02]), 'Max', self._auto_v(1e-3),
+                self._auto_v(100-1e-3), valinit=self.image.norm.vmax, slidermin=slmid)
+
+            if slmid is None:
+                slmin.slidermax = slmax
+                slmax.slidermin = slmin
+            else:
+                slmid.slidermax = slmax
+                slmin.slidermax = slmid
 
             stretch = self.image.norm.stretch
             exponent = self.image.norm.exponent
 
             def update(value):
+                midval = slmid.val if slmid is not None else None
                 self.image.set_norm(APLpyNormalize(stretch=stretch, 
-                    exponent=exponent, vmin=slmin.val, vmid=slmid.val, vmax=slmax.val))
+                    exponent=exponent, vmin=slmin.val, vmid=midval, vmax=slmax.val))
                 self.refresh()
                 if hasattr(self, 'colorbar'):
                     self.colorbar.update()
 
             slmin.on_changed(update)
-            slmid.on_changed(update)
+            if slmid is not None: slmid.on_changed(update)
             slmax.on_changed(update)
 
             self.sliders = [slmin,slmid,slmax]
