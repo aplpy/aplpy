@@ -1846,3 +1846,22 @@ class FITSFigure(Layers, Regions, Deprecated):
         Close the figure and free up the memory.
         '''
         mpl.close(self._figure)
+
+     @auto_refresh
+     def add_sliders(self):
+         """
+         Create a slider widget window
+         """
+         import widgets
+ 
+         self.Sliders = widgets.ColorSliders(self._figure, aplpyfigure=self)
+ 
+     @auto_refresh
+     def remove_sliders(self):
+         """
+         Get rid of the sliders
+         """
+         if hasattr(self,'Sliders'):
+             self.Sliders.clear_sliders()
+             mpl.close(self.Sliders.toolfig.number)
+       
