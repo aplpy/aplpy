@@ -15,6 +15,9 @@ class ColorSliders(Widget):
         *targetfig*
             The figure instance to adjust
 
+        *aplpyfigure*
+            The APLPY FITSFigure host
+
         *toolfig*
             The figure instance to embed the subplot tool into. If
             None, a default figure will be created. If you are using
