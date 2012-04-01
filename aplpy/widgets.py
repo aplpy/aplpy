@@ -30,7 +30,11 @@ class ColorSliders(Widget):
             tbar = mpl.rcParams['toolbar'] # turn off the navigation toolbar for the toolfig
             mpl.rcParams['toolbar'] = 'None'
             self.toolfig = pyplot.figure(figsize=(6,3))
-            self.toolfig.canvas.set_window_title("Color Sliders for "+targetfig.canvas.manager.window.title())
+            try:
+                self.toolfig.canvas.set_window_title("Color Sliders for "+targetfig.canvas.manager.window.title())
+            except AttributeError:
+                # should try annotating instead?
+                pass
             self.toolfig.subplots_adjust(top=0.9,left=0.2,right=0.9)
             mpl.rcParams['toolbar'] = tbar
         else:
@@ -94,12 +98,12 @@ class ColorSliders(Widget):
     def set_sliders(self):
         if self.aplpyfigure.image:
             if self.aplpyfigure.image.norm.midpoint is not None:
-                axmin = self.toolfig.add_axes([0.1,0.7,0.8,0.2])
-                axmid = self.toolfig.add_axes([0.1,0.4,0.8,0.2])
-                axmax = self.toolfig.add_axes([0.1,0.1,0.8,0.2])
+                axmin = self.toolfig.add_axes([0.1,0.75,0.8,0.15])
+                axmid = self.toolfig.add_axes([0.1,0.45,0.8,0.15])
+                axmax = self.toolfig.add_axes([0.1,0.15,0.8,0.15])
             else:
-                axmin = self.toolfig.add_axes([0.1,0.6,0.8,0.3])
-                axmax = self.toolfig.add_axes([0.1,0.2,0.8,0.3])
+                axmin = self.toolfig.add_axes([0.1,0.6,0.8,0.2])
+                axmax = self.toolfig.add_axes([0.1,0.2,0.8,0.2])
 
             slmin = Slider(axmin, 'Min', self.aplpyfigure._auto_v(1e-3),
                 self.aplpyfigure._auto_v(100-1e-3), valinit=self.aplpyfigure.image.norm.vmin)

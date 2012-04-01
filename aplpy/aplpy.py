@@ -1848,7 +1848,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         mpl.close(self._figure)
 
     @auto_refresh
-    def add_sliders(self):
+    def show_sliders(self):
         """
         Create a slider widget window
         """
@@ -1857,7 +1857,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.Sliders = widgets.ColorSliders(self._figure, aplpyfigure=self)
  
     @auto_refresh
-    def remove_sliders(self):
+    def hide_sliders(self):
         """
         Get rid of the sliders
         """
