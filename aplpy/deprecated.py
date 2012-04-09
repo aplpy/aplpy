@@ -33,7 +33,7 @@ class Deprecated(object):
     @auto_refresh
     def hide_grid(self, *args, **kwargs):
         warnings.warn("hide_grid is deprecated - use remove_grid instead", DeprecationWarning)
-        self.add_grid(*args, **kwargs)
+        self.remove_grid(*args, **kwargs)
 
     @auto_refresh
     def show_beam(self, *args, **kwargs):
