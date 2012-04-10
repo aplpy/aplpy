@@ -1481,15 +1481,16 @@ class FITSFigure(Layers, Regions, Deprecated):
         if self._parameters.auto_refresh or force:
             self._figure.canvas.draw()
 
-    def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300):
+    def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300, format=None):
         '''
         Save the current figure to a file
 
         Required arguments:
 
-            *filename*: [ string ]
-                The name of the file to save the plot to. This can be
-                for example a PS, EPS, PDF, PNG, JPEG, or SVG file.
+            *filename*: [ string or file-like object ]
+                The name of the file to save the plot to. This can be for
+                example a PS, EPS, PDF, PNG, JPEG, or SVG file. Note that it
+                is also possible to pass file-like object.
 
         Optional Keyword Arguments:
 
@@ -1510,9 +1511,17 @@ class FITSFigure(Layers, Regions, Deprecated):
             *max_dpi*: [ float ]
                 The maximum resolution to output images at. If no maximum is
                 wanted, enter None or 0.
+
+            *format*: [ str ]
+                By default, APLpy tries to guess the file format based on the
+                file extension, but the format can also be specified
+                explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
         '''
 
-        if dpi == None and os.path.splitext(filename)[1].lower() in ['.eps', '.ps', '.pdf']:
+        if isinstance(filename, basestring) and format is None:
+            format = os.path.splitext(filename)[1].lower()[1:]
+
+        if dpi is None and format in ['eps', 'ps', 'pdf']:
             width = self._ax1.get_position().width * self._figure.get_figwidth()
             interval = self._ax1.xaxis.get_view_interval()
             nx = interval[1] - interval[0]
@@ -1527,9 +1536,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             for artist in self._layers.values():
                 if isinstance(artist, matplotlib.text.Text):
                     artists.append(artist)
-            self._figure.savefig(filename, dpi=dpi, transparent=transparent, bbox_inches='tight', bbox_extra_artists=artists)
+            self._figure.savefig(filename, dpi=dpi, transparent=transparent, bbox_inches='tight', bbox_extra_artists=artists, format=format)
         else:
-            self._figure.savefig(filename, dpi=dpi, transparent=transparent)
+            self._figure.savefig(filename, dpi=dpi, transparent=transparent, format=format)
 
     def _initialize_view(self):
 
