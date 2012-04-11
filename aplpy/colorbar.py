@@ -250,10 +250,17 @@ class Colorbar(object):
         if fontproperties:
             self._label_fontproperties = fontproperties
 
+        # Update the tick label font properties
         for label in self._colorbar_axes.get_xticklabels():
             label.set_fontproperties(self._label_fontproperties)
         for label in self._colorbar_axes.get_yticklabels():
             label.set_fontproperties(self._label_fontproperties)
+
+        # Also update the offset text font properties
+        label = self._colorbar_axes.xaxis.get_offset_text()
+        label.set_fontproperties(self._label_fontproperties)
+        label = self._colorbar_axes.yaxis.get_offset_text()
+        label.set_fontproperties(self._label_fontproperties)
 
     # FRAME PROPERTIES
 
