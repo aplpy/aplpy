@@ -1,5 +1,14 @@
 import numpy as np
-import pywcs
+
+try:
+    import pywcs
+except ImportError:
+    pass
+
+try:
+    from astropy import wcs as pywcs
+except ImportError:
+    pass
 
 from .logger import logger
 
