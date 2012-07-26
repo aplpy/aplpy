@@ -14,15 +14,47 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('0.99.0')
 import matplotlib.pyplot as mpl
 import mpl_toolkits.axes_grid.parasite_axes as mpltk
 
+WCS_TYPES = []
+HDU_TYPES = []
+HDULIST_TYPES = []
+
 try:
     import pyfits
+    HDU_TYPES.append(pyfits.PrimaryHDU)
+    HDU_TYPES.append(pyfits.ImageHDU)
+    HDULIST_TYPES.append(pyfits.HDUList)
 except ImportError:
-    raise Exception("pyfits is required for APLpy")
+    pass
 
 try:
     import pywcs
+    WCS_TYPES.append(pywcs.WCS)
 except ImportError:
-    raise Exception("pywcs is required for APLpy")
+    pass
+
+try:
+    from astropy.io import fits as pyfits
+    HDU_TYPES.append(pyfits.PrimaryHDU)
+    HDU_TYPES.append(pyfits.ImageHDU)
+    HDULIST_TYPES.append(pyfits.HDUList)
+except ImportError:
+    pass
+
+try:
+    from astropy import wcs as pywcs
+    WCS_TYPES.append(pywcs.WCS)
+except ImportError:
+    pass
+
+if HDU_TYPES == []:
+    raise Exception("pyfits or astropy is required for APLpy")
+
+if WCS_TYPES == []:
+    raise Exception("pywcs or astropy is required for APLpy")
+
+HDU_TYPES = tuple(HDU_TYPES)
+HDULIST_TYPES = tuple(HDULIST_TYPES)
+WCS_TYPES = tuple(WCS_TYPES)
 
 try:
     import numpy as np
@@ -80,7 +112,6 @@ from .decorators import auto_refresh, fixdocstring
 
 from .deprecated import Deprecated
 
-
 class Parameters():
     '''
     A class to contain the current plotting parameters
@@ -104,11 +135,18 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Required arguments:
 
-            *data*: [ string | pyfits.PrimaryHDU | pyfits.ImageHDU | pywcs.WCS | np.ndarray ]
-                Either the filename of the FITS file to open, a pyfits
-                PrimaryHDU or ImageHDU object, or a pywcs WCS object. It is
-                also possible to specify the filename of an RGB image tagged
-                with AVM meta-data.
+            *data*: [see below]
+
+                The FITS file to open. The following data types can be passed:
+
+                    * string
+                    * astropy.io.fits.PrimaryHDU
+                    * astropy.io.fits.ImageHDU
+                    * pyfits.PrimaryHDU
+                    * pyfits.ImageHDU
+                    * astropy.wcs.WCS
+                    * np.ndarray
+                    * RGB image with AVM meta-data
 
         Optional Keyword Arguments:
 
@@ -199,7 +237,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             data.nx = nx
             data.ny = ny
 
-        if isinstance(data, pywcs.WCS):
+        if isinstance(data, WCS_TYPES):
             wcs = data
             if wcs.naxis != 2:
                 raise ValueError("FITSFigure initialization via WCS objects can only be done with 2-dimensional WCS objects")
@@ -314,8 +352,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             if hdulist[hdu].data is None:
                 found = False
                 for alt_hdu in range(len(hdulist)):
-                    if isinstance(hdulist[alt_hdu], pyfits.PrimaryHDU) or \
-                       isinstance(hdulist[alt_hdu], pyfits.ImageHDU):
+                    if isinstance(hdulist[alt_hdu], HDU_TYPES):
                         if hdulist[alt_hdu].data is not None:
                             logger.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
                             hdu = hdulist[alt_hdu]
@@ -331,17 +368,17 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             hdu = pyfits.ImageHDU(data)
 
-        elif isinstance(data, pyfits.PrimaryHDU) or isinstance(data, pyfits.ImageHDU):
+        elif isinstance(data, HDU_TYPES):
 
             hdu = data
 
-        elif isinstance(data, pyfits.HDUList):
+        elif isinstance(data, HDULIST_TYPES):
 
             hdu = data[hdu]
 
         else:
 
-            raise Exception("data argument should either be a filename, an HDU instance from pyfits, a pywcs.WCS object, or a Numpy array.")
+            raise Exception("data argument should either be a filename, an HDU object from astropy.io.fits or pyfits, a WCS object from astropy.wcs or pywcs, or a Numpy array.")
 
         # Check dimensions= argument
         if type(dimensions) not in [list, tuple]:
@@ -759,9 +796,17 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Required Arguments:
 
-            *data*: [ string | pyfits PrimaryHDU | pyfits ImageHDU ]
-                Either the filename of the FITS file to open, or a pyfits
-                PrimaryHDU or ImageHDU instance.
+            *data*: [see below]
+
+                The FITS file to plot contours for. The following data types can be passed:
+
+                    * string
+                    * astropy.io.fits.PrimaryHDU
+                    * astropy.io.fits.ImageHDU
+                    * pyfits.PrimaryHDU
+                    * pyfits.ImageHDU
+                    * astropy.wcs.WCS
+                    * np.ndarray
 
         Optional Keyword Arguments:
 
