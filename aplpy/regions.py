@@ -106,8 +106,8 @@ def ds9(region_file, header, zorder=3, **kwargs):
     # pyregion and aplpy both correct for the FITS standard origin=1,1
     # need to avoid double-correcting
     for r in rrim:
-        r.coord_list[0] += 1
-        r.coord_list[1] += 1
+        for i in range(len(r.coord_list)):
+            r.coord_list[i] += 1
 
     if 'text_offset' in kwargs:
         text_offset = kwargs['text_offset']
