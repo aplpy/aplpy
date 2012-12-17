@@ -421,10 +421,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         header = header_util.check(header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
-        try:
-            wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices)
-        except:
-            raise Exception("An error occured while parsing the WCS information")
+        wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices)
 
         return data, header, wcs
 
