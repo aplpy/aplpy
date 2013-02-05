@@ -101,15 +101,15 @@ class WCS(pywcs.WCS):
             raise AttributeError("Attribute %s does not exist" % attribute)
 
         if attribute[:5] == 'ctype':
-            return self.wcs.ctype[axis]
+            return self.wcs.ctype[axis].decode('ascii')
         elif attribute[:5] == 'cname':
-            return self.wcs.cname[axis]
+            return self.wcs.cname[axis].decode('ascii')
         elif attribute[:5] == 'cunit':
-            return self.wcs.cunit[axis]
+            return self.wcs.cunit[axis].decode('ascii')
         elif attribute[:5] == 'crval':
-            return self.wcs.crval[axis]
+            return self.wcs.crval[axis].decode('ascii')
         elif attribute[:5] == 'crpix':
-            return self.wcs.crpix[axis]
+            return self.wcs.crpix[axis].decode('ascii')
         else:
             raise AttributeError("Attribute %s does not exist" % attribute)
 

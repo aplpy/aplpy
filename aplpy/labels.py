@@ -326,7 +326,7 @@ class TickLabels(object):
                     sep = (':', ':', '')
 
                 xlabel = xw.tostringlist(format=xaxis.apl_label_form, sep=sep)
-                xlabel = string.join(xlabel, "")
+                xlabel = "".join(xlabel)
 
             else:
 
@@ -349,7 +349,7 @@ class TickLabels(object):
                     sep = (':', ':', '')
 
                 ylabel = yw.tostringlist(format=yaxis.apl_label_form, sep=sep)
-                ylabel = string.join(ylabel, "")
+                ylabel = "".join(ylabel)
 
             else:
 
@@ -432,6 +432,6 @@ class WCSFormatter(mpl.Formatter):
             label = self.axis.apl_label_form % label
 
         if mpl.rcParams['text.usetex']:
-            return "$" + string.join(label, "") + "$"
+            return "$" + "".join(label) + "$"
         else:
-            return string.join(label, "")
+            return "".join(label)

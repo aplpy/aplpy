@@ -268,6 +268,7 @@ class Angle(object):
         else:
             return div
 
+    __truediv__ = __div__
 
 def smart_round_angle_sexagesimal(x, latitude=False, hours=False):
 

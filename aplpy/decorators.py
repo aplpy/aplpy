@@ -86,7 +86,7 @@ def fixdocstring(func):
         if item.strip() in doc:
             common.append(" " * indent + doc[item.strip()].replace('\n', '\n' + " " * indent))
 
-    docstring = string.join(header + common + footer, "\n")
+    docstring = "\n".join(header + common + footer)
 
     func.__doc__ = docstring
 
