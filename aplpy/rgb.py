@@ -12,7 +12,7 @@ except ImportError:
 
 import numpy as np
 
-from .logger import logger
+from astropy import log
 
 try:
     import Image
@@ -54,16 +54,16 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
         vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
 
     if min_auto:
-        logger.info("vmin = %10.3e (auto)" % vmin_auto)
+        log.info("vmin = %10.3e (auto)" % vmin_auto)
         vmin = vmin_auto
     else:
-        logger.info("vmin = %10.3e" % vmin)
+        log.info("vmin = %10.3e" % vmin)
 
     if max_auto:
-        logger.info("vmax = %10.3e (auto)" % vmax_auto)
+        log.info("vmax = %10.3e (auto)" % vmax_auto)
         vmax = vmax_auto
     else:
-        logger.info("vmax = %10.3e" % vmax)
+        log.info("vmax = %10.3e" % vmax)
 
     image = (image - vmin) / (vmax - vmin)
 
@@ -209,7 +209,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
 
-    logger.info("Red:")
+    log.info("Red:")
     image_r = Image.fromarray(_data_stretch(image_r, \
                                             vmin=vmin_r, vmax=vmax_r, \
                                             pmin=pmin_r, pmax=pmax_r, \
@@ -217,7 +217,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             vmid=vmid_r, \
                                             exponent=exponent_r))
 
-    logger.info("\nGreen:")
+    log.info("\nGreen:")
     image_g = Image.fromarray(_data_stretch(image_g, \
                                             vmin=vmin_g, vmax=vmax_g, \
                                             pmin=pmin_g, pmax=pmax_g, \
@@ -225,7 +225,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             vmid=vmid_g, \
                                             exponent=exponent_g))
 
-    logger.info("\nBlue:")
+    log.info("\nBlue:")
     image_b = Image.fromarray(_data_stretch(image_b, \
                                             vmin=vmin_b, vmax=vmax_b, \
                                             pmin=pmin_b, pmax=pmax_b, \

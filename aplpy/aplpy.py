@@ -89,6 +89,8 @@ if montage_installed:
         warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
         montage_installed = False
 
+from astropy import log
+
 from . import contour_util
 from . import convolve_util
 from . import image_util
@@ -106,7 +108,6 @@ from .regions import Regions
 from .colorbar import Colorbar
 from .normalize import APLpyNormalize
 from .frame import Frame
-from .logger import logger
 
 from .decorators import auto_refresh, fixdocstring
 
@@ -252,10 +253,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._wcs.nx = nx
             self._wcs.ny = ny
             if downsample:
-                logger.warn("downsample argument is ignored if data passed is a WCS object")
+                log.warn("downsample argument is ignored if data passed is a WCS object")
                 downsample = False
             if north:
-                logger.warn("north argument is ignored if data passed is a WCS object")
+                log.warn("north argument is ignored if data passed is a WCS object")
                 north = False
         else:
             self._data, self._header, self._wcs = self._get_hdu(data, hdu, north, \
@@ -354,7 +355,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 for alt_hdu in range(len(hdulist)):
                     if isinstance(hdulist[alt_hdu], HDU_TYPES):
                         if hdulist[alt_hdu].data is not None:
-                            logger.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
+                            log.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
                             hdu = hdulist[alt_hdu]
                             found = True
                             break
@@ -412,7 +413,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                     * shape[len(shape) - 1 - dimensions[1]]
             if n_total == n_image:
                 slices = [0 for i in range(1, len(shape) - 1)]
-                logger.info("Setting slices=%s" % str(slices))
+                log.info("Setting slices=%s" % str(slices))
 
         # Extract slices
         data = slicer.slice_hypercube(data, header, dimensions=dimensions, slices=slices)
@@ -693,12 +694,12 @@ class FITSFigure(Layers, Regions, Deprecated):
         if min_auto:
             if stretch == 'linear':
                 vmin = -0.1 * (vmax - vmin) + vmin
-            logger.info("Auto-setting vmin to %10.3e" % vmin)
+            log.info("Auto-setting vmin to %10.3e" % vmin)
 
         if max_auto:
             if stretch == 'linear':
                 vmax = 0.1 * (vmax - vmin) + vmax
-            logger.info("Auto-setting vmax to %10.3e" % vmax)
+            log.info("Auto-setting vmax to %10.3e" % vmax)
 
         # Update normalizer object
         normalizer.vmin = vmin
@@ -1571,7 +1572,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 dpi = np.minimum(nx / width, max_dpi)
             else:
                 dpi = nx / width
-            logger.info("Auto-setting resolution to %g dpi" % dpi)
+            log.info("Auto-setting resolution to %g dpi" % dpi)
 
         artists = []
         if adjust_bbox:

@@ -70,6 +70,4 @@ def generate_file(header_file, directory):
     filename = os.path.join(directory, random_id() + '.fits')
     hdu.writeto(filename)
 
-    print filename
-
     return filename

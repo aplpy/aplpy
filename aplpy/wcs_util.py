@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 
-from .logger import logger
+from astropy import log
 
 
 class WCS(pywcs.WCS):
@@ -416,7 +416,7 @@ def system(wcs):
 
     if system['name'] == 'equatorial':
         if equinox == '' or np.isnan(equinox) or equinox == 0.:
-            logger.warning("Cannot determine equinox. Assuming J2000.")
+            log.warning("Cannot determine equinox. Assuming J2000.")
             equinox = 'j2000'
         elif equinox == 1950.:
             equinox = 'b1950'

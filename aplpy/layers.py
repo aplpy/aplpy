@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
     PatchCollection, CircleCollection, LineCollection
@@ -63,18 +65,18 @@ class Layers(object):
 
         n_layers = len(layers_list)
         if n_layers == 0:
-            print "\n  There are no layers in this figure"
+            print("\n  There are no layers in this figure")
         else:
             if n_layers == 1:
-                print "\n  There is one layer in this figure:\n"
+                print("\n  There is one layer in this figure:\n")
             else:
-                print "\n  There are " + str(n_layers) + \
-                    " layers in this figure:\n"
+                print("\n  There are " + str(n_layers) + \
+                    " layers in this figure:\n")
             for layer in layers_list:
                 if layer['visible']:
-                    print "   -> " + layer['name']
+                    print("   -> " + layer['name'])
                 else:
-                    print "   -> " + layer['name'] + " (hidden)"
+                    print("   -> " + layer['name'] + " (hidden)")
 
     @auto_refresh
     def remove_layer(self, layer, raise_exception=True):
