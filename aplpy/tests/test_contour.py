@@ -2,7 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 import numpy as np
-import pytest
+from astropy.tests.helper import pytest
 
 from .. import FITSFigure
 

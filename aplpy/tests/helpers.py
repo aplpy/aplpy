@@ -2,13 +2,13 @@ import string
 import random
 import os
 
+import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
-import numpy as np
 
 
 def random_id():
-    return string.join(random.sample(string.letters + string.digits, 16), '')
+    return ''.join(random.sample(string.ascii_letters + string.digits, 16))
 
 
 def generate_header(header_file):
@@ -45,7 +45,7 @@ def generate_hdu(header_file):
     data = generate_data(header_file)
 
     # Generate primary HDU
-    hdu = pyfits.PrimaryHDU(data=data, header=header)
+    hdu = fits.PrimaryHDU(data=data, header=header)
 
     return hdu
 
