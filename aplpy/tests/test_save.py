@@ -15,13 +15,13 @@ def is_format(filename, format):
     else:
         f = filename
     if format == 'png':
-        return f.read(8) == '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a'
+        return f.read(8) == b'\x89\x50\x4e\x47\x0d\x0a\x1a\x0a'
     elif format == 'pdf':
-        return f.read(4) == '\x25\x50\x44\x46'
+        return f.read(4) == b'\x25\x50\x44\x46'
     elif format == 'eps':
-        return f.read(23) == '%!PS-Adobe-3.0 EPSF-3.0'
+        return f.read(23) == b'%!PS-Adobe-3.0 EPSF-3.0'
     elif format == 'ps':
-        return f.read(14) == '%!PS-Adobe-3.0'
+        return f.read(14) == b'%!PS-Adobe-3.0'
     elif format == 'svg':
         import xml.etree.ElementTree as e
         return e.parse(f).getroot().tag == '{http://www.w3.org/2000/svg}svg'

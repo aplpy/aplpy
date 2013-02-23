@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 
 from . import math_util as m
@@ -34,8 +36,8 @@ def resample(array, factor):
 
     nx, ny = np.shape(array)
 
-    nx_new = nx / factor
-    ny_new = ny / factor
+    nx_new = nx // factor
+    ny_new = ny // factor
 
     array2 = np.zeros((nx_new, ny))
     for i in range(nx_new):

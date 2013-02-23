@@ -2,8 +2,8 @@ import string
 import random
 import os
 
-import pyfits
-import pywcs
+from astropy.io import fits
+from astropy.wcs import WCS
 import numpy as np
 
 
@@ -14,7 +14,7 @@ def random_id():
 def generate_header(header_file):
 
     # Read in header
-    header = pyfits.Header()
+    header = fits.Header()
     header.fromTxtFile(header_file)
 
     return header
@@ -56,7 +56,7 @@ def generate_wcs(header_file):
     header = generate_header(header_file)
 
     # Compute WCS object
-    wcs = pywcs.WCS(header)
+    wcs = WCS(header)
 
     return wcs
 
