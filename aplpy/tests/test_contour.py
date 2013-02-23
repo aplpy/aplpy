@@ -4,7 +4,7 @@ matplotlib.use('Agg')
 import numpy as np
 import pytest
 
-from aplpy import FITSFigure
+from .. import FITSFigure
 
 # Test simple contour generation with Numpy example
 

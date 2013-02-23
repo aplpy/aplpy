@@ -3,7 +3,7 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 
-from aplpy import FITSFigure
+from .. import FITSFigure
 import pytest
 import numpy as np
 import pyfits

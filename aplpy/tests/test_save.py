@@ -4,7 +4,7 @@ from StringIO import StringIO
 import pytest
 import numpy as np
 
-from aplpy import FITSFigure
+from .. import FITSFigure
 
 FORMATS = [None, 'png', 'pdf', 'eps', 'ps', 'svg']
 
