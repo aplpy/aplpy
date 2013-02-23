@@ -105,7 +105,7 @@ class WCS(pywcs.WCS):
         elif attribute[:5] == 'cname':
             return self.wcs.cname[axis].decode('ascii')
         elif attribute[:5] == 'cunit':
-            return self.wcs.cunit[axis].decode('ascii')
+            return str(self.wcs.cunit[axis])
         elif attribute[:5] == 'crval':
             return self.wcs.crval[axis].decode('ascii')
         elif attribute[:5] == 'crpix':
