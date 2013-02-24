@@ -229,6 +229,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Open the figure
         if figure:
             self._figure = figure
+        elif axis:
+            self._figure = axis.get_figure()
         else:
             self._figure = mpl.figure(**kwargs)
 
@@ -238,7 +240,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         elif type(subplot) == tuple and len(subplot) == 3:
             self._ax1 = mpltk.SubplotHost(self._figure, *subplot)
         elif axis is not None:
-            self._ax1 = axis
+            if hasattr(axis,'toggle_axisline'):
+                self._ax1 = axis
+            else:
+                # doesn't work. self._ax1 = mpltk.HostAxes(axis.get_figure(), axis.get_position())
+                raise ValueError('Need a ParasiteAxes / HostAxes axis instance if axis= is specified')
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
@@ -787,7 +793,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
-    def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
+    def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False,
+                     cmap=None, colors=None, returnlevels=False, convention=None,
+                     dimensions=[0, 1], slices=[], smooth=None, kernel='gauss',
+                     overlap=False, **kwargs):
         '''
         Overlay contours on the current plot.
 
