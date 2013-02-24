@@ -1,6 +1,27 @@
 CHANGES
 --------
 
+Version 0.9.9 (unreleased)
+
+    The main change in this version is that APLpy is now an Astropy-affiliated
+    package. This means that the Astropy core package is now required, but
+    PyFITS and PyWCS are no longer required as dependencies.
+
+    This release is also the first release fully compatible with Python 3.
+
+    New features
+    ~~~~~~~~~~~~
+
+    - file-like objects can now be passed to ``FITSFigure.save()``
+
+    Bug fixes
+    ~~~~~~~~~
+
+    - fix bug that caused regions read from a ds9 region file to be offset by
+      one pixel.
+
+    - fix bug that caused an exception when adding a Beam
+
 Version 0.9.8
 
     This version fixes issues that occurred when using APLpy with PyFITS
