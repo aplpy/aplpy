@@ -65,7 +65,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=None,
-                 **kwargs):
+                 axis=None, **kwargs):
         '''
         Create a FITSFigure instance.
 
@@ -237,6 +237,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._ax1 = mpltk.HostAxes(self._figure, subplot, adjustable='datalim')
         elif type(subplot) == tuple and len(subplot) == 3:
             self._ax1 = mpltk.SubplotHost(self._figure, *subplot)
+        elif axis is not None:
+            self._ax1 = axis
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
