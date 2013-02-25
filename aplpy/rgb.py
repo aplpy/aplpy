@@ -5,14 +5,9 @@ import warnings
 import tempfile
 import shutil
 
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
-
 import numpy as np
-
 from astropy import log
+from astropy.io import fits
 
 try:
     import Image
@@ -180,13 +175,13 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
 
     if isinstance(data, basestring):
 
-        image = pyfits.getdata(data)
+        image = fits.getdata(data)
         image_r = image[indices[0], :, :]
         image_g = image[indices[1], :, :]
         image_b = image[indices[2], :, :]
 
         # Read in header
-        header = pyfits.getheader(data)
+        header = fits.getheader(data)
 
         # Remove information about third dimension
         header['NAXIS'] = 2
@@ -199,12 +194,12 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     elif (type(data) == list or type(data) == tuple) and len(data) == 3:
 
         filename_r, filename_g, filename_b = data
-        image_r = pyfits.getdata(filename_r)
-        image_g = pyfits.getdata(filename_g)
-        image_b = pyfits.getdata(filename_b)
+        image_r = fits.getdata(filename_r)
+        image_g = fits.getdata(filename_g)
+        image_b = fits.getdata(filename_b)
 
         # Read in header
-        header = pyfits.getheader(filename_r)
+        header = fits.getheader(filename_r)
 
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
@@ -328,8 +323,8 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     contents = open(header_hdr).read()
     open(header_py_hdr, 'wb').write(contents.replace('END\n', ''))
 
-    # Read header in with pyfits
-    header = pyfits.Header()
+    # Read header in with astropy.io.fits
+    header = fits.Header()
     header.fromTxtFile(header_py_hdr, replace=True)
 
     # Find image dimensions
@@ -348,16 +343,14 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
                           header=header_hdr, exact_size=True, bitpix=-32)
 
         # Read in and add to datacube
-        image_cube[i, :, :] = pyfits.getdata('%s/image_%i.fits' % (final_dir, i))
+        image_cube[i, :, :] = fits.getdata('%s/image_%i.fits' % (final_dir, i))
 
     # Write out final cube
-    pyfits.writeto(output, image_cube, header, clobber=True)
+    fits.writeto(output, image_cube, header, clobber=True)
 
     # Write out collapsed version of cube
-    pyfits.writeto(output.replace('.fits', '_2d.fits'), \
+    fits.writeto(output.replace('.fits', '_2d.fits'), \
                    np.mean(image_cube, axis=0), header, clobber=True)
 
     # Remove work directory
     shutil.rmtree(work_dir)
-
-    return
