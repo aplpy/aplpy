@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 from distutils import version
 import os
 import warnings
@@ -18,8 +20,9 @@ except:
 try:
     import montage
     if not hasattr(montage, 'reproject_hdu'):
-        raise
-    montage_installed = True
+        montage_installed = False
+    else:
+        montage_installed = True
 except:
     montage_installed = False
 

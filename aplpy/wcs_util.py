@@ -1,19 +1,13 @@
+from __future__ import absolute_import, print_function, division
+
 import numpy as np
 
-try:
-    import pywcs
-except ImportError:
-    pass
-
-try:
-    from astropy import wcs as pywcs
-except ImportError:
-    pass
 
 from astropy import log
+from astropy.wcs import WCS as AstropyWCS
 
 
-class WCS(pywcs.WCS):
+class WCS(AstropyWCS):
 
     def __init__(self, *args, **kwargs):
 
@@ -23,7 +17,7 @@ class WCS(pywcs.WCS):
         if 'dimensions' in kwargs:
             self._dimensions = kwargs.pop('dimensions')
 
-        pywcs.WCS.__init__(self, *args, **kwargs)
+        AstropyWCS.__init__(self, *args, **kwargs)
 
         # Fix common non-standard units
         self.wcs.unitfix()
@@ -49,7 +43,7 @@ class WCS(pywcs.WCS):
                     coords.append(np.repeat(self._slices[s], xpix.shape))
                     s += 1
             coords = np.vstack(coords).transpose()
-            result = pywcs.WCS.wcs_pix2sky(self, coords, 1)
+            result = AstropyWCS.wcs_pix2sky(self, coords, 1)
             self._mean_world = np.mean(result, axis=0)
             # result = result.transpose()
             # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
@@ -116,10 +110,10 @@ class WCS(pywcs.WCS):
     def wcs_sky2pix(self, x, y, origin):
         if self.naxis == 2:
             if self._dimensions[1] < self._dimensions[0]:
-                xp, yp = pywcs.WCS.wcs_sky2pix(self, y, x, origin)
+                xp, yp = AstropyWCS.wcs_sky2pix(self, y, x, origin)
                 return yp, xp
             else:
-                return pywcs.WCS.wcs_sky2pix(self, x, y, origin)
+                return AstropyWCS.wcs_sky2pix(self, x, y, origin)
         else:
             coords = []
             s = 0
@@ -136,20 +130,20 @@ class WCS(pywcs.WCS):
             coords = np.vstack(coords).transpose()
 
             # Due to a bug in pywcs, we need to loop over each coordinate
-            # result = pywcs.WCS.wcs_sky2pix(self, coords, origin)
+            # result = AstropyWCS.wcs_sky2pix(self, coords, origin)
             result = np.zeros(coords.shape)
             for i in range(result.shape[0]):
-                result[i:i + 1, :] = pywcs.WCS.wcs_sky2pix(self, coords[i:i + 1, :], origin)
+                result[i:i + 1, :] = AstropyWCS.wcs_sky2pix(self, coords[i:i + 1, :], origin)
 
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
     def wcs_pix2sky(self, x, y, origin):
         if self.naxis == 2:
             if self._dimensions[1] < self._dimensions[0]:
-                xw, yw = pywcs.WCS.wcs_pix2sky(self, y, x, origin)
+                xw, yw = AstropyWCS.wcs_pix2sky(self, y, x, origin)
                 return yw, xw
             else:
-                return pywcs.WCS.wcs_pix2sky(self, x, y, origin)
+                return AstropyWCS.wcs_pix2sky(self, x, y, origin)
         else:
             coords = []
             s = 0
@@ -162,7 +156,7 @@ class WCS(pywcs.WCS):
                     coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
                     s += 1
             coords = np.vstack(coords).transpose()
-            result = pywcs.WCS.wcs_pix2sky(self, coords, origin)
+            result = AstropyWCS.wcs_pix2sky(self, coords, origin)
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
 
