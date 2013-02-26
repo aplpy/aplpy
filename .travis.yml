@@ -17,7 +17,7 @@ install:
    - pip install --upgrade "numpy==$NUMPY_VERSION" --use-mirrors
    - pip install python-dateutil --use-mirrors
    - pip install pytz --use-mirrors
-   - pip install http://mpia.de/~robitaille/python/matplotlib-1.2.0_fixed.tar.gz
+   - pip install git+http://github.com/matplotlib/matplotlib.git#egg=matplotlib
    - pip install Cython --use-mirrors
    - pip install astropy --use-mirrors
 script: python setup.py test
