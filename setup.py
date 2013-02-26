@@ -6,6 +6,9 @@ import subprocess
 
 from distutils.core import setup, Command
 
+if 'develop' in sys.argv:
+    from setuptools import setup
+
 try:  # Python 3.x
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:  # Python 2.x
