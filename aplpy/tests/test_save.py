@@ -1,5 +1,10 @@
 import os
-from StringIO import StringIO
+import sys
+
+if sys.version_info[0] > 2:
+    from io import BytesIO as StringIO
+else:
+    from StringIO import StringIO
 
 import numpy as np
 from astropy.tests.helper import pytest
