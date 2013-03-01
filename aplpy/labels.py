@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, division, unicode_literals
+
 import string
 import warnings
 
@@ -388,7 +390,7 @@ class WCSFormatter(mpl.Formatter):
                 label_style = self.axis.apl_labels_style
 
             if label_style == 'plain_notex':
-                sep = (u'\u00b0', u"'", u'"')
+                sep = ('\u00b0', "'", '"')
                 if hours:
                     sep = ('h', 'm', 's')
             elif label_style == 'colons':

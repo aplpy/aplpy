@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 from distutils import version
 import os
 import warnings
@@ -5,14 +7,9 @@ import warnings
 import tempfile
 import shutil
 
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
-
 import numpy as np
-
-from .logger import logger
+from astropy import log
+from astropy.io import fits
 
 try:
     import Image
@@ -23,8 +20,9 @@ except:
 try:
     import montage
     if not hasattr(montage, 'reproject_hdu'):
-        raise
-    montage_installed = True
+        montage_installed = False
+    else:
+        montage_installed = True
 except:
     montage_installed = False
 
@@ -54,16 +52,16 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
         vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
 
     if min_auto:
-        logger.info("vmin = %10.3e (auto)" % vmin_auto)
+        log.info("vmin = %10.3e (auto)" % vmin_auto)
         vmin = vmin_auto
     else:
-        logger.info("vmin = %10.3e" % vmin)
+        log.info("vmin = %10.3e" % vmin)
 
     if max_auto:
-        logger.info("vmax = %10.3e (auto)" % vmax_auto)
+        log.info("vmax = %10.3e (auto)" % vmax_auto)
         vmax = vmax_auto
     else:
-        logger.info("vmax = %10.3e" % vmax)
+        log.info("vmax = %10.3e" % vmax)
 
     image = (image - vmin) / (vmax - vmin)
 
@@ -180,13 +178,13 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
 
     if isinstance(data, basestring):
 
-        image = pyfits.getdata(data)
+        image = fits.getdata(data)
         image_r = image[indices[0], :, :]
         image_g = image[indices[1], :, :]
         image_b = image[indices[2], :, :]
 
         # Read in header
-        header = pyfits.getheader(data)
+        header = fits.getheader(data)
 
         # Remove information about third dimension
         header['NAXIS'] = 2
@@ -199,17 +197,17 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     elif (type(data) == list or type(data) == tuple) and len(data) == 3:
 
         filename_r, filename_g, filename_b = data
-        image_r = pyfits.getdata(filename_r)
-        image_g = pyfits.getdata(filename_g)
-        image_b = pyfits.getdata(filename_b)
+        image_r = fits.getdata(filename_r)
+        image_g = fits.getdata(filename_g)
+        image_b = fits.getdata(filename_b)
 
         # Read in header
-        header = pyfits.getheader(filename_r)
+        header = fits.getheader(filename_r)
 
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
 
-    logger.info("Red:")
+    log.info("Red:")
     image_r = Image.fromarray(_data_stretch(image_r, \
                                             vmin=vmin_r, vmax=vmax_r, \
                                             pmin=pmin_r, pmax=pmax_r, \
@@ -217,7 +215,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             vmid=vmid_r, \
                                             exponent=exponent_r))
 
-    logger.info("\nGreen:")
+    log.info("\nGreen:")
     image_g = Image.fromarray(_data_stretch(image_g, \
                                             vmin=vmin_g, vmax=vmax_g, \
                                             pmin=pmin_g, pmax=pmax_g, \
@@ -225,7 +223,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             vmid=vmid_g, \
                                             exponent=exponent_g))
 
-    logger.info("\nBlue:")
+    log.info("\nBlue:")
     image_b = Image.fromarray(_data_stretch(image_b, \
                                             vmin=vmin_b, vmax=vmax_b, \
                                             pmin=pmin_b, pmax=pmax_b, \
@@ -328,8 +326,8 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     contents = open(header_hdr).read()
     open(header_py_hdr, 'wb').write(contents.replace('END\n', ''))
 
-    # Read header in with pyfits
-    header = pyfits.Header()
+    # Read header in with astropy.io.fits
+    header = fits.Header()
     header.fromTxtFile(header_py_hdr, replace=True)
 
     # Find image dimensions
@@ -348,16 +346,14 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
                           header=header_hdr, exact_size=True, bitpix=-32)
 
         # Read in and add to datacube
-        image_cube[i, :, :] = pyfits.getdata('%s/image_%i.fits' % (final_dir, i))
+        image_cube[i, :, :] = fits.getdata('%s/image_%i.fits' % (final_dir, i))
 
     # Write out final cube
-    pyfits.writeto(output, image_cube, header, clobber=True)
+    fits.writeto(output, image_cube, header, clobber=True)
 
     # Write out collapsed version of cube
-    pyfits.writeto(output.replace('.fits', '_2d.fits'), \
+    fits.writeto(output.replace('.fits', '_2d.fits'), \
                    np.mean(image_cube, axis=0), header, clobber=True)
 
     # Remove work directory
     shutil.rmtree(work_dir)
-
-    return
