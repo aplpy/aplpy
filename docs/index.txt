@@ -1,11 +1,7 @@
-*******************
 APLpy documentation
-*******************
+===================
 
 This is the documentation for APLpy. The APLpy homepage is located at http://aplpy.github.com
- 
-Using APLpy
-===========
  
 .. toctree::
   :maxdepth: 1
@@ -15,9 +11,4 @@ Using APLpy
   arbitrary_coordinate_systems.rst
   slicing.rst
   howtos.rst
-
-Reference/API
-=============
-
-.. automodapi:: aplpy
-   :no-inheritance-diagram:
+  api.rst
