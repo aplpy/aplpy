@@ -28,7 +28,7 @@ class Colorbar(object):
         self._label_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical'):
+    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical', label_text=None):
         '''
         Show a colorbar on the side of the image.
 
@@ -57,6 +57,9 @@ class Colorbar(object):
             *box_orientation* [ str ]
                 The orientation of the colorbar within the box. Can be
                 'horizontal' or 'vertical'
+
+            *label_text* [ str ]
+                Optional text label of the colorbar.
         '''
 
         self._base_settings['location'] = location
@@ -66,6 +69,7 @@ class Colorbar(object):
         self._base_settings['labels'] = labels
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
+        self._base_settings['label_text'] = label_text
 
         if self._parent.image:
 
@@ -105,6 +109,8 @@ class Colorbar(object):
                 orientation = box_orientation
 
             self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes, orientation=orientation, ticks=ticks)
+            if label_text:
+                self._colorbar.set_label(label_text)
 
             if location == 'right':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
