@@ -29,7 +29,7 @@ class Colorbar(object):
         self._axislabel_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical', axis_label_text=None, axis_label_rotation=None):
+    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical', axis_label_text=None, axis_label_rotation=None, axis_label_pad=5):
         '''
         Show a colorbar on the side of the image.
 
@@ -72,6 +72,7 @@ class Colorbar(object):
         self._base_settings['box_orientation'] = box_orientation
         self._base_settings['axis_label_text'] = axis_label_text
         self._base_settings['axis_label_rotation'] = axis_label_rotation
+        self._base_settings['axis_label_pad'] = axis_label_pad
 
         if self._parent.image:
 
@@ -124,6 +125,7 @@ class Colorbar(object):
                     tick.label1On = False
                     tick.label2On = labels
                 self._colorbar_axes.yaxis.set_label_position('right')
+                self._colorbar_axes.yaxis.labelpad = axis_label_pad
             elif location == 'top':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
@@ -131,6 +133,7 @@ class Colorbar(object):
                     tick.label1On = False
                     tick.label2On = labels
                 self._colorbar_axes.xaxis.set_label_position('top')
+                self._colorbar_axes.xaxis.labelpad = axis_label_pad
             elif location == 'left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
@@ -138,6 +141,7 @@ class Colorbar(object):
                     tick.label1On = labels
                     tick.label2On = False
                 self._colorbar_axes.yaxis.set_label_position('left')
+                self._colorbar_axes.yaxis.labelpad = axis_label_pad
             elif location == 'bottom':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
@@ -145,6 +149,7 @@ class Colorbar(object):
                     tick.label1On = labels
                     tick.label2On = False
                 self._colorbar_axes.xaxis.set_label_position('bottom')
+                self._colorbar_axes.xaxis.labelpad = axis_label_pad
 
         else:
 
@@ -246,6 +251,16 @@ class Colorbar(object):
         Set the colorbar label rotation
         '''
         self._base_settings['axis_label_rotation'] = axis_label_rotation
+        self.show(**self._base_settings)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
+
+    @auto_refresh
+    def set_axis_label_pad(self, axis_label_pad):
+        '''
+        Set the colorbar label displacement, in points
+        '''
+        self._base_settings['axis_label_pad'] = axis_label_pad
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
         self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
