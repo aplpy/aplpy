@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 
 import numpy as np
 
-from aplpy import FITSFigure
+from .. import FITSFigure
 
 
 def test_beam_addremove():

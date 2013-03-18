@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 import warnings
 
 import numpy as np
@@ -412,7 +414,7 @@ def default_spacing(ax, coord, format):
             return spacing
     else:
         min_spacing = su._get_label_precision(format)
-        if min_spacing > spacing:
+        if min_spacing is not None and min_spacing > spacing:
             return min_spacing
         else:
             return spacing

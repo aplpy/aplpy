@@ -2,19 +2,19 @@ import string
 import random
 import os
 
-import pyfits
-import pywcs
 import numpy as np
+from astropy.io import fits
+from astropy.wcs import WCS
 
 
 def random_id():
-    return string.join(random.sample(string.letters + string.digits, 16), '')
+    return ''.join(random.sample(string.ascii_letters + string.digits, 16))
 
 
 def generate_header(header_file):
 
     # Read in header
-    header = pyfits.Header()
+    header = fits.Header()
     header.fromTxtFile(header_file)
 
     return header
@@ -45,7 +45,7 @@ def generate_hdu(header_file):
     data = generate_data(header_file)
 
     # Generate primary HDU
-    hdu = pyfits.PrimaryHDU(data=data, header=header)
+    hdu = fits.PrimaryHDU(data=data, header=header)
 
     return hdu
 
@@ -56,7 +56,7 @@ def generate_wcs(header_file):
     header = generate_header(header_file)
 
     # Compute WCS object
-    wcs = pywcs.WCS(header)
+    wcs = WCS(header)
 
     return wcs
 
@@ -69,7 +69,5 @@ def generate_file(header_file, directory):
     # Write out to a temporary file in the specified directory
     filename = os.path.join(directory, random_id() + '.fits')
     hdu.writeto(filename)
-
-    print filename
 
     return filename

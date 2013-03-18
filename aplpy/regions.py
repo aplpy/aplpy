@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 try:
     import pyregion
     pyregion_installed = True

@@ -2,9 +2,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 import numpy as np
-import pytest
+from astropy.tests.helper import pytest
 
-from aplpy import FITSFigure
+from .. import FITSFigure
 
 
 def test_axis_labels_show_hide():

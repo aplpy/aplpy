@@ -3,12 +3,12 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 
-from aplpy import FITSFigure
-import pytest
 import numpy as np
-import pyfits
+from astropy.tests.helper import pytest
+from astropy.io import fits
 
-from helpers import generate_file, generate_hdu, generate_wcs
+from .helpers import generate_file, generate_hdu, generate_wcs
+from .. import FITSFigure
 
 # The tests in this file check that the initialization and basic plotting do
 # not crash for FITS files with 2 dimensions. No reference images are
@@ -80,7 +80,7 @@ def test_wcs_init():
 # Test initialization through an HDU object (no WCS)
 def test_hdu_nowcs_init():
     data = np.zeros((16, 16))
-    hdu = pyfits.PrimaryHDU(data)
+    hdu = fits.PrimaryHDU(data)
     f = FITSFigure(hdu)
     f.show_grayscale()
     f.close()
