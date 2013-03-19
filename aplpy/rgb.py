@@ -12,17 +12,18 @@ from astropy import log
 from astropy.io import fits
 
 try:
-    import Image
-    installed_pil = True
-except:
-    installed_pil = False
+    from PIL import Image
+    pil_installed = True
+except ImportError:
+    try:
+        import Image
+        pil_installed = True
+    except ImportError:
+        pil_installed = False
 
 try:
-    import montage
-    if not hasattr(montage, 'reproject_hdu'):
-        montage_installed = False
-    else:
-        montage_installed = True
+    import montage_wrapper as montage
+    montage_installed = True
 except:
     montage_installed = False
 
