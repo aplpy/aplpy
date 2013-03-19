@@ -25,10 +25,11 @@ class Colorbar(object):
         self._parameters = parent._parameters
 
         self._base_settings = {}
-        self._label_fontproperties = FontProperties()
+        self._ticklabel_fontproperties = FontProperties()
+        self._axislabel_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical', label_text=None):
+    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical', axis_label_text=None, axis_label_rotation=None, axis_label_pad=5):
         '''
         Show a colorbar on the side of the image.
 
@@ -58,7 +59,7 @@ class Colorbar(object):
                 The orientation of the colorbar within the box. Can be
                 'horizontal' or 'vertical'
 
-            *label_text* [ str ]
+            *axis_label_text* [ str ]
                 Optional text label of the colorbar.
         '''
 
@@ -69,7 +70,9 @@ class Colorbar(object):
         self._base_settings['labels'] = labels
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
-        self._base_settings['label_text'] = label_text
+        self._base_settings['axis_label_text'] = axis_label_text
+        self._base_settings['axis_label_rotation'] = axis_label_rotation
+        self._base_settings['axis_label_pad'] = axis_label_pad
 
         if self._parent.image:
 
@@ -109,8 +112,11 @@ class Colorbar(object):
                 orientation = box_orientation
 
             self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes, orientation=orientation, ticks=ticks)
-            if label_text:
-                self._colorbar.set_label(label_text)
+            if axis_label_text:
+                if axis_label_rotation:
+                    self._colorbar.set_label(axis_label_text, rotation=axis_label_rotation)
+                else:
+                    self._colorbar.set_label(axis_label_text)
 
             if location == 'right':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
@@ -118,24 +124,32 @@ class Colorbar(object):
                     tick.tick2On = True
                     tick.label1On = False
                     tick.label2On = labels
+                self._colorbar_axes.yaxis.set_label_position('right')
+                self._colorbar_axes.yaxis.labelpad = axis_label_pad
             elif location == 'top':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = False
                     tick.label2On = labels
+                self._colorbar_axes.xaxis.set_label_position('top')
+                self._colorbar_axes.xaxis.labelpad = axis_label_pad
             elif location == 'left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = labels
                     tick.label2On = False
+                self._colorbar_axes.yaxis.set_label_position('left')
+                self._colorbar_axes.yaxis.labelpad = axis_label_pad
             elif location == 'bottom':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1On = True
                     tick.tick2On = True
                     tick.label1On = labels
                     tick.label2On = False
+                self._colorbar_axes.xaxis.set_label_position('bottom')
+                self._colorbar_axes.xaxis.labelpad = axis_label_pad
 
         else:
 
@@ -164,7 +178,8 @@ class Colorbar(object):
         '''
         self._base_settings['location'] = location
         self.show(**self._base_settings)
-        self.set_font(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
 
     @auto_refresh
     def set_width(self, width):
@@ -173,7 +188,8 @@ class Colorbar(object):
         '''
         self._base_settings['width'] = width
         self.show(**self._base_settings)
-        self.set_font(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
 
     @auto_refresh
     def set_pad(self, pad):
@@ -182,7 +198,8 @@ class Colorbar(object):
         '''
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
-        self.set_font(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
 
     @auto_refresh
     def set_ticks(self, ticks):
@@ -191,7 +208,8 @@ class Colorbar(object):
         '''
         self._base_settings['ticks'] = ticks
         self.show(**self._base_settings)
-        self.set_font(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
 
     @auto_refresh
     def set_labels(self, labels):
@@ -200,7 +218,8 @@ class Colorbar(object):
         '''
         self._base_settings['labels'] = labels
         self.show(**self._base_settings)
-        self.set_font(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
 
     @auto_refresh
     def set_box(self, box, box_orientation='vertical'):
@@ -213,7 +232,38 @@ class Colorbar(object):
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
         self.show(**self._base_settings)
-        self.set_font(fontproperties=self._label_fontproperties)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
+
+    @auto_refresh
+    def set_axis_label_text(self, axis_label_text):
+        '''
+        Set the colorbar label text
+        '''
+        self._base_settings['axis_label_text'] = axis_label_text
+        self.show(**self._base_settings)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
+
+    @auto_refresh
+    def set_axis_label_rotation(self, axis_label_rotation):
+        '''
+        Set the colorbar label rotation
+        '''
+        self._base_settings['axis_label_rotation'] = axis_label_rotation
+        self.show(**self._base_settings)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
+
+    @auto_refresh
+    def set_axis_label_pad(self, axis_label_pad):
+        '''
+        Set the colorbar label displacement, in points
+        '''
+        self._base_settings['axis_label_pad'] = axis_label_pad
+        self.show(**self._base_settings)
+        self.set_font(fontproperties=self._ticklabel_fontproperties)
+        self.set_axis_label_font(fontproperties=self._axislabel_fontproperties)
 
     # FONT PROPERTIES
 
@@ -238,37 +288,79 @@ class Colorbar(object):
         '''
 
         if family:
-            self._label_fontproperties.set_family(family)
+            self._ticklabel_fontproperties.set_family(family)
 
         if style:
-            self._label_fontproperties.set_style(style)
+            self._ticklabel_fontproperties.set_style(style)
 
         if variant:
-            self._label_fontproperties.set_variant(variant)
+            self._ticklabel_fontproperties.set_variant(variant)
 
         if stretch:
-            self._label_fontproperties.set_stretch(stretch)
+            self._ticklabel_fontproperties.set_stretch(stretch)
 
         if weight:
-            self._label_fontproperties.set_weight(weight)
+            self._ticklabel_fontproperties.set_weight(weight)
 
         if size:
-            self._label_fontproperties.set_size(size)
+            self._ticklabel_fontproperties.set_size(size)
 
         if fontproperties:
-            self._label_fontproperties = fontproperties
+            self._ticklabel_fontproperties = fontproperties
 
         # Update the tick label font properties
         for label in self._colorbar_axes.get_xticklabels():
-            label.set_fontproperties(self._label_fontproperties)
+            label.set_fontproperties(self._ticklabel_fontproperties)
         for label in self._colorbar_axes.get_yticklabels():
-            label.set_fontproperties(self._label_fontproperties)
+            label.set_fontproperties(self._ticklabel_fontproperties)
 
         # Also update the offset text font properties
         label = self._colorbar_axes.xaxis.get_offset_text()
-        label.set_fontproperties(self._label_fontproperties)
+        label.set_fontproperties(self._ticklabel_fontproperties)
         label = self._colorbar_axes.yaxis.get_offset_text()
-        label.set_fontproperties(self._label_fontproperties)
+        label.set_fontproperties(self._ticklabel_fontproperties)
+
+    @auto_refresh
+    @fixdocstring
+    def set_axis_label_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+        '''
+        Set the font of the tick labels
+
+        Optional Keyword Arguments:
+
+        common: family, style, variant, stretch, weight, size, fontproperties
+
+        Default values are set by matplotlib or previously set values if
+        set_font has already been called. Global default values can be set by
+        editing the matplotlibrc file.
+        '''
+
+        if family:
+            self._axislabel_fontproperties.set_family(family)
+
+        if style:
+            self._axislabel_fontproperties.set_style(style)
+
+        if variant:
+            self._axislabel_fontproperties.set_variant(variant)
+
+        if stretch:
+            self._axislabel_fontproperties.set_stretch(stretch)
+
+        if weight:
+            self._axislabel_fontproperties.set_weight(weight)
+
+        if size:
+            self._axislabel_fontproperties.set_size(size)
+
+        if fontproperties:
+            self._axislabel_fontproperties = fontproperties
+
+        # Update the label font properties
+        label = self._colorbar_axes.xaxis.get_label()
+        label.set_fontproperties(self._axislabel_fontproperties)
+        label = self._colorbar_axes.yaxis.get_label()
+        label.set_fontproperties(self._axislabel_fontproperties)
 
     # FRAME PROPERTIES
 
