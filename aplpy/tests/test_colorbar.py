@@ -76,3 +76,16 @@ def test_colorbar_font():
     f.colorbar.set_font(size='small', weight='bold', stretch='normal',
                         family='serif', style='normal', variant='normal')
     f.close()
+
+
+def test_colorbar_axis_label():
+    data = np.zeros((16, 16))
+    f = FITSFigure(data)
+    f.show_grayscale()
+    f.add_colorbar()
+    f.colorbar.set_axis_label_text('Flux (MJy/sr)')
+    f.colorbar.set_axis_label_rotation(45.)
+    f.colorbar.set_axis_label_font(size='small', weight='bold', stretch='normal',
+                                   family='serif', style='normal', variant='normal')
+    f.colorbar.set_axis_label_pad(5.)
+    f.close()
