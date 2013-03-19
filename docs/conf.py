@@ -46,19 +46,19 @@ rst_epilog += """
 # -- Project information ------------------------------------------------------
 
 # This does not *have* to match the package name, but typically does
-project = u'Packagename'
-author = u'The Packagename Developers'
-copyright = u'2012, ' + author
+project = u'APLpy'
+author = u'The APLpy Developers'
+copyright = u'2012-13, ' + author
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-import packagename
+import aplpy
 # The short X.Y version.
-version = packagename.__version__.split('-', 1)[0]
+version = aplpy.__version__.split('-', 1)[0]
 # The full version, including alpha/beta/rc tags.
-release = packagename.__version__
+release = aplpy.__version__
 
 
 # -- Options for HTML output ---------------------------------------------------
@@ -97,6 +97,8 @@ html_title = '{0} v{1}'.format(project, release)
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = project + 'doc'
+
+html_logo = 'aplpy_logo.png'
 
 
 # -- Options for LaTeX output --------------------------------------------------
