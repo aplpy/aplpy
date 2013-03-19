@@ -56,18 +56,20 @@ from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
 
 try:
-    import montage
-    if not hasattr(montage, 'reproject_hdu'):
-        raise
+    import montage_wrapper as montage
     montage_installed = True
 except:
     montage_installed = False
 
 try:
-    import Image
+    from PIL import Image
     pil_installed = True
-except:
-    pil_installed = False
+except ImportError:
+    try:
+        import Image
+        pil_installed = True
+    except ImportError:
+        pil_installed = False
 
 try:
     from pyavm import AVM
