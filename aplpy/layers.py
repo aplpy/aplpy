@@ -83,10 +83,11 @@ class Layers(object):
         '''
         Remove a layer
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *layer*: [ string ]
-                The name of the layer to remove
+        layer: str
+            The name of the layer to remove
         '''
 
         if layer in self._layers:
@@ -117,10 +118,11 @@ class Layers(object):
         This differs from remove_layer in that if a layer is hidden
         it can be shown again using show_layer.
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *layer*: [ string ]
-                The name of the layer to hide
+        layer: str
+            The name of the layer to hide
         '''
         if layer in self._layers:
 
@@ -144,10 +146,11 @@ class Layers(object):
 
         This shows a layer previously hidden with hide_layer
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *layer*: [ string ]
-                The name of the layer to show
+        layer: str
+            The name of the layer to show
         '''
         if layer in self._layers:
 
@@ -167,10 +170,11 @@ class Layers(object):
         '''
         Return a layer object
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *layer*: [ string ]
-                The name of the layer to return
+        layer: str
+            The name of the layer to return
         '''
         if layer in self._layers:
             return self._layers[layer]

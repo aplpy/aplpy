@@ -114,7 +114,8 @@ class AxisLabels(object):
         """
         Set the font of the axis labels
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
         common: family, style, variant, stretch, weight, size, fontproperties
 

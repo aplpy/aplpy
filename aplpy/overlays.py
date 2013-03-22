@@ -41,35 +41,34 @@ class Compass(object):
         '''
         Display a scalebar
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *length*:[ float ]
-                The length of the scalebar
+        length:float
+            The length of the scalebar
 
-        Optional Keyword Arguments:
+        label: str, optional
+            Label to place above the scalebar
 
-            *label*: [ string ]
-                Label to place above the scalebar
+        corner: int, optional
+            Where to place the scalebar. Acceptable values are:, 'left', 'right', 'top', 'bottom', 'top left', 'top right', 'bottom left' (default), 'bottom right'
 
-            *corner*: [ integer ]
-                Where to place the scalebar. Acceptable values are:, 'left', 'right', 'top', 'bottom', 'top left', 'top right', 'bottom left' (default), 'bottom right'
+        frame: str, optional
+            Whether to display a frame behind the scalebar (default is False)
 
-            *frame*: [ True | False ]
-                Whether to display a frame behind the scalebar (default is False)
+        Additional keyword arguments can be used to control the appearance
+        of the scalebar, which is made up of an instance of the matplotlib
+        Rectangle class and a an instance of the Text class. For more
+        information on available arguments, see
 
-            Additional keyword arguments can be used to control the appearance
-            of the scalebar, which is made up of an instance of the matplotlib
-            Rectangle class and a an instance of the Text class. For more
-            information on available arguments, see
+        `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
 
-            `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
+        and
 
-            and
+        `Text <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.text.Text>`_`.
 
-            `Text <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.text.Text>`_`.
-
-            In cases where the same argument exists for the two objects, the
-            argument is passed to both the Text and Rectangle instance
+        In cases where the same argument exists for the two objects, the
+        argument is passed to both the Text and Rectangle instance
 
         '''
 
@@ -164,30 +163,29 @@ class ScaleBar(object):
         '''
         Overlay a scale bar on the image.
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *length*:[ float ]
-                The length of the scalebar
+        length:float
+            The length of the scalebar
 
-        Optional Keyword Arguments:
+        label: str, optional
+            Label to place below the scalebar
 
-            *label*: [ string ]
-                Label to place below the scalebar
+        corner: int, optional
+            Where to place the scalebar. Acceptable values are:, 'left',
+            'right', 'top', 'bottom', 'top left', 'top right', 'bottom
+            left' (default), 'bottom right'
 
-            *corner*: [ integer ]
-                Where to place the scalebar. Acceptable values are:, 'left',
-                'right', 'top', 'bottom', 'top left', 'top right', 'bottom
-                left' (default), 'bottom right'
-
-            *frame*: [ True | False ]
-                Whether to display a frame behind the scalebar (default is False)
+        frame: str, optional
+            Whether to display a frame behind the scalebar (default is False)
 
         Advanced:
 
-            Additional arguments are passed to the matplotlib Rectangle and
-            Text classes. See the matplotlib documentation for more details.
-            In cases where the same argument exists for the two objects, the
-            argument is passed to both the Text and Rectangle instance.
+        Additional arguments are passed to the matplotlib Rectangle and
+        Text classes. See the matplotlib documentation for more details.
+        In cases where the same argument exists for the two objects, the
+        argument is passed to both the Text and Rectangle instance.
         '''
 
         self._length = length
@@ -306,7 +304,8 @@ class ScaleBar(object):
         '''
         Set the font of the tick labels
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
         common: family, style, variant, stretch, weight, size, fontproperties
 
@@ -433,30 +432,31 @@ class Beam(object):
         keywords in the FITS header to set the major and minor axes and the
         position angle on the sky.
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
-            *major*: [ float ]
-                Major axis of the beam in degrees (overrides BMAJ if present)
+        major: float, optional
+            Major axis of the beam in degrees (overrides BMAJ if present)
 
-            *minor*: [ float ]
-                Minor axis of the beam in degrees (overrides BMIN if present)
+        minor: float, optional
+            Minor axis of the beam in degrees (overrides BMIN if present)
 
-            *angle*: [ float ]
-                Position angle of the beam on the sky in degrees (overrides
-                BPA if present) in the anticlockwise direction.
+        angle: float, optional
+            Position angle of the beam on the sky in degrees (overrides
+            BPA if present) in the anticlockwise direction.
 
-            *corner*: [ integer ]
-                The beam location. Acceptable values are 'left', 'right',
-                'top', 'bottom', 'top left', 'top right', 'bottom left'
-                (default), and 'bottom right'.
+        corner: int, optional
+            The beam location. Acceptable values are 'left', 'right',
+            'top', 'bottom', 'top left', 'top right', 'bottom left'
+            (default), and 'bottom right'.
 
-            *frame*: [ True | False ]
-                Whether to display a frame behind the beam (default is False)
+        frame: str, optional
+            Whether to display a frame behind the beam (default is False)
 
         Advanced:
 
-            Additional arguments are passed to the matplotlib Ellipse classe.
-            See the matplotlib documentation for more details.
+        Additional arguments are passed to the matplotlib Ellipse classe.
+        See the matplotlib documentation for more details.
 
         '''
 

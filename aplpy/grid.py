@@ -48,11 +48,12 @@ class Grid(object):
         '''
         Set the grid line spacing in the longitudinal direction
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *xspacing*: [ float | 'tick' ]
-                The spacing in the longitudinal direction. To set the spacing
-                to be the same as the ticks, set this to 'tick'
+        xspacing: [ float | 'tick' ]
+            The spacing in the longitudinal direction. To set the spacing
+            to be the same as the ticks, set this to 'tick'
         '''
         if xspacing == 'tick':
             self.x_auto_spacing = True
@@ -72,11 +73,12 @@ class Grid(object):
         '''
         Set the grid line spacing in the latitudinal direction
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *yspacing*: [ float | 'tick' ]
-                The spacing in the latitudinal direction. To set the spacing
-                to be the same as the ticks, set this to 'tick'
+        yspacing: [ float | 'tick' ]
+            The spacing in the latitudinal direction. To set the spacing
+            to be the same as the ticks, set this to 'tick'
         '''
 
         if yspacing == 'tick':
@@ -97,10 +99,11 @@ class Grid(object):
         '''
         Set the color of the grid lines
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *color*: [ string ]
-                The color of the grid lines
+        color: str
+            The color of the grid lines
         '''
         if self._grid:
             self._grid.set_edgecolor(color)
@@ -112,12 +115,13 @@ class Grid(object):
         '''
         Set the alpha (transparency) of the grid lines
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *alpha*: [ float ]
-                The alpha value of the grid. This should be a floating
-                point value between 0 and 1, where 0 is completely
-                transparent, and 1 is completely opaque.
+        alpha: float
+            The alpha value of the grid. This should be a floating
+            point value between 0 and 1, where 0 is completely
+            transparent, and 1 is completely opaque.
         '''
         if self._grid:
             self._grid.set_alpha(alpha)

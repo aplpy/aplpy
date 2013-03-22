@@ -54,15 +54,14 @@ class Regions:
         """
         Overplot regions as specified in the regionsfile
 
-        Required Arguments:
-            *region_file*: [ string | pyregion.ShapeList ]
-                Path to a ds9 regions file or a ShapeList already read
-                in by pyregion.
+        Parameters
+        ----------
+        region_file: [ string | pyregion.ShapeList ]
+            Path to a ds9 regions file or a ShapeList already read
+            in by pyregion.
 
-        Optional Keyword Arguments:
-
-            *layer*: [ string ]
-                The name of the layer
+        layer: str, optional
+            The name of the layer
 
         Additional keyword arguments, e.g. zorder, will be passed to the ds9
         call and onto the patchcollections.

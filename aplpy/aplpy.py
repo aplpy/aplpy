@@ -127,69 +127,68 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Create a FITSFigure instance
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *data*: [see below]
+        data: [see below]
 
-                The FITS file to open. The following data types can be passed:
+            The FITS file to open. The following data types can be passed:
 
-                    * string
-                    * astropy.io.fits.PrimaryHDU
-                    * astropy.io.fits.ImageHDU
-                    * pyfits.PrimaryHDU
-                    * pyfits.ImageHDU
-                    * astropy.wcs.WCS
-                    * np.ndarray
-                    * RGB image with AVM meta-data
+                 string
+                 astropy.io.fits.PrimaryHDU
+                 astropy.io.fits.ImageHDU
+                 pyfits.PrimaryHDU
+                 pyfits.ImageHDU
+                 astropy.wcs.WCS
+                 np.ndarray
+                 RGB image with AVM meta-data
 
-        Optional Keyword Arguments:
+        hdu: int, optional
+            By default, the image in the primary HDU is read in. If a
+            different HDU is required, use this argument.
 
-            *hdu*: [ integer ]
-                By default, the image in the primary HDU is read in. If a
-                different HDU is required, use this argument.
+        figure: [ matplotlib figure() instance ], optional
+            If specified, a subplot will be added to this existing
+            matplotlib figure() instance, rather than a new figure
+            being created from scratch.
 
-            *figure*: [ matplotlib figure() instance ]
-                If specified, a subplot will be added to this existing
-                matplotlib figure() instance, rather than a new figure
-                being created from scratch.
+        subplot: [ list of four floats ], optional
+            If specified, a subplot will be added at this position. The
+            list should contain [xmin, ymin, dx, dy] where xmin and ymin
+            are the position of the bottom left corner of the subplot, and
+            dx and dy are the width and height of the subplot respectively.
+            These should all be given in units of the figure width and
+            height. For example, [0.1, 0.1, 0.8, 0.8] will almost fill the
+            entire figure, leaving a 10 percent margin on all sides.
 
-            *subplot*: [ list of four floats ]
-                If specified, a subplot will be added at this position. The
-                list should contain [xmin, ymin, dx, dy] where xmin and ymin
-                are the position of the bottom left corner of the subplot, and
-                dx and dy are the width and height of the subplot respectively.
-                These should all be given in units of the figure width and
-                height. For example, [0.1, 0.1, 0.8, 0.8] will almost fill the
-                entire figure, leaving a 10 percent margin on all sides.
+        downsample: int, optional
+            If this option is specified, the image will be downsampled
+            by a factor *downsample* when reading in the data.
 
-            *downsample*: [ integer ]
-                If this option is specified, the image will be downsampled
-                by a factor *downsample* when reading in the data.
+        north: str, optional
+            Whether to rotate the image so that the North Celestial
+            Pole is up. Note that this option requires Montage to be
+            installed.
 
-            *north*: [ True | False ]
-                Whether to rotate the image so that the North Celestial
-                Pole is up. Note that this option requires Montage to be
-                installed.
+        convention: str, optional
+            This is used in cases where a FITS header can be interpreted
+            in multiple ways. For example, for files with a -CAR
+            projection and CRVAL2=0, this can be set to 'wells' or
+            'calabretta' to choose the appropriate convention.
 
-            *convention*: [ string ]
-                This is used in cases where a FITS header can be interpreted
-                in multiple ways. For example, for files with a -CAR
-                projection and CRVAL2=0, this can be set to 'wells' or
-                'calabretta' to choose the appropriate convention.
+        dimensions: tuple or list, optional
+            The index of the axes to use if the data has more than three
+            dimensions.
 
-            *dimensions*: [ tuple or list]
-                The index of the axes to use if the data has more than three
-                dimensions.
+        slices: tuple or list, optional
+            If a FITS file with more than two dimensions is specified,
+            then these are the slices to extract. If all extra dimensions
+            only have size 1, then this is not required.
 
-            *slices*: [ tuple or list ]
-                If a FITS file with more than two dimensions is specified,
-                then these are the slices to extract. If all extra dimensions
-                only have size 1, then this is not required.
-
-            *auto_refresh*: [ True | False ]
-                Whether to refresh the figure automatically every time a
-                plotting method is called. This can also be set using the
-                set_auto_refresh method.
+        auto_refresh: str, optional
+            Whether to refresh the figure automatically every time a
+            plotting method is called. This can also be set using the
+            set_auto_refresh method.
 
         Any additional arguments are passed on to matplotlib's Figure() class.
         For example, to set the figure size, use the figsize=(xsize, ysize)
@@ -450,12 +449,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *usetex*: [ True | False ]
-                Whether to use a real LaTex installation (True) or the built-in
-                matplotlib LaTeX (False). Note that if the former is chosen, an
-                installation of LaTex is required.
+        usetex: str
+            Whether to use a real LaTex installation (True) or the built-in
+            matplotlib LaTeX (False). Note that if the former is chosen, an
+            installation of LaTex is required.
         '''
         mpl.rc('text', usetex=usetex)
 
@@ -464,25 +464,24 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Center the image on a given position and with a given radius
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *x, y*: [ float ]
-                Coordinates to center on
+        x, y: float
+            Coordinates to center on
 
-        Optional Keyword Arguments:
+        Either the radius or width/heigh arguments should be specified.
 
-            Either the radius or width/heigh arguments should be specified.
+        radius: float, optional
+            Radius of the region to view. This produces a square plot.
 
-            *radius*: [ float ]
-                Radius of the region to view. This produces a square plot.
+        width: float, optional
+            Width of the region to view. This should be given in
+            conjunction with the height argument.
 
-            *width*: [ float ]
-                Width of the region to view. This should be given in
-                conjunction with the height argument.
-
-            *height*: [ float ]
-                Height of the region to view. This should be given in
-                conjunction with the width argument.
+        height: float, optional
+            Height of the region to view. This should be given in
+            conjunction with the width argument.
         '''
 
         xpix, ypix = wcs_util.world2pix(self._wcs, x, y)
@@ -517,65 +516,63 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Show a grayscale image of the FITS file
 
-        Optional Keyword Arguments:
+        vmin: None or float, optional
+            Minimum pixel value to use for the grayscale. If set to None,
+            the minimum pixel value is determined using pmin (default).
 
-            *vmin*: [ None | float ]
-                Minimum pixel value to use for the grayscale. If set to None,
-                the minimum pixel value is determined using pmin (default).
+        vmax: None or float, optional
+            Maximum pixel value to use for the grayscale. If set to None,
+            the maximum pixel value is determined using pmax (default).
 
-            *vmax*: [ None | float ]
-                Maximum pixel value to use for the grayscale. If set to None,
-                the maximum pixel value is determined using pmax (default).
+        pmin: float, optional
+            Percentile value used to determine the minimum pixel value to
+            use for the grayscale if vmin is set to None. The default
+            value is 0.25%.
 
-            *pmin*: [ float ]
-                Percentile value used to determine the minimum pixel value to
-                use for the grayscale if vmin is set to None. The default
-                value is 0.25%.
+        pmax: float, optional
+            Percentile value used to determine the maximum pixel value to
+            use for the grayscale if vmax is set to None. The default
+            value is 99.75%.
 
-            *pmax*: [ float ]
-                Percentile value used to determine the maximum pixel value to
-                use for the grayscale if vmax is set to None. The default
-                value is 99.75%.
+        stretch: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ], optional
+            The stretch function to use
 
-            *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
-                The stretch function to use
+        vmid: None or float, optional
+            Baseline value used for the log and arcsinh stretches. If
+            set to None, this is set to zero for log stretches and to
+            vmin - (vmax - vmin) / 30. for arcsinh stretches
 
-            *vmid*: [ None | float ]
-                Baseline value used for the log and arcsinh stretches. If
-                set to None, this is set to zero for log stretches and to
-                vmin - (vmax - vmin) / 30. for arcsinh stretches
+        exponent: float, optional
+            If stretch is set to 'power', this is the exponent to use
 
-            *exponent*: [ float ]
-                If stretch is set to 'power', this is the exponent to use
+        invert: str, optional
+            Whether to invert the grayscale or not. The default is False,
+            unless set_theme is used, in which case the default depends on
+            the theme.
 
-            *invert*: [ True | False ]
-                Whether to invert the grayscale or not. The default is False,
-                unless set_theme is used, in which case the default depends on
-                the theme.
+        smooth: int or tuple, optional
+            Default smoothing scale is 3 pixels across. User can define
+            whether they want an NxN kernel (integer), or NxM kernel
+            (tuple). This argument corresponds to the 'gauss' and 'box'
+            smoothing kernels.
 
-            *smooth*: [ integer | tuple ]
-                Default smoothing scale is 3 pixels across. User can define
-                whether they want an NxN kernel (integer), or NxM kernel
-                (tuple). This argument corresponds to the 'gauss' and 'box'
-                smoothing kernels.
+        kernel: [ 'gauss' | 'box' | numpy.array], optional
+            Default kernel used for smoothing is 'gauss'. The user can
+            specify if they would prefer 'gauss', 'box', or a custom
+            kernel. All kernels are normalized to ensure flux retention.
 
-            *kernel*: [ 'gauss' | 'box' | numpy.array]
-                Default kernel used for smoothing is 'gauss'. The user can
-                specify if they would prefer 'gauss', 'box', or a custom
-                kernel. All kernels are normalized to ensure flux retention.
+        aspect: ['auto', 'equal'], optional
+            Whether to change the aspect ratio of the image to match that
+            of the axes ('auto') or to change the aspect ratio of the axes
+            to match that of the data ('equal'; default)
 
-            *aspect*: ['auto', 'equal']
-                Whether to change the aspect ratio of the image to match that
-                of the axes ('auto') or to change the aspect ratio of the axes
-                to match that of the data ('equal'; default)
-
-            *interpolation*: [ string ]
-                The type of interpolation to use for the image. The default is
-                'nearest'. Other options include 'none' (no interpolation,
-                meaning that if exported to a postscript file, the grayscale
-                will be output at native resolution irrespective of the dpi
-                setting), 'bilinear', 'bicubic', and many more (see the
-                matplotlib documentation for imshow).
+        interpolation: str, optional
+            The type of interpolation to use for the image. The default is
+            'nearest'. Other options include 'none' (no interpolation,
+            meaning that if exported to a postscript file, the grayscale
+            will be output at native resolution irrespective of the dpi
+            setting), 'bilinear', 'bicubic', and many more (see the
+            matplotlib documentation for imshow).
         '''
 
         if invert == 'default':
@@ -605,63 +602,61 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Show a colorscale image of the FITS file
 
-        Optional Keyword Arguments:
+        vmin: None or float, optional
+            Minimum pixel value to use for the colorscale. If set to None,
+            the minimum pixel value is determined using pmin (default).
 
-            *vmin*: [ None | float ]
-                Minimum pixel value to use for the colorscale. If set to None,
-                the minimum pixel value is determined using pmin (default).
+        vmax: None or float, optional
+            Maximum pixel value to use for the colorscale. If set to None,
+            the maximum pixel value is determined using pmax (default).
 
-            *vmax*: [ None | float ]
-                Maximum pixel value to use for the colorscale. If set to None,
-                the maximum pixel value is determined using pmax (default).
+        pmin: float, optional
+            Percentile value used to determine the minimum pixel value to
+            use for the colorscale if vmin is set to None. The default
+            value is 0.25%.
 
-            *pmin*: [ float ]
-                Percentile value used to determine the minimum pixel value to
-                use for the colorscale if vmin is set to None. The default
-                value is 0.25%.
+        pmax: float, optional
+            Percentile value used to determine the maximum pixel value to
+            use for the colorscale if vmax is set to None. The default
+            value is 99.75%.
 
-            *pmax*: [ float ]
-                Percentile value used to determine the maximum pixel value to
-                use for the colorscale if vmax is set to None. The default
-                value is 99.75%.
+        stretch: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ], optional
+            The stretch function to use
 
-            *stretch*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
-                The stretch function to use
+        vmid: None or float, optional
+            Baseline value used for the log and arcsinh stretches. If
+            set to None, this is set to zero for log stretches and to
+            vmin - (vmax - vmin) / 30. for arcsinh stretches
 
-            *vmid*: [ None | float ]
-                Baseline value used for the log and arcsinh stretches. If
-                set to None, this is set to zero for log stretches and to
-                vmin - (vmax - vmin) / 30. for arcsinh stretches
+        exponent: float, optional
+            If stretch is set to 'power', this is the exponent to use
 
-            *exponent*: [ float ]
-                If stretch is set to 'power', this is the exponent to use
+        cmap: str, optional
+            The name of the colormap to use
 
-            *cmap*: [ string ]
-                The name of the colormap to use
+        smooth: int or tuple, optional
+            Default smoothing scale is 3 pixels across. User can define
+            whether they want an NxN kernel (integer), or NxM kernel
+            (tuple). This argument corresponds to the 'gauss' and 'box'
+            smoothing kernels.
 
-            *smooth*: [ integer | tuple ]
-                Default smoothing scale is 3 pixels across. User can define
-                whether they want an NxN kernel (integer), or NxM kernel
-                (tuple). This argument corresponds to the 'gauss' and 'box'
-                smoothing kernels.
+        kernel: [ 'gauss' | 'box' | numpy.array], optional
+            Default kernel used for smoothing is 'gauss'. The user can
+            specify if they would prefer 'gauss', 'box', or a custom
+            kernel. All kernels are normalized to ensure flux retention.
 
-            *kernel*: [ 'gauss' | 'box' | numpy.array]
-                Default kernel used for smoothing is 'gauss'. The user can
-                specify if they would prefer 'gauss', 'box', or a custom
-                kernel. All kernels are normalized to ensure flux retention.
+        aspect: ['auto', 'equal'], optional
+            Whether to change the aspect ratio of the image to match that
+            of the axes ('auto') or to change the aspect ratio of the axes
+            to match that of the data ('equal'; default)
 
-            *aspect*: ['auto', 'equal']
-                Whether to change the aspect ratio of the image to match that
-                of the axes ('auto') or to change the aspect ratio of the axes
-                to match that of the data ('equal'; default)
-
-            *interpolation*: [ string ]
-                The type of interpolation to use for the image. The default is
-                'nearest'. Other options include 'none' (no interpolation,
-                meaning that if exported to a postscript file, the colorscale
-                will be output at native resolution irrespective of the dpi
-                setting), 'bilinear', 'bicubic', and many more (see the
-                matplotlib documentation for imshow).
+        interpolation: str, optional
+            The type of interpolation to use for the image. The default is
+            'nearest'. Other options include 'none' (no interpolation,
+            meaning that if exported to a postscript file, the colorscale
+            will be output at native resolution irrespective of the dpi
+            setting), 'bilinear', 'bicubic', and many more (see the
+            matplotlib documentation for imshow).
         '''
 
         if cmap == 'default':
@@ -730,9 +725,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Set the color for NaN pixels
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *color*: [ string | matplotlib color ]
+        color: [ string | matplotlib color ]
         '''
         cm = self.image.get_cmap()
         cm.set_bad(color)
@@ -743,19 +739,17 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Show a 3-color image instead of the FITS file data
 
-        Optional Arguments:
+        filename, optional
+            The 3-color image should have exactly the same dimensions
+            as the FITS file, and will be shown with exactly the same
+            projection. If FITSFigure was initialized with an
+            AVM-tagged RGB image, the filename is not needed here.
 
-            *filename*
-                The 3-color image should have exactly the same dimensions
-                as the FITS file, and will be shown with exactly the same
-                projection. If FITSFigure was initialized with an
-                AVM-tagged RGB image, the filename is not needed here.
+        vertical_flip: str, optional
+            Whether to vertically flip the RGB image
 
-            *vertical_flip*: [ True | False ]
-                Whether to vertically flip the RGB image
-
-            *horizontal_flip*: [ True | False ]
-                Whether to horizontally flip the RGB image
+        horizontal_flip: str, optional
+            Whether to horizontally flip the RGB image
         '''
 
         if not pil_installed:
@@ -785,92 +779,91 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay contours on the current plot
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *data*: [see below]
+        data: [see below]
 
-                The FITS file to plot contours for. The following data types can be passed:
+            The FITS file to plot contours for. The following data types can be passed:
 
-                    * string
-                    * astropy.io.fits.PrimaryHDU
-                    * astropy.io.fits.ImageHDU
-                    * pyfits.PrimaryHDU
-                    * pyfits.ImageHDU
-                    * astropy.wcs.WCS
-                    * np.ndarray
+                 string
+                 astropy.io.fits.PrimaryHDU
+                 astropy.io.fits.ImageHDU
+                 pyfits.PrimaryHDU
+                 pyfits.ImageHDU
+                 astropy.wcs.WCS
+                 np.ndarray
 
-        Optional Keyword Arguments:
+        hdu: int, optional
+            By default, the image in the primary HDU is read in. If a
+            different HDU is required, use this argument.
 
-            *hdu*: [ integer ]
-                By default, the image in the primary HDU is read in. If a
-                different HDU is required, use this argument.
+        layer: str, optional
+            The name of the contour layer. This is useful for giving
+            custom names to layers (instead of contour_set_n) and for
+            replacing existing layers.
 
-            *layer*: [ string ]
-                The name of the contour layer. This is useful for giving
-                custom names to layers (instead of contour_set_n) and for
-                replacing existing layers.
+        levels: int or list, optional
+            This can either be the number of contour levels to compute
+            (if an integer is provided) or the actual list of contours
+            to show (if a list of floats is provided)
 
-            *levels*: [ int | list ]
-                This can either be the number of contour levels to compute
-                (if an integer is provided) or the actual list of contours
-                to show (if a list of floats is provided)
+        filled: str, optional
+            Whether to show filled or line contours
 
-            *filled*: [ True | False ]
-                Whether to show filled or line contours
+        cmap: str, optional
+            The colormap to use for the contours
 
-            *cmap*: [ string ]
-                The colormap to use for the contours
+        colors: str or tuple, optional
+            If a single string is provided, all contour levels will be
+            shown in this color. If a tuple of strings is provided,
+            each contour will be colored according to the corresponding
+            tuple element.
 
-            *colors*: [ string | tuple of strings ]
-                If a single string is provided, all contour levels will be
-                shown in this color. If a tuple of strings is provided,
-                each contour will be colored according to the corresponding
-                tuple element.
+        returnlevels: str, optional
+            Whether to return the list of contours to the caller.
 
-            *returnlevels*: [ True | False ]
-                Whether to return the list of contours to the caller.
+        convention: str, optional
+            This is used in cases where a FITS header can be interpreted
+            in multiple ways. For example, for files with a -CAR
+            projection and CRVAL2=0, this can be set to 'wells' or
+            'calabretta' to choose the appropriate convention.
 
-            *convention*: [ string ]
-                This is used in cases where a FITS header can be interpreted
-                in multiple ways. For example, for files with a -CAR
-                projection and CRVAL2=0, this can be set to 'wells' or
-                'calabretta' to choose the appropriate convention.
+        dimensions: tuple or list, optional
+            The index of the axes to use if the data has more than three
+            dimensions.
 
-            *dimensions*: [ tuple or list]
-                The index of the axes to use if the data has more than three
-                dimensions.
+        slices: tuple or list, optional
+            If a FITS file with more than two dimensions is specified,
+            then these are the slices to extract. If all extra dimensions
+            only have size 1, then this is not required.
 
-            *slices*: [ tuple or list ]
-                If a FITS file with more than two dimensions is specified,
-                then these are the slices to extract. If all extra dimensions
-                only have size 1, then this is not required.
+        smooth: int or tuple, optional
+            Default smoothing scale is 3 pixels across. User can define
+            whether they want an NxN kernel (integer), or NxM kernel
+            (tuple). This argument corresponds to the 'gauss' and 'box'
+            smoothing kernels.
 
-            *smooth*: [ integer | tuple ]
-                Default smoothing scale is 3 pixels across. User can define
-                whether they want an NxN kernel (integer), or NxM kernel
-                (tuple). This argument corresponds to the 'gauss' and 'box'
-                smoothing kernels.
+        kernel: [ 'gauss' | 'box' | numpy.array], optional
+            Default kernel used for smoothing is 'gauss'. The user can
+            specify if they would prefer 'gauss', 'box', or a custom
+            kernel. All kernels are normalized to ensure flux retention.
 
-            *kernel*: [ 'gauss' | 'box' | numpy.array]
-                Default kernel used for smoothing is 'gauss'. The user can
-                specify if they would prefer 'gauss', 'box', or a custom
-                kernel. All kernels are normalized to ensure flux retention.
+        overlap str, optional
+            Whether to include only contours that overlap with the image
+            area. This significantly speeds up the drawing of contours and
+            reduces file size when using a file for the contours covering
+            a much larger area than the image.
 
-            *overlap* [ True | False ]
-                Whether to include only contours that overlap with the image
-                area. This significantly speeds up the drawing of contours and
-                reduces file size when using a file for the contours covering
-                a much larger area than the image.
-
-            Additional keyword arguments (such as alpha, linewidths, or
-            linestyles) will be passed on directly to matplotlib's contour or
-            contourf methods. For more information on these additional
-            arguments, see the *Optional keyword arguments* sections in the
-            documentation for `contour
-            <http://matplotlib.sourceforge.net/api/axes_api.html?
-            #matplotlib.axes.Axes.contour>`_ and `contourf
-            <http://matplotlib.sourceforge.net/api/axes_api.html?
-            #matplotlib.axes.Axes.contourf>`_.
+        Additional keyword arguments (such as alpha, linewidths, or
+        linestyles) will be passed on directly to matplotlib's contour or
+        contourf methods. For more information on these additional
+        arguments, see the *Optional keyword arguments* sections in the
+        documentation for `contour
+        <http://matplotlib.sourceforge.net/api/axes_api.html?
+        #matplotlib.axes.Axes.contour>`_ and `contourf
+        <http://matplotlib.sourceforge.net/api/axes_api.html?
+        #matplotlib.axes.Axes.contourf>`_.
         '''
         if layer:
             self.remove_layer(layer, raise_exception=False)
@@ -920,20 +913,19 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay markers on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *xw*: [ list | numpy.ndarray ]
-                The x postions of the markers (in world coordinates)
+        xw: list or ~numpy.ndarray
+            The x postions of the markers (in world coordinates)
 
-            *yw*: [ list | numpy.ndarray ]
-                The y positions of the markers (in world coordinates)
+        yw: list or ~numpy.ndarray
+            The y positions of the markers (in world coordinates)
 
-        Optional Keyword Arguments:
-
-            *layer*: [ string ]
-                The name of the scatter layer. This is useful for giving
-                custom names to layers (instead of marker_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the scatter layer. This is useful for giving
+            custom names to layers (instead of marker_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as marker, facecolor, edgecolor,
         alpha, or linewidth) will be passed on directly to matplotlib's
@@ -971,23 +963,22 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay circles on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *xw*: [ list | numpy.ndarray ]
-                The x postions of the circles (in world coordinates)
+        xw: list or ~numpy.ndarray
+            The x postions of the circles (in world coordinates)
 
-            *yw*: [ list | numpy.ndarray ]
-                The y positions of the circles (in world coordinates)
+        yw: list or ~numpy.ndarray
+            The y positions of the circles (in world coordinates)
 
-            *radius*: [integer | float | list | numpy.ndarray ]
-                The radii of the circles (in world coordinates)
+        radius: int or float or list or ~numpy.ndarray
+            The radii of the circles (in world coordinates)
 
-        Optional Keyword Arguments:
-
-            *layer*: [ string ]
-                The name of the circle layer. This is useful for giving
-                custom names to layers (instead of circle_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the circle layer. This is useful for giving
+            custom names to layers (instead of circle_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as facecolor, edgecolor, alpha,
         or linewidth) can be used to control the appearance of the circles,
@@ -1043,30 +1034,29 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay ellipses on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *xw*: [ list | numpy.ndarray ]
-                The x postions of the ellipses (in world coordinates)
+        xw: list or ~numpy.ndarray
+            The x postions of the ellipses (in world coordinates)
 
-            *yw*: [ list | numpy.ndarray ]
-                The y positions of the ellipses (in world coordinates)
+        yw: list or ~numpy.ndarray
+            The y positions of the ellipses (in world coordinates)
 
-            *width*: [integer | float | list | numpy.ndarray ]
-                The width of the ellipse (in world coordinates)
+        width: int or float or list or ~numpy.ndarray
+            The width of the ellipse (in world coordinates)
 
-            *height*: [integer | float | list | numpy.ndarray ]
-                The height of the ellipse (in world coordinates)
+        height: int or float or list or ~numpy.ndarray
+            The height of the ellipse (in world coordinates)
 
-        Optional Keyword Arguments:
+        angle: int or float or list or ~numpy.ndarray, optional
+            rotation in degrees (anti-clockwise). Default
+            angle is 0.0.
 
-            *angle*: [integer | float | list | numpy.ndarray ]
-                rotation in degrees (anti-clockwise). Default
-                angle is 0.0.
-
-            *layer*: [ string ]
-                The name of the ellipse layer. This is useful for giving
-                custom names to layers (instead of ellipse_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the ellipse layer. This is useful for giving
+            custom names to layers (instead of ellipse_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as facecolor, edgecolor, alpha,
         or linewidth) can be used to control the appearance of the ellipses,
@@ -1134,26 +1124,25 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay rectangles on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *xw*: [ list | numpy.ndarray ]
-                The x postions of the rectangles (in world coordinates)
+        xw: list or ~numpy.ndarray
+            The x postions of the rectangles (in world coordinates)
 
-            *yw*: [ list | numpy.ndarray ]
-                The y positions of the rectangles (in world coordinates)
+        yw: list or ~numpy.ndarray
+            The y positions of the rectangles (in world coordinates)
 
-            *width*: [integer | float | list | numpy.ndarray ]
-                The width of the rectangle (in world coordinates)
+        width: int or float or list or ~numpy.ndarray
+            The width of the rectangle (in world coordinates)
 
-            *height*: [integer | float | list | numpy.ndarray ]
-                The height of the rectangle (in world coordinates)
+        height: int or float or list or ~numpy.ndarray
+            The height of the rectangle (in world coordinates)
 
-        Optional Keyword Arguments:
-
-            *layer*: [ string ]
-                The name of the rectangle layer. This is useful for giving
-                custom names to layers (instead of rectangle_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the rectangle layer. This is useful for giving
+            custom names to layers (instead of rectangle_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as facecolor, edgecolor, alpha,
         or linewidth) can be used to control the appearance of the
@@ -1217,18 +1206,17 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay lines on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *line_list*: [ list ]
-                 A list of one or more 2xN numpy arrays which contain
-                 the [x, y] positions of the vertices in world coordinates.
+        line_list: list
+             A list of one or more 2xN numpy arrays which contain
+             the [x, y] positions of the vertices in world coordinates.
 
-        Optional Keyword Arguments:
-
-            *layer*: [ string ]
-                The name of the line(s) layer. This is useful for giving
-                custom names to layers (instead of line_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the line(s) layer. This is useful for giving
+            custom names to layers (instead of line_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as color, offsets, cmap,
         or linewidth) can be used to control the appearance of the
@@ -1269,31 +1257,30 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay arrows on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *x, y, dx, dy*: [ float | list | array ]
-                Origin and displacement of the arrows in world coordinates.
-                These can either be scalars to plot a single arrow, or lists or
-                arrays to plot multiple arrows.
+        x, y, dx, dy: float or list or ~numpy.ndarray
+            Origin and displacement of the arrows in world coordinates.
+            These can either be scalars to plot a single arrow, or lists or
+            arrays to plot multiple arrows.
 
-        Optional Keyword Arguments:
+        width: float, optional
+            The width of the arrow body, in pixels (default: 2% of the
+            arrow length)
 
-            *width*: [ float ]
-                The width of the arrow body, in pixels (default: 2% of the
-                arrow length)
+        head_width: float, optional
+            The width of the arrow head, in pixels (default: 5% of the
+            arrow length)
 
-            *head_width*: [ float ]
-                The width of the arrow head, in pixels (default: 5% of the
-                arrow length)
+        head_length: float, optional
+            The length of the arrow head, in pixels (default: 5% of the
+            arrow length)
 
-            *head_length*: [ float ]
-                The length of the arrow head, in pixels (default: 5% of the
-                arrow length)
-
-            *layer*: [ string ]
-                The name of the arrow(s) layer. This is useful for giving
-                custom names to layers (instead of line_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the arrow(s) layer. This is useful for giving
+            custom names to layers (instead of line_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as color, offsets, cmap,
         or linewidth) can be used to control the appearance of the
@@ -1354,19 +1341,18 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Overlay polygons on the current plot.
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *polygon_list*: [ list or tuple ]
-                A list of one or more 2xN or Nx2 Numpy arrays which contain
-                the [x, y] positions of the vertices in world coordinates.
-                Note that N should be greater than 2.
+        polygon_list: list or tuple
+            A list of one or more 2xN or Nx2 Numpy arrays which contain
+            the [x, y] positions of the vertices in world coordinates.
+            Note that N should be greater than 2.
 
-        Optional Keyword Arguments:
-
-            *layer*: [ string ]
-                The name of the circle layer. This is useful for giving
-                custom names to layers (instead of circle_set_n) and for
-                replacing existing layers.
+        layer: str, optional
+            The name of the circle layer. This is useful for giving
+            custom names to layers (instead of circle_set_n) and for
+            replacing existing layers.
 
         Additional keyword arguments (such as facecolor, edgecolor, alpha,
         or linewidth) can be used to control the appearance of the circles,
@@ -1430,21 +1416,20 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Add a text label
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *x, y*: [ float ]
-                Coordinates of the text label
+        x, y: float
+            Coordinates of the text label
 
-            *text*: [ string ]
-                The label
+        text: str
+            The label
 
-        Optional Keyword Arguments:
-
-            *relative*: [ True | False ]
-                Whether the coordinates are to be interpreted as world
-                coordinates (e.g. RA/Dec or longitude/latitude), or
-                coordinates relative to the axes (where 0.0 is left or bottom
-                and 1.0 is right or top).
+        relative: str, optional
+            Whether the coordinates are to be interpreted as world
+            coordinates (e.g. RA/Dec or longitude/latitude), or
+            coordinates relative to the axes (where 0.0 is left or bottom
+            and 1.0 is right or top).
 
         common: color, family, style, variant, stretch, weight, size, fontproperties, horizontalalignment, verticalalignment
         '''
@@ -1492,13 +1477,14 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Set whether the display should refresh after each method call
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *refresh*: [ True | False ]
-                Whether to refresh the display every time a FITSFigure
-                method is called. The default is True. If set to false,
-                the display can be refreshed manually using the refresh()
-                method
+        refresh: str
+            Whether to refresh the display every time a FITSFigure
+            method is called. The default is True. If set to false,
+            the display can be refreshed manually using the refresh()
+            method
         '''
         self._parameters.auto_refresh = refresh
 
@@ -1506,13 +1492,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Refresh the display
 
-        Optional Keyword Arguments:
-
-            *force*: [ True | False ]
-                If set to False, refresh() will only have an effect if
-                auto refresh is on. If set to True, the display will be
-                refreshed whatever the auto refresh setting is set to.
-                The default is True.
+        force: str, optional
+            If set to False, refresh() will only have an effect if
+            auto refresh is on. If set to True, the display will be
+            refreshed whatever the auto refresh setting is set to.
+            The default is True.
         '''
         if self._parameters.auto_refresh or force:
             self._figure.canvas.draw()
@@ -1521,37 +1505,36 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Save the current figure to a file
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *filename*: [ string or file-like object ]
-                The name of the file to save the plot to. This can be for
-                example a PS, EPS, PDF, PNG, JPEG, or SVG file. Note that it
-                is also possible to pass file-like object.
+        filename: str or fileobj
+            The name of the file to save the plot to. This can be for
+            example a PS, EPS, PDF, PNG, JPEG, or SVG file. Note that it
+            is also possible to pass file-like object.
 
-        Optional Keyword Arguments:
+        dpi: float, optional
+            The output resolution, in dots per inch. If the output file
+            is a vector graphics format (such as PS, EPS, PDF or SVG) only
+            the image itself will be rasterized. If the output is a PS or
+            EPS file and no dpi is specified, the dpi is automatically
+            calculated to match the resolution of the image. If this value is
+            larger than max_dpi, then dpi is set to max_dpi.
 
-            *dpi*: [ float ]
-                The output resolution, in dots per inch. If the output file
-                is a vector graphics format (such as PS, EPS, PDF or SVG) only
-                the image itself will be rasterized. If the output is a PS or
-                EPS file and no dpi is specified, the dpi is automatically
-                calculated to match the resolution of the image. If this value is
-                larger than max_dpi, then dpi is set to max_dpi.
+        transparent: str, optional
+            Whether to preserve transparency
 
-            *transparent*: [ True | False ]
-                Whether to preserve transparency
+        adjust_bbox: str, optional
+            Auto-adjust the bounding box for the output
 
-            *adjust_bbox*: [ True | False ]
-                Auto-adjust the bounding box for the output
+        max_dpi: float, optional
+            The maximum resolution to output images at. If no maximum is
+            wanted, enter None or 0.
 
-            *max_dpi*: [ float ]
-                The maximum resolution to output images at. If no maximum is
-                wanted, enter None or 0.
-
-            *format*: [ str ]
-                By default, APLpy tries to guess the file format based on the
-                file extension, but the format can also be specified
-                explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
+        format: str, optional
+            By default, APLpy tries to guess the file format based on the
+            file extension, but the format can also be specified
+            explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
         '''
 
         if isinstance(filename, basestring) and format is None:
@@ -1597,12 +1580,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Set the axes, ticks, grid, and image colors to a certain style (experimental)
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *theme*: [ string ]
-                The theme to use. At the moment, this can be 'pretty' (for
-                viewing on-screen) and 'publication' (which makes the ticks
-                and grid black, and displays the image in inverted grayscale)
+        theme: str
+            The theme to use. At the moment, this can be 'pretty' (for
+            viewing on-screen) and 'publication' (which makes the ticks
+            and grid black, and displays the image in inverted grayscale)
        '''
 
         if theme == 'pretty':
@@ -1628,13 +1612,14 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Convert world to pixel coordinates
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *xw*: [ scalar | list | numpy array ]
-                x world coordinate
+        xw: float or list or ~numpy.ndarray
+            x world coordinate
 
-            *yw*: [ scalar | list | numpy array ]
-                y world coordinate
+        yw: float or list or ~numpy.ndarray
+            y world coordinate
 
         Returns the pixel coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
         '''
@@ -1645,13 +1630,14 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Convert pixel to world coordinates
 
-        Required arguments:
+        Parameters
+        ----------
 
-            *xp*: [ scalar | list | numpy array ]
-                x pixel coordinate
+        xp: float or list or ~numpy.ndarray
+            x pixel coordinate
 
-            *yp*: [ scalar | list | numpy array ]
-                y pixel coordinate
+        yp: float or list or ~numpy.ndarray
+            y pixel coordinate
 
         Returns the world coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
         '''

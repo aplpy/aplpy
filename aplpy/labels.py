@@ -167,7 +167,8 @@ class TickLabels(object):
         """
         Set the font of the tick labels
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
         common: family, style, variant, stretch, weight, size, fontproperties
 
