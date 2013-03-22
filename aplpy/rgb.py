@@ -85,93 +85,57 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files
 
-    Required arguments:
+    Parameters
+    ----------
 
-        *data*: [ string | tuple | list ]
-            If a string, this is the filename of an RGB FITS cube. If a tuple
-            or list, this should give the filename of three files to use for
-            the red, green, and blue channel.
+    data: str, tuple, list
+       If a string, this is the filename of an RGB FITS cube. If a tuple
+       or list, this should give the filename of three files to use for
+       the red, green, and blue channel.
 
-        *output*: [ string ]
-            The output filename. The image type (e.g. PNG, JPEG, TIFF, ...)
-            will be determined from the extension. Any image type supported by
-            the Python Imaging Library can be used.
+    output: str
+       The output filename. The image type (e.g. PNG, JPEG, TIFF, ...)
+       will be determined from the extension. Any image type supported by
+       the Python Imaging Library can be used.
 
-    Optional keyword arguments:
+    indices: tuple, optional
+       If data is the filename of a FITS cube, these indices are the
+       positions in the third dimension to use for red, green, and
+       blue respectively. The default is to use the first three
+       indices.
 
-        *indices*: [ tuple ]
-            If data is the filename of a FITS cube, these indices are the
-            positions in the third dimension to use for red, green, and
-            blue respectively. The default is to use the first three
-            indices.
+    vmin_r, vmin_g, vmin_b: float, optional
+       Minimum pixel value to use for the red, green, and blue channels.
+       If set to None for a given channel, the minimum pixel value for
+       that channel is determined using the corresponding pmin_x argument
+       (default).
 
-        *vmin_r*: [ None | float ]
+    vmax_r, vmax_g, vmax_b: float, optional
+       Maximum pixel value to use for the red, green, and blue channels.
+       If set to None for a given channel, the maximum pixel value for
+       that channel is determined using the corresponding pmax_x argument
+       (default).
 
-        *vmin_g*: [ None | float ]
+    pmin_r, pmin_r, pmin_g: float, optional
+       Percentile values used to determine for a given channel the
+       minimum pixel value to use for that channel if the corresponding
+       vmin_x is set to None. The default is 0.25% for all channels.
 
-        *vmin_b*: [ None | float ]
+    pmax_r, pmax_g, pmax_b: float, optional
+       Percentile values used to determine for a given channel the
+       maximum pixel value to use for that channel if the corresponding
+       vmax_x is set to None. The default is 99.75% for all channels.
 
-            Minimum pixel value to use for the red, green, and blue channels.
-            If set to None for a given channel, the minimum pixel value for
-            that channel is determined using the corresponding pmin_x argument
-            (default).
+    stretch_r, stretch_g, stretch_b: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }
+       The stretch function to use for the different channels.
 
-        *vmax_r*: [ None | float ]
+    vmid_r, vmid_g, vmid_b: float, optional
+       Baseline values used for the log and arcsinh stretches. If
+       set to None, this is set to zero for log stretches and to
+       vmin - (vmax - vmin) / 30. for arcsinh stretches
 
-        *vmax_g*: [ None | float ]
-
-        *vmax_b*: [ None | float ]
-
-            Maximum pixel value to use for the red, green, and blue channels.
-            If set to None for a given channel, the maximum pixel value for
-            that channel is determined using the corresponding pmax_x argument
-            (default).
-
-        *pmin_r*: [ float ]
-
-        *pmin_g*: [ float ]
-
-        *pmin_b*: [ float ]
-
-            Percentile values used to determine for a given channel the
-            minimum pixel value to use for that channel if the corresponding
-            vmin_x is set to None. The default is 0.25% for all channels.
-
-        *pmax_r*: [ float ]
-
-        *pmax_g*: [ float ]
-
-        *pmax_b*: [ float ]
-
-            Percentile values used to determine for a given channel the
-            maximum pixel value to use for that channel if the corresponding
-            vmax_x is set to None. The default is 99.75% for all channels.
-
-        *stretch_r*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
-
-        *stretch_g*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
-
-        *stretch_b*: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ]
-
-            The stretch function to use for the different channels.
-
-        *vmid_r*: [ None | float ]
-
-        *vmid_g*: [ None | float ]
-
-        *vmid_b*: [ None | float ]
-
-            Baseline values used for the log and arcsinh stretches. If
-            set to None, this is set to zero for log stretches and to
-            vmin - (vmax - vmin) / 30. for arcsinh stretches
-
-        *exponent_r*: [ float ]
-
-        *exponent_g*: [ float ]
-
-        *exponent_b*: [ float ]
-
-            If stretch_x is set to 'power', this is the exponent to use.
+    exponent_r, exponent_g, exponent_b: float, optional
+       If stretch_x is set to 'power', this is the exponent to use.
         '''
 
     if not installed_pil:
@@ -264,30 +228,29 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     generated from the FITS cube (to provide the correct WCS information to
     FITSFigure).
 
-    Required arguments:
+    Parameters
+    ----------
 
-        *files* [ tuple | list ]
-            A list of the filenames of three FITS filename to reproject.
-            The order is red, green, blue.
+    files: tuple or list
+       A list of the filenames of three FITS filename to reproject.
+       The order is red, green, blue.
 
-        *output* [ string ]
-            The filename of the output RGB FITS cube.
+    output: str
+       The filename of the output RGB FITS cube.
 
-    Optional Keyword Arguments:
+    north: bool, optional
+       By default, the FITS header generated by Montage represents the
+       best fit to the images, often resulting in a slight rotation. If
+       you want north to be straight up in your final mosaic, you should
+       use this option.
 
-        *north* [ True | False ]
-            By default, the FITS header generated by Montage represents the
-            best fit to the images, often resulting in a slight rotation. If
-            you want north to be straight up in your final mosaic, you should
-            use this option.
+    system: str, optional
+       Specifies the system for the header (default is EQUJ).
+       Possible values are: EQUJ EQUB ECLJ ECLB GAL SGAL
 
-        *system* [ string ]
-            Specifies the system for the header (default is EQUJ).
-            Possible values are: EQUJ EQUB ECLJ ECLB GAL SGAL
-
-        *equinox* [ string ]
-            If a coordinate system is specified, the equinox can also be given
-            in the form YYYY. Default is J2000.
+    equinox: str, optional
+       If a coordinate system is specified, the equinox can also be given
+       in the form YYYY. Default is J2000.
     '''
 
     # Check whether the Python montage module is installed. The Python module
