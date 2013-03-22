@@ -1041,40 +1041,40 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_ellipses(self, xw, yw, width, height, angle=0, layer=False, zorder=None, **kwargs):
         '''
-       Overlay ellipses on the current plot.
+        Overlay ellipses on the current plot.
 
-       Required arguments:
+        Required arguments:
 
-           *xw*: [ list | numpy.ndarray ]
-               The x postions of the ellipses (in world coordinates)
+            *xw*: [ list | numpy.ndarray ]
+                The x postions of the ellipses (in world coordinates)
 
-           *yw*: [ list | numpy.ndarray ]
-               The y positions of the ellipses (in world coordinates)
+            *yw*: [ list | numpy.ndarray ]
+                The y positions of the ellipses (in world coordinates)
 
-           *width*: [integer | float | list | numpy.ndarray ]
-               The width of the ellipse (in world coordinates)
+            *width*: [integer | float | list | numpy.ndarray ]
+                The width of the ellipse (in world coordinates)
 
-           *height*: [integer | float | list | numpy.ndarray ]
-               The height of the ellipse (in world coordinates)
+            *height*: [integer | float | list | numpy.ndarray ]
+                The height of the ellipse (in world coordinates)
 
-       Optional Keyword Arguments:
+        Optional Keyword Arguments:
 
-           *angle*: [integer | float | list | numpy.ndarray ]
-               rotation in degrees (anti-clockwise). Default
-               angle is 0.0.
+            *angle*: [integer | float | list | numpy.ndarray ]
+                rotation in degrees (anti-clockwise). Default
+                angle is 0.0.
 
-           *layer*: [ string ]
-               The name of the ellipse layer. This is useful for giving
-               custom names to layers (instead of ellipse_set_n) and for
-               replacing existing layers.
+            *layer*: [ string ]
+                The name of the ellipse layer. This is useful for giving
+                custom names to layers (instead of ellipse_set_n) and for
+                replacing existing layers.
 
-       Additional keyword arguments (such as facecolor, edgecolor, alpha,
-       or linewidth) can be used to control the appearance of the ellipses,
-       which are instances of the matplotlib Ellipse class. For more
-       information on available arguments, see `Ellipse
-       <http://matplotlib.sourceforge.net/api/
-       artist_api.html#matplotlib.patches.Ellipse>`_.
-       '''
+        Additional keyword arguments (such as facecolor, edgecolor, alpha,
+        or linewidth) can be used to control the appearance of the ellipses,
+        which are instances of the matplotlib Ellipse class. For more
+        information on available arguments, see `Ellipse
+        <http://matplotlib.sourceforge.net/api/
+        artist_api.html#matplotlib.patches.Ellipse>`_.
+        '''
 
         if np.isscalar(xw):
             xw = np.array([xw])
@@ -1132,36 +1132,36 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_rectangles(self, xw, yw, width, height, layer=False, zorder=None, **kwargs):
         '''
-       Overlay rectangles on the current plot.
+        Overlay rectangles on the current plot.
 
-       Required arguments:
+        Required arguments:
 
-           *xw*: [ list | numpy.ndarray ]
-               The x postions of the rectangles (in world coordinates)
+            *xw*: [ list | numpy.ndarray ]
+                The x postions of the rectangles (in world coordinates)
 
-           *yw*: [ list | numpy.ndarray ]
-               The y positions of the rectangles (in world coordinates)
+            *yw*: [ list | numpy.ndarray ]
+                The y positions of the rectangles (in world coordinates)
 
-           *width*: [integer | float | list | numpy.ndarray ]
-               The width of the rectangle (in world coordinates)
+            *width*: [integer | float | list | numpy.ndarray ]
+                The width of the rectangle (in world coordinates)
 
-           *height*: [integer | float | list | numpy.ndarray ]
-               The height of the rectangle (in world coordinates)
+            *height*: [integer | float | list | numpy.ndarray ]
+                The height of the rectangle (in world coordinates)
 
-       Optional Keyword Arguments:
+        Optional Keyword Arguments:
 
-           *layer*: [ string ]
-               The name of the rectangle layer. This is useful for giving
-               custom names to layers (instead of rectangle_set_n) and for
-               replacing existing layers.
+            *layer*: [ string ]
+                The name of the rectangle layer. This is useful for giving
+                custom names to layers (instead of rectangle_set_n) and for
+                replacing existing layers.
 
-       Additional keyword arguments (such as facecolor, edgecolor, alpha,
-       or linewidth) can be used to control the appearance of the
-       rectangles, which are instances of the matplotlib Rectangle class.
-       For more information on available arguments, see `Rectangle
-       <http://matplotlib.sourceforge.net/api/
-       artist_api.html#matplotlib.patches.Rectangle>`_.
-       '''
+        Additional keyword arguments (such as facecolor, edgecolor, alpha,
+        or linewidth) can be used to control the appearance of the
+        rectangles, which are instances of the matplotlib Rectangle class.
+        For more information on available arguments, see `Rectangle
+        <http://matplotlib.sourceforge.net/api/
+        artist_api.html#matplotlib.patches.Rectangle>`_.
+        '''
 
         if np.isscalar(xw):
             xw = np.array([xw])
@@ -1215,28 +1215,28 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_lines(self, line_list, layer=False, zorder=None, **kwargs):
         '''
-       Overlay lines on the current plot.
+        Overlay lines on the current plot.
 
-       Required arguments:
+        Required arguments:
 
-           *line_list*: [ list ]
-                A list of one or more 2xN numpy arrays which contain
-                the [x, y] positions of the vertices in world coordinates.
+            *line_list*: [ list ]
+                 A list of one or more 2xN numpy arrays which contain
+                 the [x, y] positions of the vertices in world coordinates.
 
-       Optional Keyword Arguments:
+        Optional Keyword Arguments:
 
-           *layer*: [ string ]
-               The name of the line(s) layer. This is useful for giving
-               custom names to layers (instead of line_set_n) and for
-               replacing existing layers.
+            *layer*: [ string ]
+                The name of the line(s) layer. This is useful for giving
+                custom names to layers (instead of line_set_n) and for
+                replacing existing layers.
 
-       Additional keyword arguments (such as color, offsets, cmap,
-       or linewidth) can be used to control the appearance of the
-       lines, which is an instances of the matplotlib LineCollection class.
-       For more information on available arguments, see `LineCollection
-       <http://matplotlib.sourceforge.net/api/collections_api.html?
-       highlight=linecollection#matplotlib.collections.LineCollection>`_.
-       '''
+        Additional keyword arguments (such as color, offsets, cmap,
+        or linewidth) can be used to control the appearance of the
+        lines, which is an instances of the matplotlib LineCollection class.
+        For more information on available arguments, see `LineCollection
+        <http://matplotlib.sourceforge.net/api/collections_api.html?
+        highlight=linecollection#matplotlib.collections.LineCollection>`_.
+        '''
 
         if not 'color' in kwargs:
             kwargs.setdefault('color', 'none')
@@ -1267,41 +1267,41 @@ class FITSFigure(Layers, Regions, Deprecated):
     def show_arrows(self, x, y, dx, dy, width='auto', head_width='auto',
                     head_length='auto', layer=False, zorder=None, **kwargs):
         '''
-       Overlay arrows on the current plot.
+        Overlay arrows on the current plot.
 
-       Required arguments:
+        Required arguments:
 
-           *x, y, dx, dy*: [ float | list | array ]
-               Origin and displacement of the arrows in world coordinates.
-               These can either be scalars to plot a single arrow, or lists or
-               arrays to plot multiple arrows.
+            *x, y, dx, dy*: [ float | list | array ]
+                Origin and displacement of the arrows in world coordinates.
+                These can either be scalars to plot a single arrow, or lists or
+                arrays to plot multiple arrows.
 
-       Optional Keyword Arguments:
+        Optional Keyword Arguments:
 
-           *width*: [ float ]
-               The width of the arrow body, in pixels (default: 2% of the
-               arrow length)
+            *width*: [ float ]
+                The width of the arrow body, in pixels (default: 2% of the
+                arrow length)
 
-           *head_width*: [ float ]
-               The width of the arrow head, in pixels (default: 5% of the
-               arrow length)
+            *head_width*: [ float ]
+                The width of the arrow head, in pixels (default: 5% of the
+                arrow length)
 
-           *head_length*: [ float ]
-               The length of the arrow head, in pixels (default: 5% of the
-               arrow length)
+            *head_length*: [ float ]
+                The length of the arrow head, in pixels (default: 5% of the
+                arrow length)
 
-           *layer*: [ string ]
-               The name of the arrow(s) layer. This is useful for giving
-               custom names to layers (instead of line_set_n) and for
-               replacing existing layers.
+            *layer*: [ string ]
+                The name of the arrow(s) layer. This is useful for giving
+                custom names to layers (instead of line_set_n) and for
+                replacing existing layers.
 
-       Additional keyword arguments (such as color, offsets, cmap,
-       or linewidth) can be used to control the appearance of the
-       arrows, which is an instances of the matplotlib FancyArrow class.
-       For more information on available arguments, see `FancyArrow
-       <http://matplotlib.sourceforge.net/api/artist_api.html?
-       highlight=arrow#matplotlib.patches.FancyArrow>`_.
-       '''
+        Additional keyword arguments (such as color, offsets, cmap,
+        or linewidth) can be used to control the appearance of the
+        arrows, which is an instances of the matplotlib FancyArrow class.
+        For more information on available arguments, see `FancyArrow
+        <http://matplotlib.sourceforge.net/api/artist_api.html?
+        highlight=arrow#matplotlib.patches.FancyArrow>`_.
+        '''
 
         if 'length_includes_head' not in kwargs:
             kwargs['length_includes_head'] = True
