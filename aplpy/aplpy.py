@@ -534,7 +534,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             use for the grayscale if vmax is set to None. The default
             value is 99.75%.
 
-        stretch: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ], optional
+        stretch: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
             The stretch function to use
 
         vmid: None or float, optional
@@ -620,7 +620,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             use for the colorscale if vmax is set to None. The default
             value is 99.75%.
 
-        stretch: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ], optional
+        stretch: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
             The stretch function to use
 
         vmid: None or float, optional

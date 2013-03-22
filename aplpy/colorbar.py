@@ -45,10 +45,10 @@ class Colorbar(object):
         pad: float, optional
             The spacing between the colorbar and the image relative to the canvas size.
 
-        ticks: [ None or list ], optional
+        ticks: list, optional
             The position of the ticks on the colorbar.
 
-        labels: [ True or False ], optional
+        labels: bool, optional
             Whether to show numerical labels.
 
         box: list, optional

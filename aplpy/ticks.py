@@ -426,33 +426,32 @@ def tick_positions(wcs, spacing, axis, coord, farside=False,
     '''
     Find positions of ticks along a given axis.
 
-    Required arguments
+    Parameters
+    ----------
 
-        *wcs*: [ wcs_util.WCS instance ]
-            The WCS instance for the image.
+    wcs*: ~aplpy.wcs_util.WCS
+       The WCS instance for the image.
 
-        *spacing*: [ float ]
-            The spacing along the axis.
+    spacing*: float
+       The spacing along the axis.
 
-        *axis*: [ 'x' or 'y' ]
-            The axis along which we are looking for ticks.
+    axis*: { 'x', 'y' }
+       The axis along which we are looking for ticks.
 
-        *coord*: [ 'x' or 'y' ]
-            The coordinate for which we are looking for ticks.
+    coord: { 'x', 'y' }
+       The coordinate for which we are looking for ticks.
 
-    Optional keyword arguments
+    farside: bool, optional
+       Whether we are looking on the left or bottom axes (False) or the
+       right or top axes (True).
 
-        *farside*: [ bool ]
-            Whether we are looking on the left or bottom axes (False) or the
-            right or top axes (True).
+    xmin, xmax, ymin, ymax: float, optional
+       The range of pixel values covered by the image.
 
-        *xmin, xmax, ymin, ymax*: [ float ]
-            The range of pixel values covered by the image.
-
-        *mode*: [ 'xy' or 'xscaled' ]
-            If set to 'xy' the function returns the world coordinates of the
-            ticks. If 'xscaled', then only the coordinate requested is
-            returned, in units of the tick spacing.
+    mode: { 'xy', 'xscaled' }, optional
+       If set to 'xy' the function returns the world coordinates of the
+       ticks. If 'xscaled', then only the coordinate requested is
+       returned, in units of the tick spacing.
     '''
 
     (px, py, wx, wy) = axis_positions(wcs, axis, farside, xmin, xmax, ymin, ymax)
@@ -524,22 +523,21 @@ def axis_positions(wcs, axis, farside, xmin=False, xmax=False,
     '''
     Find the world coordinates of all pixels along an axis.
 
-    Required arguments
+    Parameters
+    ----------
 
-       *wcs*: [ wcs_util.WCS instance ]
-           The WCS instance for the image.
+    wcs*: ~aplpy.wcs_util.WCS
+       The WCS instance for the image.
 
-       *axis*: [ 'x' or 'y' ]
-           The axis along which we are computing world coordinates.
+    axis*: { 'x', 'y' }
+       The axis along which we are computing world coordinates.
 
-    Optional keyword arguments
+    farside: bool
+       Whether we are looking on the left or bottom axes (False) or the
+       right or top axes (True).
 
-       *farside*: [ bool ]
-           Whether we are looking on the left or bottom axes (False) or the
-           right or top axes (True).
-
-       *xmin, xmax, ymin, ymax*: [ float ]
-           The range of pixel values covered by the image
+    xmin, xmax, ymin, ymax: float, optional
+       The range of pixel values covered by the image
     '''
 
     if not xmin:
@@ -580,10 +578,11 @@ def coord_range(wcs):
     '''
     Find the range of coordinates that intersect the axes.
 
-    Required arguments
+    Parameters
+    ----------
 
-        *wcs*: [ wcs_util.WCS instance ]
-            The WCS instance for the image.
+    wcs: ~aplpy.wcs_util.WCS
+        The WCS instance for the image.
     '''
 
     x_pix, y_pix, x_world_1, y_world_1 = axis_positions(wcs, 'x', farside=False)

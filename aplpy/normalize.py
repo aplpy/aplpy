@@ -29,7 +29,7 @@ class APLpyNormalize(Normalize):
         vmax: None or float, optional
             Maximum pixel value to use for the scaling.
 
-        stretch: [ 'linear' | 'log' | 'sqrt' | 'arcsinh' | 'power' ], optional
+        stretch: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
             The stretch function to use (default is 'linear').
 
         vmid: None or float, optional
