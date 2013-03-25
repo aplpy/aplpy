@@ -96,7 +96,7 @@ from .grid import Grid
 from .ticks import Ticks
 from .labels import TickLabels
 from .axis_labels import AxisLabels
-from .overlays import Beam, ScaleBar
+from .overlays import Beam, Scalebar
 from .regions import Regions
 from .colorbar import Colorbar
 from .normalize import APLpyNormalize
@@ -727,8 +727,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Parameters
         ----------
-
-        color : [ string | matplotlib color ]
+        color : str
+            This can be any valid matplotlib color
         '''
         cm = self.image.get_cmap()
         cm.set_bad(color)
@@ -738,6 +738,9 @@ class FITSFigure(Layers, Regions, Deprecated):
     def show_rgb(self, filename=None, interpolation='nearest', vertical_flip=False, horizontal_flip=False, flip=False):
         '''
         Show a 3-color image instead of the FITS file data.
+
+        Parameters
+        ----------
 
         filename, optional
             The 3-color image should have exactly the same dimensions
@@ -1717,7 +1720,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     def remove_beam(self, beam_index=None):
         '''
         Removes the beam from the current figure.
-        
+
         If more than one beam is present, the index of the beam should be
         specified using beam_index=
         '''
@@ -1757,7 +1760,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if hasattr(self, 'scalebar'):
             raise Exception("Scalebar already exists")
         try:
-            self.scalebar = ScaleBar(self)
+            self.scalebar = Scalebar(self)
             self.scalebar.show(length, *args, **kwargs)
         except:
             del self.scalebar

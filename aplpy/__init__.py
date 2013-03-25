@@ -124,5 +124,5 @@ if not _PACKAGE_SETUP_:
 
 from .aplpy import FITSFigure
 from .rgb import make_rgb_image, make_rgb_cube
-from .overlays import Beam, ScaleBar
+from .overlays import Beam, Scalebar
 from .colorbar import Colorbar

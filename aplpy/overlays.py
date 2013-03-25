@@ -138,7 +138,7 @@ class Compass(object):
         pass
 
 
-class ScaleBar(object):
+class Scalebar(object):
 
     def __init__(self, parent):
 
@@ -404,6 +404,9 @@ class ScaleBar(object):
     def set_font_style(self, style):
         warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
         self.set_font(style=style)
+
+# For backward-compatibility
+ScaleBar = Scalebar
 
 
 class Beam(object):
