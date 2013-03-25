@@ -23,23 +23,23 @@ class APLpyNormalize(Normalize):
         Parameters
         ----------
 
-        vmin: None or float, optional
+        vmin : None or float, optional
             Minimum pixel value to use for the scaling.
 
-        vmax: None or float, optional
+        vmax : None or float, optional
             Maximum pixel value to use for the scaling.
 
-        stretch: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
+        stretch : { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
             The stretch function to use (default is 'linear').
 
-        vmid: None or float, optional
+        vmid : None or float, optional
             Mid-pixel value used for the log and arcsinh stretches. If
             set to None, a default value is picked.
 
-        exponent: float, optional
+        exponent : float, optional
             if self.stretch is set to 'power', this is the exponent to use.
 
-        clip: str, optional
+        clip : str, optional
             If clip is True and the given value falls outside the range,
             the returned value will be 0 or 1, whichever is closer.
         '''

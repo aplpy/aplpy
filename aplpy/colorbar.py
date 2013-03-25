@@ -36,22 +36,22 @@ class Colorbar(object):
         Parameters
         ----------
 
-        location: str, optional
+        location : str, optional
             Where to place the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
 
-        width: float, optional
+        width : float, optional
             The width of the colorbar relative to the canvas size.
 
-        pad: float, optional
+        pad : float, optional
             The spacing between the colorbar and the image relative to the canvas size.
 
-        ticks: list, optional
+        ticks : list, optional
             The position of the ticks on the colorbar.
 
-        labels: bool, optional
+        labels : bool, optional
             Whether to show numerical labels.
 
-        box: list, optional
+        box : list, optional
             A custom box within which to place the colorbar. This should
             be in the form [xmin, ymin, dx, dy] and be in relative figure
             units. This overrides the location argument.

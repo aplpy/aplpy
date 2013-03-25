@@ -50,7 +50,7 @@ class Grid(object):
 
         Parameters
         ----------
-        xspacing: { float, str }
+        xspacing : { float, str }
             The spacing in the longitudinal direction. To set the spacing
             to be the same as the ticks, set this to 'tick'
         '''
@@ -74,7 +74,7 @@ class Grid(object):
 
         Parameters
         ----------
-        yspacing: { float, str }
+        yspacing : { float, str }
             The spacing in the latitudinal direction. To set the spacing
             to be the same as the ticks, set this to 'tick'
         '''
@@ -99,7 +99,7 @@ class Grid(object):
 
         Parameters
         ----------
-        color: str
+        color : str
             The color of the grid lines
         '''
         if self._grid:
@@ -114,7 +114,7 @@ class Grid(object):
 
         Parameters
         ----------
-        alpha: float
+        alpha : float
             The alpha value of the grid. This should be a floating
             point value between 0 and 1, where 0 is completely
             transparent, and 1 is completely opaque.

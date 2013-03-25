@@ -44,16 +44,16 @@ class Compass(object):
         Parameters
         ----------
 
-        length: float, optional
+        length : float, optional
             The length of the scalebar
 
-        label: str, optional
+        label : str, optional
             Label to place above the scalebar
 
-        corner: int, optional
+        corner : int, optional
             Where to place the scalebar. Acceptable values are:, 'left', 'right', 'top', 'bottom', 'top left', 'top right', 'bottom left' (default), 'bottom right'
 
-        frame: str, optional
+        frame : str, optional
             Whether to display a frame behind the scalebar (default is False)
 
         Additional keyword arguments can be used to control the appearance
@@ -166,18 +166,18 @@ class ScaleBar(object):
         Parameters
         ----------
 
-        length: float
+        length : float
             The length of the scalebar
 
-        label: str, optional
+        label : str, optional
             Label to place below the scalebar
 
-        corner: int, optional
+        corner : int, optional
             Where to place the scalebar. Acceptable values are:, 'left',
             'right', 'top', 'bottom', 'top left', 'top right', 'bottom
             left' (default), 'bottom right'
 
-        frame: str, optional
+        frame : str, optional
             Whether to display a frame behind the scalebar (default is False)
 
         Additional arguments are passed to the matplotlib Rectangle and
@@ -439,22 +439,22 @@ class Beam(object):
         Parameters
         ----------
 
-        major: float, optional
+        major : float, optional
             Major axis of the beam in degrees (overrides BMAJ if present)
 
-        minor: float, optional
+        minor : float, optional
             Minor axis of the beam in degrees (overrides BMIN if present)
 
-        angle: float, optional
+        angle : float, optional
             Position angle of the beam on the sky in degrees (overrides
             BPA if present) in the anticlockwise direction.
 
-        corner: int, optional
+        corner : int, optional
             The beam location. Acceptable values are 'left', 'right',
             'top', 'bottom', 'top left', 'top right', 'bottom left'
             (default), and 'bottom right'.
 
-        frame: str, optional
+        frame : str, optional
             Whether to display a frame behind the beam (default is False)
 
         Additional arguments are passed to the matplotlib Ellipse classe.

@@ -130,7 +130,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        data: see below
+        data : see below
 
             The FITS file to open. The following data types can be passed:
 
@@ -143,16 +143,16 @@ class FITSFigure(Layers, Regions, Deprecated):
                  np.ndarray
                  RGB image with AVM meta-data
 
-        hdu: int, optional
+        hdu : int, optional
             By default, the image in the primary HDU is read in. If a
             different HDU is required, use this argument.
 
-        figure: ~matplotlib.figure.Figure, optional
+        figure : ~matplotlib.figure.Figure, optional
             If specified, a subplot will be added to this existing
             matplotlib figure() instance, rather than a new figure
             being created from scratch.
 
-        subplot: list, optional
+        subplot : list, optional
             If specified, a subplot will be added at this position. The
             list should contain [xmin, ymin, dx, dy] where xmin and ymin
             are the position of the bottom left corner of the subplot, and
@@ -161,31 +161,31 @@ class FITSFigure(Layers, Regions, Deprecated):
             height. For example, [0.1, 0.1, 0.8, 0.8] will almost fill the
             entire figure, leaving a 10 percent margin on all sides.
 
-        downsample: int, optional
+        downsample : int, optional
             If this option is specified, the image will be downsampled
             by a factor *downsample* when reading in the data.
 
-        north: str, optional
+        north : str, optional
             Whether to rotate the image so that the North Celestial
             Pole is up. Note that this option requires Montage to be
             installed.
 
-        convention: str, optional
+        convention : str, optional
             This is used in cases where a FITS header can be interpreted
             in multiple ways. For example, for files with a -CAR
             projection and CRVAL2=0, this can be set to 'wells' or
             'calabretta' to choose the appropriate convention.
 
-        dimensions: tuple or list, optional
+        dimensions : tuple or list, optional
             The index of the axes to use if the data has more than three
             dimensions.
 
-        slices: tuple or list, optional
+        slices : tuple or list, optional
             If a FITS file with more than two dimensions is specified,
             then these are the slices to extract. If all extra dimensions
             only have size 1, then this is not required.
 
-        auto_refresh: str, optional
+        auto_refresh : str, optional
             Whether to refresh the figure automatically every time a
             plotting method is called. This can also be set using the
             set_auto_refresh method.
@@ -452,7 +452,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        usetex: str
+        usetex : str
             Whether to use a real LaTex installation (True) or the built-in
             matplotlib LaTeX (False). Note that if the former is chosen, an
             installation of LaTex is required.
@@ -469,17 +469,17 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        x, y: float
+        x, y : float
             Coordinates to center on
 
-        radius: float, optional
+        radius : float, optional
             Radius of the region to view. This produces a square plot.
 
-        width: float, optional
+        width : float, optional
             Width of the region to view. This should be given in
             conjunction with the height argument.
 
-        height: float, optional
+        height : float, optional
             Height of the region to view. This should be given in
             conjunction with the width argument.
         '''
@@ -516,57 +516,57 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Show a grayscale image of the FITS file.
 
-        vmin: None or float, optional
+        vmin : None or float, optional
             Minimum pixel value to use for the grayscale. If set to None,
             the minimum pixel value is determined using pmin (default).
 
-        vmax: None or float, optional
+        vmax : None or float, optional
             Maximum pixel value to use for the grayscale. If set to None,
             the maximum pixel value is determined using pmax (default).
 
-        pmin: float, optional
+        pmin : float, optional
             Percentile value used to determine the minimum pixel value to
             use for the grayscale if vmin is set to None. The default
             value is 0.25%.
 
-        pmax: float, optional
+        pmax : float, optional
             Percentile value used to determine the maximum pixel value to
             use for the grayscale if vmax is set to None. The default
             value is 99.75%.
 
-        stretch: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
+        stretch : { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
             The stretch function to use
 
-        vmid: None or float, optional
+        vmid : None or float, optional
             Baseline value used for the log and arcsinh stretches. If
             set to None, this is set to zero for log stretches and to
             vmin - (vmax - vmin) / 30. for arcsinh stretches
 
-        exponent: float, optional
+        exponent : float, optional
             If stretch is set to 'power', this is the exponent to use
 
-        invert: str, optional
+        invert : str, optional
             Whether to invert the grayscale or not. The default is False,
             unless set_theme is used, in which case the default depends on
             the theme.
 
-        smooth: int or tuple, optional
+        smooth : int or tuple, optional
             Default smoothing scale is 3 pixels across. User can define
             whether they want an NxN kernel (integer), or NxM kernel
             (tuple). This argument corresponds to the 'gauss' and 'box'
             smoothing kernels.
 
-        kernel: { 'gauss', 'box', numpy.array }, optional
+        kernel : { 'gauss', 'box', numpy.array }, optional
             Default kernel used for smoothing is 'gauss'. The user can
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
 
-        aspect: { 'auto', 'equal' }, optional
+        aspect : { 'auto', 'equal' }, optional
             Whether to change the aspect ratio of the image to match that
             of the axes ('auto') or to change the aspect ratio of the axes
             to match that of the data ('equal'; default)
 
-        interpolation: str, optional
+        interpolation : str, optional
             The type of interpolation to use for the image. The default is
             'nearest'. Other options include 'none' (no interpolation,
             meaning that if exported to a postscript file, the grayscale
@@ -602,55 +602,55 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Show a colorscale image of the FITS file.
 
-        vmin: None or float, optional
+        vmin : None or float, optional
             Minimum pixel value to use for the colorscale. If set to None,
             the minimum pixel value is determined using pmin (default).
 
-        vmax: None or float, optional
+        vmax : None or float, optional
             Maximum pixel value to use for the colorscale. If set to None,
             the maximum pixel value is determined using pmax (default).
 
-        pmin: float, optional
+        pmin : float, optional
             Percentile value used to determine the minimum pixel value to
             use for the colorscale if vmin is set to None. The default
             value is 0.25%.
 
-        pmax: float, optional
+        pmax : float, optional
             Percentile value used to determine the maximum pixel value to
             use for the colorscale if vmax is set to None. The default
             value is 99.75%.
 
-        stretch: { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
+        stretch : { 'linear', 'log', 'sqrt', 'arcsinh', 'power' }, optional
             The stretch function to use
 
-        vmid: None or float, optional
+        vmid : None or float, optional
             Baseline value used for the log and arcsinh stretches. If
             set to None, this is set to zero for log stretches and to
             vmin - (vmax - vmin) / 30. for arcsinh stretches
 
-        exponent: float, optional
+        exponent : float, optional
             If stretch is set to 'power', this is the exponent to use
 
-        cmap: str, optional
+        cmap : str, optional
             The name of the colormap to use
 
-        smooth: int or tuple, optional
+        smooth : int or tuple, optional
             Default smoothing scale is 3 pixels across. User can define
             whether they want an NxN kernel (integer), or NxM kernel
             (tuple). This argument corresponds to the 'gauss' and 'box'
             smoothing kernels.
 
-        kernel: { 'gauss', 'box', numpy.array }, optional
+        kernel : { 'gauss', 'box', numpy.array }, optional
             Default kernel used for smoothing is 'gauss'. The user can
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
 
-        aspect: { 'auto', 'equal' }, optional
+        aspect : { 'auto', 'equal' }, optional
             Whether to change the aspect ratio of the image to match that
             of the axes ('auto') or to change the aspect ratio of the axes
             to match that of the data ('equal'; default)
 
-        interpolation: str, optional
+        interpolation : str, optional
             The type of interpolation to use for the image. The default is
             'nearest'. Other options include 'none' (no interpolation,
             meaning that if exported to a postscript file, the colorscale
@@ -728,7 +728,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        color: [ string | matplotlib color ]
+        color : [ string | matplotlib color ]
         '''
         cm = self.image.get_cmap()
         cm.set_bad(color)
@@ -745,10 +745,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             projection. If FITSFigure was initialized with an
             AVM-tagged RGB image, the filename is not needed here.
 
-        vertical_flip: str, optional
+        vertical_flip : str, optional
             Whether to vertically flip the RGB image
 
-        horizontal_flip: str, optional
+        horizontal_flip : str, optional
             Whether to horizontally flip the RGB image
         '''
 
@@ -782,7 +782,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        data: see below
+        data : see below
 
             The FITS file to plot contours for. The following data types can be passed:
 
@@ -794,57 +794,57 @@ class FITSFigure(Layers, Regions, Deprecated):
                  astropy.wcs.WCS
                  np.ndarray
 
-        hdu: int, optional
+        hdu : int, optional
             By default, the image in the primary HDU is read in. If a
             different HDU is required, use this argument.
 
-        layer: str, optional
+        layer : str, optional
             The name of the contour layer. This is useful for giving
             custom names to layers (instead of contour_set_n) and for
             replacing existing layers.
 
-        levels: int or list, optional
+        levels : int or list, optional
             This can either be the number of contour levels to compute
             (if an integer is provided) or the actual list of contours
             to show (if a list of floats is provided)
 
-        filled: str, optional
+        filled : str, optional
             Whether to show filled or line contours
 
-        cmap: str, optional
+        cmap : str, optional
             The colormap to use for the contours
 
-        colors: str or tuple, optional
+        colors : str or tuple, optional
             If a single string is provided, all contour levels will be
             shown in this color. If a tuple of strings is provided,
             each contour will be colored according to the corresponding
             tuple element.
 
-        returnlevels: str, optional
+        returnlevels : str, optional
             Whether to return the list of contours to the caller.
 
-        convention: str, optional
+        convention : str, optional
             This is used in cases where a FITS header can be interpreted
             in multiple ways. For example, for files with a -CAR
             projection and CRVAL2=0, this can be set to 'wells' or
             'calabretta' to choose the appropriate convention.
 
-        dimensions: tuple or list, optional
+        dimensions : tuple or list, optional
             The index of the axes to use if the data has more than three
             dimensions.
 
-        slices: tuple or list, optional
+        slices : tuple or list, optional
             If a FITS file with more than two dimensions is specified,
             then these are the slices to extract. If all extra dimensions
             only have size 1, then this is not required.
 
-        smooth: int or tuple, optional
+        smooth : int or tuple, optional
             Default smoothing scale is 3 pixels across. User can define
             whether they want an NxN kernel (integer), or NxM kernel
             (tuple). This argument corresponds to the 'gauss' and 'box'
             smoothing kernels.
 
-        kernel: { 'gauss' , 'box' , numpy.array }, optional
+        kernel : { 'gauss' , 'box' , numpy.array }, optional
             Default kernel used for smoothing is 'gauss'. The user can
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
@@ -916,13 +916,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw: list or ~numpy.ndarray
+        xw : list or ~numpy.ndarray
             The x postions of the markers (in world coordinates)
 
-        yw: list or ~numpy.ndarray
+        yw : list or ~numpy.ndarray
             The y positions of the markers (in world coordinates)
 
-        layer: str, optional
+        layer : str, optional
             The name of the scatter layer. This is useful for giving
             custom names to layers (instead of marker_set_n) and for
             replacing existing layers.
@@ -966,16 +966,16 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw: list or ~numpy.ndarray
+        xw : list or ~numpy.ndarray
             The x postions of the circles (in world coordinates)
 
-        yw: list or ~numpy.ndarray
+        yw : list or ~numpy.ndarray
             The y positions of the circles (in world coordinates)
 
-        radius: int or float or list or ~numpy.ndarray
+        radius : int or float or list or ~numpy.ndarray
             The radii of the circles (in world coordinates)
 
-        layer: str, optional
+        layer : str, optional
             The name of the circle layer. This is useful for giving
             custom names to layers (instead of circle_set_n) and for
             replacing existing layers.
@@ -1037,23 +1037,23 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw: list or ~numpy.ndarray
+        xw : list or ~numpy.ndarray
             The x postions of the ellipses (in world coordinates)
 
-        yw: list or ~numpy.ndarray
+        yw : list or ~numpy.ndarray
             The y positions of the ellipses (in world coordinates)
 
-        width: int or float or list or ~numpy.ndarray
+        width : int or float or list or ~numpy.ndarray
             The width of the ellipse (in world coordinates)
 
-        height: int or float or list or ~numpy.ndarray
+        height : int or float or list or ~numpy.ndarray
             The height of the ellipse (in world coordinates)
 
-        angle: int or float or list or ~numpy.ndarray, optional
+        angle : int or float or list or ~numpy.ndarray, optional
             rotation in degrees (anti-clockwise). Default
             angle is 0.0.
 
-        layer: str, optional
+        layer : str, optional
             The name of the ellipse layer. This is useful for giving
             custom names to layers (instead of ellipse_set_n) and for
             replacing existing layers.
@@ -1127,19 +1127,19 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw: list or ~numpy.ndarray
+        xw : list or ~numpy.ndarray
             The x postions of the rectangles (in world coordinates)
 
-        yw: list or ~numpy.ndarray
+        yw : list or ~numpy.ndarray
             The y positions of the rectangles (in world coordinates)
 
-        width: int or float or list or ~numpy.ndarray
+        width : int or float or list or ~numpy.ndarray
             The width of the rectangle (in world coordinates)
 
-        height: int or float or list or ~numpy.ndarray
+        height : int or float or list or ~numpy.ndarray
             The height of the rectangle (in world coordinates)
 
-        layer: str, optional
+        layer : str, optional
             The name of the rectangle layer. This is useful for giving
             custom names to layers (instead of rectangle_set_n) and for
             replacing existing layers.
@@ -1209,11 +1209,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        line_list: list
+        line_list : list
              A list of one or more 2xN numpy arrays which contain
              the [x, y] positions of the vertices in world coordinates.
 
-        layer: str, optional
+        layer : str, optional
             The name of the line(s) layer. This is useful for giving
             custom names to layers (instead of line_set_n) and for
             replacing existing layers.
@@ -1260,24 +1260,24 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        x, y, dx, dy: float or list or ~numpy.ndarray
+        x, y, dx, dy : float or list or ~numpy.ndarray
             Origin and displacement of the arrows in world coordinates.
             These can either be scalars to plot a single arrow, or lists or
             arrays to plot multiple arrows.
 
-        width: float, optional
+        width : float, optional
             The width of the arrow body, in pixels (default: 2% of the
             arrow length)
 
-        head_width: float, optional
+        head_width : float, optional
             The width of the arrow head, in pixels (default: 5% of the
             arrow length)
 
-        head_length: float, optional
+        head_length : float, optional
             The length of the arrow head, in pixels (default: 5% of the
             arrow length)
 
-        layer: str, optional
+        layer : str, optional
             The name of the arrow(s) layer. This is useful for giving
             custom names to layers (instead of line_set_n) and for
             replacing existing layers.
@@ -1344,12 +1344,12 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        polygon_list: list or tuple
+        polygon_list : list or tuple
             A list of one or more 2xN or Nx2 Numpy arrays which contain
             the [x, y] positions of the vertices in world coordinates.
             Note that N should be greater than 2.
 
-        layer: str, optional
+        layer : str, optional
             The name of the circle layer. This is useful for giving
             custom names to layers (instead of circle_set_n) and for
             replacing existing layers.
@@ -1419,13 +1419,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        x, y: float
+        x, y : float
             Coordinates of the text label
 
-        text: str
+        text : str
             The label
 
-        relative: str, optional
+        relative : str, optional
             Whether the coordinates are to be interpreted as world
             coordinates (e.g. RA/Dec or longitude/latitude), or
             coordinates relative to the axes (where 0.0 is left or bottom
@@ -1479,7 +1479,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Parameters
         ----------
-        refresh: str
+        refresh : str
             Whether to refresh the display every time a FITSFigure
             method is called. The default is True. If set to false,
             the display can be refreshed manually using the refresh()
@@ -1493,7 +1493,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Parameters
         ----------
-        force: str, optional
+        force : str, optional
             If set to False, refresh() will only have an effect if
             auto refresh is on. If set to True, the display will be
             refreshed whatever the auto refresh setting is set to.
@@ -1509,12 +1509,12 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        filename: str or fileobj
+        filename : str or fileobj
             The name of the file to save the plot to. This can be for
             example a PS, EPS, PDF, PNG, JPEG, or SVG file. Note that it
             is also possible to pass file-like object.
 
-        dpi: float, optional
+        dpi : float, optional
             The output resolution, in dots per inch. If the output file
             is a vector graphics format (such as PS, EPS, PDF or SVG) only
             the image itself will be rasterized. If the output is a PS or
@@ -1522,17 +1522,17 @@ class FITSFigure(Layers, Regions, Deprecated):
             calculated to match the resolution of the image. If this value is
             larger than max_dpi, then dpi is set to max_dpi.
 
-        transparent: str, optional
+        transparent : str, optional
             Whether to preserve transparency
 
-        adjust_bbox: str, optional
+        adjust_bbox : str, optional
             Auto-adjust the bounding box for the output
 
-        max_dpi: float, optional
+        max_dpi : float, optional
             The maximum resolution to output images at. If no maximum is
             wanted, enter None or 0.
 
-        format: str, optional
+        format : str, optional
             By default, APLpy tries to guess the file format based on the
             file extension, but the format can also be specified
             explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
@@ -1584,7 +1584,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        theme: str
+        theme : str
             The theme to use. At the moment, this can be 'pretty' (for
             viewing on-screen) and 'publication' (which makes the ticks
             and grid black, and displays the image in inverted grayscale)
@@ -1616,10 +1616,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw: float or list or ~numpy.ndarray
+        xw : float or list or ~numpy.ndarray
             x world coordinate
 
-        yw: float or list or ~numpy.ndarray
+        yw : float or list or ~numpy.ndarray
             y world coordinate
 
         Returns the pixel coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
@@ -1634,10 +1634,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xp: float or list or ~numpy.ndarray
+        xp : float or list or ~numpy.ndarray
             x pixel coordinate
 
-        yp: float or list or ~numpy.ndarray
+        yp : float or list or ~numpy.ndarray
             y pixel coordinate
 
         Returns the world coordinates as a tuple of scalars, lists, or numpy arrays depending on the input

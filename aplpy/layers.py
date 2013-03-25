@@ -85,7 +85,7 @@ class Layers(object):
 
         Parameters
         ----------
-        layer: str
+        layer : str
             The name of the layer to remove
         '''
 
@@ -119,7 +119,7 @@ class Layers(object):
 
         Parameters
         ----------
-        layer: str
+        layer : str
             The name of the layer to hide
         '''
         if layer in self._layers:
@@ -146,7 +146,7 @@ class Layers(object):
 
         Parameters
         ----------
-        layer: str
+        layer : str
             The name of the layer to show
         '''
         if layer in self._layers:
@@ -169,7 +169,7 @@ class Layers(object):
 
         Parameters
         ----------
-        layer: str
+        layer : str
             The name of the layer to return
         '''
         if layer in self._layers:

@@ -429,26 +429,26 @@ def tick_positions(wcs, spacing, axis, coord, farside=False,
     Parameters
     ----------
 
-    wcs: ~aplpy.wcs_util.WCS
+    wcs : ~aplpy.wcs_util.WCS
        The WCS instance for the image.
 
-    spacing: float
+    spacing : float
        The spacing along the axis.
 
-    axis: { 'x', 'y' }
+    axis : { 'x', 'y' }
        The axis along which we are looking for ticks.
 
-    coord: { 'x', 'y' }
+    coord : { 'x', 'y' }
        The coordinate for which we are looking for ticks.
 
-    farside: bool, optional
+    farside : bool, optional
        Whether we are looking on the left or bottom axes (False) or the
        right or top axes (True).
 
-    xmin, xmax, ymin, ymax: float, optional
+    xmin, xmax, ymin, ymax : float, optional
        The range of pixel values covered by the image.
 
-    mode: { 'xy', 'xscaled' }, optional
+    mode : { 'xy', 'xscaled' }, optional
        If set to 'xy' the function returns the world coordinates of the
        ticks. If 'xscaled', then only the coordinate requested is
        returned, in units of the tick spacing.
@@ -526,17 +526,17 @@ def axis_positions(wcs, axis, farside, xmin=False, xmax=False,
     Parameters
     ----------
 
-    wcs: ~aplpy.wcs_util.WCS
+    wcs : ~aplpy.wcs_util.WCS
        The WCS instance for the image.
 
-    axis: { 'x', 'y' }
+    axis : { 'x', 'y' }
        The axis along which we are computing world coordinates.
 
-    farside: bool
+    farside : bool
        Whether we are looking on the left or bottom axes (False) or the
        right or top axes (True).
 
-    xmin, xmax, ymin, ymax: float, optional
+    xmin, xmax, ymin, ymax : float, optional
        The range of pixel values covered by the image
     '''
 
@@ -581,7 +581,7 @@ def coord_range(wcs):
     Parameters
     ----------
 
-    wcs: ~aplpy.wcs_util.WCS
+    wcs : ~aplpy.wcs_util.WCS
         The WCS instance for the image.
     '''
 
