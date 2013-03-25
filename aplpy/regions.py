@@ -56,7 +56,8 @@ class Regions:
 
         Parameters
         ----------
-        region_file: [ string | pyregion.ShapeList ]
+
+        region_file: string or pyregion.ShapeList
             Path to a ds9 regions file or a ShapeList already read
             in by pyregion.
 

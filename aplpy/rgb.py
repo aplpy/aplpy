@@ -88,7 +88,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     Parameters
     ----------
 
-    data: str, tuple, list
+    data: str or tuple or list
        If a string, this is the filename of an RGB FITS cube. If a tuple
        or list, this should give the filename of three files to use for
        the red, green, and blue channel.

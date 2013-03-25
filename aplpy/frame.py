@@ -22,7 +22,6 @@ class Frame(object):
 
         Parameters
         ----------
-
         linewidth:
             The linewidth to use for the frame.
         '''
@@ -38,7 +37,6 @@ class Frame(object):
 
         Parameters
         ----------
-
         color:
             The color to use for the frame.
         '''

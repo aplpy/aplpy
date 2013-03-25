@@ -85,7 +85,6 @@ class Layers(object):
 
         Parameters
         ----------
-
         layer: str
             The name of the layer to remove
         '''
@@ -120,7 +119,6 @@ class Layers(object):
 
         Parameters
         ----------
-
         layer: str
             The name of the layer to hide
         '''
@@ -148,7 +146,6 @@ class Layers(object):
 
         Parameters
         ----------
-
         layer: str
             The name of the layer to show
         '''
@@ -172,7 +169,6 @@ class Layers(object):
 
         Parameters
         ----------
-
         layer: str
             The name of the layer to return
         '''

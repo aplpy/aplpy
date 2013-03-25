@@ -130,7 +130,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        data: [see below]
+        data: see below
 
             The FITS file to open. The following data types can be passed:
 
@@ -147,12 +147,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             By default, the image in the primary HDU is read in. If a
             different HDU is required, use this argument.
 
-        figure: [ matplotlib figure() instance ], optional
+        figure: ~matplotlib.figure.Figure, optional
             If specified, a subplot will be added to this existing
             matplotlib figure() instance, rather than a new figure
             being created from scratch.
 
-        subplot: [ list of four floats ], optional
+        subplot: list, optional
             If specified, a subplot will be added at this position. The
             list should contain [xmin, ymin, dx, dy] where xmin and ymin
             are the position of the bottom left corner of the subplot, and
@@ -464,13 +464,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Center the image on a given position and with a given radius
 
+        Either the radius or width/heigh arguments should be specified.
+
         Parameters
         ----------
 
         x, y: float
             Coordinates to center on
-
-        Either the radius or width/heigh arguments should be specified.
 
         radius: float, optional
             Radius of the region to view. This produces a square plot.
@@ -556,12 +556,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             (tuple). This argument corresponds to the 'gauss' and 'box'
             smoothing kernels.
 
-        kernel: [ 'gauss' | 'box' | numpy.array], optional
+        kernel: { 'gauss', 'box', numpy.array }, optional
             Default kernel used for smoothing is 'gauss'. The user can
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
 
-        aspect: ['auto', 'equal'], optional
+        aspect: { 'auto', 'equal' }, optional
             Whether to change the aspect ratio of the image to match that
             of the axes ('auto') or to change the aspect ratio of the axes
             to match that of the data ('equal'; default)
@@ -640,12 +640,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             (tuple). This argument corresponds to the 'gauss' and 'box'
             smoothing kernels.
 
-        kernel: [ 'gauss' | 'box' | numpy.array], optional
+        kernel: { 'gauss', 'box', numpy.array }, optional
             Default kernel used for smoothing is 'gauss'. The user can
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
 
-        aspect: ['auto', 'equal'], optional
+        aspect: { 'auto', 'equal' }, optional
             Whether to change the aspect ratio of the image to match that
             of the axes ('auto') or to change the aspect ratio of the axes
             to match that of the data ('equal'; default)
@@ -782,7 +782,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        data: [see below]
+        data: see below
 
             The FITS file to plot contours for. The following data types can be passed:
 
@@ -844,7 +844,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             (tuple). This argument corresponds to the 'gauss' and 'box'
             smoothing kernels.
 
-        kernel: [ 'gauss' | 'box' | numpy.array], optional
+        kernel: { 'gauss' , 'box' , numpy.array }, optional
             Default kernel used for smoothing is 'gauss'. The user can
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
@@ -1491,6 +1491,9 @@ class FITSFigure(Layers, Regions, Deprecated):
     def refresh(self, force=True):
         '''
         Refresh the display
+
+        Parameters
+        ----------
 
         force: str, optional
             If set to False, refresh() will only have an effect if

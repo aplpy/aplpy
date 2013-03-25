@@ -429,13 +429,13 @@ def tick_positions(wcs, spacing, axis, coord, farside=False,
     Parameters
     ----------
 
-    wcs*: ~aplpy.wcs_util.WCS
+    wcs: ~aplpy.wcs_util.WCS
        The WCS instance for the image.
 
-    spacing*: float
+    spacing: float
        The spacing along the axis.
 
-    axis*: { 'x', 'y' }
+    axis: { 'x', 'y' }
        The axis along which we are looking for ticks.
 
     coord: { 'x', 'y' }

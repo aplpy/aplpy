@@ -44,7 +44,7 @@ class Compass(object):
         Parameters
         ----------
 
-        length:float
+        length: float, optional
             The length of the scalebar
 
         label: str, optional
@@ -166,7 +166,7 @@ class ScaleBar(object):
         Parameters
         ----------
 
-        length:float
+        length: float
             The length of the scalebar
 
         label: str, optional
