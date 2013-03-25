@@ -190,13 +190,14 @@ class FITSFigure(Layers, Regions, Deprecated):
             plotting method is called. This can also be set using the
             set_auto_refresh method.
 
-        Any additional arguments are passed on to matplotlib's Figure() class.
-        For example, to set the figure size, use the figsize=(xsize, ysize)
-        argument (where xsize and ysize are in inches). For more information
-        on these additional arguments, see the *Optional keyword arguments*
-        section in the documentation for `Figure
-        <http://matplotlib.sourceforge.net/api/figure_api.html?
-        #matplotlib.figure.Figure>`_
+        kwargs
+            Any additional arguments are passed on to matplotlib's Figure() class.
+            For example, to set the figure size, use the figsize=(xsize, ysize)
+            argument (where xsize and ysize are in inches). For more information
+            on these additional arguments, see the *Optional keyword arguments*
+            section in the documentation for `Figure
+            <http://matplotlib.sourceforge.net/api/figure_api.html?
+            #matplotlib.figure.Figure>`_
         '''
 
         # Set whether to automatically refresh the display
@@ -864,15 +865,16 @@ class FITSFigure(Layers, Regions, Deprecated):
             reduces file size when using a file for the contours covering
             a much larger area than the image.
 
-        Additional keyword arguments (such as alpha, linewidths, or
-        linestyles) will be passed on directly to matplotlib's contour or
-        contourf methods. For more information on these additional
-        arguments, see the *Optional keyword arguments* sections in the
-        documentation for `contour
-        <http://matplotlib.sourceforge.net/api/axes_api.html?
-        #matplotlib.axes.Axes.contour>`_ and `contourf
-        <http://matplotlib.sourceforge.net/api/axes_api.html?
-        #matplotlib.axes.Axes.contourf>`_.
+        kwargs
+            Additional keyword arguments (such as alpha, linewidths, or
+            linestyles) will be passed on directly to matplotlib's contour or
+            contourf methods. For more information on these additional
+            arguments, see the *Optional keyword arguments* sections in the
+            documentation for `contour
+            <http://matplotlib.sourceforge.net/api/axes_api.html?
+            #matplotlib.axes.Axes.contour>`_ and `contourf
+            <http://matplotlib.sourceforge.net/api/axes_api.html?
+            #matplotlib.axes.Axes.contourf>`_.
         '''
         if layer:
             self.remove_layer(layer, raise_exception=False)
@@ -936,12 +938,14 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of marker_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as marker, facecolor, edgecolor,
-        alpha, or linewidth) will be passed on directly to matplotlib's
-        scatter method. For more information on these additional arguments,
-        see the *Optional keyword arguments* sections in the documentation for
-        `scatter <http://matplotlib.sourceforge.net/api/
-        axes_api.html?#matplotlib.axes.Axes.scatter>`_.
+        kwargs
+            Additional keyword arguments (such as marker, facecolor,
+            edgecolor, alpha, or linewidth) will be passed on directly to
+            matplotlib's scatter method. For more information on these
+            additional arguments, see the *Optional keyword arguments*
+            sections in the documentation for `scatter
+            <http://matplotlib.sourceforge.net/api/
+            axes_api.html?#matplotlib.axes.Axes.scatter>`_.
 
         '''
 
@@ -989,12 +993,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of circle_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as facecolor, edgecolor, alpha,
-        or linewidth) can be used to control the appearance of the circles,
-        which are instances of the matplotlib Circle class. For more
-        information on available arguments, see `Circle
-        <http://matplotlib.sourceforge.net/api/
-        artist_api.html#matplotlib.patches.Circle>`_.
+        kwargs
+            Additional keyword arguments (such as facecolor, edgecolor, alpha,
+            or linewidth) can be used to control the appearance of the circles,
+            which are instances of the matplotlib Circle class. For more
+            information on available arguments, see `Circle
+            <http://matplotlib.sourceforge.net/api/
+            artist_api.html#matplotlib.patches.Circle>`_.
         '''
 
         if np.isscalar(xw):
@@ -1067,12 +1072,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of ellipse_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as facecolor, edgecolor, alpha,
-        or linewidth) can be used to control the appearance of the ellipses,
-        which are instances of the matplotlib Ellipse class. For more
-        information on available arguments, see `Ellipse
-        <http://matplotlib.sourceforge.net/api/
-        artist_api.html#matplotlib.patches.Ellipse>`_.
+        kwargs
+            Additional keyword arguments (such as facecolor, edgecolor, alpha,
+            or linewidth) can be used to control the appearance of the
+            ellipses, which are instances of the matplotlib Ellipse class. For
+            more information on available arguments, see `Ellipse
+            <http://matplotlib.sourceforge.net/api/
+            artist_api.html#matplotlib.patches.Ellipse>`_.
         '''
 
         if np.isscalar(xw):
@@ -1153,12 +1159,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of rectangle_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as facecolor, edgecolor, alpha,
-        or linewidth) can be used to control the appearance of the
-        rectangles, which are instances of the matplotlib Rectangle class.
-        For more information on available arguments, see `Rectangle
-        <http://matplotlib.sourceforge.net/api/
-        artist_api.html#matplotlib.patches.Rectangle>`_.
+        kwargs
+            Additional keyword arguments (such as facecolor, edgecolor, alpha,
+            or linewidth) can be used to control the appearance of the
+            rectangles, which are instances of the matplotlib Rectangle class.
+            For more information on available arguments, see `Rectangle
+            <http://matplotlib.sourceforge.net/api/
+            artist_api.html#matplotlib.patches.Rectangle>`_.
         '''
 
         if np.isscalar(xw):
@@ -1227,12 +1234,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of line_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as color, offsets, cmap,
-        or linewidth) can be used to control the appearance of the
-        lines, which is an instances of the matplotlib LineCollection class.
-        For more information on available arguments, see `LineCollection
-        <http://matplotlib.sourceforge.net/api/collections_api.html?
-        highlight=linecollection#matplotlib.collections.LineCollection>`_.
+        kwargs
+            Additional keyword arguments (such as color, offsets, cmap, or
+            linewidth) can be used to control the appearance of the lines,
+            which is an instances of the matplotlib LineCollection class. For
+            more information on available arguments, see `LineCollection
+            <http://matplotlib.sourceforge.net/api/collections_api.html?
+            highlight=linecollection#matplotlib.collections.LineCollection>`_.
         '''
 
         if not 'color' in kwargs:
@@ -1291,12 +1299,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of line_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as color, offsets, cmap,
-        or linewidth) can be used to control the appearance of the
-        arrows, which is an instances of the matplotlib FancyArrow class.
-        For more information on available arguments, see `FancyArrow
-        <http://matplotlib.sourceforge.net/api/artist_api.html?
-        highlight=arrow#matplotlib.patches.FancyArrow>`_.
+        kwargs
+            Additional keyword arguments (such as color, offsets, cmap, or
+            linewidth) can be used to control the appearance of the arrows,
+            which is an instances of the matplotlib FancyArrow class. For more
+            information on available arguments, see `FancyArrow
+            <http://matplotlib.sourceforge.net/api/artist_api.html?
+            highlight=arrow#matplotlib.patches.FancyArrow>`_.
         '''
 
         if 'length_includes_head' not in kwargs:
@@ -1363,12 +1372,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             custom names to layers (instead of circle_set_n) and for
             replacing existing layers.
 
-        Additional keyword arguments (such as facecolor, edgecolor, alpha,
-        or linewidth) can be used to control the appearance of the circles,
-        which are instances of the matplotlib Polygon class. For more
-        information on available arguments, see `Polygon
-        <http://matplotlib.sourceforge.net/api/
-        artist_api.html#matplotlib.patches.Polygon>`_.
+        kwargs
+            Additional keyword arguments (such as facecolor, edgecolor, alpha,
+            or linewidth) can be used to control the appearance of the
+            circles, which are instances of the matplotlib Polygon class. For
+            more information on available arguments, see `Polygon
+            <http://matplotlib.sourceforge.net/api/
+            artist_api.html#matplotlib.patches.Polygon>`_.
         '''
 
         if not 'facecolor' in kwargs:

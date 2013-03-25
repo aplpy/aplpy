@@ -64,8 +64,9 @@ class Regions:
         layer: str, optional
             The name of the layer
 
-        Additional keyword arguments, e.g. zorder, will be passed to the ds9
-        call and onto the patchcollections.
+        kwargs
+            Additional keyword arguments, e.g. zorder, will be passed to the
+            ds9 call and onto the patchcollections.
         """
 
         _check_pyregion_installed()

@@ -56,10 +56,11 @@ class Compass(object):
         frame : str, optional
             Whether to display a frame behind the scalebar (default is False)
 
-        Additional keyword arguments can be used to control the appearance
-        of the scalebar, which is made up of an instance of the matplotlib
-        Rectangle class and a an instance of the Text class. For more
-        information on available arguments, see
+        kwargs
+            Additional keyword arguments can be used to control the appearance
+            of the scalebar, which is made up of an instance of the matplotlib
+            Rectangle class and a an instance of the Text class. For more
+            information on available arguments, see
 
         `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
 
@@ -180,10 +181,11 @@ class Scalebar(object):
         frame : str, optional
             Whether to display a frame behind the scalebar (default is False)
 
-        Additional arguments are passed to the matplotlib Rectangle and
-        Text classes. See the matplotlib documentation for more details.
-        In cases where the same argument exists for the two objects, the
-        argument is passed to both the Text and Rectangle instance.
+        kwargs
+            Additional arguments are passed to the matplotlib Rectangle and
+            Text classes. See the matplotlib documentation for more details.
+            In cases where the same argument exists for the two objects, the
+            argument is passed to both the Text and Rectangle instance.
         '''
 
         self._length = length
@@ -460,9 +462,9 @@ class Beam(object):
         frame : str, optional
             Whether to display a frame behind the beam (default is False)
 
-        Additional arguments are passed to the matplotlib Ellipse classe.
-        See the matplotlib documentation for more details.
-
+        kwargs
+            Additional arguments are passed to the matplotlib Ellipse classe.
+            See the matplotlib documentation for more details.
         '''
 
         if isinstance(major, basestring):
