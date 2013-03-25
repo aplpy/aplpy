@@ -516,6 +516,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Show a grayscale image of the FITS file.
 
+        Parameters
+        ----------
+
         vmin : None or float, optional
             Minimum pixel value to use for the grayscale. If set to None,
             the minimum pixel value is determined using pmin (default).
@@ -601,6 +604,9 @@ class FITSFigure(Layers, Regions, Deprecated):
                              interpolation='nearest'):
         '''
         Show a colorscale image of the FITS file.
+
+        Parameters
+        ----------
 
         vmin : None or float, optional
             Minimum pixel value to use for the colorscale. If set to None,
