@@ -18,7 +18,7 @@ class Frame(object):
     @auto_refresh
     def set_linewidth(self, linewidth):
         '''
-        Set line width of the frame
+        Set line width of the frame.
 
         Parameters
         ----------
@@ -33,7 +33,7 @@ class Frame(object):
     @auto_refresh
     def set_color(self, color):
         '''
-        Set color of the frame
+        Set color of the frame.
 
         Parameters
         ----------

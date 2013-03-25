@@ -407,7 +407,9 @@ def in_plot(wcs, x_pix, y_pix):
 
 
 def find_intersections(wcs, coord, spacing):
-    '''Find intersections of a given coordinate with a all axes'''
+    '''
+    Find intersections of a given coordinate with a all axes
+    '''
 
     # Initialize arrays
     x = []

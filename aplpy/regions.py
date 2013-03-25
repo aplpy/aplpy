@@ -52,7 +52,7 @@ class Regions:
     @auto_refresh
     def show_regions(self, region_file, layer=False, **kwargs):
         """
-        Overplot regions as specified in the regionsfile
+        Overplot regions as specified in the region file.
 
         Parameters
         ----------

@@ -526,10 +526,10 @@ def axis_positions(wcs, axis, farside, xmin=False, xmax=False,
     Parameters
     ----------
 
-    wcs*: ~aplpy.wcs_util.WCS
+    wcs: ~aplpy.wcs_util.WCS
        The WCS instance for the image.
 
-    axis*: { 'x', 'y' }
+    axis: { 'x', 'y' }
        The axis along which we are computing world coordinates.
 
     farside: bool

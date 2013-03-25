@@ -39,7 +39,7 @@ class Compass(object):
     @auto_refresh
     def show_compass(self, color='red', length=0.1, corner=4, frame=True):
         '''
-        Display a scalebar
+        Display a scalebar.
 
         Parameters
         ----------
@@ -180,8 +180,6 @@ class ScaleBar(object):
         frame: str, optional
             Whether to display a frame behind the scalebar (default is False)
 
-        Advanced:
-
         Additional arguments are passed to the matplotlib Rectangle and
         Text classes. See the matplotlib documentation for more details.
         In cases where the same argument exists for the two objects, the
@@ -246,9 +244,10 @@ class ScaleBar(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set where to place the scalebar. Acceptable values are 'left', 'right',
-        'top', 'bottom', 'top left', 'top right', 'bottom left' (default), and
-        'bottom right'.
+        Set where to place the scalebar.
+
+        Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
+        'top right', 'bottom left' (default), and 'bottom right'.
         '''
         self._base_settings['corner'] = corner
         self.show(self._length, **self._base_settings)
@@ -277,16 +276,18 @@ class ScaleBar(object):
     @auto_refresh
     def set_linestyle(self, linestyle):
         '''
-        Set the linestyle of the scalebar. Should be one of 'solid', 'dashed',
-        'dashdot', or 'dotted'.
+        Set the linestyle of the scalebar.
+
+        Should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
         '''
         self._set_scalebar_properties(linestyle=linestyle)
 
     @auto_refresh
     def set_alpha(self, alpha):
         '''
-        Set the alpha value (transparency). This should be a floating point
-        value between 0 and 1.
+        Set the alpha value (transparency).
+
+        This should be a floating point value between 0 and 1.
         '''
         self._set_scalebar_properties(alpha=alpha)
         self._set_label_properties(alpha=alpha)
@@ -340,9 +341,10 @@ class ScaleBar(object):
     @auto_refresh
     def _set_label_properties(self, **kwargs):
         '''
-        Modify the scalebar label properties. All arguments are passed to the
-        matplotlib Text class. See the matplotlib documentation for more
-        details.
+        Modify the scalebar label properties.
+
+        All arguments are passed to the matplotlib Text class. See the
+        matplotlib documentation for more details.
         '''
         for kwarg in kwargs:
             self._label_settings[kwarg] = kwargs[kwarg]
@@ -351,9 +353,10 @@ class ScaleBar(object):
     @auto_refresh
     def _set_scalebar_properties(self, **kwargs):
         '''
-        Modify the scalebar properties. All arguments are passed to the
-        matplotlib Rectangle class. See the matplotlib documentation for more
-        details.
+        Modify the scalebar properties.
+
+        All arguments are passed to the matplotlib Rectangle class. See the
+        matplotlib documentation for more details.
         '''
         for kwarg in kwargs:
             self._scalebar_settings[kwarg] = kwargs[kwarg]
@@ -362,11 +365,12 @@ class ScaleBar(object):
     @auto_refresh
     def set(self, **kwargs):
         '''
-        Modify the scalebar and scalebar properties. All arguments are passed
-        to the matplotlib Rectangle and Text classes. See the matplotlib
-        documentation for more details. In cases where the same argument
-        exists for the two objects, the argument is passed to both the Text
-        and Rectangle instance.
+        Modify the scalebar and scalebar properties.
+
+        All arguments are passed to the matplotlib Rectangle and Text classes.
+        See the matplotlib documentation for more details. In cases where the
+        same argument exists for the two objects, the argument is passed to
+        both the Text and Rectangle instance.
         '''
         for kwarg in kwargs:
             kwargs_single = {kwarg: kwargs[kwarg]}
@@ -426,7 +430,7 @@ class Beam(object):
         angle='BPA', corner='bottom left', frame=False, borderpad=0.4, pad=0.5, **kwargs):
 
         '''
-        Display the beam shape and size for the primary image
+        Display the beam shape and size for the primary image.
 
         By default, this method will search for the BMAJ, BMIN, and BPA
         keywords in the FITS header to set the major and minor axes and the
@@ -452,8 +456,6 @@ class Beam(object):
 
         frame: str, optional
             Whether to display a frame behind the beam (default is False)
-
-        Advanced:
 
         Additional arguments are passed to the matplotlib Ellipse classe.
         See the matplotlib documentation for more details.
@@ -533,7 +535,7 @@ class Beam(object):
     @auto_refresh
     def set_angle(self, angle):
         '''
-        Set the position angle of the beam on the sky in degrees.
+        Set the position angle of the beam on the sky, in degrees.
         '''
         self._base_settings['angle'] = angle
         self.show(**self._base_settings)
@@ -542,9 +544,10 @@ class Beam(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set the beam location. Acceptable values are 'left', 'right', 'top',
-        'bottom', 'top left', 'top right', 'bottom left' (default), and
-        'bottom right'.
+        Set the beam location.
+
+        Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
+        'top right', 'bottom left' (default), and 'bottom right'.
         '''
         self._base_settings['corner'] = corner
         self.show(**self._base_settings)
@@ -584,8 +587,9 @@ class Beam(object):
     @auto_refresh
     def set_alpha(self, alpha):
         '''
-        Set the alpha value (transparency). This should be a floating point
-        value between 0 and 1.
+        Set the alpha value (transparency).
+
+        This should be a floating point value between 0 and 1.
         '''
         self.set(alpha=alpha)
 
@@ -613,8 +617,9 @@ class Beam(object):
     @auto_refresh
     def set_linestyle(self, linestyle):
         '''
-        Set the line style for the edge of the beam. This should be one of
-        'solid', 'dashed', 'dashdot', or 'dotted'.
+        Set the line style for the edge of the beam.
+
+        This should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
         '''
         self.set(linestyle=linestyle)
 
@@ -628,8 +633,10 @@ class Beam(object):
     @auto_refresh
     def set_hatch(self, hatch):
         '''
-        Set the hatch pattern. This should be one of '/', '\', '|', '-', '+',
-        'x', 'o', 'O', '.', or '*'.
+        Set the hatch pattern.
+
+        This should be one of '/', '\', '|', '-', '+', 'x', 'o', 'O', '.', or
+        '*'.
         '''
         self.set(hatch=hatch)
 

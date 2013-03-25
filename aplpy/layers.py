@@ -47,7 +47,7 @@ class Layers(object):
 
     def list_layers(self):
         '''
-        Print a list of layers to standard output
+        Print a list of layers to standard output.
         '''
 
         layers_list = []
@@ -81,7 +81,7 @@ class Layers(object):
     @auto_refresh
     def remove_layer(self, layer, raise_exception=True):
         '''
-        Remove a layer
+        Remove a layer.
 
         Parameters
         ----------
@@ -112,7 +112,7 @@ class Layers(object):
     @auto_refresh
     def hide_layer(self, layer, raise_exception=True):
         '''
-        Hide a layer
+        Hide a layer.
 
         This differs from remove_layer in that if a layer is hidden
         it can be shown again using show_layer.
@@ -140,7 +140,7 @@ class Layers(object):
     @auto_refresh
     def show_layer(self, layer, raise_exception=True):
         '''
-        Show a layer
+        Show a layer.
 
         This shows a layer previously hidden with hide_layer
 
@@ -165,7 +165,7 @@ class Layers(object):
 
     def get_layer(self, layer, raise_exception=True):
         '''
-        Return a layer object
+        Return a layer object.
 
         Parameters
         ----------

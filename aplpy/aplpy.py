@@ -125,7 +125,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                  dimensions=[0, 1], slices=[], auto_refresh=True,
                  **kwargs):
         '''
-        Create a FITSFigure instance
+        Create a FITSFigure instance.
 
         Parameters
         ----------
@@ -447,7 +447,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def set_system_latex(self, usetex):
         '''
-        Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX
+        Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX.
 
         Parameters
         ----------
@@ -462,7 +462,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def recenter(self, x, y, radius=None, width=None, height=None):
         '''
-        Center the image on a given position and with a given radius
+        Center the image on a given position and with a given radius.
 
         Either the radius or width/heigh arguments should be specified.
 
@@ -514,7 +514,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                             smooth=None, kernel='gauss', aspect='equal',
                             interpolation='nearest'):
         '''
-        Show a grayscale image of the FITS file
+        Show a grayscale image of the FITS file.
 
         vmin: None or float, optional
             Minimum pixel value to use for the grayscale. If set to None,
@@ -600,7 +600,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                              smooth=None, kernel='gauss', aspect='equal',
                              interpolation='nearest'):
         '''
-        Show a colorscale image of the FITS file
+        Show a colorscale image of the FITS file.
 
         vmin: None or float, optional
             Minimum pixel value to use for the colorscale. If set to None,
@@ -723,7 +723,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def set_nan_color(self, color):
         '''
-        Set the color for NaN pixels
+        Set the color for NaN pixels.
 
         Parameters
         ----------
@@ -737,7 +737,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_rgb(self, filename=None, interpolation='nearest', vertical_flip=False, horizontal_flip=False, flip=False):
         '''
-        Show a 3-color image instead of the FITS file data
+        Show a 3-color image instead of the FITS file data.
 
         filename, optional
             The 3-color image should have exactly the same dimensions
@@ -777,7 +777,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
         '''
-        Overlay contours on the current plot
+        Overlay contours on the current plot.
 
         Parameters
         ----------
@@ -1414,7 +1414,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                   horizontalalignment='center', verticalalignment='center',
                   layer=None, **kwargs):
         '''
-        Add a text label
+        Add a text label.
 
         Parameters
         ----------
@@ -1475,11 +1475,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def set_auto_refresh(self, refresh):
         '''
-        Set whether the display should refresh after each method call
+        Set whether the display should refresh after each method call.
 
         Parameters
         ----------
-
         refresh: str
             Whether to refresh the display every time a FITSFigure
             method is called. The default is True. If set to false,
@@ -1490,11 +1489,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def refresh(self, force=True):
         '''
-        Refresh the display
+        Refresh the display.
 
         Parameters
         ----------
-
         force: str, optional
             If set to False, refresh() will only have an effect if
             auto refresh is on. If set to True, the display will be
@@ -1506,7 +1504,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300, format=None):
         '''
-        Save the current figure to a file
+        Save the current figure to a file.
 
         Parameters
         ----------
@@ -1581,7 +1579,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def set_theme(self, theme):
         '''
-        Set the axes, ticks, grid, and image colors to a certain style (experimental)
+        Set the axes, ticks, grid, and image colors to a certain style (experimental).
 
         Parameters
         ----------
@@ -1613,7 +1611,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def world2pixel(self, xw, yw):
         '''
-        Convert world to pixel coordinates
+        Convert world to pixel coordinates.
 
         Parameters
         ----------
@@ -1631,7 +1629,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def pixel2world(self, xp, yp):
         '''
-        Convert pixel to world coordinates
+        Convert pixel to world coordinates.
 
         Parameters
         ----------
@@ -1650,7 +1648,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def add_grid(self, *args, **kwargs):
         '''
-        Add a coordinate to the current figure
+        Add a coordinate to the current figure.
 
         Once this method has been run, a grid attribute becomes available,
         and can be used to control the aspect of the grid::
@@ -1674,7 +1672,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_grid(self):
         '''
-        Removes the grid from the current figure
+        Removes the grid from the current figure.
         '''
         self.grid._remove()
         del self.grid
@@ -1682,7 +1680,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def add_beam(self, *args, **kwargs):
         '''
-        Add a beam to the current figure
+        Add a beam to the current figure.
 
         Once this method has been run, a beam attribute becomes available,
         and can be used to control the aspect of the beam::
@@ -1718,8 +1716,10 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_beam(self, beam_index=None):
         '''
-        Removes the beam from the current figure. If more than one beam is
-        present, the index of the beam should be specified using beam_index=
+        Removes the beam from the current figure.
+        
+        If more than one beam is present, the index of the beam should be
+        specified using beam_index=
         '''
 
         if type(self.beam) is list:
@@ -1743,7 +1743,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def add_scalebar(self, length, *args, **kwargs):
         '''
-        Add a scalebar to the current figure
+        Add a scalebar to the current figure.
 
         Once this method has been run, a scalebar attribute becomes
         available, and can be used to control the aspect of the scalebar::
@@ -1766,7 +1766,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_scalebar(self):
         '''
-        Removes the scalebar from the current figure
+        Removes the scalebar from the current figure.
         '''
         self.scalebar._remove()
         del self.scalebar
@@ -1774,7 +1774,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def add_colorbar(self, *args, **kwargs):
         '''
-        Add a colorbar to the current figure
+        Add a colorbar to the current figure.
 
         Once this method has been run, a colorbar attribute becomes
         available, and can be used to control the aspect of the colorbar::
@@ -1800,13 +1800,13 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def remove_colorbar(self):
         '''
-        Removes the colorbar from the current figure
+        Removes the colorbar from the current figure.
         '''
         self.colorbar._remove()
         del self.colorbar
 
     def close(self):
         '''
-        Close the figure and free up the memory
+        Close the figure and free up the memory.
         '''
         mpl.close(self._figure)

@@ -75,8 +75,10 @@ class TickLabels(object):
     @auto_refresh
     def set_xformat(self, format):
         '''
-        Set the format of the x-axis tick labels. If the x-axis type is
-        ``longitude`` or ``latitude``, then the options are:
+        Set the format of the x-axis tick labels.
+
+        If the x-axis type is ``longitude`` or ``latitude``, then the options
+        are:
 
             * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
             * ``hh`` or ``dd`` - hours (or degrees)
@@ -109,8 +111,10 @@ class TickLabels(object):
     @auto_refresh
     def set_yformat(self, format):
         '''
-        Set the format of the y-axis tick labels. If the y-axis type is
-        ``longitude`` or ``latitude``, then the options are:
+        Set the format of the y-axis tick labels.
+
+        If the y-axis type is ``longitude`` or ``latitude``, then the options
+        are:
 
             * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
             * ``hh`` or ``dd`` - hours (or degrees)
@@ -143,7 +147,9 @@ class TickLabels(object):
     @auto_refresh
     def set_style(self, style):
         """
-        Set the format of the x-axis tick labels. This can be 'colons' or 'plain':
+        Set the format of the x-axis tick labels.
+
+        This can be 'colons' or 'plain':
 
             * 'colons' uses colons as separators, for example 31:41:59.26 +27:18:28.1
             * 'plain' uses letters and symbols as separators, for example 31h41m59.26s +27º18'28.1"
@@ -165,7 +171,7 @@ class TickLabels(object):
     @fixdocstring
     def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
         """
-        Set the font of the tick labels
+        Set the font of the tick labels.
 
         Parameters
         ----------
@@ -210,7 +216,7 @@ class TickLabels(object):
     @auto_refresh
     def show(self):
         """
-        Show the x- and y-axis tick labels
+        Show the x- and y-axis tick labels.
         """
         self.show_x()
         self.show_y()
@@ -218,7 +224,7 @@ class TickLabels(object):
     @auto_refresh
     def hide(self):
         """
-        Hide the x- and y-axis tick labels
+        Hide the x- and y-axis tick labels.
         """
         self.hide_x()
         self.hide_y()
@@ -226,7 +232,7 @@ class TickLabels(object):
     @auto_refresh
     def show_x(self):
         """
-        Show the x-axis tick labels
+        Show the x-axis tick labels.
         """
 
         for tick in self._ax1.get_xticklabels():
@@ -237,7 +243,7 @@ class TickLabels(object):
     @auto_refresh
     def hide_x(self):
         """
-        Hide the x-axis tick labels
+        Hide the x-axis tick labels.
         """
 
         for tick in self._ax1.get_xticklabels():
@@ -248,7 +254,7 @@ class TickLabels(object):
     @auto_refresh
     def show_y(self):
         """
-        Show the y-axis tick labels
+        Show the y-axis tick labels.
         """
 
         for tick in self._ax1.get_yticklabels():
@@ -259,7 +265,7 @@ class TickLabels(object):
     @auto_refresh
     def hide_y(self):
         """
-        Hide the y-axis tick labels
+        Hide the y-axis tick labels.
         """
 
         for tick in self._ax1.get_yticklabels():
@@ -269,7 +275,9 @@ class TickLabels(object):
 
     @auto_refresh
     def set_xposition(self, position):
-        "Set the position of the x-axis tick labels ('top' or 'bottom')"
+        """
+        Set the position of the x-axis tick labels ('top' or 'bottom')
+        """
         if position == 'bottom':
             fx1 = WCSFormatter(wcs=self._wcs, coord='x')
             self._ax1.xaxis.set_major_formatter(fx1)
@@ -285,7 +293,9 @@ class TickLabels(object):
 
     @auto_refresh
     def set_yposition(self, position):
-        "Set the position of the y-axis tick labels ('left' or 'right')"
+        """
+        Set the position of the y-axis tick labels ('left' or 'right')
+        """
         if position == 'left':
             fy1 = WCSFormatter(wcs=self._wcs, coord='y')
             self._ax1.yaxis.set_major_formatter(fy1)
@@ -372,8 +382,10 @@ class WCSFormatter(mpl.Formatter):
         self.coord = coord
 
     def __call__(self, x, pos=None):
-        'Return the format for tick val x at position pos; pos=None indicated unspecified'
-
+        """
+        Return the format for tick val x at position pos; pos=None indicated
+        unspecified
+        """
         self.coord_type = self._wcs.xaxis_coord_type if self.coord == 'x' else self._wcs.yaxis_coord_type
 
         if self.coord_type in ['longitude', 'latitude']:

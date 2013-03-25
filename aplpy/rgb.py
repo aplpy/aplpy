@@ -83,7 +83,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                    stretch_b='linear', vmid_b=None, exponent_b=2, \
                    embed_avm_tags=False):
     '''
-    Make an RGB image from a FITS RGB cube or from three FITS files
+    Make an RGB image from a FITS RGB cube or from three FITS files.
 
     Parameters
     ----------

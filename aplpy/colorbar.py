@@ -175,7 +175,9 @@ class Colorbar(object):
     @auto_refresh
     def set_location(self, location):
         '''
-        Set the location of the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
+        Set the location of the colorbar.
+        
+        Should be one of 'left', 'right', 'top', 'bottom'.
         '''
         self._base_settings['location'] = location
         self.show(**self._base_settings)
@@ -225,10 +227,11 @@ class Colorbar(object):
     @auto_refresh
     def set_box(self, box, box_orientation='vertical'):
         '''
-        Set the box within which to place the colorbar. This should be in the
-        form [xmin, ymin, dx, dy] and be in relative figure units. The
-        orientation of the colorbar within the box can be controlled with the
-        box_orientation argument.
+        Set the box within which to place the colorbar.
+        
+        This should be in the form [xmin, ymin, dx, dy] and be in relative
+        figure units. The orientation of the colorbar within the box can be
+        controlled with the box_orientation argument.
         '''
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
@@ -239,7 +242,7 @@ class Colorbar(object):
     @auto_refresh
     def set_axis_label_text(self, axis_label_text):
         '''
-        Set the colorbar label text
+        Set the colorbar label text.
         '''
         self._base_settings['axis_label_text'] = axis_label_text
         self.show(**self._base_settings)
@@ -249,7 +252,7 @@ class Colorbar(object):
     @auto_refresh
     def set_axis_label_rotation(self, axis_label_rotation):
         '''
-        Set the colorbar label rotation
+        Set the colorbar label rotation.
         '''
         self._base_settings['axis_label_rotation'] = axis_label_rotation
         self.show(**self._base_settings)
@@ -259,7 +262,7 @@ class Colorbar(object):
     @auto_refresh
     def set_axis_label_pad(self, axis_label_pad):
         '''
-        Set the colorbar label displacement, in points
+        Set the colorbar label displacement, in points.
         '''
         self._base_settings['axis_label_pad'] = axis_label_pad
         self.show(**self._base_settings)
@@ -277,7 +280,7 @@ class Colorbar(object):
     @fixdocstring
     def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
         '''
-        Set the font of the tick labels
+        Set the font of the tick labels.
 
         Parameters
         ----------
@@ -326,7 +329,7 @@ class Colorbar(object):
     @fixdocstring
     def set_axis_label_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
         '''
-        Set the font of the tick labels
+        Set the font of the tick labels.
 
         Parameters
         ----------
@@ -370,7 +373,7 @@ class Colorbar(object):
     @auto_refresh
     def set_frame_linewidth(self, linewidth):
         '''
-        Set the linewidth of the colorbar frame, in points
+        Set the linewidth of the colorbar frame, in points.
         '''
         warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
@@ -379,7 +382,7 @@ class Colorbar(object):
     @auto_refresh
     def set_frame_color(self, color):
         '''
-        Set the color of the colorbar frame, in points
+        Set the color of the colorbar frame, in points.
         '''
         warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
