@@ -39,37 +39,37 @@ class Compass(object):
     @auto_refresh
     def show_compass(self, color='red', length=0.1, corner=4, frame=True):
         '''
-        Display a scalebar
+        Display a scalebar.
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *length*:[ float ]
-                The length of the scalebar
+        length : float, optional
+            The length of the scalebar
 
-        Optional Keyword Arguments:
+        label : str, optional
+            Label to place above the scalebar
 
-            *label*: [ string ]
-                Label to place above the scalebar
+        corner : int, optional
+            Where to place the scalebar. Acceptable values are:, 'left', 'right', 'top', 'bottom', 'top left', 'top right', 'bottom left' (default), 'bottom right'
 
-            *corner*: [ integer ]
-                Where to place the scalebar. Acceptable values are:, 'left', 'right', 'top', 'bottom', 'top left', 'top right', 'bottom left' (default), 'bottom right'
+        frame : str, optional
+            Whether to display a frame behind the scalebar (default is False)
 
-            *frame*: [ True | False ]
-                Whether to display a frame behind the scalebar (default is False)
-
+        kwargs
             Additional keyword arguments can be used to control the appearance
             of the scalebar, which is made up of an instance of the matplotlib
             Rectangle class and a an instance of the Text class. For more
             information on available arguments, see
 
-            `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
+        `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
 
-            and
+        and
 
-            `Text <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.text.Text>`_`.
+        `Text <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.text.Text>`_`.
 
-            In cases where the same argument exists for the two objects, the
-            argument is passed to both the Text and Rectangle instance
+        In cases where the same argument exists for the two objects, the
+        argument is passed to both the Text and Rectangle instance
 
         '''
 
@@ -139,7 +139,7 @@ class Compass(object):
         pass
 
 
-class ScaleBar(object):
+class Scalebar(object):
 
     def __init__(self, parent):
 
@@ -164,26 +164,24 @@ class ScaleBar(object):
         '''
         Overlay a scale bar on the image.
 
-        Required Arguments:
+        Parameters
+        ----------
 
-            *length*:[ float ]
-                The length of the scalebar
+        length : float
+            The length of the scalebar
 
-        Optional Keyword Arguments:
+        label : str, optional
+            Label to place below the scalebar
 
-            *label*: [ string ]
-                Label to place below the scalebar
+        corner : int, optional
+            Where to place the scalebar. Acceptable values are:, 'left',
+            'right', 'top', 'bottom', 'top left', 'top right', 'bottom
+            left' (default), 'bottom right'
 
-            *corner*: [ integer ]
-                Where to place the scalebar. Acceptable values are:, 'left',
-                'right', 'top', 'bottom', 'top left', 'top right', 'bottom
-                left' (default), 'bottom right'
+        frame : str, optional
+            Whether to display a frame behind the scalebar (default is False)
 
-            *frame*: [ True | False ]
-                Whether to display a frame behind the scalebar (default is False)
-
-        Advanced:
-
+        kwargs
             Additional arguments are passed to the matplotlib Rectangle and
             Text classes. See the matplotlib documentation for more details.
             In cases where the same argument exists for the two objects, the
@@ -248,9 +246,10 @@ class ScaleBar(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set where to place the scalebar. Acceptable values are 'left', 'right',
-        'top', 'bottom', 'top left', 'top right', 'bottom left' (default), and
-        'bottom right'.
+        Set where to place the scalebar.
+
+        Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
+        'top right', 'bottom left' (default), and 'bottom right'.
         '''
         self._base_settings['corner'] = corner
         self.show(self._length, **self._base_settings)
@@ -279,16 +278,18 @@ class ScaleBar(object):
     @auto_refresh
     def set_linestyle(self, linestyle):
         '''
-        Set the linestyle of the scalebar. Should be one of 'solid', 'dashed',
-        'dashdot', or 'dotted'.
+        Set the linestyle of the scalebar.
+
+        Should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
         '''
         self._set_scalebar_properties(linestyle=linestyle)
 
     @auto_refresh
     def set_alpha(self, alpha):
         '''
-        Set the alpha value (transparency). This should be a floating point
-        value between 0 and 1.
+        Set the alpha value (transparency).
+
+        This should be a floating point value between 0 and 1.
         '''
         self._set_scalebar_properties(alpha=alpha)
         self._set_label_properties(alpha=alpha)
@@ -306,7 +307,8 @@ class ScaleBar(object):
         '''
         Set the font of the tick labels
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
         common: family, style, variant, stretch, weight, size, fontproperties
 
@@ -341,9 +343,10 @@ class ScaleBar(object):
     @auto_refresh
     def _set_label_properties(self, **kwargs):
         '''
-        Modify the scalebar label properties. All arguments are passed to the
-        matplotlib Text class. See the matplotlib documentation for more
-        details.
+        Modify the scalebar label properties.
+
+        All arguments are passed to the matplotlib Text class. See the
+        matplotlib documentation for more details.
         '''
         for kwarg in kwargs:
             self._label_settings[kwarg] = kwargs[kwarg]
@@ -352,9 +355,10 @@ class ScaleBar(object):
     @auto_refresh
     def _set_scalebar_properties(self, **kwargs):
         '''
-        Modify the scalebar properties. All arguments are passed to the
-        matplotlib Rectangle class. See the matplotlib documentation for more
-        details.
+        Modify the scalebar properties.
+
+        All arguments are passed to the matplotlib Rectangle class. See the
+        matplotlib documentation for more details.
         '''
         for kwarg in kwargs:
             self._scalebar_settings[kwarg] = kwargs[kwarg]
@@ -363,11 +367,12 @@ class ScaleBar(object):
     @auto_refresh
     def set(self, **kwargs):
         '''
-        Modify the scalebar and scalebar properties. All arguments are passed
-        to the matplotlib Rectangle and Text classes. See the matplotlib
-        documentation for more details. In cases where the same argument
-        exists for the two objects, the argument is passed to both the Text
-        and Rectangle instance.
+        Modify the scalebar and scalebar properties.
+
+        All arguments are passed to the matplotlib Rectangle and Text classes.
+        See the matplotlib documentation for more details. In cases where the
+        same argument exists for the two objects, the argument is passed to
+        both the Text and Rectangle instance.
         '''
         for kwarg in kwargs:
             kwargs_single = {kwarg: kwargs[kwarg]}
@@ -402,6 +407,9 @@ class ScaleBar(object):
         warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
         self.set_font(style=style)
 
+# For backward-compatibility
+ScaleBar = Scalebar
+
 
 class Beam(object):
 
@@ -427,37 +435,36 @@ class Beam(object):
         angle='BPA', corner='bottom left', frame=False, borderpad=0.4, pad=0.5, **kwargs):
 
         '''
-        Display the beam shape and size for the primary image
+        Display the beam shape and size for the primary image.
 
         By default, this method will search for the BMAJ, BMIN, and BPA
         keywords in the FITS header to set the major and minor axes and the
         position angle on the sky.
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
-            *major*: [ float ]
-                Major axis of the beam in degrees (overrides BMAJ if present)
+        major : float, optional
+            Major axis of the beam in degrees (overrides BMAJ if present)
 
-            *minor*: [ float ]
-                Minor axis of the beam in degrees (overrides BMIN if present)
+        minor : float, optional
+            Minor axis of the beam in degrees (overrides BMIN if present)
 
-            *angle*: [ float ]
-                Position angle of the beam on the sky in degrees (overrides
-                BPA if present) in the anticlockwise direction.
+        angle : float, optional
+            Position angle of the beam on the sky in degrees (overrides
+            BPA if present) in the anticlockwise direction.
 
-            *corner*: [ integer ]
-                The beam location. Acceptable values are 'left', 'right',
-                'top', 'bottom', 'top left', 'top right', 'bottom left'
-                (default), and 'bottom right'.
+        corner : int, optional
+            The beam location. Acceptable values are 'left', 'right',
+            'top', 'bottom', 'top left', 'top right', 'bottom left'
+            (default), and 'bottom right'.
 
-            *frame*: [ True | False ]
-                Whether to display a frame behind the beam (default is False)
+        frame : str, optional
+            Whether to display a frame behind the beam (default is False)
 
-        Advanced:
-
+        kwargs
             Additional arguments are passed to the matplotlib Ellipse classe.
             See the matplotlib documentation for more details.
-
         '''
 
         if isinstance(major, basestring):
@@ -533,7 +540,7 @@ class Beam(object):
     @auto_refresh
     def set_angle(self, angle):
         '''
-        Set the position angle of the beam on the sky in degrees.
+        Set the position angle of the beam on the sky, in degrees.
         '''
         self._base_settings['angle'] = angle
         self.show(**self._base_settings)
@@ -542,9 +549,10 @@ class Beam(object):
     @auto_refresh
     def set_corner(self, corner):
         '''
-        Set the beam location. Acceptable values are 'left', 'right', 'top',
-        'bottom', 'top left', 'top right', 'bottom left' (default), and
-        'bottom right'.
+        Set the beam location.
+
+        Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
+        'top right', 'bottom left' (default), and 'bottom right'.
         '''
         self._base_settings['corner'] = corner
         self.show(**self._base_settings)
@@ -584,8 +592,9 @@ class Beam(object):
     @auto_refresh
     def set_alpha(self, alpha):
         '''
-        Set the alpha value (transparency). This should be a floating point
-        value between 0 and 1.
+        Set the alpha value (transparency).
+
+        This should be a floating point value between 0 and 1.
         '''
         self.set(alpha=alpha)
 
@@ -613,8 +622,9 @@ class Beam(object):
     @auto_refresh
     def set_linestyle(self, linestyle):
         '''
-        Set the line style for the edge of the beam. This should be one of
-        'solid', 'dashed', 'dashdot', or 'dotted'.
+        Set the line style for the edge of the beam.
+
+        This should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
         '''
         self.set(linestyle=linestyle)
 
@@ -628,8 +638,10 @@ class Beam(object):
     @auto_refresh
     def set_hatch(self, hatch):
         '''
-        Set the hatch pattern. This should be one of '/', '\', '|', '-', '+',
-        'x', 'o', 'O', '.', or '*'.
+        Set the hatch pattern.
+
+        This should be one of '/', '\', '|', '-', '+', 'x', 'o', 'O', '.', or
+        '*'.
         '''
         self.set(hatch=hatch)
 

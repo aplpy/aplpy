@@ -34,37 +34,37 @@ import string
 
 doc = {}
 
-doc['size'] = '''*size*:
+doc['size'] = '''size : str or int or float, optional
     The size of the font. This can either be a numeric value (e.g.
     12), giving the size in points, or one of 'xx-small', 'x-small',
     'small', 'medium', 'large', 'x-large', or 'xx-large'.
     '''
 
-doc['weight'] = '''*weight*:
+doc['weight'] = '''weight : str or int or float, optional
     The weight (or boldness) of the font. This can either be a numeric
     value in the range 0-1000 or one of 'ultralight', 'light', 'normal',
     'regular', 'book', 'medium', 'roman', 'semibold', 'demibold', 'demi',
     'bold', 'heavy', 'extra bold', 'black'.
     '''
 
-doc['stretch'] = '''*stretch*:
+doc['stretch'] = '''stretch : str or int or float, optional
     The stretching (spacing between letters) for the font. This can either
     be a numeric value in the range 0-1000 or one of 'ultra-condensed',
     'extra-condensed', 'condensed', 'semi-condensed', 'normal',
     'semi-expanded', 'expanded', 'extra-expanded' or 'ultra-expanded'.
     '''
 
-doc['family'] = '''*family*:
+doc['family'] = '''family : str, optional
     The family of the font to use. This can either be a generic font
     family name, either 'serif', 'sans-serif', 'cursive', 'fantasy', or
     'monospace', or a list of font names in decreasing order of priority.
     '''
 
-doc['style'] = '''*style*:
+doc['style'] = '''style : str, optional
     The font style. This can be 'normal', 'italic' or 'oblique'.
     '''
 
-doc['variant'] = '''*variant*:
+doc['variant'] = '''variant : str, optional
     The font variant. This can be 'normal' or 'small-caps'
     '''
 
@@ -81,7 +81,7 @@ def fixdocstring(func):
 
     footer = lines[i + 1:]
 
-    indent = lines[i].index('common:') + 4
+    indent = lines[i].index('common:')
 
     common = []
     for item in lines[i].split(':')[1].split(','):

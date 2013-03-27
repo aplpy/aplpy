@@ -33,34 +33,35 @@ class Colorbar(object):
         '''
         Show a colorbar on the side of the image.
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
-            *location*: [ string ]
-                Where to place the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
+        location : str, optional
+            Where to place the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
 
-            *width*: [ float ]
-                The width of the colorbar relative to the canvas size.
+        width : float, optional
+            The width of the colorbar relative to the canvas size.
 
-            *pad*: [ float ]
-                The spacing between the colorbar and the image relative to the canvas size.
+        pad : float, optional
+            The spacing between the colorbar and the image relative to the canvas size.
 
-            *ticks*: [ None or list ]
-                The position of the ticks on the colorbar.
+        ticks : list, optional
+            The position of the ticks on the colorbar.
 
-            *labels*: [ True or False ]
-                Whether to show numerical labels.
+        labels : bool, optional
+            Whether to show numerical labels.
 
-            *box*: [ list ]
-                A custom box within which to place the colorbar. This should
-                be in the form [xmin, ymin, dx, dy] and be in relative figure
-                units. This overrides the location argument.
+        box : list, optional
+            A custom box within which to place the colorbar. This should
+            be in the form [xmin, ymin, dx, dy] and be in relative figure
+            units. This overrides the location argument.
 
-            *box_orientation* [ str ]
-                The orientation of the colorbar within the box. Can be
-                'horizontal' or 'vertical'
+        box_orientation str, optional
+            The orientation of the colorbar within the box. Can be
+            'horizontal' or 'vertical'
 
-            *axis_label_text* [ str ]
-                Optional text label of the colorbar.
+        axis_label_text str, optional
+            Optional text label of the colorbar.
         '''
 
         self._base_settings['location'] = location
@@ -174,7 +175,9 @@ class Colorbar(object):
     @auto_refresh
     def set_location(self, location):
         '''
-        Set the location of the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
+        Set the location of the colorbar.
+        
+        Should be one of 'left', 'right', 'top', 'bottom'.
         '''
         self._base_settings['location'] = location
         self.show(**self._base_settings)
@@ -224,10 +227,11 @@ class Colorbar(object):
     @auto_refresh
     def set_box(self, box, box_orientation='vertical'):
         '''
-        Set the box within which to place the colorbar. This should be in the
-        form [xmin, ymin, dx, dy] and be in relative figure units. The
-        orientation of the colorbar within the box can be controlled with the
-        box_orientation argument.
+        Set the box within which to place the colorbar.
+        
+        This should be in the form [xmin, ymin, dx, dy] and be in relative
+        figure units. The orientation of the colorbar within the box can be
+        controlled with the box_orientation argument.
         '''
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
@@ -238,7 +242,7 @@ class Colorbar(object):
     @auto_refresh
     def set_axis_label_text(self, axis_label_text):
         '''
-        Set the colorbar label text
+        Set the colorbar label text.
         '''
         self._base_settings['axis_label_text'] = axis_label_text
         self.show(**self._base_settings)
@@ -248,7 +252,7 @@ class Colorbar(object):
     @auto_refresh
     def set_axis_label_rotation(self, axis_label_rotation):
         '''
-        Set the colorbar label rotation
+        Set the colorbar label rotation.
         '''
         self._base_settings['axis_label_rotation'] = axis_label_rotation
         self.show(**self._base_settings)
@@ -258,7 +262,7 @@ class Colorbar(object):
     @auto_refresh
     def set_axis_label_pad(self, axis_label_pad):
         '''
-        Set the colorbar label displacement, in points
+        Set the colorbar label displacement, in points.
         '''
         self._base_settings['axis_label_pad'] = axis_label_pad
         self.show(**self._base_settings)
@@ -276,9 +280,10 @@ class Colorbar(object):
     @fixdocstring
     def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
         '''
-        Set the font of the tick labels
+        Set the font of the tick labels.
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
         common: family, style, variant, stretch, weight, size, fontproperties
 
@@ -324,9 +329,10 @@ class Colorbar(object):
     @fixdocstring
     def set_axis_label_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
         '''
-        Set the font of the tick labels
+        Set the font of the tick labels.
 
-        Optional Keyword Arguments:
+        Parameters
+        ----------
 
         common: family, style, variant, stretch, weight, size, fontproperties
 
@@ -367,7 +373,7 @@ class Colorbar(object):
     @auto_refresh
     def set_frame_linewidth(self, linewidth):
         '''
-        Set the linewidth of the colorbar frame, in points
+        Set the linewidth of the colorbar frame, in points.
         '''
         warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
@@ -376,7 +382,7 @@ class Colorbar(object):
     @auto_refresh
     def set_frame_color(self, color):
         '''
-        Set the color of the colorbar frame, in points
+        Set the color of the colorbar frame, in points.
         '''
         warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:

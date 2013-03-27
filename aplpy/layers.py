@@ -47,7 +47,7 @@ class Layers(object):
 
     def list_layers(self):
         '''
-        Print a list of layers to standard output
+        Print a list of layers to standard output.
         '''
 
         layers_list = []
@@ -81,12 +81,12 @@ class Layers(object):
     @auto_refresh
     def remove_layer(self, layer, raise_exception=True):
         '''
-        Remove a layer
+        Remove a layer.
 
-        Required Arguments:
-
-            *layer*: [ string ]
-                The name of the layer to remove
+        Parameters
+        ----------
+        layer : str
+            The name of the layer to remove
         '''
 
         if layer in self._layers:
@@ -112,15 +112,15 @@ class Layers(object):
     @auto_refresh
     def hide_layer(self, layer, raise_exception=True):
         '''
-        Hide a layer
+        Hide a layer.
 
         This differs from remove_layer in that if a layer is hidden
         it can be shown again using show_layer.
 
-        Required Arguments:
-
-            *layer*: [ string ]
-                The name of the layer to hide
+        Parameters
+        ----------
+        layer : str
+            The name of the layer to hide
         '''
         if layer in self._layers:
 
@@ -140,14 +140,14 @@ class Layers(object):
     @auto_refresh
     def show_layer(self, layer, raise_exception=True):
         '''
-        Show a layer
+        Show a layer.
 
         This shows a layer previously hidden with hide_layer
 
-        Required Arguments:
-
-            *layer*: [ string ]
-                The name of the layer to show
+        Parameters
+        ----------
+        layer : str
+            The name of the layer to show
         '''
         if layer in self._layers:
 
@@ -165,12 +165,12 @@ class Layers(object):
 
     def get_layer(self, layer, raise_exception=True):
         '''
-        Return a layer object
+        Return a layer object.
 
-        Required Arguments:
-
-            *layer*: [ string ]
-                The name of the layer to return
+        Parameters
+        ----------
+        layer : str
+            The name of the layer to return
         '''
         if layer in self._layers:
             return self._layers[layer]
