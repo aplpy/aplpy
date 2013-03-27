@@ -1026,6 +1026,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             patches.append(Circle((xp[i], yp[i]), radius=rp[i], **kwargs))
 
         p = PatchCollection(patches, match_original=True)
+
+        # Due to a bug in matplotlib, we have to reset the facecolor
+        if 'facecolor' in kwargs:
+            p.set_facecolor(kwargs['facecolor'])
+
         if zorder is not None:
             p.zorder = zorder
         c = self._ax1.add_collection(p)
@@ -1117,6 +1122,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i], **kwargs))
 
         p = PatchCollection(patches, match_original=True)
+
+        # Due to a bug in matplotlib, we have to reset the facecolor
+        if 'facecolor' in kwargs:
+            p.set_facecolor(kwargs['facecolor'])
+
         if zorder is not None:
             p.zorder = zorder
         c = self._ax1.add_collection(p)
@@ -1200,6 +1210,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
 
         p = PatchCollection(patches, match_original=True)
+
+        # Due to a bug in matplotlib, we have to reset the facecolor
+        if 'facecolor' in kwargs:
+            p.set_facecolor(kwargs['facecolor'])
+
         if zorder is not None:
             p.zorder = zorder
         c = self._ax1.add_collection(p)
@@ -1337,6 +1352,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1, **kwargs))
 
         p = PatchCollection(arrows, match_original=True)
+
+        # Due to a bug in matplotlib, we have to reset the facecolor
+        if 'facecolor' in kwargs:
+            p.set_facecolor(kwargs['facecolor'])
+
         if zorder is not None:
             p.zorder = zorder
         c = self._ax1.add_collection(p)
@@ -1408,6 +1428,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             patches.append(Polygon(pix_polygon_list[i], **kwargs))
 
         p = PatchCollection(patches, match_original=True)
+
+        # Due to a bug in matplotlib, we have to reset the facecolor
+        if 'facecolor' in kwargs:
+            p.set_facecolor(kwargs['facecolor'])
+
         if zorder is not None:
             p.zorder = zorder
         c = self._ax1.add_collection(p)
