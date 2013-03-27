@@ -18,12 +18,12 @@ class Frame(object):
     @auto_refresh
     def set_linewidth(self, linewidth):
         '''
-        Set line width of the frame
+        Set line width of the frame.
 
-        Required arguments:
-
-            *linewidth*:
-                The linewidth to use for the frame.
+        Parameters
+        ----------
+        linewidth:
+            The linewidth to use for the frame.
         '''
         for key in self._ax1.spines:
             self._ax1.spines[key].set_linewidth(linewidth)
@@ -33,12 +33,12 @@ class Frame(object):
     @auto_refresh
     def set_color(self, color):
         '''
-        Set color of the frame
+        Set color of the frame.
 
-        Required arguments:
-
-            *color*:
-                The color to use for the frame.
+        Parameters
+        ----------
+        color:
+            The color to use for the frame.
         '''
         for key in self._ax1.spines:
             self._ax1.spines[key].set_edgecolor(color)

@@ -48,11 +48,11 @@ class Grid(object):
         '''
         Set the grid line spacing in the longitudinal direction
 
-        Required Arguments:
-
-            *xspacing*: [ float | 'tick' ]
-                The spacing in the longitudinal direction. To set the spacing
-                to be the same as the ticks, set this to 'tick'
+        Parameters
+        ----------
+        xspacing : { float, str }
+            The spacing in the longitudinal direction. To set the spacing
+            to be the same as the ticks, set this to 'tick'
         '''
         if xspacing == 'tick':
             self.x_auto_spacing = True
@@ -72,11 +72,11 @@ class Grid(object):
         '''
         Set the grid line spacing in the latitudinal direction
 
-        Required Arguments:
-
-            *yspacing*: [ float | 'tick' ]
-                The spacing in the latitudinal direction. To set the spacing
-                to be the same as the ticks, set this to 'tick'
+        Parameters
+        ----------
+        yspacing : { float, str }
+            The spacing in the latitudinal direction. To set the spacing
+            to be the same as the ticks, set this to 'tick'
         '''
 
         if yspacing == 'tick':
@@ -97,10 +97,10 @@ class Grid(object):
         '''
         Set the color of the grid lines
 
-        Required Arguments:
-
-            *color*: [ string ]
-                The color of the grid lines
+        Parameters
+        ----------
+        color : str
+            The color of the grid lines
         '''
         if self._grid:
             self._grid.set_edgecolor(color)
@@ -112,12 +112,12 @@ class Grid(object):
         '''
         Set the alpha (transparency) of the grid lines
 
-        Required Arguments:
-
-            *alpha*: [ float ]
-                The alpha value of the grid. This should be a floating
-                point value between 0 and 1, where 0 is completely
-                transparent, and 1 is completely opaque.
+        Parameters
+        ----------
+        alpha : float
+            The alpha value of the grid. This should be a floating
+            point value between 0 and 1, where 0 is completely
+            transparent, and 1 is completely opaque.
         '''
         if self._grid:
             self._grid.set_alpha(alpha)
@@ -407,7 +407,9 @@ def in_plot(wcs, x_pix, y_pix):
 
 
 def find_intersections(wcs, coord, spacing):
-    '''Find intersections of a given coordinate with a all axes'''
+    '''
+    Find intersections of a given coordinate with a all axes
+    '''
 
     # Initialize arrays
     x = []

@@ -52,20 +52,21 @@ class Regions:
     @auto_refresh
     def show_regions(self, region_file, layer=False, **kwargs):
         """
-        Overplot regions as specified in the regionsfile
+        Overplot regions as specified in the region file.
 
-        Required Arguments:
-            *region_file*: [ string | pyregion.ShapeList ]
-                Path to a ds9 regions file or a ShapeList already read
-                in by pyregion.
+        Parameters
+        ----------
 
-        Optional Keyword Arguments:
+        region_file: string or pyregion.ShapeList
+            Path to a ds9 regions file or a ShapeList already read
+            in by pyregion.
 
-            *layer*: [ string ]
-                The name of the layer
+        layer: str, optional
+            The name of the layer
 
-        Additional keyword arguments, e.g. zorder, will be passed to the ds9
-        call and onto the patchcollections.
+        kwargs
+            Additional keyword arguments, e.g. zorder, will be passed to the
+            ds9 call and onto the patchcollections.
         """
 
         _check_pyregion_installed()
