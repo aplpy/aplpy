@@ -1,3 +1,4 @@
 numpy
 Cython
-git+http://github.com/astropy/astropy.git#egg=astropy
+astropy
+matplotlib
