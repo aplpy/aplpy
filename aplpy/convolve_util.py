@@ -6,7 +6,7 @@ from astropy.nddata import convolve as nddata_convolve, make_kernel
 
 def convolve(image, smooth=3, kernel='gauss'):
 
-    if not np.isscalar(smooth):
+    if smooth is not None and not np.isscalar(smooth):
         raise ValueError("smooth= should be an integer - for more complex "
                          "kernels, pass an array containing the kernel "
                          "to the kernel= option")
