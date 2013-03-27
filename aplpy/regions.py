@@ -106,9 +106,20 @@ def ds9(region_file, header, zorder=3, **kwargs):
     rrim = rr.as_imagecoord(header)
 
     # pyregion and aplpy both correct for the FITS standard origin=1,1
-    # need to avoid double-correcting
+    # need to avoid double-correcting. Also, only some items in `coord_list`
+    # are pixel coordinates, so which ones should be corrected depends on the
+    # shape.
     for r in rrim:
-        for i in range(len(r.coord_list)):
+        if r.name == 'polygon':
+            correct = range(len(r.coord_list))
+        elif r.name == 'line':
+            correct = range(4)
+        elif r.name in ['rotbox', 'box', 'ellipse', 'annulus', 'circle', 'panda', 'pie', 'epanda', 'text', 'point', 'vector']:
+            correct = range(2)
+        else:
+            log.warn("Unknown region type '{0}' - please report to the developers")
+            correct = range(2)
+        for i in correct:
             r.coord_list[i] += 1
 
     if 'text_offset' in kwargs:
