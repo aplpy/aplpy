@@ -124,3 +124,11 @@ if not _PACKAGE_SETUP_:
 
 from .aplpy import FITSFigure
 from .rgb import make_rgb_image, make_rgb_cube
+
+from .frame import Frame
+from .overlays import Scalebar, Beam
+from .colorbar import Colorbar
+from .grid import Grid
+from .ticks import Ticks
+from .labels import TickLabels
+from .axis_labels import AxisLabels
