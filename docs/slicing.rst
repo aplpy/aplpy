@@ -7,7 +7,7 @@ How to slice data cubes
 APLpy supports extracting a slice from n-dimensional FITS cubes, and
 re-ordering dimensions. The two key arguments to
 :class:`~aplpy.aplpy.FITSFigure` to control this are ``dimensions`` and
-``slices``. These arguments can also be passed to ``show_contour``.
+``slices``. These arguments can also be passed to :meth:`~aplpy.aplpy.FITSFigure.show_contour`.
 
 The ``dimensions`` argument is used to specify which dimensions should be used
 for the x- and y-axis respectively (zero based). The default values are ``[0,

@@ -79,7 +79,7 @@ image. Try typing the following command::
 
     gc.show_contour('fits/mips_24micron.fits', colors='white')
 
-There are a number of arguments that can be passed to ``show_contour`` to
+There are a number of arguments that can be passed to :meth:`~aplpy.aplpy.FITSFigure.show_contour` to
 control the appearance of the contours as well as the number of levels to
 show. For more information, see the see the :meth:`~aplpy.aplpy.FITSFigure.show_contour` documentation.
 
@@ -106,7 +106,7 @@ For more information, see the :meth:`~aplpy.aplpy.FITSFigure.show_markers`
 documentation.
 
 It's often the case that you might want to change the look of a contour or
-markers, but if you run ``show_contour`` or ``show_markers`` a second time, it
+markers, but if you run :meth:`~aplpy.aplpy.FITSFigure.show_contour` or :meth:`~aplpy.aplpy.FITSFigure.show_markers` a second time, it
 will overplot rather than replacing. To solve this problem APLpy has 'layers'
 which can be manipulated in a basic way. Type::
 
@@ -119,9 +119,9 @@ which will print out something like this::
     -> contour_set_1
     -> marker_set_1
 
-You can use ``remove_layer``, ``hide_layer``, and ``show_layer`` to manipulate
+You can use :meth:`~aplpy.aplpy.FITSFigure.remove_layer`, :meth:`~aplpy.aplpy.FITSFigure.hide_layer`, and :meth:`~aplpy.aplpy.FITSFigure.show_layer` to manipulate
 the layers, and you can also specify the ``layer=name`` argument to
-``show_contour`` or ``show_markers``. Using the latter forces APLpy to name
+:meth:`~aplpy.aplpy.FITSFigure.show_contour` or :meth:`~aplpy.aplpy.FITSFigure.show_markers`. Using the latter forces APLpy to name
 the layer you are creating with the name provided, and can also be used to
 replace an existing layer. For example, let's change the color of the markers
 from green to red::
