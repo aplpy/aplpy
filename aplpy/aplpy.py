@@ -785,7 +785,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if horizontal_flip:
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
-        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
+        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation)
 
     @auto_refresh
     def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
