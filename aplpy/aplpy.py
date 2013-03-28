@@ -766,7 +766,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
 
         if flip:
-            warnings.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
+            log.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
 
         if filename is None:
             if hasattr(self, '_rgb_image'):
@@ -775,6 +775,9 @@ class FITSFigure(Layers, Regions, Deprecated):
                 raise Exception("Need to specify the filename of an RGB image")
         else:
             image = Image.open(filename)
+
+        if image_util._matplotlib_pil_bug_present():
+            vertical_flip = True
 
         if vertical_flip:
             image = image.transpose(Image.FLIP_TOP_BOTTOM)
