@@ -8,13 +8,15 @@ Using APLpy
 ===========
  
 .. toctree::
-  :maxdepth: 1
+  :maxdepth: 2
 
   quickstart.rst
   quick_reference.rst
   arbitrary_coordinate_systems.rst
   slicing.rst
   howtos.rst
+
+.. _api:
 
 Reference/API
 =============

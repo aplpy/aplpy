@@ -1,19 +1,19 @@
 Making RGB images
 -----------------
 
-While the APLpy ``aplpy.FITSFigure.show_rgb()`` can be used to display an RGB
-image with the same projection as a given FITS file, it is also possible to
-use the ``aplpy.make_rgb_cube()`` and ``aplpy.make_rgb_image()`` to generate
-RGB images from scratch, even for files with initially different
-projections/resolutions.
+While the APLpy :meth:`~aplpy.aplpy.FITSFigure.show_rgb` can be used to
+display an RGB image with the same projection as a given FITS file, it is also
+possible to use the :func:`~aplpy.rgb.make_rgb_cube` and
+:func:`~aplpy.rgb.make_rgb_image` to generate RGB images from scratch, even
+for files with initially different projections/resolutions.
 
 Reprojecting three images to the same projection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you are starting from three images with different projections/resolutions,
 the first step is to reproject these to a common projection/resolution. The
-following code shows how this can be done using the ``aplpy.make_rgb_cube()``
-method::
+following code shows how this can be done using the
+:func:`~aplpy.rgb.make_rgb_cube` function::
 
     import aplpy
     aplpy.make_rgb_cube(['2mass_k.fits','2mass_h.fits', \
@@ -28,10 +28,10 @@ image (see next section)
 Producing an RGB image from images in a common projection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``aplpy.make_rgb_image()`` method can be used to produce an RGB image from
-either three FITS files in the exact same projection, or a FITS cube
-containing the three channels (such as that output by
-``aplpy.make_rgb_cube()``). The following example illustrates how to do this::
+The :func:`~aplpy.rgb.make_rgb_image` function can be used to produce an RGB
+image from either three FITS files in the exact same projection, or a FITS
+cube containing the three channels (such as that output by
+:func:`~aplpy.rgb.make_rgb_cube`). The following example illustrates how to do this::
 
     import aplpy
     aplpy.make_rgb_image('2mass_cube.fits','2mass_rgb.tif')

@@ -867,14 +867,12 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         kwargs
             Additional keyword arguments (such as alpha, linewidths, or
-            linestyles) will be passed on directly to matplotlib's contour or
-            contourf methods. For more information on these additional
-            arguments, see the *Optional keyword arguments* sections in the
-            documentation for `contour
-            <http://matplotlib.sourceforge.net/api/axes_api.html?
-            #matplotlib.axes.Axes.contour>`_ and `contourf
-            <http://matplotlib.sourceforge.net/api/axes_api.html?
-            #matplotlib.axes.Axes.contourf>`_.
+            linestyles) will be passed on directly to Matplotlib's
+            :meth:`~matplotlib.axes.Axes.contour` or
+            :meth:`~matplotlib.axes.Axes.contourf` methods. For more
+            information on these additional arguments, see the *Optional
+            keyword arguments* sections in the documentation for those
+            methods.
         '''
         if layer:
             self.remove_layer(layer, raise_exception=False)
@@ -927,10 +925,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw : list or ~numpy.ndarray
+        xw : list or `~numpy.ndarray`
             The x postions of the markers (in world coordinates)
 
-        yw : list or ~numpy.ndarray
+        yw : list or `~numpy.ndarray`
             The y positions of the markers (in world coordinates)
 
         layer : str, optional
@@ -941,12 +939,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         kwargs
             Additional keyword arguments (such as marker, facecolor,
             edgecolor, alpha, or linewidth) will be passed on directly to
-            matplotlib's scatter method. For more information on these
-            additional arguments, see the *Optional keyword arguments*
-            sections in the documentation for `scatter
-            <http://matplotlib.sourceforge.net/api/
-            axes_api.html?#matplotlib.axes.Axes.scatter>`_.
-
+            Matplotlib's :meth:`~matplotlib.axes.Axes.scatter` method (in
+            particular, have a look at the *Optional keyword arguments* in the
+            documentation for that method).
         '''
 
         if not 'c' in kwargs:
@@ -979,13 +974,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw : list or ~numpy.ndarray
+        xw : list or `~numpy.ndarray`
             The x postions of the circles (in world coordinates)
 
-        yw : list or ~numpy.ndarray
+        yw : list or `~numpy.ndarray`
             The y positions of the circles (in world coordinates)
 
-        radius : int or float or list or ~numpy.ndarray
+        radius : int or float or list or `~numpy.ndarray`
             The radii of the circles (in world coordinates)
 
         layer : str, optional
@@ -995,11 +990,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
-            or linewidth) can be used to control the appearance of the circles,
-            which are instances of the matplotlib Circle class. For more
-            information on available arguments, see `Circle
-            <http://matplotlib.sourceforge.net/api/
-            artist_api.html#matplotlib.patches.Circle>`_.
+            or linewidth) are passed to Matplotlib
+            :class:`~matplotlib.patches.Circle` class, and can be used to
+            control the appearance of the circles.
         '''
 
         if np.isscalar(xw):
@@ -1056,19 +1049,19 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw : list or ~numpy.ndarray
+        xw : list or `~numpy.ndarray`
             The x postions of the ellipses (in world coordinates)
 
-        yw : list or ~numpy.ndarray
+        yw : list or `~numpy.ndarray`
             The y positions of the ellipses (in world coordinates)
 
-        width : int or float or list or ~numpy.ndarray
+        width : int or float or list or `~numpy.ndarray`
             The width of the ellipse (in world coordinates)
 
-        height : int or float or list or ~numpy.ndarray
+        height : int or float or list or `~numpy.ndarray`
             The height of the ellipse (in world coordinates)
 
-        angle : int or float or list or ~numpy.ndarray, optional
+        angle : int or float or list or `~numpy.ndarray`, optional
             rotation in degrees (anti-clockwise). Default
             angle is 0.0.
 
@@ -1079,11 +1072,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
-            or linewidth) can be used to control the appearance of the
-            ellipses, which are instances of the matplotlib Ellipse class. For
-            more information on available arguments, see `Ellipse
-            <http://matplotlib.sourceforge.net/api/
-            artist_api.html#matplotlib.patches.Ellipse>`_.
+            or linewidth) are passed to Matplotlib
+            :class:`~matplotlib.patches.Ellipse` class, and can be used to
+            control the appearance of the ellipses.
         '''
 
         if np.isscalar(xw):
@@ -1152,16 +1143,16 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        xw : list or ~numpy.ndarray
+        xw : list or `~numpy.ndarray`
             The x postions of the rectangles (in world coordinates)
 
-        yw : list or ~numpy.ndarray
+        yw : list or `~numpy.ndarray`
             The y positions of the rectangles (in world coordinates)
 
-        width : int or float or list or ~numpy.ndarray
+        width : int or float or list or `~numpy.ndarray`
             The width of the rectangle (in world coordinates)
 
-        height : int or float or list or ~numpy.ndarray
+        height : int or float or list or `~numpy.ndarray`
             The height of the rectangle (in world coordinates)
 
         layer : str, optional
@@ -1171,11 +1162,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
-            or linewidth) can be used to control the appearance of the
-            rectangles, which are instances of the matplotlib Rectangle class.
-            For more information on available arguments, see `Rectangle
-            <http://matplotlib.sourceforge.net/api/
-            artist_api.html#matplotlib.patches.Rectangle>`_.
+            or linewidth) are passed to Matplotlib
+            :class:`~matplotlib.patches.Rectangle` class, and can be used to
+            control the appearance of the rectangles.
         '''
 
         if np.isscalar(xw):
@@ -1250,12 +1239,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             replacing existing layers.
 
         kwargs
-            Additional keyword arguments (such as color, offsets, cmap, or
-            linewidth) can be used to control the appearance of the lines,
-            which is an instances of the matplotlib LineCollection class. For
-            more information on available arguments, see `LineCollection
-            <http://matplotlib.sourceforge.net/api/collections_api.html?
-            highlight=linecollection#matplotlib.collections.LineCollection>`_.
+            Additional keyword arguments (such as color, offsets, linestyle,
+            or linewidth) are passed to Matplotlib
+            :class:`~matplotlib.collections.LineCollection` class, and can be used to
+            control the appearance of the lines.
         '''
 
         if not 'color' in kwargs:
@@ -1292,7 +1279,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         Parameters
         ----------
 
-        x, y, dx, dy : float or list or ~numpy.ndarray
+        x, y, dx, dy : float or list or `~numpy.ndarray`
             Origin and displacement of the arrows in world coordinates.
             These can either be scalars to plot a single arrow, or lists or
             arrays to plot multiple arrows.
@@ -1315,12 +1302,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             replacing existing layers.
 
         kwargs
-            Additional keyword arguments (such as color, offsets, cmap, or
-            linewidth) can be used to control the appearance of the arrows,
-            which is an instances of the matplotlib FancyArrow class. For more
-            information on available arguments, see `FancyArrow
-            <http://matplotlib.sourceforge.net/api/artist_api.html?
-            highlight=arrow#matplotlib.patches.FancyArrow>`_.
+            Additional keyword arguments (such as color, offsets, linestyle,
+            or linewidth) are passed to Matplotlib
+            :class:`~matplotlib.patches.FancyArrow` class, and can be used to
+            control the appearance of the arrows.
         '''
 
         if 'length_includes_head' not in kwargs:
@@ -1394,11 +1379,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
-            or linewidth) can be used to control the appearance of the
-            circles, which are instances of the matplotlib Polygon class. For
-            more information on available arguments, see `Polygon
-            <http://matplotlib.sourceforge.net/api/
-            artist_api.html#matplotlib.patches.Polygon>`_.
+            or linewidth) are passed to Matplotlib
+            :class:`~matplotlib.patches.Polygon` class, and can be used to
+            control the appearance of the polygons.
         '''
 
         if not 'facecolor' in kwargs:
@@ -1659,14 +1642,17 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Parameters
         ----------
-
-        xw : float or list or ~numpy.ndarray
+        xw : float or list or `~numpy.ndarray`
             x world coordinate
-
-        yw : float or list or ~numpy.ndarray
+        yw : float or list or `~numpy.ndarray`
             y world coordinate
 
-        Returns the pixel coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
+        Returns
+        -------
+        xp : float or list or `~numpy.ndarray`
+            x pixel coordinate
+        yp : float or list or `~numpy.ndarray`
+            y pixel coordinate
         '''
 
         return wcs_util.world2pix(self._wcs, xw, yw)
@@ -1677,14 +1663,17 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Parameters
         ----------
-
-        xp : float or list or ~numpy.ndarray
+        xp : float or list or `~numpy.ndarray`
             x pixel coordinate
-
-        yp : float or list or ~numpy.ndarray
+        yp : float or list or `~numpy.ndarray`
             y pixel coordinate
 
-        Returns the world coordinates as a tuple of scalars, lists, or numpy arrays depending on the input
+        Returns
+        -------
+        xw : float or list or `~numpy.ndarray`
+            x world coordinate
+        yw : float or list or `~numpy.ndarray`
+            y world coordinate
         '''
 
         return wcs_util.pix2world(self._wcs, xp, yp)

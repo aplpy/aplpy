@@ -1,5 +1,5 @@
-Quickstart Guide
-----------------
+Beginner Tutorial
+-----------------
 
 .. toctree::
   :maxdepth: 1
@@ -18,11 +18,8 @@ Now, start up ``ipython`` and import the ``aplpy`` module as follows::
     import aplpy
     import numpy # For the numpy.loadtxt() function
 
-Displaying a FITS image
-^^^^^^^^^^^^^^^^^^^^^^^
-
-To start off, use the ``aplpy.FITSfigure`` class to create a canvas to where
-your data will be plotted::
+To start off, use the :class:`~aplpy.aplpy.FITSfigure` class to create a
+canvas to where your data will be plotted::
 
     gc = aplpy.FITSFigure('fits/2MASS_k.fits')
 
@@ -56,15 +53,11 @@ The colormap used for the colorscale image can be changed. Try the following::
 
     gc.show_colorscale(cmap='gist_heat')
 
-to show the image showing a 'heat' map. For more information on
-``show_grayscale`` and ``show_colorscale``, see the documentation_ For
+to show the image showing a 'heat' map. You can find more information in the 
+:meth:`~aplpy.aplpy.FITSFigure.show_grayscale` and
+:meth:`~aplpy.aplpy.FITSFigure.show_colorscale` documentation. For
 example, you can control the minimum and maximum pixel values to show and the
 stretch function to use.
-
-.. _documentation: http://aplpy.github.com/documentation/api.html#aplpy.FITSFigure.show_grayscale
-
-Displaying a 3-color image
-^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is possible to use APLpy to show 3-color images. To do this, you need a
 FITS file with the image - this is used for the information relating to the
@@ -75,17 +68,11 @@ Try the following::
 
     gc.show_rgb('graphics/2MASS_arcsinh_color.png')
 
-Modifying fonts
-^^^^^^^^^^^^^^^
-
 It is very easy to modify the font properties of the various labels.
 For example, in this case, we can change the font size of the tick
 labels to be smaller than the default::
 
     gc.tick_labels.set_font(size='small')
-
-Contours
-^^^^^^^^
 
 APLpy can be used to overlay contours onto a grayscale/colorscale/3-color
 image. Try typing the following command::
@@ -94,12 +81,7 @@ image. Try typing the following command::
 
 There are a number of arguments that can be passed to ``show_contour`` to
 control the appearance of the contours as well as the number of levels to
-show. For more information, see the see the contour_ documentation.
-
-.. _contour: http://aplpy.github.com/documentation/api.html#aplpy.FITSFigure.show_contour
-
-Coordinate grid
-^^^^^^^^^^^^^^^
+show. For more information, see the see the :meth:`~aplpy.aplpy.FITSFigure.show_contour` documentation.
 
 Display a coordinate grid using::
 
@@ -108,9 +90,6 @@ Display a coordinate grid using::
 and hide it again using::
 
     gc.hide_grid()
-
-Markers
-^^^^^^^
 
 Let's overplot positions from a source list. Here we will use loadtxt to read
 in the coordinates from a file, but in general you can pass any pair of lists
@@ -123,12 +102,8 @@ or numpy arrays that are already defined::
     gc.show_markers(ra, dec, edgecolor='green', facecolor='none', 
                     marker='o', s=10, alpha=0.5)
 
-For more information about ``show_markers``, see the see the markers_ documentation.
-
-.. _markers: http://aplpy.github.com/documentation/api.html#aplpy.FITSFigure.show_markers
-
-Layers
-^^^^^^
+For more information, see the :meth:`~aplpy.aplpy.FITSFigure.show_markers`
+documentation.
 
 It's often the case that you might want to change the look of a contour or
 markers, but if you run ``show_contour`` or ``show_markers`` a second time, it
@@ -155,13 +130,7 @@ from green to red::
                     facecolor='none', marker='o', s=10, alpha=0.5)
 
 Note the presence of the ``layer='marker_set_1'`` which means that the
-current markers plot will be replaced. For more information about layers, see
-the see the layers_ documentation.
-
-.. _layers: http://aplpy.github.com/documentation/api.html#layers
-
-Saving
-^^^^^^
+current markers plot will be replaced. To view active layers, you can use the :meth:`~aplpy.aplpy.FITSFigure.list_layers` documentation.
 
 To wrap up this tutorial, we will save the plot to a file. Type the following::
 
@@ -173,9 +142,6 @@ This will produce the following file:
 
 You can of course save it as a PS/EPS, PDF, or SVG file instead. The EPS
 output is suitable for publication.
-
-Summary
-^^^^^^^
 
 To summarize, the above plot was made using the following commands::
 
@@ -199,5 +165,3 @@ To summarize, the above plot was made using the following commands::
 
 There are many more methods and options, from setting the tick spacing and
 format to controlling the label fonts. For more information, see the full api_.
-
-.. _api: http://aplpy.github.com/documentation/api.html

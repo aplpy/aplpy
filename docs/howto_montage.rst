@@ -3,8 +3,8 @@ Installing Montage
 
 Montage is a package developed by IPAC designed to handle the
 reprojection of FITS files. APLpy relies on Montage for several functions,
-such as ``aplpy.make_rgb_cube()`` or the ``north=True``
-argument in ``aplpy.FITSFigure()``. To use these features,
+such as :func:`~aplpy.rgb.make_rgb_cube` or the ``north=True``
+argument in :class:`~aplpy.aplpy.FITSFigure`. To use these features,
 Montage needs to be installed.
     
 Obtaining and installing Montage
