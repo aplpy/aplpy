@@ -145,7 +145,7 @@ A grid can be added and removed using the following commands::
     fig.add_colorbar()
     fig.remove_colorbar()
 
-Once ``add_colorbar()`` has been called, the ``fig.colorbar`` object is created and the following methods are then available:
+Once :meth:`~aplpy.aplpy.FITSFigure.add_colorbar` has been called, the ``fig.colorbar`` object is created and the following methods are then available:
 
 * Show and hide the colorbar::
 
@@ -180,7 +180,7 @@ A coordinate grid can be added and removed using the following commands::
     fig.add_grid()
     fig.remove_grid()
 
-Once ``add_grid()`` has been called, the ``fig.grid`` object is created and the following methods are then available:
+Once :meth:`~aplpy.aplpy.FITSFigure.add_grid` has been called, the ``fig.grid`` object is created and the following methods are then available:
 
 * Show and hide the grid::
 
@@ -213,7 +213,7 @@ A scalebar can be added and removed using the following commands::
     fig.add_scalebar()
     fig.remove_scalebar()
 
-Once ``add_scalebar()`` has been called, the ``fig.scalebar`` object is created and the following methods are then available:
+Once :meth:`~aplpy.aplpy.FITSFigure.add_scalebar` has been called, the ``fig.scalebar`` object is created and the following methods are then available:
 
 * Show and hide the scalebar::
 
@@ -270,7 +270,7 @@ A beam can be added and removed using the following commands::
     fig.add_beam()
     fig.remove_beam()
 
-Once ``add_beam()`` has been called, the ``fig.beam`` object is created and the following methods are then available:
+Once :meth:`~aplpy.aplpy.FITSFigure.add_beam` has been called, the ``fig.beam`` object is created and the following methods are then available:
 
 * Show and hide the beam::
 

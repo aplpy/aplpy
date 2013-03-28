@@ -12,7 +12,7 @@ the WCS header information is valid. To differentiate between longitudes,
 latitudes, and arbitrary scalar values, APLpy keeps track of the axis
 coordinate 'type' for each axis, and will try and guess these based on the
 header. However, it is possible to explicitly specify the coordinate type with
-the ``set_xaxis_coord_type`` and ``set_yaxis_coord_type`` methods in the
+the :meth:`~aplpy.aplpy.FITSFigure.set_xaxis_coord_type` and :meth:`~aplpy.aplpy.FITSFigure.set_yaxis_coord_type` methods in the
 :class:`~aplpy.aplpy.FITSFigure` object::
 
     f = FITSFigure('2MASS_k.fits')
