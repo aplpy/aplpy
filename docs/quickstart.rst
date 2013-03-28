@@ -164,4 +164,4 @@ To summarize, the above plot was made using the following commands::
     gc.save('myfirstplot.png')
 
 There are many more methods and options, from setting the tick spacing and
-format to controlling the label fonts. For more information, see the full api_.
+format to controlling the label fonts. For more information, see the :doc:`quick_reference` or the :ref:`api`.
