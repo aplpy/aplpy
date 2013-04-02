@@ -5,6 +5,7 @@ from astropy import log
 
 from . import math_util as m
 
+import matplotlib as mpl
 
 class interp1d(object):
 
@@ -137,3 +138,42 @@ def _matplotlib_pil_bug_present():
     else:
         log.warning("Could not properly determine Matplotlib behavior for RGB images - image may be flipped incorrectly")
         return False
+
+
+def adjust_hue(rgb_image, hue_rotation, dtype=None):
+    """
+    Given an RGB cube (dimensions [y,x,color]), rotate the hue by `hue_rotation` degrees
+
+    Parameters
+    ----------
+    rgb_image : ndarray
+        Image with dimensions [y,x,color] (or [x,y,color, but that is non-standard).
+        The color axis must be length 3.  Can be dtype=float or dtype=uint8
+    hue_rotation : 0-360
+        Hue rotation angle
+    dtype : dtype
+        Either some type of float or uint8.  If float, returns will be in range [0,1), if
+        uint8, will be in range [0,255].  If none, defaults to input dtype
+    """
+
+    if np.subdtype(rgb_image.dtype,np.uint8):
+        float_rgb = rgb_image/255.
+    else:
+        float_rgb = rgb_image
+
+    # :3 allows for an Alpha 4th layer
+    hsv = rgb_to_hsv(float_rgb[:,:,:3])
+
+    # add the rotation
+    hsv[:,:,0] += hue/360.
+    
+    # It's possible to have an initial rotation + added rotation > 360
+    hsv[:,:,0] %= 1
+
+    float_rgb[:,:,:3] = hsv_to_rgb(hsv)
+
+    if np.issubdtype(dtype, np.uint8):
+        rgb_image[:,:,:3] = np.round(float_rgb[:,:,:3]*255)
+        return rgb_image
+    else:
+        return float_rgb
