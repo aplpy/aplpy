@@ -138,7 +138,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
        If stretch_x is set to 'power', this is the exponent to use.
         '''
 
-    if not installed_pil:
+    if not pil_installed:
         raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
 
     if isinstance(data, basestring):
