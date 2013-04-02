@@ -139,7 +139,6 @@ def _matplotlib_pil_bug_present():
         log.warning("Could not properly determine Matplotlib behavior for RGB images - image may be flipped incorrectly")
         return False
 
-
 def adjust_hue(rgb_image, hue_rotation, dtype=None):
     """
     Given an RGB cube (dimensions [y,x,color]), rotate the hue by `hue_rotation` degrees
