@@ -138,7 +138,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
        If stretch_x is set to 'power', this is the exponent to use.
         '''
 
-    if not installed_pil:
+    if not pil_installed:
         raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
 
     if isinstance(data, basestring):
@@ -272,7 +272,6 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
 
     images_raw_tbl = '%s/images_raw.tbl' % work_dir
     header_hdr = '%s/header.hdr' % work_dir
-    header_py_hdr = '%s/header_py.hdr' % work_dir
 
     # Create raw and final directory in work directory
     os.mkdir(raw_dir)
@@ -286,13 +285,8 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     montage.mImgtbl(raw_dir, images_raw_tbl, corners=True)
     montage.mMakeHdr(images_raw_tbl, header_hdr, north_aligned=north, system=system, equinox=equinox)
 
-    # Write out header without 'END'
-    contents = open(header_hdr).read()
-    open(header_py_hdr, 'wb').write(contents.replace('END\n', ''))
-
     # Read header in with astropy.io.fits
-    header = fits.Header()
-    header.fromTxtFile(header_py_hdr, replace=True)
+    header = fits.Header.fromtextfile(header_hdr)
 
     # Find image dimensions
     nx = int(header['NAXIS1'])

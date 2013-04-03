@@ -766,7 +766,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
 
         if flip:
-            warnings.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
+            log.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
 
         if filename is None:
             if hasattr(self, '_rgb_image'):
@@ -776,13 +776,18 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             image = Image.open(filename)
 
+        if image_util._matplotlib_pil_bug_present():
+            vertical_flip = True
+
         if vertical_flip:
             image = image.transpose(Image.FLIP_TOP_BOTTOM)
 
         if horizontal_flip:
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
-        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
+        # We need to explicitly say origin='upper' to override any
+        # matplotlibrc settings.
+        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='upper')
 
     @auto_refresh
     def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
