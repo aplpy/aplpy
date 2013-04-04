@@ -45,11 +45,11 @@ The figure can be interactively explored by zooming and panning. To
 recenter on a specific region programmatically, use the following method,
 specifying either a radius::
 
-    fig.recenter(33.23, 55.33, radius=0.3) # degrees
+    fig.recenter(33.23, 55.33, radius=0.3)  # degrees
 
 or a separate width and height::
 
-    fig.recenter(33.23, 55.33, width=0.3, height=0.2) # degrees
+    fig.recenter(33.23, 55.33, width=0.3, height=0.2)  # degrees
 
 To overlay contours, use::
 
@@ -124,7 +124,7 @@ Finally, layers can be removed using::
 Coordinates
 ^^^^^^^^^^^
 
-Two methods are provided to help transform coordinates between world and pixel coordinates. These accept either scalars or arrays::
+Two methods are provided to help transform coordinates between world and pixel coordinates. These accept either scalars or arrays in degrees::
 
     x_pix, y_pix = fig.world2pixel(45.3332, 22.1932)
     x_world, y_world = fig.pixel2world(np.array([1., 2., 3]), np.array([1., 3., 5.]))
@@ -134,7 +134,7 @@ Frame
 
 To set the look of the frame around the figure, use::
 
-    fig.frame.set_linewidth(1) # points
+    fig.frame.set_linewidth(1)  # points
     fig.frame.set_color('black')
 
 Colorbar
@@ -160,11 +160,11 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_colorbar` has been called, the ``fig.col
 
 * Set the width of the colorbar::
 
-    fig.colorbar.set_width(0.1) # arbitrary units, default is 0.2
+    fig.colorbar.set_width(0.1)  # arbitrary units, default is 0.2
 
 * Set the amount of padding between the colorbar and the parent axes::
 
-    fig.colorbar.set_pad(0.03) # arbitrary units, default is 0.05
+    fig.colorbar.set_pad(0.03)  # arbitrary units, default is 0.05
 
 * Set the font properties of the labels::
 
@@ -189,8 +189,8 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_grid` has been called, the ``fig.grid`` 
 
 * Set the x and y spacing for the grid::
 
-    fig.grid.set_xspacing(0.2) # degrees
-    fig.grid.set_yspacing(0.2) # degrees
+    fig.grid.set_xspacing(0.2)  # degrees
+    fig.grid.set_yspacing(0.2)  # degrees
 
 * Set the color of the grid lines::
 
@@ -203,7 +203,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_grid` has been called, the ``fig.grid`` 
 * Set the line style and width for the grid lines::
 
     fig.grid.set_linestyle('solid')
-    fig.grid.set_linewidth(1)
+    fig.grid.set_linewidth(1)  # points
 
 Scalebar
 ^^^^^^^^
@@ -217,12 +217,12 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_scalebar` has been called, the ``fig.sca
 
 * Show and hide the scalebar::
 
-    fig.scalebar.show(0.2) # length in degrees
+    fig.scalebar.show(0.2)  # length in degrees
     fig.scalebar.hide()
 
 * Change the length of the scalebar::
 
-    fig.scalebar.set_length(0.02) # degrees
+    fig.scalebar.set_length(0.02)  # degrees
 
 * Change the label of the scalebar::
 
@@ -256,7 +256,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_scalebar` has been called, the ``fig.sca
 * Set the line style and width for the scalebar::
 
     fig.scalebar.set_linestyle('solid')
-    fig.scalebar.set_linewidth(3) # points
+    fig.scalebar.set_linewidth(3)  # points
 
 * Set multiple properties at once::
 
@@ -279,9 +279,9 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_beam` has been called, the ``fig.beam`` 
 
 * Change the major and major axes, and the position angle::
 
-    fig.beam.set_major(0.03) # degrees
-    fig.beam.set_minor(0.02) # degrees
-    fig.beam.set_angle(45.) # degrees
+    fig.beam.set_major(0.03)  # degrees
+    fig.beam.set_minor(0.02)  # degrees
+    fig.beam.set_angle(45.)  # degrees
 
 * Change the corner that the beam is shown in::
 
@@ -307,7 +307,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_beam` has been called, the ``fig.beam`` 
 * Set the line style and width for the edge of the beam::
 
     fig.beam.set_linestyle('dashed')
-    fig.beam.set_linewidth(2) # points
+    fig.beam.set_linewidth(2)  # points
 
 * Set the hatch style of the beam::
 
@@ -439,12 +439,12 @@ The methods to control properties relating to the tick marks are the following:
 
 * Change the tick spacing for the x- and y-axis::
 
-    fig.ticks.set_xspacing(0.04) # degrees
-    fig.ticks.set_yspacing(0.03) # degrees
+    fig.ticks.set_xspacing(0.04)  # degrees
+    fig.ticks.set_yspacing(0.03)  # degrees
 
 * Change the length of the ticks::
 
-    fig.ticks.set_length(10) # points
+    fig.ticks.set_length(10)  # points
 
 * Change the color of the ticks::
 
@@ -452,7 +452,7 @@ The methods to control properties relating to the tick marks are the following:
 
 * Set the line width for the ticks::
 
-    fig.ticks.set_linewidth(2) # points
+    fig.ticks.set_linewidth(2)  # points
 
 * Set the number of minor ticks per major tick::
 
