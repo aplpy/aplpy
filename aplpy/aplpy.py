@@ -120,7 +120,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     _parameters = Parameters()
 
     @auto_refresh
-    def __init__(self, data, hdu=0, figure=None, subplot=None,
+    def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=True,
                  **kwargs):
@@ -152,14 +152,16 @@ class FITSFigure(Layers, Regions, Deprecated):
             matplotlib figure() instance, rather than a new figure
             being created from scratch.
 
-        subplot : list, optional
-            If specified, a subplot will be added at this position. The
-            list should contain [xmin, ymin, dx, dy] where xmin and ymin
-            are the position of the bottom left corner of the subplot, and
-            dx and dy are the width and height of the subplot respectively.
-            These should all be given in units of the figure width and
-            height. For example, [0.1, 0.1, 0.8, 0.8] will almost fill the
-            entire figure, leaving a 10 percent margin on all sides.
+        subplot : tuple or list, optional
+            If specified, a subplot will be added at this position. If a tuple
+            of three values, the tuple should contain the standard matplotlib
+            subplot parameters, i.e. (ny, nx, subplot). If a list of four
+            values, the list should contain [xmin, ymin, dx, dy] where xmin
+            and ymin are the position of the bottom left corner of the
+            subplot, and dx and dy are the width and height of the subplot
+            respectively. These should all be given in units of the figure
+            width and height. For example, [0.1, 0.1, 0.8, 0.8] will almost
+            fill the entire figure, leaving a 10 percent margin on all sides.
 
         downsample : int, optional
             If this option is specified, the image will be downsampled
@@ -272,10 +274,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure = mpl.figure(**kwargs)
 
         # Create first axis instance
-        if subplot:
+        if type(subplot) == list and len(subplot) == 4:
             self._ax1 = mpltk.HostAxes(self._figure, subplot, adjustable='datalim')
+        elif type(subplot) == tuple and len(subplot) == 3:
+            self._ax1 = mpltk.SubplotHost(self._figure, *subplot)
         else:
-            self._ax1 = mpltk.SubplotHost(self._figure, 1, 1, 1)
+            raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
         self._ax1.toggle_axisline(False)
 
