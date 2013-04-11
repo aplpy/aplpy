@@ -205,7 +205,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
         if not avm_installed:
             raise Exception("PyAVM needs to be installed in order to be able to embed AVM tags into the RGB image")
         else:
-            avm = AVM(header)
+            avm = AVM.from_header(header)
             avm.embed(output, output)
 
     return
