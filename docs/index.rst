@@ -23,4 +23,3 @@ Reference/API
 
 .. automodapi:: aplpy
    :no-inheritance-diagram:
-   :skip: test
