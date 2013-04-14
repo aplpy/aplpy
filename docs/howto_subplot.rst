@@ -54,7 +54,7 @@ two FITS images::
 
     fig.canvas.draw()
     
-The ``hide_*`` shown above are especially useful when working with
+The ``hide`` methods shown above are especially useful when working with
 subplots, as in some cases there is no need to repeat the tick labels. Alternatively figures can be constructed from both APLpy figures and normal matplotlib axes::
 
     import aplpy

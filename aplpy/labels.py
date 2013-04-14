@@ -178,6 +178,9 @@ class TickLabels(object):
 
         common: family, style, variant, stretch, weight, size, fontproperties
 
+        Notes
+        -----
+
         Default values are set by matplotlib or previously set values if
         set_font has already been called. Global default values can be set by
         editing the matplotlibrc file.
