@@ -223,7 +223,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             nx, ny = Image.open(data).size
 
             # Now convert AVM information to WCS
-            data = AVM.from_file(data).to_wcs()
+            data = AVM.from_image(data).to_wcs()
 
             # Need to scale CDELT values sometimes the AVM meta-data is only really valid for the full-resolution image
             data.wcs.cdelt = [data.wcs.cdelt[0] * nx / float(nx), data.wcs.cdelt[1] * ny / float(ny)]
