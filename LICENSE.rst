@@ -1,5 +1,5 @@
 APLpy - The Astronomical Plotting Library in Python
-Copyright (c) 2010 Thomas P. Robitaille and Eli Bressert
+Copyright (c) 2010-2013 Thomas P. Robitaille and Eli Bressert
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
