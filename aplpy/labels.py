@@ -424,24 +424,30 @@ class WCSFormatter(mpl.Formatter):
                 label = label.tohours()
             label = label.tostringlist(format=self.axis.apl_label_form, sep=sep)
 
-            if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
-                comp_ipos = ipos - 1
-            else:
-                comp_ipos = ipos + 1
+            # Check if neighboring label is similar and if so whether some
+            # elements of the current label are redundant and can be dropped.
+            # This should only be done for sexagesimal coordinates
 
-            if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix) - 1:
+            if len(label) > 1:
 
-                comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
-                if hours:
-                    comp_label = comp_label.tohours()
-                comp_label = comp_label.tostringlist(format=self.axis.apl_label_form, sep=sep)
+                if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
+                    comp_ipos = ipos - 1
+                else:
+                    comp_ipos = ipos + 1
 
-                for iter in range(len(label)):
-                    if comp_label[0] == label[0]:
-                        label.pop(0)
-                        comp_label.pop(0)
-                    else:
-                        break
+                if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix) - 1:
+
+                    comp_label = self.axis.apl_tick_spacing * self.axis.apl_tick_positions_world[comp_ipos]
+                    if hours:
+                        comp_label = comp_label.tohours()
+                    comp_label = comp_label.tostringlist(format=self.axis.apl_label_form, sep=sep)
+
+                    for iter in range(len(label)):
+                        if comp_label[0] == label[0]:
+                            label.pop(0)
+                            comp_label.pop(0)
+                        else:
+                            break
 
         else:
 
