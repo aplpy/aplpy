@@ -7,6 +7,13 @@ from astropy import log
 from astropy.wcs import WCS as AstropyWCS
 
 
+def decode_ascii(string):
+    try:
+        return string.decode('ascii')
+    except AttributeError:
+        return string
+
+
 class WCS(AstropyWCS):
 
     def __init__(self, *args, **kwargs):
@@ -95,15 +102,15 @@ class WCS(AstropyWCS):
             raise AttributeError("Attribute %s does not exist" % attribute)
 
         if attribute[:5] == 'ctype':
-            return self.wcs.ctype[axis].decode('ascii')
+            return decode_ascii(self.wcs.ctype[axis])
         elif attribute[:5] == 'cname':
-            return self.wcs.cname[axis].decode('ascii')
+            return decode_ascii(self.wcs.cname[axis])
         elif attribute[:5] == 'cunit':
             return str(self.wcs.cunit[axis])
         elif attribute[:5] == 'crval':
-            return self.wcs.crval[axis].decode('ascii')
+            return decode_ascii(elf.wcs.crval[axis])
         elif attribute[:5] == 'crpix':
-            return self.wcs.crpix[axis].decode('ascii')
+            return decode_ascii(self.wcs.crpix[axis])
         else:
             raise AttributeError("Attribute %s does not exist" % attribute)
 
