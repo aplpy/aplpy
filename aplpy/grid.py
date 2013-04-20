@@ -325,6 +325,13 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
             xpix, ypix = wcs_util.world2pix(wcs, min(grid_x_sorted[-1] + 1., 360.), gy)
             if in_plot(wcs, xpix, ypix):
                 grid_x_sorted = np.hstack([grid_x_sorted, 360.])
+
+    # Check if the first mid-point with coordinates is inside the viewport
+    xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
+
+    if not in_plot(wcs, xpix, ypix):
+        grid_x_sorted = np.roll(grid_x_sorted, 1)
+
     # Check that number of grid points is even
     if len(grid_x_sorted) % 2 == 1:
         warnings.warn("Unexpected number of grid points - x grid lines cannot be drawn")
