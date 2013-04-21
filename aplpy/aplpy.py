@@ -55,35 +55,6 @@ import numpy as np
 from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
 
-try:
-    import montage_wrapper as montage
-    montage_installed = True
-except:
-    montage_installed = False
-
-try:
-    from PIL import Image
-    pil_installed = True
-except ImportError:
-    try:
-        import Image
-        pil_installed = True
-    except ImportError:
-        pil_installed = False
-
-try:
-    import pyavm
-    if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
-        warnings.warn("PyAVM installation is not recent enough (version"
-                      " 0.9.1 or later is required). Disabling PyAVM-related"
-                      " functionality.")
-        avm_installed = False
-    else:
-        from pyavm import AVM
-        avm_installed = True
-except:
-    avm_installed = False
-
 from astropy import log
 
 from . import contour_util
@@ -212,11 +183,24 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if isinstance(data, basestring) and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
 
-            if not pil_installed:
-                raise ImportError("The Python Imaging Library (PIL) is required to read in RGB images")
+            try:
+                from PIL import Image
+            except ImportError:
+                try:
+                    import Image
+                except ImportError:
+                    raise ImportError("The Python Imaging Library (PIL) is required to read in RGB images")
 
-            if not avm_installed:
+            try:
+                import pyavm
+            except ImportError:
                 raise ImportError("PyAVM is required to read in AVM meta-data from RGB images")
+
+            if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
+                raise ImportError("PyAVM installation is not recent enough "
+                                  "(version 0.9.1 or later is required).")
+
+            from pyavm import AVM
 
             # Remember image filename
             self._rgb_image = data
@@ -392,7 +376,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Reproject to face north if requested
         if north:
-            if not montage_installed:
+            try:
+                import montage_wrapper as montage
+            except ImportError:
                 raise Exception("Both the Montage command-line tools and the"
                                 " montage-wrapper Python module are required"
                                 " to use the north= argument")
@@ -770,8 +756,13 @@ class FITSFigure(Layers, Regions, Deprecated):
             Whether to horizontally flip the RGB image
         '''
 
-        if not pil_installed:
-            raise Exception("The Python Imaging Library (PIL) is required to read in RGB images")
+        try:
+            from PIL import Image
+        except ImportError:
+            try:
+                import Image
+            except ImportError:
+                raise ImportError("The Python Imaging Library (PIL) is required to read in RGB images")
 
         if flip:
             log.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
