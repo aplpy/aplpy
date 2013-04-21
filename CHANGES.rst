@@ -1,7 +1,7 @@
 CHANGES
 --------
 
-Version 0.9.9 (unreleased)
+0.9.9rc1 (2013-04-21)
 
     The main change in this version is that APLpy is now an Astropy-affiliated
     package. This means that the Astropy core package is now required, but
