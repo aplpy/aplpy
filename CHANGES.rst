@@ -7,6 +7,16 @@ Version 0.9.9 (unreleased)
     package. This means that the Astropy core package is now required, but
     PyFITS and PyWCS are no longer required as dependencies.
 
+    This release is now no longer compatible with python-montage, and users
+    should use the montage-wrapper package instead:
+
+       http://www.astropy.org/montage-wrapper/
+
+    Similarly, PyAVM 0.9.1 or later is now required, and APLpy cannot use
+    earlier versions:
+
+      http://astrofrog.github.io/pyavm/
+
     This release is also the first release fully compatible with Python 3.
 
     New features
@@ -14,13 +24,38 @@ Version 0.9.9 (unreleased)
 
     - file-like objects can now be passed to ``FITSFigure.save()``
 
+    - the subplot= argument to ``FITSFigure`` can now take the tuple syntax
+      ``(2, 2, 1)`` instead of the full axes box, e.g. ``[0.1, 0.1, 0.9,
+      0.9]`` (thanks to Anika Schmiedeke for a patch).
+
+    - a colorbar label can now be set (thanks to Daniel Goering for a patch).
+
+    API changes
+    ~~~~~~~~~~~
+
+    - the ``smooth`` argument used for images and contours can no longer take
+      a tuple. It takes either a single value for symmetric kernels (``gauss``
+      and ``box``), or it can take a Numpy array for any other kernel shape.
+
     Bug fixes
     ~~~~~~~~~
 
-    - fix bug that caused regions read from a ds9 region file to be offset by
-      one pixel.
+    - fixed bug that caused regions read from a ds9 region file to be offset
+      by one pixel.
 
-    - fix bug that caused an exception when adding a Beam
+    - fixed bug that caused an exception when adding a Beam
+
+    - fixed bug that caused labels in decimal degrees to disappear for images
+      near the poles.
+
+    - fixed a bug that caused RGB images to appear vertically flipped with
+      certain versions of Matplotlib.
+
+    - added a workaround for a bug in Matplotlib that caused patches to appear
+      filled even with ``facecolor='none'``.
+
+    - fixed bug that caused images with NaN or Inf values to not be smoothed
+      correctly.
 
 Version 0.9.8
 

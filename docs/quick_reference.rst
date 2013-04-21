@@ -155,7 +155,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_colorbar` has been called, the ``fig.col
 * Set where to place the colorbar::
 
     fig.colorbar.set_location('right')
-    
+
   This can be one of ``left``, ``right``, ``bottom`` or ``top``.
 
 * Set the width of the colorbar::
@@ -171,6 +171,22 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_colorbar` has been called, the ``fig.col
     fig.colorbar.set_font(size='medium', weight='medium', \
                           stretch='normal', family='sans-serif', \
                           style='normal', variant='normal')
+
+* Add a colorbar label::
+
+    f.colorbar.set_axis_label_text('Flux (Jy/beam)')
+
+* Set some of the colorbar label properties::
+
+    f.colorbar.set_axis_label_font(size=12, weight='bold')
+
+* Set the padding between the colorbar and the label in points::
+
+    f.colorbar.set_axis_label_pad(10)
+
+* Change the rotation of the colorbar label, in degrees::
+
+    f.colorbar.set_axis_label_rotation(270)
 
 Coordinate Grid
 ^^^^^^^^^^^^^^^
@@ -231,7 +247,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_scalebar` has been called, the ``fig.sca
 * Change the corner that the beam is shown in::
 
     fig.scalebar.set_corner('top right')
-    
+
   This can be one of ``top right``, ``top left``, ``bottom right``,
   ``bottom left``, ``left``, ``right``, ``bottom`` or ``top``.
 
@@ -286,7 +302,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_beam` has been called, the ``fig.beam`` 
 * Change the corner that the beam is shown in::
 
     fig.beam.set_corner('top left')
-    
+
   This can be one of ``top right``, ``top left``, ``bottom right``,
   ``bottom left``, ``left``, ``right``, ``bottom`` or ``top``.
 
@@ -356,13 +372,13 @@ The methods to control the x- and y- axis labels are the following
 
     fig.axis_labels.set_xpad(...)
     fig.axis_labels.set_ypad(...)
-    
+
 * Set where to place the x-axis label::
 
     fig.axis_labels.set_xposition('bottom')
-    
+
 * Set where to place the y-axis label::
-    
+
     fig.axis_labels.set_yposition('right')
 
 * Set the font properties of the labels::
@@ -398,7 +414,7 @@ The methods to control the numerical labels below each tick are the following
 * Set the format for the y-axis labels (e.g dd:mm, dd:mm:ss.s, etc.)::
 
     fig.tick_labels.set_yformat('dd:mm:ss.s')
-    
+
 * Set where to place the x-axis tick labels::
 
     fig.tick_labels.set_xposition('top')
