@@ -72,15 +72,17 @@ except ImportError:
         pil_installed = False
 
 try:
-    from pyavm import AVM
-    avm_installed = True
+    import pyavm
+    if version.LooseVersion(pavm.__version__) < version.LooseVersion('0.9.0'):
+        warnings.warn("PyAVM installation is not recent enough (version"
+                      " 0.9.0 or later is required). Disabling PyAVM-related"
+                      " functionality.")
+        avm_installed = False
+    else:
+        from pyavm import AVM
+        avm_installed = True
 except:
     avm_installed = False
-
-if montage_installed:
-    if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
-        warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
-        montage_installed = False
 
 from astropy import log
 
@@ -391,7 +393,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Reproject to face north if requested
         if north:
             if not montage_installed:
-                raise Exception("Both the Montage command-line tools and the Python-montage module are required to use the north= argument")
+                raise Exception("Both the Montage command-line tools and the"
+                                " montage-wrapper Python module are required"
+                                " to use the north= argument")
             hdu = montage.reproject_hdu(hdu, north_aligned=True)
 
         # Now copy the data and header to new objects, since in PyFITS the two

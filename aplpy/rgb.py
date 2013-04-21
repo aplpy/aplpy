@@ -28,15 +28,17 @@ except:
     montage_installed = False
 
 try:
-    from pyavm import AVM
-    avm_installed = True
+    import pyavm
+    if version.LooseVersion(pavm.__version__) < version.LooseVersion('0.9.0'):
+        warnings.warn("PyAVM installation is not recent enough (version"
+                      " 0.9.0 or later is required). Disabling PyAVM-related"
+                      " functionality.")
+        avm_installed = False
+    else:
+        from pyavm import AVM
+        avm_installed = True
 except:
     avm_installed = False
-
-if montage_installed:
-    if version.LooseVersion(montage.__version__) < version.LooseVersion('0.9.2'):
-        warnings.warn("Python-montage installation is not recent enough (version 0.9.2 or later is required). Disabling Montage-related functionality.")
-        montage_installed = False
 
 from . import image_util
 from . import math_util
@@ -257,7 +259,9 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     # checks itself whether the Montage command-line tools are available, and
     # if they are not then importing the Python module will fail.
     if not montage_installed:
-        raise Exception("Both the Montage command-line tools and the Python-montage module are required for this function")
+        raise Exception("Both the Montage command-line tools and the"
+                        " montage-wrapper Python module are required"
+                        " for this function")
 
     # Check that input files exist
     for f in files:
