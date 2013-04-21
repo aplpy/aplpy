@@ -11,35 +11,6 @@ import numpy as np
 from astropy import log
 from astropy.io import fits
 
-try:
-    from PIL import Image
-    pil_installed = True
-except ImportError:
-    try:
-        import Image
-        pil_installed = True
-    except ImportError:
-        pil_installed = False
-
-try:
-    import montage_wrapper as montage
-    montage_installed = True
-except:
-    montage_installed = False
-
-try:
-    import pyavm
-    if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
-        warnings.warn("PyAVM installation is not recent enough (version"
-                      " 0.9.1 or later is required). Disabling PyAVM-related"
-                      " functionality.")
-        avm_installed = False
-    else:
-        from pyavm import AVM
-        avm_installed = True
-except:
-    avm_installed = False
-
 from . import image_util
 from . import math_util
 
@@ -144,8 +115,13 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
         JPEG and PNG files, and only if PyAVM is installed.
     '''
 
-    if not pil_installed:
-        raise Exception("The Python Imaging Library (PIL) is not installed but is required for this function")
+    try:
+        from PIL import Image
+    except ImportError:
+        try:
+            import Image
+        except ImportError:
+            raise ImportError("The Python Imaging Library (PIL) is required to make an RGB image")
 
     if isinstance(data, basestring):
 
@@ -208,9 +184,20 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     img.save(output)
 
     if embed_avm_tags:
-        if not avm_installed:
-            warnings.warn("AVM tags will not be embedded in RGB image, since PyAVM 0.9.1 or later is not installed")
-        elif output.lower().endswith(('.jpg', '.jpeg', '.png')):
+
+        try:
+            import pyavm
+        except ImportError:
+            warnings.warn("PyAVM 0.9.1 or later is not installed, so AVM tags will not be embedded in RGB image")
+            return
+
+        if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
+            warnings.warn("PyAVM 0.9.1 or later is not installed, so AVM tags will not be embedded in RGB image")
+            return
+
+        from pyavm import AVM
+
+        if output.lower().endswith(('.jpg', '.jpeg', '.png')):
             avm = AVM.from_header(header)
             avm.embed(output, output)
         else:
@@ -262,7 +249,9 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     # Check whether the Python montage module is installed. The Python module
     # checks itself whether the Montage command-line tools are available, and
     # if they are not then importing the Python module will fail.
-    if not montage_installed:
+    try:
+        import montage_wrapper as montage
+    except ImportError:
         raise Exception("Both the Montage command-line tools and the"
                         " montage-wrapper Python module are required"
                         " for this function")
