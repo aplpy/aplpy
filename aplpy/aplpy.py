@@ -73,9 +73,9 @@ except ImportError:
 
 try:
     import pyavm
-    if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.0'):
+    if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
         warnings.warn("PyAVM installation is not recent enough (version"
-                      " 0.9.0 or later is required). Disabling PyAVM-related"
+                      " 0.9.1 or later is required). Disabling PyAVM-related"
                       " functionality.")
         avm_installed = False
     else:

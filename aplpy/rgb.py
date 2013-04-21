@@ -29,9 +29,9 @@ except:
 
 try:
     import pyavm
-    if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.0'):
+    if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
         warnings.warn("PyAVM installation is not recent enough (version"
-                      " 0.9.0 or later is required). Disabling PyAVM-related"
+                      " 0.9.1 or later is required). Disabling PyAVM-related"
                       " functionality.")
         avm_installed = False
     else:
@@ -209,7 +209,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
 
     if embed_avm_tags:
         if not avm_installed:
-            warnings.warn("AVM tags will not be embedded in RGB image, since PyAVM 0.9.0 or later is not installed")
+            warnings.warn("AVM tags will not be embedded in RGB image, since PyAVM 0.9.1 or later is not installed")
         elif output.lower().endswith(('.jpg', '.jpeg', '.png')):
             avm = AVM.from_header(header)
             avm.embed(output, output)
