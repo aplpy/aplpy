@@ -1,7 +1,7 @@
 CHANGES
 --------
 
-0.9.9 (unreleased)
+0.9.9 (2013-04-25)
 ------------------
 
     The main change in this version is that APLpy is now an Astropy-affiliated
