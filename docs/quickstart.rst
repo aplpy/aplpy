@@ -12,11 +12,13 @@ First, unpack the example files and go to the ``tutorial`` directory::
     tar -xvzf tutorial.tar.gz
     cd tutorial
 
-Now, start up ``ipython`` and import the ``aplpy`` module as follows::
+Now, start up ``ipython``::
 
-    ipython -pylab 
+    ipython --pylab
+
+ and import the ``aplpy`` module as follows::
+
     import aplpy
-    import numpy # For the numpy.loadtxt() function
 
 To start off, use the :class:`~aplpy.aplpy.FITSfigure` class to create a
 canvas to where your data will be plotted::
@@ -38,13 +40,6 @@ you can click on the home button (first one on the left). When you're zoomed
 in you can pan around by clicking on the button with the arrows (fourth button
 from the left).
 
-The size of the canvas can be controlled through the ``figsize`` argument.
-Close the current canvas and create a new figure using::
-
-    gc = aplpy.FITSFigure('fits/2MASS_k.fits', figsize=(10, 9))
-    gc.show_grayscale()
-
-This will create a figure that is 10 by 10 inches and will show the image as a grayscale.
 Use the following command to show a colorscale image instead::
 
     gc.show_colorscale()
@@ -85,18 +80,17 @@ show. For more information, see the see the :meth:`~aplpy.aplpy.FITSFigure.show_
 
 Display a coordinate grid using::
 
-    gc.show_grid()
+    gc.add_grid()
 
 and hide it again using::
 
-    gc.hide_grid()
+    gc.remove_grid()
 
 Let's overplot positions from a source list. Here we will use loadtxt to read
 in the coordinates from a file, but in general you can pass any pair of lists
 or numpy arrays that are already defined::
 
-    # If the numpy.loadtxt() command does not work 
-    # then do "import numpy", without the quotes. 
+    import numpy
     data = numpy.loadtxt('data/yso_wcs_only.txt')
     ra, dec = data[:, 0], data[:, 1]
     gc.show_markers(ra, dec, edgecolor='green', facecolor='none', 
@@ -126,7 +120,7 @@ the layer you are creating with the name provided, and can also be used to
 replace an existing layer. For example, let's change the color of the markers
 from green to red::
 
-    gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='green', 
+    gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='red', 
                     facecolor='none', marker='o', s=10, alpha=0.5)
 
 Note the presence of the ``layer='marker_set_1'`` which means that the
@@ -148,7 +142,7 @@ To summarize, the above plot was made using the following commands::
     import aplpy
     import numpy
 
-    gc = aplpy.FITSFigure('fits/2MASS_k.fits', figsize=(10, 9))
+    gc = aplpy.FITSFigure('fits/2MASS_k.fits')
     gc.show_rgb('graphics/2MASS_arcsinh_color.png')
 
     gc.tick_labels.set_font(size='small')
