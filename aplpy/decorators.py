@@ -30,8 +30,6 @@ def _auto_refresh(f, *args, **kwargs):
                 args[0]._figure.canvas.draw()
 
 
-import string
-
 doc = {}
 
 doc['size'] = '''size : str or int or float, optional

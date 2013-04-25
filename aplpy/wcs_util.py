@@ -108,7 +108,7 @@ class WCS(AstropyWCS):
         elif attribute[:5] == 'cunit':
             return str(self.wcs.cunit[axis])
         elif attribute[:5] == 'crval':
-            return decode_ascii(elf.wcs.crval[axis])
+            return decode_ascii(self.wcs.crval[axis])
         elif attribute[:5] == 'crpix':
             return decode_ascii(self.wcs.crpix[axis])
         else:

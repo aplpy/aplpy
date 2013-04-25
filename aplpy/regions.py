@@ -1,15 +1,6 @@
 from __future__ import absolute_import, print_function, division
 
-try:
-    import pyregion
-    pyregion_installed = True
-except:
-    pyregion_installed = False
-
-
-def _check_pyregion_installed():
-    if not pyregion_installed:
-        raise Exception("The pyregion package is required to load region files")
+from astropy import log
 
 from .decorators import auto_refresh
 
@@ -69,8 +60,6 @@ class Regions:
             ds9 call and onto the patchcollections.
         """
 
-        _check_pyregion_installed()
-
         PC, TC = ds9(region_file, self._header, **kwargs)
 
         #ffpc = self._ax1.add_collection(PC)
@@ -94,6 +83,11 @@ def ds9(region_file, header, zorder=3, **kwargs):
 
     zorder - defaults to 3 so that regions are on top of contours
     """
+
+    try:
+        import pyregion
+    except:
+        raise ImportError("The pyregion package is required to load region files")
 
     # read region file
     if isinstance(region_file, basestring):

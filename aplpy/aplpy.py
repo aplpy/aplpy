@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function, division
 
 from distutils import version
 import os
-import warnings
 import operator
 
 import matplotlib
