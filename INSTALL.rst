@@ -4,40 +4,37 @@ Installing APLpy
 Dependencies
 ============
 
-  Required
+Required:
 
-  - matplotlib 1.0.0 or later
-    http://matplotlib.sourceforge.net/
+- Numpy 1.4.1 or later
+  http://numpy.scipy.org
 
-  - numpy 1.4.1 or later
-    http://numpy.scipy.org/
+- Matplotlib 1.0.0 or later
+  http://www.matplotlib.org
 
-  - pyfits 2.4.0 or later
-    http://www.stsci.edu/institute/software_hardware/pyfits
+- astropy 0.2.0 or later
+  http://www.astropy.org
 
-  - pywcs 1.8.1-4.4.4 or later
-    https://trac.assembla.com/astrolib
+Optional:
 
-  Optional
+- Montage 3.0 or later
+  http://montage.ipac.caltech.edu/
 
-  - Montage 3.0 or later
-    http://montage.ipac.caltech.edu/
+- PyAVM
+  http://astrofrog.github.io/pyavm/
 
-  - python-montage 0.9.2 or later
-    http://astrofrog.github.com/python-montage/
+- pyregion
+  http://leejjoon.github.com/pyregion/
 
-  - pyregion
-    http://leejjoon.github.com/pyregion/
+- Python Imaging Library (PIL)
+  http://www.pythonware.com/products/pil/
 
-  - Python Imaging Library (PIL)
-    http://www.pythonware.com/products/pil/
-
-  - PyAVM
-    https://github.com/astrofrog/pyavm
+- montage-wrapper 0.9.5 or later
+  http://www.astropy.org/montage-wrapper
 
 Installing
 ==========
 
-  To install APLpy, simply type:
+To install APLpy, simply type:
 
     python setup.py install
