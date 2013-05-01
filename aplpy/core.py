@@ -243,8 +243,14 @@ class FITSFigure(Layers, Regions, Deprecated):
             if hasattr(axis,'toggle_axisline'):
                 self._ax1 = axis
             else:
-                # doesn't work. self._ax1 = mpltk.HostAxes(axis.get_figure(), axis.get_position())
-                raise ValueError('Need a ParasiteAxes / HostAxes axis instance if axis= is specified')
+                # Hack-ish; there must be a better way
+                lower_corner = axis.get_position()[0,:]
+                extent = axis.get_position()[1:] - lower_corner
+                cornerpars = np.concatenate([lower_corner,extent])
+                self._figure = axis.get_figure()
+                self._ax1 = mpltk.HostAxis(self._figure, cornerpars)
+                axis.set_visible(False)
+                self._figure.add_axes(self._ax1)
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
