@@ -139,9 +139,10 @@ def _matplotlib_pil_bug_present():
         log.warning("Could not properly determine Matplotlib behavior for RGB images - image may be flipped incorrectly")
         return False
 
-def adjust_hue(rgb_image, hue_rotation, dtype=None):
+def adjust_hsv(rgb_image, hue_rotation=0, saturation=0, value=0, dtype=None):
     """
-    Given an RGB cube (dimensions [y,x,color]), rotate the hue by `hue_rotation` degrees
+    Given an RGB cube (dimensions [y,x,color]), rotate the hue by `hue_rotation` degrees,
+    add `saturation` to the saturation, and `value` to the value of the image.
 
     Parameters
     ----------
@@ -150,26 +151,40 @@ def adjust_hue(rgb_image, hue_rotation, dtype=None):
         The color axis must be length 3.  Can be dtype=float or dtype=uint8
     hue_rotation : 0-360
         Hue rotation angle
+    saturation : 0-1 (float)
+        Goes from greyscale (0) to fully colored (1)
+    value : 0-1 (float)
+        Goes from black (0) to white/color (1)
     dtype : dtype
         Either some type of float or uint8.  If float, returns will be in range [0,1), if
         uint8, will be in range [0,255].  If none, defaults to input dtype
     """
 
-    if np.subdtype(rgb_image.dtype,np.uint8):
+    if np.issubdtype(rgb_image.dtype,np.uint8):
         float_rgb = rgb_image/255.
     else:
         float_rgb = rgb_image
 
     # :3 allows for an Alpha 4th layer
-    hsv = rgb_to_hsv(float_rgb[:,:,:3])
+    hsv = mpl.colors.rgb_to_hsv(float_rgb[:,:,:3])
 
     # add the rotation
-    hsv[:,:,0] += hue/360.
+    hsv[:,:,0] += hue_rotation/360.
     
     # It's possible to have an initial rotation + added rotation > 360
     hsv[:,:,0] %= 1
 
-    float_rgb[:,:,:3] = hsv_to_rgb(hsv)
+    # add the saturation
+    hsv[:,:,1] += saturation
+    # ensure max saturation = 1
+    hsv[:,:,1][hsv[:,:,1] > 1] = 1
+
+    # add the value
+    hsv[:,:,2] += value
+    # ensure max value = 1
+    hsv[:,:,2][hsv[:,:,2] > 1] = 1
+
+    float_rgb[:,:,:3] = mpl.colors.hsv_to_rgb(hsv)
 
     if np.issubdtype(dtype, np.uint8):
         rgb_image[:,:,:3] = np.round(float_rgb[:,:,:3]*255)
