@@ -1531,6 +1531,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         if self._parameters.auto_refresh or force:
             self._figure.canvas.draw()
+            if hasattr(self,'Sliders'):
+                # refresh slider values from displayed data
+                self.Sliders.set_sliders()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300, format=None):
         '''
@@ -1852,9 +1855,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         """
         Create a slider widget window
         """
-        import widgets
- 
-        self.Sliders = widgets.ColorSliders(self._figure, aplpyfigure=self)
+        from . import widgets
+        
+        if not hasattr(self,'Sliders') or \
+            (hasattr(self,'Sliders') and not mpl.fignum_exists(self.Sliders.toolfig.number)):
+            self.Sliders = widgets.ColorSliders(self._figure, aplpyfigure=self)
  
     @auto_refresh
     def hide_sliders(self):
