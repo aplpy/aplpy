@@ -304,7 +304,9 @@ class TextBox(Widget):
             if not(text.strip() in ('-.','.','-','')):
                 self.value = float(text)
             # but always change the text
+            # CLEAR TEXT FIRST!!! OMG.
             self.text.set_text(text)
+            self.text.draw(self.text._renderer)
             self.redraw()
         except ValueError:
             print "error for text = ",text
