@@ -1531,9 +1531,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         if self._parameters.auto_refresh or force:
             self._figure.canvas.draw()
-            if hasattr(self,'Sliders'):
-                # refresh slider values from displayed data
-                self.Sliders.set_sliders()
+            # results in infinite loop: sliders handle this directly
+            #if hasattr(self,'Sliders'):
+            #    # refresh slider values from displayed data
+            #    self.Sliders._reset_sliders()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300, format=None):
         '''
