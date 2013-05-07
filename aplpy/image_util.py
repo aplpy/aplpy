@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
 import numpy as np
+from astropy import log
 
 from . import math_util as m
 
@@ -51,6 +52,10 @@ def resample(array, factor):
 
 
 def percentile_function(array):
+
+    if np.all(np.isnan(array) | np.isinf(array)):
+        log.warn("Image contains only NaN or Inf values")
+        return lambda x: 0
 
     array = array.ravel()
     array = array[np.where(np.isnan(array) == False)]
