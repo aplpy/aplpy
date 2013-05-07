@@ -213,8 +213,14 @@ class ColorSliders(Widget):
                 self.sliders = [slmin,slmid,slmax]
 
     def _reset_sliders(self):
-        self.slmin.set_val(self.aplpyfigure.image.norm.vmin)
-        self.slmax.set_val(self.aplpyfigure.image.norm.vmax)
+
+        # store these so they don't get overwritten by the update procedure
+        vmin,vmax = self.aplpyfigure.image.norm.vmin,self.aplpyfigure.image.norm.vmax
+        if self.aplpyfigure.image.norm.midpoint is not None:
+            vmid = self.aplpyfigure.image.norm.vmid
+
+        self.slmin.set_val(vmin)
+        self.slmax.set_val(vmax)
         if self.aplpyfigure.image.norm.midpoint is not None:
             self.slmid.set_val(self.aplpyfigure.image.norm.vmid)
 

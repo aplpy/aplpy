@@ -692,6 +692,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Update normalizer object
         normalizer.vmin = vmin
         normalizer.vmax = vmax
+        print('normalizer: ',normalizer,normalizer.vmin,normalizer.vmax)
 
         if self.image:
             self.image.set_visible(True)
@@ -703,7 +704,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                                                        smooth=smooth,
                                                        kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer, aspect=aspect)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._data,
+                smooth=smooth, kernel=kernel), cmap=cmap,
+                interpolation=interpolation, origin='lower',
+                extent=self._extent, norm=normalizer, aspect=aspect)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
@@ -715,6 +719,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if hasattr(self, 'colorbar'):
             self.colorbar.update()
+
+        if hasattr(self, 'Sliders'):
+            self.Sliders._reset_sliders()
+            print('normalizer: ',self.image.norm,self.image.norm.vmin,self.image.norm.vmax)
 
     @auto_refresh
     def hide_colorscale(self):
@@ -1531,10 +1539,6 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         if self._parameters.auto_refresh or force:
             self._figure.canvas.draw()
-            # results in infinite loop: sliders handle this directly
-            #if hasattr(self,'Sliders'):
-            #    # refresh slider values from displayed data
-            #    self.Sliders._reset_sliders()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True, max_dpi=300, format=None):
         '''
