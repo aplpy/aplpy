@@ -267,8 +267,12 @@ class TextBox(Widget):
             self._cursorpos += 1
         elif event.key == 'enter':
             if self.enter_callback is not None:
-                self.enter_callback(self.value)
-            self.deactivate()
+                try:
+                    self.enter_callback(self.value)
+                    self.deactivate()
+                except Exception as ex:
+                    print ex
+
         elif len(event.key) > 1:
             # ignore...
             pass
