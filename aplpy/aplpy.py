@@ -692,7 +692,6 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Update normalizer object
         normalizer.vmin = vmin
         normalizer.vmax = vmax
-        print('normalizer: ',normalizer,normalizer.vmin,normalizer.vmax)
 
         if self.image:
             self.image.set_visible(True)
