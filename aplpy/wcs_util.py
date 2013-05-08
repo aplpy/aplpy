@@ -452,11 +452,10 @@ def world2pix(wcs, x_world, y_world):
     elif (type(x_world) == list) and (type(y_world) == list):
         x_pix, y_pix = wcs.wcs_sky2pix(np.array(x_world), np.array(y_world), 1)
         return x_pix.tolist(), y_pix.tolist()
-    else:
-        try:
-            return wcs.wcs_sky2pix(x_world, y_world, 1)
-        except:            
-            raise Exception("world2pix should be provided either with two scalars, two lists, two numpy arrays, or two objects that can be cast to numpy arrays")
+    elif isinstance(x_world, np.ndarray) and isinstance(y_world, np.ndarray):
+        return wcs.wcs_sky2pix(x_world, y_world, 1)
+    else:            
+        raise Exception("world2pix should be provided either with two scalars, two lists, or two numpy arrays")
 
 
 def pix2world(wcs, x_pix, y_pix):
@@ -466,8 +465,7 @@ def pix2world(wcs, x_pix, y_pix):
     elif (type(x_pix) == list) and (type(y_pix) == list):
         x_world, y_world = wcs.wcs_pix2sky(np.array(x_pix), np.array(y_pix), 1)
         return x_world.tolist(), y_world.tolist()
+    elif isinstance(x_pix, np.ndarray) and isinstance(y_pix, np.ndarray):
+        return wcs.wcs_pix2sky(x_pix, y_pix, 1)
     else:
-        try:
-            return wcs.wcs_pix2sky(x_pix, y_pix, 1)
-        except:
-            raise Exception("pix2world should be provided either with two scalars, two lists, two numpy arrays, or two objects that can be cast to numpy arrays")
+        raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
