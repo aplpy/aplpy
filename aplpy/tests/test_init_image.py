@@ -142,3 +142,11 @@ def test_init_car_invalid(dimensions):
     hdu = generate_hdu(CAR_REFERENCE)
     with pytest.raises(Exception):
         FITSFigure(hdu, dimensions=dimensions)
+
+# Check that images containing only NaN or Inf values don't crash FITSFigure
+def test_init_only_naninf():
+    data = np.ones((10,10)) * np.nan
+    data[::2,::2] = np.inf
+    f = FITSFigure(data)
+    f.show_grayscale()
+    f.show_colorscale()
