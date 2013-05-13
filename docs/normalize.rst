@@ -2,7 +2,7 @@ APLpy Normalizations
 ====================
 
 APLpy uses a different set of normalization techniques than other image display tools.
-The default options available are ``linear``, ``log``, and ``arcsinh``.  
+The default options available are ``linear``, ``sqrt``, ``power``, ``log``, and ``arcsinh``.  
 
 
 Log Scale
