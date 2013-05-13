@@ -15,8 +15,10 @@ In the FITS display program `ds9 <http://hea-www.harvard.edu/RD/ds9/>`_, the log
     y = \frac{\log(ax+1)}{\log(a)}
 
 where ``a`` defaults to 1000 and recommended values are from 100-10000 (see
-`<http://hea-www.harvard.edu/RD/ds9/ref/how.html>`_).  In the ds9 formalism, ``x`` is the normalized data
-in the range [0,1].
+`<http://hea-www.harvard.edu/RD/ds9/ref/how.html>`_).  In both the ds9 and
+APLpy formalism, ``x`` is the normalized data in the range [0,1], i.e.
+:math:`x=(x_0-vmin)/(vmax-vmin)`.
+
 APLpy defines the log scale with a ``vmid`` parameter such that
 
 .. math::
@@ -24,9 +26,12 @@ APLpy defines the log scale with a ``vmid`` parameter such that
     m = (vmax - vmid) / (vmin-vmid)
     y = \frac{\log(x * (m-1) + 1)}{\log(m)}
 
-So the midpoint :math:`m \approx a+1`; the two scalings are nearly identical
-but specified in different ways. ``x`` in APLpy is effectively the same as in
-ds9.  Therefore :math:`vmid = (m*vmin-vmax)/(m-1)`
+So the midpoint :math:`m \approx a+1`; the two scalings are *nearly* identical
+but specified in different ways, i.e. ``a`` can only be specified indirectly in
+APLpy. 
+
+If you want to convert from the ds9 ``a`` parameter to APLpy's ``vmid``
+parameter, you can use this formula: :math:`vmid = (m*vmin-vmax)/(m-1)`
 
 Arcsinh Scale
 -------------
