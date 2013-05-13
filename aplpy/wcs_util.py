@@ -438,9 +438,9 @@ def arcperpix(wcs):
 
 
 def pixel_scale(wcs):
-    if hasattr(wcs.wcs,'cd'):
+    if wcs.wcs.has_cd():
         pscale = np.sqrt(wcs.wcs.cd[0, 0] ** 2 + wcs.wcs.cd[1, 0] ** 2)
-    elif hasattr(wcs.wcs,'pc'):
+    elif wcs.wcs.has_pc():
         pscale = np.sqrt(wcs.wcs.pc[0, 0] ** 2 + wcs.wcs.pc[1, 0] ** 2)
     else:
         pscale = np.abs(wcs.wcs.cdelt[0])
