@@ -41,14 +41,14 @@ The DS9 definition is simply :math:`y = \frac{\textrm{asinh}(10x)}{3}`.
 
 Linear Scale
 ------------
-The linear scale is only concerned with the ``vmin`` and ``vmax`` keywords and
-respects :math:`y=x` between those limits.  (e.g., :math:`y=(x-vmin)/(vmax-vmin)`)
+The linear scale is only concerned with the ``vmin`` and ``vmax`` keywords:
+:math:`y=(x-vmin)/(vmax-vmin)`
 
 Square Root Scale
 -----------------
-The square root scale is :math:`y=\sqrt{x}` between ``vmin`` and ``vmax``
+The square root scale is :math:`y=\sqrt{(x-vmin)/(vmax-vmin)}`
 
 Power Scale
 -----------
-The power root scale is :math:`y=x^a` between ``vmin`` and ``vmax``, where
+The power root scale is :math:`y=\left[(x-vmin)/(vmax-vmin)\right]^a` between ``vmin`` and ``vmax``, where
 ``a`` is passed in as the ``exponent`` keyword.
