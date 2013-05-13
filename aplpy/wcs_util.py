@@ -29,11 +29,6 @@ class WCS(AstropyWCS):
         # Fix common non-standard units
         self.wcs.unitfix()
 
-        # hack to deal with to_header converting CD into PC, but aplpy only
-        # parses CD
-        if hasattr(self.wcs,'pc') and not hasattr(self.wcs,'cd'):
-            self.wcs.cd = self.wcs.pc
-
         # Now find the values of the coordinates in the slices - only needed if
         # data has more than two dimensions
         if len(self._slices) > 0:

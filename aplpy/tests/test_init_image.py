@@ -88,9 +88,8 @@ def test_wcs_toheader_init():
     wcs2.naxis1 = wcs.naxis1
     wcs2.naxis2 = wcs.naxis2
     f = FITSFigure(wcs2)
-    assert hasattr(f._wcs.wcs,'cd')
     f.show_grayscale()
-    # this fails: f.add_grid()
+    f.add_grid()
     f.close()
 
 
