@@ -1,61 +1,91 @@
 APLpy Normalizations
 ====================
 
-APLpy uses a different set of normalization techniques than other image display tools.
-The default options available are ``linear``, ``sqrt``, ``power``, ``log``, and ``arcsinh``.  
+APLpy uses a different set of normalization techniques than other image
+display tools. The default options available for the ``stretch`` argument are
+``linear``, ``sqrt``, ``power``, ``log``, and ``arcsinh``.
 
+In all cases, the transformations below map the values from the image onto a
+scale from 0 to 1 which then corresponds to the endpoints of the colormap
+being used.
 
 Log Scale
 ---------
 
-In the FITS display program `ds9 <http://hea-www.harvard.edu/RD/ds9/>`_, the log scale is defined by 
-
-.. math::
-
-    y = \frac{\log(ax+1)}{\log(a)}
-
-where ``a`` defaults to 1000 and recommended values are from 100-10000 (see
-`<http://hea-www.harvard.edu/RD/ds9/ref/how.html>`_).  In both the ds9 and
-APLpy formalism, ``x`` is the normalized data in the range [0,1], i.e.
-:math:`x=(x_0-vmin)/(vmax-vmin)`.
-
 APLpy defines the log scale with a ``vmid`` parameter such that
 
 .. math::
+    y = \frac{\log_{10}(x \cdot (m-1) + 1)}{\log_{10}(m)}
 
-    m = (vmax - vmid) / (vmin-vmid)
-    y = \frac{\log(x * (m-1) + 1)}{\log(m)}
+where:
 
-So the midpoint :math:`m \approx a+1`; the two scalings are *nearly* identical
-but specified in different ways, i.e. ``a`` can only be specified indirectly in
-APLpy. 
+.. math::
+    m = \frac{v_{\rm max} - v_{\rm mid}}{v_{\rm min}-v_{\rm mid}}
 
-If you want to convert from the ds9 ``a`` parameter to APLpy's ``vmid``
-parameter, you can use this formula: 
-:math:`vmid = (m*vmin-vmax)/(m-1) \approx ((a+1)*vmin - vmax) / a`
+and:
+
+.. math::
+    x=\frac{v-v_{\rm min}}{v_{\rm max}-v_{\rm min}}
+
+and :math:`v` is the image pixel values.
+
+For reference, in the FITS display program `ds9 <http://hea-www.harvard.edu/RD/ds9/>`_, the
+log scale is defined by
+
+.. math::
+    y = \frac{\log_{10}(ax+1)}{\log_{10}(a)}
+
+where :math:`a` defaults to 1000 and recommended values are from 100-10000 (see
+`here <http://hea-www.harvard.edu/RD/ds9/ref/how.html>`_).
+
+The two stretches are *nearly* (but not completely) identical for :math:`m
+\approx a+1`. If you want to convert from the ds9 :math:`a` parameter to
+APLpy's :math:`v_{\rm mid}`, you can use this formula:
+
+.. math::
+    v_{\rm mid} = \frac{m \cdot v_{\rm min}-v_{\rm max}}{m-1} \approx \frac{(a+1) \cdot v_{\rm min} - v_{\rm max}}{a}
 
 
 Arcsinh Scale
 -------------
+
 The arcsinh scale is defined by
 
 .. math::
-
-    m = (vmid - vmin) / (vmax-vmin)
     y = \frac{\textrm{asinh}(x/m)}{\textrm{asinh}(1/m)}
 
-The DS9 definition is simply :math:`y = \frac{\textrm{asinh}(10x)}{3}`.
+where
+
+.. math::
+    m = \frac{v_{\rm mid} - v_{\rm min}}{v_{\rm max}-v_{\rm min}}
+
+For reference, the ds9 definition is simply
+
+.. math::
+    y = \frac{\textrm{asinh}(10x)}{3}
 
 Linear Scale
 ------------
+
 The linear scale is only concerned with the ``vmin`` and ``vmax`` keywords:
-:math:`y=(x-vmin)/(vmax-vmin)`
+
+.. math::
+    y=\frac{x-v_{\rm min}}{v_{\rm max}-v_{\rm min}}
 
 Square Root Scale
 -----------------
-The square root scale is :math:`y=\sqrt{(x-vmin)/(vmax-vmin)}`
+
+The square root scale is given by
+
+.. math::
+    y=\sqrt{\frac{x-v_{\rm min}}{v_{\rm max}-v_{\rm min}}}
 
 Power Scale
 -----------
-The power root scale is :math:`y=\left[(x-vmin)/(vmax-vmin)\right]^a` between ``vmin`` and ``vmax``, where
-``a`` is passed in as the ``exponent`` keyword.
+
+The power root scale is
+
+.. math::
+    y=\left[\frac{x-v_{\rm min}}{v_{\rm max}-v_{\rm min}}\right]^a
+
+where :math:`a` is passed in as the ``exponent`` keyword.
