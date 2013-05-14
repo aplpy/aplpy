@@ -15,6 +15,7 @@ Using APLpy
   arbitrary_coordinate_systems.rst
   slicing.rst
   howtos.rst
+  normalize.rst
 
 .. _api:
 
