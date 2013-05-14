@@ -248,7 +248,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 extent = axis.get_position()[1:] - lower_corner
                 cornerpars = np.concatenate([lower_corner,extent])
                 self._figure = axis.get_figure()
-                self._ax1 = mpltk.HostAxis(self._figure, cornerpars)
+                self._ax1 = mpltk.HostAxes(self._figure, cornerpars)
                 axis.set_visible(False)
                 self._figure.add_axes(self._ax1)
         else:
