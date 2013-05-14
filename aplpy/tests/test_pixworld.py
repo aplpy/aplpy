@@ -21,7 +21,7 @@ GOOD_INPUT = [ [1.,2.],
                [tab['RA'], tab['DEC']]
              ]
 
-BAD_INPUT = [ [1,'s'],
+BAD_INPUT = [ [1,['s','w']],
               [np.arange(2), np.sum],
               [tab['RA'], 'ewr']
             ]
@@ -50,12 +50,14 @@ def test_returntypes():
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
 def test_pix2world_fail(inputval):
     wcs = generate_wcs(HEADER)
-    with pytest.raises(Exception):
-        wcs_util.pix2world(inputval[0], inputval[1])
+    with pytest.raises(Exception) as exc:
+        wcs_util.pix2world(wcs, inputval[0], inputval[1])
+    assert exc.value.args[0] == "pix2world should be provided either with two scalars, two lists, or two numpy arrays"
 
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
-def test_pix2world_fail(inputval):
+def test_world2pix_fail(inputval):
     wcs = generate_wcs(HEADER)
-    with pytest.raises(Exception):
-        wcs_util.world2pix(inputval[0], inputval[1])
+    with pytest.raises(Exception) as exc:
+        wcs_util.world2pix(wcs, inputval[0], inputval[1])
+    assert exc.value.args[0] == "world2pix should be provided either with two scalars, two lists, or two numpy arrays"
 

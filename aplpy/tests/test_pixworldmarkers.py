@@ -20,7 +20,7 @@ GOOD_INPUT = [ [1,2],
                [tab['RA'], tab['DEC']]
              ]
 
-BAD_INPUT = [ [1,'s'],
+BAD_INPUT = [ [1,['s', 'e']],
               [np.arange(2), np.sum],
               [tab['RA'], 'ewr']
             ]
@@ -43,16 +43,18 @@ def test_wcs_coords(inputval):
 def test_pixel_coords_bad(inputval):
     data = np.zeros((16, 16))
     f = FITSFigure(data)
-    with pytest.raises(Exception):
+    with pytest.raises(Exception) as exc:
         f.show_markers(inputval[0], inputval[1])
+    assert exc.value.args[0] == "world2pix should be provided either with two scalars, two lists, or two numpy arrays"
     f.close()
 
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
 def test_wcs_coords_bad(inputval):
     wcs = generate_wcs(HEADER)
     f = FITSFigure(wcs)
-    with pytest.raises(Exception):
+    with pytest.raises(Exception) as exc:
         f.show_markers(inputval[0], inputval[1])
     f.close()
+    assert exc.value.args[0] == "world2pix should be provided either with two scalars, two lists, or two numpy arrays"
 
 
