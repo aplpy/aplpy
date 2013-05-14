@@ -31,7 +31,9 @@ but specified in different ways, i.e. ``a`` can only be specified indirectly in
 APLpy. 
 
 If you want to convert from the ds9 ``a`` parameter to APLpy's ``vmid``
-parameter, you can use this formula: :math:`vmid = (m*vmin-vmax)/(m-1)`
+parameter, you can use this formula: 
+:math:`vmid = (m*vmin-vmax)/(m-1) \approx ((a+1)*vmin - vmax) / a`
+
 
 Arcsinh Scale
 -------------
