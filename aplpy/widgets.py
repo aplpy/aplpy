@@ -229,7 +229,31 @@ class TextBox(Widget):
     def __init__(self, ax, s='', horizontalalignment='left',
             enter_callback=None, fontsize=12):
         """
-        Text box!
+        Editable text box
+
+        Creates a mouse-click callback such that clicking on the text box will
+        activate the cursor.
+
+        *WARNING* Activating a textbox will permanently disable all other
+        key-press bindings!  They'll be stored in TextBox.old_callbacks and
+        restored when TextBox.deactivate is called.
+
+        The default widget assumes only numerical (float) data and will not
+        allow text entry besides numerical characters and ('e','-','.')
+
+        Parameters
+        ----------
+        ax : axis
+            Parent axis to turn into text box
+        s : str
+            Initial string contents of text box
+        horizontalalignment : left | center | right
+            Passed to self.text
+        enter_callback : function
+            A function of one argument that will be called with TextBox.value
+            passed in as the only argument when enter is pressed
+        fontsize : int
+            Font size for text box
         """
 
         self.value = float(s)
@@ -263,8 +287,9 @@ class TextBox(Widget):
         self.canvas.mpl_connect('button_press_event',self._mouse_activate)
 
     def redraw(self):
-        self.ax.redraw_in_frame()
-        self.canvas.blit(self.ax.bbox)
+        # blitting doesn't clear old text
+        #self.ax.redraw_in_frame()
+        #self.canvas.blit(self.ax.bbox)
         self.canvas.draw()
 
     def _mouse_activate(self, event):
@@ -286,10 +311,13 @@ class TextBox(Widget):
     def activate(self):
         if self._cid not in self.canvas.callbacks.callbacks['key_press_event']:
 
+            if not hasattr(self,'old_callbacks'):
+                self.old_callbacks = {}
+
             # remove all other key bindings
             keys = self.canvas.callbacks.callbacks['key_press_event'].keys()
             for k in keys:
-                self.canvas.callbacks.callbacks['key_press_event'].pop(k)
+                self.old_callbacks[k] = self.canvas.callbacks.callbacks['key_press_event'].pop(k)
 
             self._cid = self.canvas.mpl_connect('key_press_event', self.keypress)
             self.active = True
@@ -297,6 +325,10 @@ class TextBox(Widget):
     def deactivate(self):
         if self._cid in self.canvas.callbacks.callbacks['key_press_event']:
             self.canvas.mpl_disconnect(self._cid)
+            if hasattr(self,'old_callbacks'):
+                for k in self.old_callbacks:
+                    self.canvas.callbacks.callbacks['key_press_event'][k] = self.old_callbacks[k]
+
         self.active = False
 
     def keypress(self, event):
