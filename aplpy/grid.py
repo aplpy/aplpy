@@ -59,7 +59,9 @@ class Grid(object):
         elif np.isreal(xspacing):
             self.x_auto_spacing = False
             if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
-                self.x_grid_spacing = au.Angle(degrees=xspacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
+                self.x_grid_spacing = au.Angle(
+                    degrees=xspacing,
+                    latitude=self._wcs.xaxis_coord_type == 'latitude')
             else:
                 self.x_grid_spacing = xspacing
         else:
@@ -84,7 +86,9 @@ class Grid(object):
         elif np.isreal(yspacing):
             self.y_auto_spacing = False
             if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
-                self.y_grid_spacing = au.Angle(degrees=yspacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+                self.y_grid_spacing = au.Angle(
+                    degrees=yspacing,
+                    latitude=self._wcs.yaxis_coord_type == 'latitude')
             else:
                 self.y_grid_spacing = yspacing
         else:
@@ -164,7 +168,8 @@ class Grid(object):
         # Set x grid spacing
         if self.x_auto_spacing:
             if self.ax.xaxis.apl_auto_tick_spacing:
-                xspacing = default_spacing(self.ax, 'x', self.ax.xaxis.apl_label_form)
+                xspacing = default_spacing(self.ax, 'x',
+                                           self.ax.xaxis.apl_label_form)
             else:
                 xspacing = self.ax.xaxis.apl_tick_spacing
         else:
@@ -180,7 +185,8 @@ class Grid(object):
         # Set y grid spacing
         if self.y_auto_spacing:
             if self.ax.yaxis.apl_auto_tick_spacing:
-                yspacing = default_spacing(self.ax, 'y', self.ax.yaxis.apl_label_form)
+                yspacing = default_spacing(self.ax, 'y',
+                                           self.ax.yaxis.apl_label_form)
             else:
                 yspacing = self.ax.yaxis.apl_tick_spacing
         else:
@@ -256,7 +262,8 @@ class Grid(object):
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed longitude
         # lines
-        if self._wcs.xaxis_coord_type == 'longitude' and self._wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0:
+        if (self._wcs.xaxis_coord_type == 'longitude' and
+           self._wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0):
 
             gy = grid_y_i.min()
 

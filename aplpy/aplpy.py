@@ -503,10 +503,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def show_grayscale(self, vmin=None, vmid=None, vmax=None,
-                            pmin=0.25, pmax=99.75,
-                            stretch='linear', exponent=2, invert='default',
-                            smooth=None, kernel='gauss', aspect='equal',
-                            interpolation='nearest'):
+                       pmin=0.25, pmax=99.75,
+                       stretch='linear', exponent=2, invert='default',
+                       smooth=None, kernel='gauss', aspect='equal',
+                       interpolation='nearest'):
         '''
         Show a grayscale image of the FITS file.
 
@@ -703,7 +703,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                                                        smooth=smooth,
                                                        kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer, aspect=aspect)
+            self.image = self._ax1.imshow(
+                convolve_util.convolve(self._data, smooth=smooth, kernel=kernel),
+                cmap=cmap, interpolation=interpolation, origin='lower',
+                extent=self._extent, norm=normalizer, aspect=aspect)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
