@@ -27,7 +27,11 @@ and:
 .. math::
     x=\frac{v-v_{\rm min}}{v_{\rm max}-v_{\rm min}}
 
-and :math:`v` is the image pixel values.
+and :math:`v` is the image pixel values. Note that :math:`v_{\rm mid}` should
+be smaller than :math:`v_{\rm min}`, which means that :math:`m` will always be
+larger than one. By default, :math:`v_{\rm mid}=0` and :math:`v_{\rm min}` is
+therefore required to be positive (but negative values of :math:`v_{\rm min}`
+are allowed if :math:`v_{\rm mid}` is specified).
 
 For reference, in the FITS display program `ds9 <http://hea-www.harvard.edu/RD/ds9/>`_, the
 log scale is defined by
@@ -58,6 +62,8 @@ where
 
 .. math::
     m = \frac{v_{\rm mid} - v_{\rm min}}{v_{\rm max}-v_{\rm min}}
+
+By default, :math:`v_{\rm mid}` is chosen such that :math:`1/m=-30`.
 
 For reference, the ds9 definition is simply
 
