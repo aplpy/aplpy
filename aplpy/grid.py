@@ -439,32 +439,28 @@ def find_intersections(wcs, coord, spacing):
     (labels_x, labels_y, world_x, world_y) = tick_positions(
         wcs, spacing, 'x', coord, farside=False, mode='xy')
 
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    x.extend(world_x)
+    y.extend(world_y)
 
     # Top X axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
         wcs, spacing, 'x', coord, farside=True, mode='xy')
 
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    x.extend(world_x)
+    y.extend(world_y)
 
     # Left Y axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
         wcs, spacing, 'y', coord, farside=False, mode='xy')
 
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    x.extend(world_x)
+    y.extend(world_y)
 
     # Right Y axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
         wcs, spacing, 'y', coord, farside=True, mode='xy')
 
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    x.extend(world_x)
+    y.extend(world_y)
 
     return np.array(x), np.array(y)
