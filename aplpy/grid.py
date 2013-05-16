@@ -415,7 +415,20 @@ def in_plot(wcs, x_pix, y_pix):
 
 def find_intersections(wcs, coord, spacing):
     '''
-    Find intersections of a given coordinate with a all axes
+    Find intersections of a given coordinate with all axes
+
+    Parameters
+    ----------
+
+    wcs : ~aplpy.wcs_util.WCS
+       The WCS instance for the image.
+
+    coord : { 'x', 'y' }
+       The coordinate for which we are looking for ticks.
+
+    spacing : float
+       The spacing along the axis.
+
     '''
 
     # Initialize arrays
@@ -423,25 +436,33 @@ def find_intersections(wcs, coord, spacing):
     y = []
 
     # Bottom X axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=False, mode='xy')
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'x', coord, farside=False, mode='xy')
+
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
 
     # Top X axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=True, mode='xy')
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'x', coord, farside=True, mode='xy')
+
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
 
     # Left Y axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=False, mode='xy')
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'y', coord, farside=False, mode='xy')
+
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
 
     # Right Y axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=True, mode='xy')
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'y', coord, farside=True, mode='xy')
+
     for i in range(0, len(world_x)):
         x.append(world_x[i])
         y.append(world_y[i])
