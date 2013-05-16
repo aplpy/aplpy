@@ -218,7 +218,7 @@ class Grid(object):
             while True:
                 gx -= xspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, gx, 0.)
-                if in_plot(self._wcs, xpix, ypix) and gx >= -90.:
+                if in_plot(self.ax, xpix, ypix) and gx >= -90.:
                     grid_x_i = np.hstack([grid_x_i, gx, gx])
                     grid_y_i = np.hstack([grid_y_i, 0., 360.])
                 else:
@@ -229,7 +229,7 @@ class Grid(object):
             while True:
                 gx += xspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, gx, 0.)
-                if in_plot(self._wcs, xpix, ypix) and gx <= +90.:
+                if in_plot(self.ax, xpix, ypix) and gx <= +90.:
                     grid_x_i = np.hstack([grid_x_i, gx, gx])
                     grid_y_i = np.hstack([grid_y_i, 0., 360.])
                 else:
@@ -237,7 +237,7 @@ class Grid(object):
 
         # Plot those lines
         for gx in np.unique(grid_x_i):
-            for line in plot_grid_x(self._wcs, grid_x_i, grid_y_i, gx):
+            for line in plot_grid_x(self.ax, grid_x_i, grid_y_i, gx):
                 lines.append(line)
 
         # Find y lines that intersect with axes
@@ -263,7 +263,7 @@ class Grid(object):
             while True:
                 gy -= yspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, 0., gy)
-                if in_plot(self._wcs, xpix, ypix) and gy >= -90.:
+                if in_plot(self.ax, xpix, ypix) and gy >= -90.:
                     grid_x_i = np.hstack([grid_x_i, 0., 360.])
                     grid_y_i = np.hstack([grid_y_i, gy, gy])
                 else:
@@ -274,7 +274,7 @@ class Grid(object):
             while True:
                 gy += yspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, 0., gy)
-                if in_plot(self._wcs, xpix, ypix) and gy <= +90.:
+                if in_plot(self.ax, xpix, ypix) and gy <= +90.:
                     grid_x_i = np.hstack([grid_x_i, 0., 360.])
                     grid_y_i = np.hstack([grid_y_i, gy, gy])
                 else:
@@ -282,7 +282,7 @@ class Grid(object):
 
         # Plot those lines
         for gy in np.unique(grid_y_i):
-            for line in plot_grid_y(self._wcs, grid_x_i, grid_y_i, gy):
+            for line in plot_grid_y(self.ax, grid_x_i, grid_y_i, gy):
                 lines.append(line)
 
         if self._grid:
@@ -294,9 +294,10 @@ class Grid(object):
         return self.ax
 
 
-def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
+def plot_grid_y(ax, grid_x, grid_y, gy, alpha=0.5):
     '''Plot a single grid line in the y direction'''
 
+    wcs = ax._wcs
     lines_out = []
 
     # Find intersections that correspond to latitude lat0
@@ -310,26 +311,26 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
     if wcs.xaxis_coord_type == 'latitude':
         if not np.any(grid_x_sorted == -90):
             xpix, ypix = wcs_util.world2pix(wcs, max(grid_x_sorted[0] - 1., -90.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([-90., grid_x_sorted])
         if not np.any(grid_x_sorted == +90):
             xpix, ypix = wcs_util.world2pix(wcs, min(grid_x_sorted[-1] + 1., +90.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([grid_x_sorted, +90.])
     elif wcs.xaxis_coord_type == 'longitude':
         if not np.any(grid_x_sorted == 0.):
             xpix, ypix = wcs_util.world2pix(wcs, max(grid_x_sorted[0] - 1., 0.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([0., grid_x_sorted])
         if not np.any(grid_x_sorted == 360.):
             xpix, ypix = wcs_util.world2pix(wcs, min(grid_x_sorted[-1] + 1., 360.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([grid_x_sorted, 360.])
 
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
 
-    if not in_plot(wcs, xpix, ypix):
+    if not in_plot(ax, xpix, ypix):
         grid_x_sorted = np.roll(grid_x_sorted, 1)
 
     # Check that number of grid points is even
@@ -351,9 +352,10 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
     return lines_out
 
 
-def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
+def plot_grid_x(ax, grid_x, grid_y, gx, alpha=0.5):
     '''Plot a single longitude line'''
 
+    wcs = ax._wcs
     lines_out = []
 
     # Find intersections that correspond to longitude gx
@@ -367,26 +369,26 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
     if wcs.yaxis_coord_type == 'latitude':
         if not np.any(grid_y_sorted == -90):
             xpix, ypix = wcs_util.world2pix(wcs, gx, max(grid_y_sorted[0] - 1., -90.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([-90., grid_y_sorted])
         if not np.any(grid_y_sorted == +90):
             xpix, ypix = wcs_util.world2pix(wcs, gx, min(grid_y_sorted[-1] + 1., +90.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([grid_y_sorted, +90.])
     elif wcs.yaxis_coord_type == 'longitude':
         if not np.any(grid_y_sorted == 0.):
             xpix, ypix = wcs_util.world2pix(wcs, gx, max(grid_y_sorted[0] - 1., 0.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([0., grid_y_sorted])
         if not np.any(grid_y_sorted == 360.):
             xpix, ypix = wcs_util.world2pix(wcs, gx, min(grid_y_sorted[-1] + 1., 360.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([grid_y_sorted, 360.])
 
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, gx, (grid_y_sorted[0] + grid_y_sorted[1]) / 2.)
 
-    if not in_plot(wcs, xpix, ypix):
+    if not in_plot(ax, xpix, ypix):
         grid_y_sorted = np.roll(grid_y_sorted, 1)
 
     # Check that number of grid points is even
@@ -408,9 +410,14 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
     return lines_out
 
 
-def in_plot(wcs, x_pix, y_pix):
+def in_plot(ax, x_pix, y_pix):
     '''Check whether a given point is in a plot'''
-    return x_pix > +0.5 and x_pix < wcs.nx + 0.5 and y_pix > +0.5 and y_pix < wcs.ny + 0.5
+
+    xmin, xmax = ax.xaxis.get_view_interval()
+    ymin, ymax = ax.yaxis.get_view_interval()
+
+    return (x_pix > xmin + 0.5 and x_pix < xmax + 0.5 and
+            y_pix > ymin + 0.5 and y_pix < ymax + 0.5)
 
 
 def find_intersections(ax, coord, spacing):
