@@ -194,7 +194,7 @@ class Grid(object):
             yspacing = yspacing.todegrees()
 
         # Find x lines that intersect with axes
-        grid_x_i, grid_y_i = find_intersections(self._wcs, 'x', xspacing)
+        grid_x_i, grid_y_i = find_intersections(self.ax, 'x', xspacing)
 
         # Ensure that longitudes are between 0 and 360, and latitudes between
         # -90 and 90
@@ -241,7 +241,7 @@ class Grid(object):
                 lines.append(line)
 
         # Find y lines that intersect with axes
-        grid_x_i, grid_y_i = find_intersections(self._wcs, 'y', yspacing)
+        grid_x_i, grid_y_i = find_intersections(self.ax, 'y', yspacing)
 
         if self._wcs.xaxis_coord_type == 'longitude':
             grid_x_i = np.mod(grid_x_i, 360.)
@@ -413,15 +413,15 @@ def in_plot(wcs, x_pix, y_pix):
     return x_pix > +0.5 and x_pix < wcs.nx + 0.5 and y_pix > +0.5 and y_pix < wcs.ny + 0.5
 
 
-def find_intersections(wcs, coord, spacing):
+def find_intersections(ax, coord, spacing):
     '''
     Find intersections of a given coordinate with all axes
 
     Parameters
     ----------
 
-    wcs : ~aplpy.wcs_util.WCS
-       The WCS instance for the image.
+    ax :
+       The matplotlib axis instance for the figure.
 
     coord : { 'x', 'y' }
        The coordinate for which we are looking for ticks.
@@ -431,34 +431,40 @@ def find_intersections(wcs, coord, spacing):
 
     '''
 
+    wcs = ax._wcs
+
+    xmin, xmax = ax.xaxis.get_view_interval()
+    ymin, ymax = ax.yaxis.get_view_interval()
+
+    options = dict(mode='xy', xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+
     # Initialize arrays
-    x = []
-    y = []
+    x, y = [], []
 
     # Bottom X axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
-        wcs, spacing, 'x', coord, farside=False, mode='xy')
+        wcs, spacing, 'x', coord, farside=False, **options)
 
     x.extend(world_x)
     y.extend(world_y)
 
     # Top X axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
-        wcs, spacing, 'x', coord, farside=True, mode='xy')
+        wcs, spacing, 'x', coord, farside=True, **options)
 
     x.extend(world_x)
     y.extend(world_y)
 
     # Left Y axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
-        wcs, spacing, 'y', coord, farside=False, mode='xy')
+        wcs, spacing, 'y', coord, farside=False, **options)
 
     x.extend(world_x)
     y.extend(world_y)
 
     # Right Y axis
     (labels_x, labels_y, world_x, world_y) = tick_positions(
-        wcs, spacing, 'y', coord, farside=True, mode='xy')
+        wcs, spacing, 'y', coord, farside=True, **options)
 
     x.extend(world_x)
     y.extend(world_y)
