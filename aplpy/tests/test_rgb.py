@@ -53,4 +53,17 @@ class TestRGB(BaseImageTests):
 
         f.recenter(359.3, -72.1, radius=0.05)
 
+
+
         return f
+
+
+# this test fails because the image is treated as a 3-layer data cube instead of an RGB cube
+# Is there any way to pass in a python object rather than a .png or .jpg for testing RGB data?
+#@pytest.mark.xfail
+def test_rgb():
+    data = np.zeros((3, 16, 16))
+    header = fits.Header.fromtextfile(HEADER)
+    hdu = fits.ImageHDU(data, header=header)
+    f = FITSFigure(hdu, rgb_cube=True)
+    f.show_rgb()
