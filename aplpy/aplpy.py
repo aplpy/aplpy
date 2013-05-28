@@ -994,8 +994,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
-            :class:`~matplotlib.patches.Circle` class, and can be used to
-            control the appearance of the circles.
+            :class:`~matplotlib.collections.PatchCollection` class, and can be
+            used to control the appearance of the circles.
         '''
 
         if np.isscalar(xw):
@@ -1024,13 +1024,11 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         patches = []
         for i in range(len(xp)):
-            patches.append(Circle((xp[i], yp[i]), radius=rp[i], **kwargs))
+            patches.append(Circle((xp[i], yp[i]), radius=rp[i]))
 
-        p = PatchCollection(patches, match_original=True)
-
-        # Due to a bug in matplotlib, we have to reset the facecolor
-        if 'facecolor' in kwargs:
-            p.set_facecolor(kwargs['facecolor'])
+        # Due to bugs in matplotlib, we need to pass the patch properties
+        # directly to the PatchCollection rather than use match_original.
+        p = PatchCollection(patches, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1076,8 +1074,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
-            :class:`~matplotlib.patches.Ellipse` class, and can be used to
-            control the appearance of the ellipses.
+            :class:`~matplotlib.collections.PatchCollection` class, and can be
+            used to control the appearance of the ellipses.
         '''
 
         if np.isscalar(xw):
@@ -1118,13 +1116,11 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         patches = []
         for i in range(len(xp)):
-            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i], **kwargs))
+            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i]))
 
-        p = PatchCollection(patches, match_original=True)
-
-        # Due to a bug in matplotlib, we have to reset the facecolor
-        if 'facecolor' in kwargs:
-            p.set_facecolor(kwargs['facecolor'])
+        # Due to bugs in matplotlib, we need to pass the patch properties
+        # directly to the PatchCollection rather than use match_original.
+        p = PatchCollection(patches, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1166,8 +1162,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
-            :class:`~matplotlib.patches.Rectangle` class, and can be used to
-            control the appearance of the rectangles.
+            :class:`~matplotlib.collections.PatchCollection` class, and can be
+            used to control the appearance of the rectangles.
         '''
 
         if np.isscalar(xw):
@@ -1204,13 +1200,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         xp = xp - wp / 2.
         yp = yp - hp / 2.
         for i in range(len(xp)):
-            patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i], **kwargs))
+            patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i]))
 
-        p = PatchCollection(patches, match_original=True)
-
-        # Due to a bug in matplotlib, we have to reset the facecolor
-        if 'facecolor' in kwargs:
-            p.set_facecolor(kwargs['facecolor'])
+        # Due to bugs in matplotlib, we need to pass the patch properties
+        # directly to the PatchCollection rather than use match_original.
+        p = PatchCollection(patches, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
