@@ -1269,7 +1269,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     @auto_refresh
     def show_arrows(self, x, y, dx, dy, width='auto', head_width='auto',
-                    head_length='auto', layer=False, zorder=None, **kwargs):
+                    head_length='auto', length_includes_head=True, layer=False, zorder=None, **kwargs):
         '''
         Overlay arrows on the current plot.
 
@@ -1293,20 +1293,20 @@ class FITSFigure(Layers, Regions, Deprecated):
             The length of the arrow head, in pixels (default: 5% of the
             arrow length)
 
+        length_includes_head : bool, optional
+            Whether the head includes the length
+
         layer : str, optional
             The name of the arrow(s) layer. This is useful for giving
             custom names to layers (instead of line_set_n) and for
             replacing existing layers.
 
         kwargs
-            Additional keyword arguments (such as color, offsets, linestyle,
+            Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
-            :class:`~matplotlib.patches.FancyArrow` class, and can be used to
-            control the appearance of the arrows.
+            :class:`~matplotlib.collections.PatchCollection` class, and can be
+            used to control the appearance of the arrows.
         '''
-
-        if 'length_includes_head' not in kwargs:
-            kwargs['length_includes_head'] = True
 
         if layer:
             self.remove_layer(layer, raise_exception=False)
@@ -1322,27 +1322,23 @@ class FITSFigure(Layers, Regions, Deprecated):
             xp2, yp2 = wcs_util.world2pix(self._wcs, x[i] + dx[i], y[i] + dy[i])
 
             if width == 'auto':
-                kwargs['width'] = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
-            else:
-                kwargs['width'] = width
+                width = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
 
             if head_width == 'auto':
-                kwargs['head_width'] = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
-            else:
-                kwargs['head_width'] = head_width
+                head_width = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
 
             if head_length == 'auto':
-                kwargs['head_length'] = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
-            else:
-                kwargs['head_length'] = head_length
+                head_length = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
 
-            arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1, **kwargs))
+            arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1,
+                                     width=width, head_width=head_width,
+                                     head_length=head_length,
+                                     length_includes_head=length_includes_head)
+                                     )
 
-        p = PatchCollection(arrows, match_original=True)
-
-        # Due to a bug in matplotlib, we have to reset the facecolor
-        if 'facecolor' in kwargs:
-            p.set_facecolor(kwargs['facecolor'])
+        # Due to bugs in matplotlib, we need to pass the patch properties
+        # directly to the PatchCollection rather than use match_original.
+        p = PatchCollection(arrows, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1377,8 +1373,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
-            :class:`~matplotlib.patches.Polygon` class, and can be used to
-            control the appearance of the polygons.
+            :class:`~matplotlib.collections.PatchCollection` class, and can be
+            used to control the appearance of the polygons.
         '''
 
         if not 'facecolor' in kwargs:
@@ -1412,11 +1408,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         for i in range(len(pix_polygon_list)):
             patches.append(Polygon(pix_polygon_list[i], **kwargs))
 
-        p = PatchCollection(patches, match_original=True)
-
-        # Due to a bug in matplotlib, we have to reset the facecolor
-        if 'facecolor' in kwargs:
-            p.set_facecolor(kwargs['facecolor'])
+        # Due to bugs in matplotlib, we need to pass the patch properties
+        # directly to the PatchCollection rather than use match_original.
+        p = PatchCollection(patches, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
