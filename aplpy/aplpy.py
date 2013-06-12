@@ -978,13 +978,16 @@ class FITSFigure(Layers, Regions, Deprecated):
         ----------
 
         xw : list or `~numpy.ndarray`
-            The x postions of the circles (in world coordinates)
+            The x postions of the circles (in world coordinates, 
+            usually degrees)
 
         yw : list or `~numpy.ndarray`
-            The y positions of the circles (in world coordinates)
+            The y positions of the circles (in world coordinates, 
+            usually degrees)
 
         radius : int or float or list or `~numpy.ndarray`
-            The radii of the circles (in world coordinates)
+            The radii of the circles (in world coordinates, usually 
+            arcseconds)
 
         layer : str, optional
             The name of the circle layer. This is useful for giving
