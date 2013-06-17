@@ -108,7 +108,7 @@ Markers, shapes, regions and text labels are stored in layers. These layers can 
 
     fig.list_layers()
 
-Layers can behidden and shown with the following methods::
+Layers can be hidden and shown with the following methods::
 
     fig.hide_layer('regions')
     fig.show_layer('regions')
