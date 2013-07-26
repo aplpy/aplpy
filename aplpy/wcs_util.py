@@ -438,13 +438,9 @@ def arcperpix(wcs):
 
 
 def pixel_scale(wcs):
-    if wcs.wcs.has_cd():
-        pscale = np.sqrt(wcs.wcs.cd[0, 0] ** 2 + wcs.wcs.cd[1, 0] ** 2)
-    elif wcs.wcs.has_pc():
-        pscale = np.sqrt(wcs.wcs.pc[0, 0] ** 2 + wcs.wcs.pc[1, 0] ** 2)
-    else:
-        pscale = np.abs(wcs.wcs.cdelt[0])
-    return pscale
+    # We use ``get_cdelt`` because it is independent of whether the FITS file
+    # uses the CD or CDELT formalism.
+    return wcs.wcs.get_cdelt()[0]
 
 
 def world2pix(wcs, x_world, y_world):
