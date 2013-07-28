@@ -113,9 +113,9 @@ class Compass(object):
 
         len_pix = length * (ymax - ymin)
 
-        pixel_scale = wcs_util.pixel_scale(self._wcs)
+        degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
-        len_deg = len_pix * pixel_scale
+        len_deg = len_pix * degrees_per_pixel
 
         # Should really only do tiny displacement then magnify the vectors - important if there is curvature
 
@@ -194,9 +194,9 @@ class Scalebar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        pixel_scale = wcs_util.pixel_scale(self._wcs)
+        degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
-        length = length / pixel_scale
+        length = length / degrees_per_pixel
 
         try:
             self._scalebar.remove()
@@ -479,7 +479,7 @@ class Beam(object):
         if isinstance(angle, basestring):
             angle = self._header[angle]
 
-        pixel_scale = wcs_util.pixel_scale(self._wcs)
+        degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
         self._base_settings['minor'] = minor
         self._base_settings['major'] = major
@@ -489,8 +489,8 @@ class Beam(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        minor /= pixel_scale
-        major /= pixel_scale
+        minor /= degrees_per_pixel
+        major /= degrees_per_pixel
 
         try:
             self._beam.remove()
