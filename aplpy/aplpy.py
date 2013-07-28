@@ -458,7 +458,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Center the image on a given position and with a given radius.
 
-        Either the radius or width/heigh arguments should be specified.
+        Either the radius or width/heigh arguments should be specified. The
+        units of the radius or width/height should be the same as the world
+        coordinates in the WCS. For images of the sky, this is often (but not
+        always) degrees.
 
         Parameters
         ----------
@@ -480,14 +483,14 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         xpix, ypix = wcs_util.world2pix(self._wcs, x, y)
 
-        pixel_scale = wcs_util.pixel_scale(self._wcs)
+        sx, sy = wcs_util.pixel_scale(self._wcs)
 
         if radius:
-            dx_pix = radius / pixel_scale
-            dy_pix = radius / pixel_scale
+            dx_pix = radius / sx
+            dy_pix = radius / sy
         elif width and height:
-            dx_pix = width / pixel_scale / 2.
-            dy_pix = height / pixel_scale / 2.
+            dx_pix = width / sx * 0.5
+            dy_pix = height / sy * 0.5
         else:
             raise Exception("Need to specify either radius= or width= and height= arguments")
 
