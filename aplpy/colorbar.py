@@ -5,6 +5,7 @@ import warnings
 import matplotlib.axes as maxes
 from mpl_toolkits.axes_grid import make_axes_locatable
 from matplotlib.font_manager import FontProperties
+from matplotlib.ticker import LogFormatterMathtext
 
 from .decorators import auto_refresh, fixdocstring
 
@@ -29,7 +30,9 @@ class Colorbar(object):
         self._axislabel_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, box=None, box_orientation='vertical', axis_label_text=None, axis_label_rotation=None, axis_label_pad=5):
+    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, log_format=False,
+             box=None, box_orientation='vertical', axis_label_text=None, axis_label_rotation=None,
+             axis_label_pad=5):
         '''
         Show a colorbar on the side of the image.
 
@@ -51,6 +54,9 @@ class Colorbar(object):
         labels : bool, optional
             Whether to show numerical labels.
 
+        log_format : bool, optional
+            Whether to format ticks in exponential notation
+
         box : list, optional
             A custom box within which to place the colorbar. This should
             be in the form [xmin, ymin, dx, dy] and be in relative figure
@@ -69,6 +75,7 @@ class Colorbar(object):
         self._base_settings['pad'] = pad
         self._base_settings['ticks'] = ticks
         self._base_settings['labels'] = labels
+        self._base_settings['log_format'] = log_format
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
         self._base_settings['axis_label_text'] = axis_label_text
@@ -112,7 +119,14 @@ class Colorbar(object):
                 self._colorbar_axes = self._parent._figure.add_axes(box)
                 orientation = box_orientation
 
-            self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes, orientation=orientation, ticks=ticks)
+            if log_format:
+                format=LogFormatterMathtext()
+            else:
+                format=None
+                
+            self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes,
+                                                           orientation=orientation, format=format,
+                                                           ticks=ticks)
             if axis_label_text:
                 if axis_label_rotation:
                     self._colorbar.set_label(axis_label_text, rotation=axis_label_rotation)
