@@ -458,7 +458,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Center the image on a given position and with a given radius.
 
-        Either the radius or width/heigh arguments should be specified.
+        Either the radius or width/height arguments should be specified.
 
         Parameters
         ----------
@@ -467,7 +467,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             Coordinates to center on
 
         radius : float, optional
-            Radius of the region to view. This produces a square plot.
+            Radius of the region to view in degrees. This produces a square plot.
 
         width : float, optional
             Width of the region to view. This should be given in
