@@ -80,6 +80,10 @@ class WCS(AstropyWCS):
             self.set_yaxis_coord_type('scalar')
             self.set_yaxis_coord_type('scalar')
 
+    def get_cdelt(self):
+        cdelt = self.wcs.get_cdelt()
+        return cdelt[self._dimensions[0]], cdelt[self._dimensions[1]]
+
     def set_xaxis_coord_type(self, coord_type):
         if coord_type in ['longitude', 'latitude', 'scalar']:
             self.xaxis_coord_type = coord_type
@@ -434,17 +438,18 @@ def system(wcs):
 
 
 def arcperpix(wcs):
-    return pixel_scale(wcs) * 3600.
+    return degperpix(wcs) * 3600.
+
+
+def degperpix(wcs):
+    sx, sy = pixel_scale(wcs)
+    return 0.5 * (sx + sy)
 
 
 def pixel_scale(wcs):
-    if wcs.wcs.has_cd():
-        pscale = np.sqrt(wcs.wcs.cd[0, 0] ** 2 + wcs.wcs.cd[1, 0] ** 2)
-    elif wcs.wcs.has_pc():
-        pscale = np.sqrt(wcs.wcs.pc[0, 0] ** 2 + wcs.wcs.pc[1, 0] ** 2)
-    else:
-        pscale = np.abs(wcs.wcs.cdelt[0])
-    return pscale
+    # We use ``get_cdelt`` because it is independent of whether the FITS file
+    # uses the CD or CDELT formalism.
+    return np.abs(wcs.get_cdelt())
 
 
 def world2pix(wcs, x_world, y_world):
