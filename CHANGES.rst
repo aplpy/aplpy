@@ -4,8 +4,23 @@ CHANGES
 0.9.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+    This version restores compatibility with Astropy 0.3
 
+    New Features
+    ~~~~~~~~~~~~
+
+    - `FITSFigure.recenter` can now be used with sliced data cubes. [#122]
+
+    Bug fixes
+    ~~~~~~~~~
+
+    - Fixed issues related to bugs in matplotlib in `match_original` when using
+      patch collections. [#124]
+
+    - Fixed a bug that made images containing NaN or Inf values crash APLpy. [#113]
+
+    - Fixed a bug that meant that world2pix and pix2world could not take
+      Astropy table columns. [#114]
 
 0.9.9 (2013-04-25)
 ------------------
