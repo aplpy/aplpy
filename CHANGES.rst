@@ -1,7 +1,7 @@
 CHANGES
 --------
 
-0.9.10 (unreleased)
+0.9.10 (2013-11-25)
 -------------------
 
     This version restores compatibility with Astropy 0.3
