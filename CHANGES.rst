@@ -4,8 +4,11 @@ CHANGES
 0.9.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+    Bug fixes
+    ~~~~~~~~~
 
+    - Fix a bug that meant that pixel scales were incorrectly extracted for
+      some WCS settings. [#156]
 
 0.9.10 (2013-11-25)
 -------------------
