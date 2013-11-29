@@ -31,7 +31,7 @@ LICENSE = 'MIT'
 URL = 'http://aplpy.github.com'
 
 # VERSION should be PEP386 compatible (http://www.python.org/dev/peps/pep-0386)
-VERSION = '0.9.11'
+VERSION = '0.9.12.dev'
 
 # Indicates if this version is a release version
 RELEASE = 'dev' not in VERSION
