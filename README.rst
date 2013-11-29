@@ -1,12 +1,14 @@
 Introduction
-++++++++++++
+============
 
-  APLpy (the Astronomical Plotting Library in Python) is a
-  Python module aimed at producing publication-quality plots
-  of astronomical imaging data in FITS format.
+APLpy (the Astronomical Plotting Library in Python) is a
+Python module aimed at producing publication-quality plots
+of astronomical imaging data in FITS format.
 
-  Documentation is available here:
+PyPI: https://pypi.python.org/pypi/APLpy
 
-  http://aplpy.github.com/
-  
-  APLpy is released under an MIT open-source license
+Website: http://aplpy.github.io
+
+Documentation: http://aplpy.readthedocs.org/
+
+APLpy is released under an MIT open-source license
