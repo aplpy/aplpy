@@ -954,6 +954,150 @@ class FITSFigure(Layers, Regions, Deprecated):
         if returnlevels:
             return levels
 
+# This method plots polarization vectors
+
+    @auto_refresh
+    def show_vectors(self, pdata, adata, phdu=0, ahdu=0, step=1, scale=1, rotate=0, cutoff=0, units='degrees', layer=None, convention=None, dimensions=[0, 1], slices=[], **kwargs):
+        '''
+        Overlay vectors on the current plot.
+
+        Parameters
+        ----------
+
+        pdata : see below
+
+            The FITS file specifying the magnitude of vectors. The following data types can be passed:
+
+                 string
+                 astropy.io.fits.PrimaryHDU
+                 astropy.io.fits.ImageHDU
+                 pyfits.PrimaryHDU
+                 pyfits.ImageHDU
+                 astropy.wcs.WCS
+                 np.ndarray
+
+        adata : see below
+
+            The FITS file specifying the angle of vectors. The following data types can be passed:
+
+                 string
+                 astropy.io.fits.PrimaryHDU
+                 astropy.io.fits.ImageHDU
+                 pyfits.PrimaryHDU
+                 pyfits.ImageHDU
+                 astropy.wcs.WCS
+                 np.ndarray
+
+        phdu : int, optional
+            By default, the image in the primary HDU is read in. If a
+            different HDU is required for pdata, use this argument.
+
+        ahdu : int, optional
+            By default, the image in the primary HDU is read in. If a
+            different HDU is required for adata, use this argument.
+
+        step : int, optional
+            Derive a vector only from every 'step' pixels. You will
+            normally want this to be >1 to get sensible vector spacing.
+
+        scale : int, optional
+            The length, in pixels, of a vector with magnitude 1 in the image
+            specified by pdata. If pdata specifies fractional polarization,
+            make this comparable to step.
+
+        rotate : float, optional
+            An angle to rotate by, in units the same as those of the angle map.
+
+        cutoff : float, optional
+            The value of magnitude below which no
+            vectors should be plotted. The default value, zero,
+            excludes negative-length and NaN-masked data.
+
+        units : str, optional
+            Units to assume for the angle map. Valid values are 'degrees'
+            (the default) or 'radians' (or anything else), which will not
+            apply a scaling factor of pi/180 to the angle data.
+
+        layer : str, optional
+            The name of the vector layer. This is useful for giving
+            custom names to layers (instead of vector_set_n) and for
+            replacing existing layers.
+
+        convention : str, optional
+            This is used in cases where a FITS header can be interpreted
+            in multiple ways. For example, for files with a -CAR
+            projection and CRVAL2=0, this can be set to 'wells' or
+            'calabretta' to choose the appropriate convention.
+
+        dimensions : tuple or list, optional
+            The index of the axes to use if the data has more than three
+            dimensions.
+
+        slices : tuple or list, optional
+            If a FITS file with more than two dimensions is specified,
+            then these are the slices to extract. If all extra dimensions
+            only have size 1, then this is not required.
+
+        kwargs
+            Additional keyword arguments (such as alpha, linewidths, or color)
+            which are passed to Matplotlib's
+            :class:`~matplotlib.collections.LineCollection` class, and can be used to
+            control the appearance of the lines. For more
+            information on these additional arguments, see the *Optional
+            keyword arguments* sections in the documentation for those
+            methods.
+
+        '''
+
+        # over-ride default color (none) that will otherwise be set by
+        #show_lines() 
+        if not 'color' in kwargs:
+            kwargs.setdefault('color', 'white')
+
+        if layer:
+            self.remove_layer(layer, raise_exception=False)
+
+        data_p, header_p, wcs_p = self._get_hdu(pdata, phdu, False, \
+            convention=convention, dimensions=dimensions, slices=slices)
+        data_a, header_a, wcs_a = self._get_hdu(adata, ahdu, False, \
+            convention=convention, dimensions=dimensions, slices=slices)
+
+        wcs_p.nx = header_p['NAXIS%i' % (dimensions[0] + 1)]
+        wcs_p.ny = header_p['NAXIS%i' % (dimensions[1] + 1)]
+        wcs_a.nx = header_a['NAXIS%i' % (dimensions[0] + 1)]
+        wcs_a.ny = header_a['NAXIS%i' % (dimensions[1] + 1)]
+
+        if (wcs_p.nx!=wcs_a.nx or wcs_p.ny!=wcs_a.ny):
+            raise Exception("Angle and magnitude images must be same size")
+
+        angle=data_a+rotate
+        if (units=='degrees'):
+            angle*=np.pi/180.0
+
+        linelist=[]
+        for y in range(0,wcs_p.ny-1,step):
+            for x in range(0,wcs_p.nx-1,step):
+                if data_p[y,x]>cutoff:
+                    r=data_p[y,x]*0.5*scale
+                    a=angle[y,x]
+                    x1=x+r*np.sin(a)
+                    y1=y-r*np.cos(a)
+                    x2=x-r*np.sin(a)
+                    y2=y+r*np.cos(a)
+
+                    x_world,y_world=wcs_util.pix2world(wcs_p, [x1,x2],[y1,y2] )
+                    line=np.array([x_world,y_world])
+                    linelist.append(line)
+
+        if layer:
+            vector_set_name = layer
+        else:
+            self._vector_counter += 1
+            vector_set_name = 'vector_set_' + str(self._vector_counter)
+
+        # Use show_lines to finish the process off
+        self.show_lines(linelist,layer=vector_set_name,**kwargs)
+
     # This method plots markers. The input should be an Nx2 array with WCS coordinates
     # in degree format.
 
