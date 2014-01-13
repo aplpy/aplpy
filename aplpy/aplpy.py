@@ -981,10 +981,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         ----------
 
         xw : list or `~numpy.ndarray`
-            The x postions of the circles (in world coordinates)
+            The x positions of the centers of the circles (in world coordinates)
 
         yw : list or `~numpy.ndarray`
-            The y positions of the circles (in world coordinates)
+            The y positions of the centers of the circles (in world coordinates)
 
         radius : int or float or list or `~numpy.ndarray`
             The radii of the circles (in world coordinates)
@@ -1054,10 +1054,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         ----------
 
         xw : list or `~numpy.ndarray`
-            The x postions of the ellipses (in world coordinates)
+            The x positions of the centers of the ellipses (in world coordinates)
 
         yw : list or `~numpy.ndarray`
-            The y positions of the ellipses (in world coordinates)
+            The y positions of the centers of the ellipses (in world coordinates)
 
         width : int or float or list or `~numpy.ndarray`
             The width of the ellipse (in world coordinates)
@@ -1146,10 +1146,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         ----------
 
         xw : list or `~numpy.ndarray`
-            The x postions of the rectangles (in world coordinates)
+            The x positions of the centers of the rectangles (in world coordinates)
 
         yw : list or `~numpy.ndarray`
-            The y positions of the rectangles (in world coordinates)
+            The y positions of the centers of the rectangles (in world coordinates)
 
         width : int or float or list or `~numpy.ndarray`
             The width of the rectangle (in world coordinates)
