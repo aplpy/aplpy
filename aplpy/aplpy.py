@@ -1043,7 +1043,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         linelist=[]
         for y in range(0,wcs_p.ny-1,step):
             for x in range(0,wcs_p.nx-1,step):
-                if data_p[y,x]>cutoff:
+                if data_p[y,x]>cutoff and np.isfinite(angle[y,x]):
                     r=data_p[y,x]*0.5*scale
                     a=angle[y,x]
                     x1=x+r*np.sin(a)
