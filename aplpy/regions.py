@@ -62,7 +62,7 @@ class Regions:
             ds9 call and onto the patchcollections.
         """
 
-        PC, TC = ds9(region_file, wcs.WCS(self._header).sub([wcs.WCSSUB_CELESTIAL]), **kwargs)
+        PC, TC = ds9(region_file, flatten_header(self._header), **kwargs)
 
         # ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)
@@ -172,3 +172,26 @@ class ArtistCollection():
     def set_zorder(self, zorder):
         for T in self.artistlist:
             T.set_zorder(zorder)
+
+
+def flatten_header(header):
+    """
+    Attempt to turn an N-dimensional fits header into a 2-dimensional header
+    Turns all CRPIX[>2] etc. into new keywords with suffix 'A'
+    """
+
+    newheader = header.copy()
+
+    for key in newheader.keys():
+        try:
+            if int(key[-1]) >= 3 and key[:2] in ['CD','CR','CT','CU','NA']:
+                newheader.rename_key(key,'A'+key,force=True)
+        except ValueError:
+            # if key[-1] is not an int
+            pass
+        except IndexError:
+            # if len(key) < 2
+            pass
+    newheader.update('NAXIS',2)
+
+    return newheader
