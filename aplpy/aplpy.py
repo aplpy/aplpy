@@ -706,7 +706,10 @@ class FITSFigure(Layers, Regions, Deprecated):
                                                        smooth=smooth,
                                                        kernel=kernel))
         else:
-            self.image = self._ax1.imshow(convolve_util.convolve(self._data, smooth=smooth, kernel=kernel), cmap=cmap, interpolation=interpolation, origin='lower', extent=self._extent, norm=normalizer, aspect=aspect)
+            self.image = self._ax1.imshow(convolve_util.convolve(self._data,
+                smooth=smooth, kernel=kernel), cmap=cmap,
+                interpolation=interpolation, origin='lower',
+                extent=self._extent, norm=normalizer, aspect=aspect)
 
         xmin, xmax = self._ax1.get_xbound()
         if xmin == 0.0:
@@ -718,6 +721,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if hasattr(self, 'colorbar'):
             self.colorbar.update()
+
+        if hasattr(self, 'Sliders'):
+            self.Sliders._reset_sliders()
+            print('normalizer: ',self.image.norm,self.image.norm.vmin,self.image.norm.vmax)
 
     @auto_refresh
     def hide_colorscale(self):
@@ -1837,3 +1844,24 @@ class FITSFigure(Layers, Regions, Deprecated):
         Close the figure and free up the memory.
         '''
         mpl.close(self._figure)
+
+    @auto_refresh
+    def show_sliders(self):
+        """
+        Create a slider widget window
+        """
+        from . import widgets
+        
+        if not hasattr(self,'Sliders') or \
+            (hasattr(self,'Sliders') and not mpl.fignum_exists(self.Sliders.toolfig.number)):
+            self.Sliders = widgets.ColorSliders(self._figure, aplpyfigure=self)
+ 
+    @auto_refresh
+    def hide_sliders(self):
+        """
+        Get rid of the sliders
+        """
+        if hasattr(self,'Sliders'):
+            self.Sliders.clear_sliders()
+            mpl.close(self.Sliders.toolfig.number)
+      
