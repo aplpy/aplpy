@@ -46,7 +46,7 @@ install:
    - $PIP_WHEEL_COMMAND "Cython==0.19.1"
    - $PIP_WHEEL_COMMAND "matplotlib==1.3.0"
    - if [[ $SETUP_CMD == build_sphinx* ]]; then $PIP_WHEEL_COMMAND "Sphinx==1.2b3"; fi
-   - if [[ $ASTROPY_VERSION == stable ]]; then $PIP_WHEEL_COMMAND "astropy==0.3"; fi
+   - if [[ $ASTROPY_VERSION == stable ]]; then pip install "astropy==0.3"; fi
    - if [[ $ASTROPY_VERSION == development ]]; then pip install git+http://github.com/astropy/astropy.git#egg=astropy; fi
 
 script:
