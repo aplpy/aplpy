@@ -791,7 +791,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='upper')
 
     @auto_refresh
-    def show_contour(self, data, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
+    def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
         '''
         Overlay contours on the current plot.
 
@@ -888,8 +888,15 @@ class FITSFigure(Layers, Regions, Deprecated):
         elif not colors:
             cmap = mpl.cm.get_cmap('jet')
 
-        data_contour, header_contour, wcs_contour = self._get_hdu(data, hdu, False, \
-            convention=convention, dimensions=dimensions, slices=slices)
+        if data:
+            data_contour, header_contour, wcs_contour = self._get_hdu(data, \
+                    hdu, False, convention=convention, dimensions=dimensions, \
+                    slices=slices)
+        else:
+            data_contour = self._data
+            header_contour = self._header
+            wcs_contour = self._wcs
+
         wcs_contour.nx = header_contour['NAXIS%i' % (dimensions[0] + 1)]
         wcs_contour.ny = header_contour['NAXIS%i' % (dimensions[1] + 1)]
 
