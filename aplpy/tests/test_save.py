@@ -28,8 +28,8 @@ def is_format(filename, format):
     elif format == 'ps':
         return f.read(14) == b'%!PS-Adobe-3.0'
     elif format == 'svg':
-        import xml.etree.ElementTree as e
-        return e.parse(f).getroot().tag == '{http://www.w3.org/2000/svg}svg'
+        from xml.dom import minidom
+        return minidom.parse(f).childNodes[2].attributes['xmlns'].value == u'http://www.w3.org/2000/svg'
     else:
         raise Exception("Unknown format: %s" % format)
 
