@@ -554,14 +554,14 @@ def axis_positions(wcs, axis, farside, xmin=False, xmax=False,
 
     # Generate an array of pixel values for the x-axis
     if axis == 'x':
-        x_pix = math_util.arange2(xmin, xmax, 1.)
+        x_pix = np.linspace(xmin, xmax, 512)
         y_pix = np.ones(np.shape(x_pix))
         if(farside):
             y_pix = y_pix * ymax
         else:
             y_pix = y_pix * ymin
     else:
-        y_pix = math_util.arange2(ymin, ymax, 1.)
+        y_pix = np.linspace(ymin, ymax, 512)
         x_pix = np.ones(np.shape(y_pix))
         if(farside):
             x_pix = x_pix * xmax
