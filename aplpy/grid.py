@@ -59,7 +59,9 @@ class Grid(object):
         elif np.isreal(xspacing):
             self.x_auto_spacing = False
             if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
-                self.x_grid_spacing = au.Angle(degrees=xspacing, latitude=self._wcs.xaxis_coord_type == 'latitude')
+                self.x_grid_spacing = au.Angle(
+                    degrees=xspacing,
+                    latitude=self._wcs.xaxis_coord_type == 'latitude')
             else:
                 self.x_grid_spacing = xspacing
         else:
@@ -84,7 +86,9 @@ class Grid(object):
         elif np.isreal(yspacing):
             self.y_auto_spacing = False
             if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
-                self.y_grid_spacing = au.Angle(degrees=yspacing, latitude=self._wcs.yaxis_coord_type == 'latitude')
+                self.y_grid_spacing = au.Angle(
+                    degrees=yspacing,
+                    latitude=self._wcs.yaxis_coord_type == 'latitude')
             else:
                 self.y_grid_spacing = yspacing
         else:
@@ -164,7 +168,8 @@ class Grid(object):
         # Set x grid spacing
         if self.x_auto_spacing:
             if self.ax.xaxis.apl_auto_tick_spacing:
-                xspacing = default_spacing(self.ax, 'x', self.ax.xaxis.apl_label_form)
+                xspacing = default_spacing(self.ax, 'x',
+                                           self.ax.xaxis.apl_label_form)
             else:
                 xspacing = self.ax.xaxis.apl_tick_spacing
         else:
@@ -180,7 +185,8 @@ class Grid(object):
         # Set y grid spacing
         if self.y_auto_spacing:
             if self.ax.yaxis.apl_auto_tick_spacing:
-                yspacing = default_spacing(self.ax, 'y', self.ax.yaxis.apl_label_form)
+                yspacing = default_spacing(self.ax, 'y',
+                                           self.ax.yaxis.apl_label_form)
             else:
                 yspacing = self.ax.yaxis.apl_tick_spacing
         else:
@@ -194,7 +200,7 @@ class Grid(object):
             yspacing = yspacing.todegrees()
 
         # Find x lines that intersect with axes
-        grid_x_i, grid_y_i = find_intersections(self._wcs, 'x', xspacing)
+        grid_x_i, grid_y_i = find_intersections(self.ax, 'x', xspacing)
 
         # Ensure that longitudes are between 0 and 360, and latitudes between
         # -90 and 90
@@ -218,7 +224,7 @@ class Grid(object):
             while True:
                 gx -= xspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, gx, 0.)
-                if in_plot(self._wcs, xpix, ypix) and gx >= -90.:
+                if in_plot(self.ax, xpix, ypix) and gx >= -90.:
                     grid_x_i = np.hstack([grid_x_i, gx, gx])
                     grid_y_i = np.hstack([grid_y_i, 0., 360.])
                 else:
@@ -229,7 +235,7 @@ class Grid(object):
             while True:
                 gx += xspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, gx, 0.)
-                if in_plot(self._wcs, xpix, ypix) and gx <= +90.:
+                if in_plot(self.ax, xpix, ypix) and gx <= +90.:
                     grid_x_i = np.hstack([grid_x_i, gx, gx])
                     grid_y_i = np.hstack([grid_y_i, 0., 360.])
                 else:
@@ -237,11 +243,11 @@ class Grid(object):
 
         # Plot those lines
         for gx in np.unique(grid_x_i):
-            for line in plot_grid_x(self._wcs, grid_x_i, grid_y_i, gx):
+            for line in plot_grid_x(self.ax, grid_x_i, grid_y_i, gx):
                 lines.append(line)
 
         # Find y lines that intersect with axes
-        grid_x_i, grid_y_i = find_intersections(self._wcs, 'y', yspacing)
+        grid_x_i, grid_y_i = find_intersections(self.ax, 'y', yspacing)
 
         if self._wcs.xaxis_coord_type == 'longitude':
             grid_x_i = np.mod(grid_x_i, 360.)
@@ -256,14 +262,15 @@ class Grid(object):
         # If we are dealing with longitude/latitude then can search all
         # neighboring grid lines to see if there are any closed longitude
         # lines
-        if self._wcs.xaxis_coord_type == 'longitude' and self._wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0:
+        if (self._wcs.xaxis_coord_type == 'longitude' and
+           self._wcs.yaxis_coord_type == 'latitude' and len(grid_y_i) > 0):
 
             gy = grid_y_i.min()
 
             while True:
                 gy -= yspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, 0., gy)
-                if in_plot(self._wcs, xpix, ypix) and gy >= -90.:
+                if in_plot(self.ax, xpix, ypix) and gy >= -90.:
                     grid_x_i = np.hstack([grid_x_i, 0., 360.])
                     grid_y_i = np.hstack([grid_y_i, gy, gy])
                 else:
@@ -274,7 +281,7 @@ class Grid(object):
             while True:
                 gy += yspacing
                 xpix, ypix = wcs_util.world2pix(self._wcs, 0., gy)
-                if in_plot(self._wcs, xpix, ypix) and gy <= +90.:
+                if in_plot(self.ax, xpix, ypix) and gy <= +90.:
                     grid_x_i = np.hstack([grid_x_i, 0., 360.])
                     grid_y_i = np.hstack([grid_y_i, gy, gy])
                 else:
@@ -282,7 +289,7 @@ class Grid(object):
 
         # Plot those lines
         for gy in np.unique(grid_y_i):
-            for line in plot_grid_y(self._wcs, grid_x_i, grid_y_i, gy):
+            for line in plot_grid_y(self.ax, grid_x_i, grid_y_i, gy):
                 lines.append(line)
 
         if self._grid:
@@ -294,9 +301,10 @@ class Grid(object):
         return self.ax
 
 
-def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
+def plot_grid_y(ax, grid_x, grid_y, gy, alpha=0.5):
     '''Plot a single grid line in the y direction'''
 
+    wcs = ax._wcs
     lines_out = []
 
     # Find intersections that correspond to latitude lat0
@@ -310,26 +318,26 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
     if wcs.xaxis_coord_type == 'latitude':
         if not np.any(grid_x_sorted == -90):
             xpix, ypix = wcs_util.world2pix(wcs, max(grid_x_sorted[0] - 1., -90.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([-90., grid_x_sorted])
         if not np.any(grid_x_sorted == +90):
             xpix, ypix = wcs_util.world2pix(wcs, min(grid_x_sorted[-1] + 1., +90.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([grid_x_sorted, +90.])
     elif wcs.xaxis_coord_type == 'longitude':
         if not np.any(grid_x_sorted == 0.):
             xpix, ypix = wcs_util.world2pix(wcs, max(grid_x_sorted[0] - 1., 0.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([0., grid_x_sorted])
         if not np.any(grid_x_sorted == 360.):
             xpix, ypix = wcs_util.world2pix(wcs, min(grid_x_sorted[-1] + 1., 360.), gy)
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_x_sorted = np.hstack([grid_x_sorted, 360.])
 
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, (grid_x_sorted[0] + grid_x_sorted[1]) / 2., gy)
 
-    if not in_plot(wcs, xpix, ypix):
+    if not in_plot(ax, xpix, ypix):
         grid_x_sorted = np.roll(grid_x_sorted, 1)
 
     # Check that number of grid points is even
@@ -351,9 +359,10 @@ def plot_grid_y(wcs, grid_x, grid_y, gy, alpha=0.5):
     return lines_out
 
 
-def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
+def plot_grid_x(ax, grid_x, grid_y, gx, alpha=0.5):
     '''Plot a single longitude line'''
 
+    wcs = ax._wcs
     lines_out = []
 
     # Find intersections that correspond to longitude gx
@@ -367,26 +376,26 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
     if wcs.yaxis_coord_type == 'latitude':
         if not np.any(grid_y_sorted == -90):
             xpix, ypix = wcs_util.world2pix(wcs, gx, max(grid_y_sorted[0] - 1., -90.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([-90., grid_y_sorted])
         if not np.any(grid_y_sorted == +90):
             xpix, ypix = wcs_util.world2pix(wcs, gx, min(grid_y_sorted[-1] + 1., +90.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([grid_y_sorted, +90.])
     elif wcs.yaxis_coord_type == 'longitude':
         if not np.any(grid_y_sorted == 0.):
             xpix, ypix = wcs_util.world2pix(wcs, gx, max(grid_y_sorted[0] - 1., 0.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([0., grid_y_sorted])
         if not np.any(grid_y_sorted == 360.):
             xpix, ypix = wcs_util.world2pix(wcs, gx, min(grid_y_sorted[-1] + 1., 360.))
-            if in_plot(wcs, xpix, ypix):
+            if in_plot(ax, xpix, ypix):
                 grid_y_sorted = np.hstack([grid_y_sorted, 360.])
 
     # Check if the first mid-point with coordinates is inside the viewport
     xpix, ypix = wcs_util.world2pix(wcs, gx, (grid_y_sorted[0] + grid_y_sorted[1]) / 2.)
 
-    if not in_plot(wcs, xpix, ypix):
+    if not in_plot(ax, xpix, ypix):
         grid_y_sorted = np.roll(grid_y_sorted, 1)
 
     # Check that number of grid points is even
@@ -408,42 +417,70 @@ def plot_grid_x(wcs, grid_x, grid_y, gx, alpha=0.5):
     return lines_out
 
 
-def in_plot(wcs, x_pix, y_pix):
+def in_plot(ax, x_pix, y_pix):
     '''Check whether a given point is in a plot'''
-    return x_pix > +0.5 and x_pix < wcs.nx + 0.5 and y_pix > +0.5 and y_pix < wcs.ny + 0.5
+
+    xmin, xmax = ax.xaxis.get_view_interval()
+    ymin, ymax = ax.yaxis.get_view_interval()
+
+    return (x_pix > xmin + 0.5 and x_pix < xmax + 0.5 and
+            y_pix > ymin + 0.5 and y_pix < ymax + 0.5)
 
 
-def find_intersections(wcs, coord, spacing):
+def find_intersections(ax, coord, spacing):
     '''
-    Find intersections of a given coordinate with a all axes
+    Find intersections of a given coordinate with all axes
+
+    Parameters
+    ----------
+
+    ax :
+       The matplotlib axis instance for the figure.
+
+    coord : { 'x', 'y' }
+       The coordinate for which we are looking for ticks.
+
+    spacing : float
+       The spacing along the axis.
+
     '''
+
+    wcs = ax._wcs
+
+    xmin, xmax = ax.xaxis.get_view_interval()
+    ymin, ymax = ax.yaxis.get_view_interval()
+
+    options = dict(mode='xy', xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
 
     # Initialize arrays
-    x = []
-    y = []
+    x, y = [], []
 
     # Bottom X axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=False, mode='xy')
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'x', coord, farside=False, **options)
+
+    x.extend(world_x)
+    y.extend(world_y)
 
     # Top X axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'x', coord, farside=True, mode='xy')
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'x', coord, farside=True, **options)
+
+    x.extend(world_x)
+    y.extend(world_y)
 
     # Left Y axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=False, mode='xy')
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'y', coord, farside=False, **options)
+
+    x.extend(world_x)
+    y.extend(world_y)
 
     # Right Y axis
-    (labels_x, labels_y, world_x, world_y) = tick_positions(wcs, spacing, 'y', coord, farside=True, mode='xy')
-    for i in range(0, len(world_x)):
-        x.append(world_x[i])
-        y.append(world_y[i])
+    (labels_x, labels_y, world_x, world_y) = tick_positions(
+        wcs, spacing, 'y', coord, farside=True, **options)
+
+    x.extend(world_x)
+    y.extend(world_y)
 
     return np.array(x), np.array(y)
