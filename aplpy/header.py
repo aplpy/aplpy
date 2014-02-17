@@ -11,7 +11,7 @@ def check(header, convention=None, dimensions=[0, 1]):
     # If header does not contain CTYPE keywords, assume that the WCS is
     # missing or incomplete, and replace it with a 1-to-1 pixel mapping
     if 'CTYPE%i' % ix not in header or 'CTYPE%i' % iy not in header:
-        log.warn("No WCS information found in header - using pixel coordinates")
+        log.warning("No WCS information found in header - using pixel coordinates")
         header.update('CTYPE%i' % ix, 'PIXEL')
         header.update('CTYPE%i' % iy, 'PIXEL')
         header.update('CRVAL%i' % ix, 0.)

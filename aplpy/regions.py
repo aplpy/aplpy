@@ -112,7 +112,7 @@ def ds9(region_file, header, zorder=3, **kwargs):
         elif r.name in ['rotbox', 'box', 'ellipse', 'annulus', 'circle', 'panda', 'pie', 'epanda', 'text', 'point', 'vector']:
             correct = range(2)
         else:
-            log.warn("Unknown region type '{0}' - please report to the developers")
+            log.warning("Unknown region type '{0}' - please report to the developers")
             correct = range(2)
         for i in correct:
             r.coord_list[i] += 1

@@ -54,7 +54,7 @@ def resample(array, factor):
 def percentile_function(array):
 
     if np.all(np.isnan(array) | np.isinf(array)):
-        log.warn("Image contains only NaN or Inf values")
+        log.warning("Image contains only NaN or Inf values")
         return lambda x: 0
 
     array = array.ravel()
@@ -125,5 +125,5 @@ def _matplotlib_pil_bug_present():
         log.debug("PIL Image flipping bug detected in Matplotlib")
         return True
     else:
-        log.warn("Could not properly determine Matplotlib behavior for RGB images - image may be flipped incorrectly")
+        log.warning("Could not properly determine Matplotlib behavior for RGB images - image may be flipped incorrectly")
         return False

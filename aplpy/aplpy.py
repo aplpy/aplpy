@@ -233,10 +233,10 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._wcs.nx = nx
             self._wcs.ny = ny
             if downsample:
-                log.warn("downsample argument is ignored if data passed is a WCS object")
+                log.warning("downsample argument is ignored if data passed is a WCS object")
                 downsample = False
             if north:
-                log.warn("north argument is ignored if data passed is a WCS object")
+                log.warning("north argument is ignored if data passed is a WCS object")
                 north = False
         else:
             self._data, self._header, self._wcs = self._get_hdu(data, hdu, north, \
@@ -337,7 +337,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 for alt_hdu in range(len(hdulist)):
                     if isinstance(hdulist[alt_hdu], HDU_TYPES):
                         if hdulist[alt_hdu].data is not None:
-                            log.warn("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
+                            log.warning("hdu=%i does not contain any data, using hdu=%i instead" % (hdu, alt_hdu))
                             hdu = hdulist[alt_hdu]
                             found = True
                             break
@@ -770,7 +770,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                 raise ImportError("The Python Imaging Library (PIL) is required to read in RGB images")
 
         if flip:
-            log.warn("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
+            log.warning("Note that show_rgb should now correctly flip RGB images, so the flip= argument is now deprecated. If you still need to flip an image vertically or horizontally, you can use the vertical_flip= and horizontal_flip arguments instead.")
 
         if filename is None:
             if hasattr(self, '_rgb_image'):
