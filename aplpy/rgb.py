@@ -54,6 +54,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                    stretch_g='linear', vmid_g=None, exponent_g=2, \
                    vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75, \
                    stretch_b='linear', vmid_b=None, exponent_b=2, \
+                   make_nans_transparent=False, \
                    embed_avm_tags=True):
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files.
@@ -110,6 +111,10 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     exponent_r, exponent_g, exponent_b : float, optional
         If stretch_x is set to 'power', this is the exponent to use.
 
+    make_nans_transparent : bool, optional
+        If set AND output is png, will add an alpha layer that sets pixels 
+        containing a NaN to transparent.
+
     embed_avm_tags : bool, optional
         Whether to embed AVM tags inside the image - this can only be done for
         JPEG and PNG files, and only if PyAVM is installed.
@@ -154,6 +159,20 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     else:
         raise Exception("data should either be the filename of a FITS cube or a list/tuple of three images")
 
+    # are we making a transparent layer?
+    do_alpha = make_nans_transparent and output.lower().endswith('.png')
+
+    if do_alpha:
+        log.info("Making alpha layer")
+
+        # initialize alpha layer
+        image_alpha = np.empty_like(image_r, dtype=np.uint8)
+        image_alpha[:] = 255
+
+        # look for nans in images
+        for im in [image_r, image_g, image_b]:
+            image_alpha[np.isnan(im)] = 0
+
     log.info("Red:")
     image_r = Image.fromarray(_data_stretch(image_r, \
                                             vmin=vmin_r, vmax=vmax_r, \
@@ -179,6 +198,13 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
                                             exponent=exponent_b))
 
     img = Image.merge("RGB", (image_r, image_g, image_b))
+
+    if do_alpha:
+        # convert to RGBA and add alpha layer
+        image_alpha = Image.fromarray(image_alpha)
+        img.convert("RGBA")
+        img.putalpha(image_alpha)
+
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
 
     img.save(output)
