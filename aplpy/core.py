@@ -423,6 +423,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         return data, header, wcs
 
     @auto_refresh
+    def set_title(self, title, **kwargs):
+        '''
+        Set the figure title
+        '''
+        self._ax1.set_title(title, **kwargs)
+
+    @auto_refresh
     def set_xaxis_coord_type(self, coord_type):
         '''
         Set the type of x coordinate.
