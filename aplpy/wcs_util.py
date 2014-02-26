@@ -209,13 +209,19 @@ def convert_coords(x, y, input, output):
             x, y = b1950toj2000(x, y)
         elif equinox_in == 'j2000' and equinox_out == 'b1950':
             x, y = j2000tob1950(x, y)
+        elif equinox_in == equinox_out:
+            pass
         else:
             raise Exception("Cannot convert between equatorial coordinates for equinoxes %s and %s" % (equinox_in, equinox_out))
 
     else:
         raise Exception("Cannot (yet) convert between %s, %s and %s, %s" % (system_in['name'], equinox_in, system_out['name'], equinox_out))
 
-    return x, y
+    # Take into account inverted coordinates
+    if system_in['inverted'] is system_out['inverted']:
+        return x, y
+    else:
+        return y, x
 
 
 def precession_matrix(equinox1, equinox2, fk4=False):
@@ -461,7 +467,7 @@ def world2pix(wcs, x_world, y_world):
         return x_pix.tolist(), y_pix.tolist()
     elif isinstance(x_world, np.ndarray) and isinstance(y_world, np.ndarray):
         return wcs.wcs_sky2pix(x_world, y_world, 1)
-    else:            
+    else:
         raise Exception("world2pix should be provided either with two scalars, two lists, or two numpy arrays")
 
 
