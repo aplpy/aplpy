@@ -139,7 +139,7 @@ class FITSFigure(Layers, Regions):
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=None,
-                 **kwargs):
+                 xmp_packet_index=0, **kwargs):
 
         self._wcsaxes_slices = ('x', 'y')
 
@@ -183,7 +183,7 @@ class FITSFigure(Layers, Regions):
             nx, ny = Image.open(data).size
 
             # Now convert AVM information to WCS
-            data = AVM.from_image(data).to_wcs()
+            data = AVM.from_image(data,xmp_packet_index=xmp_packet_index).to_wcs()
 
             # Need to scale CDELT values sometimes the AVM meta-data is only
             # really valid for the full-resolution image
