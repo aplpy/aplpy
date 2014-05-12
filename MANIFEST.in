@@ -5,13 +5,13 @@ include LICENSE.rst
 
 include ez_setup.py
 include setuptools_bootstrap.py
-recursive-include packagename *.pyx *.c
+recursive-include aplpy *.pyx *.c
 
 recursive-include docs *
 recursive-include licenses *
 recursive-include cextern *
 recursive-include scripts *
 
-exclude *.pyc *.o 
+exclude *.pyc *.o
 prune docs/_build
 prune build
