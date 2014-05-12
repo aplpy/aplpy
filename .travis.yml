@@ -36,6 +36,8 @@ before_install:
    - sudo apt-get update -qq
    - sudo apt-get install -qq python-numpy python-sphinx cython libatlas-dev liblapack-dev gfortran
    - if [[ $SETUP_CMD == build_sphinx* ]]; then sudo apt-get install -qq python-sphinx graphviz texlive-latex-extra dvipng python-matplotlib; fi
+   - export DISPLAY=:99.0
+   - sh -e /etc/init.d/xvfb start
 
 install:
    - export PYTHONIOENCODING=UTF8 # just in case
