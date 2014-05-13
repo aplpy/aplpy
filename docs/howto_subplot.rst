@@ -15,7 +15,7 @@ argument as follows::
     
 The above will place a subplot inside the ``fig`` figure instance. The ``f``
 object can be used as normal to control the FITS figure inside the
-subplot. The above however is not very insteresting compared to just
+subplot. The above however is not very interesting compared to just
 creating a FITSFigure instance from scratch. What this is useful for is
 only using sub-regions of the figure to display the FITS data, to leave
 place for other subplots, whether histograms, scatter, or other matplotlib
@@ -72,3 +72,21 @@ subplots, as in some cases there is no need to repeat the tick labels. Alternati
     # some code here with ax2
 
     fig.canvas.draw()
+
+Complex layouts can be specified with the use of ``GridSpec`` objects. For
+example, the following code loads an image in 4/9 of the figure, with two
+other plots above and to the left of the image::
+
+    import aplpy
+    import matplotlib.pyplot as mpl
+    from matplotlib.gridspec import GridSpec
+
+    gs = GridSpec(3,3)
+
+    f1 = aplpy.FITSFigure('image.fits', subplot=gs[1:, 1:])
+    f1.show_grayscale()
+
+    ax1 = mpl.subplot(gs[0, 1:])
+    ax2 = mpl.subplot(gs[1:, 0])
+
+    # some code with ax1 and ax2 here
