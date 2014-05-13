@@ -26,4 +26,4 @@ def test_subplot_subplotspec():
 def test_subplot_invalid(subplot):
     with pytest.raises(ValueError) as exc:
         FITSFigure(np.zeros((10, 10)), subplot=subplot)
-    assert exc.value.args[0] == "subplot= should be either a tuple of three values, or a list of four values"
+    assert exc.value.args[0] == "subplot= should be either a tuple of three values, a list of four values, or an element of a GridSpec object"

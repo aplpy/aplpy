@@ -268,7 +268,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         elif type(subplot) == matplotlib.gridspec.SubplotSpec:
             self._ax1 = mpltk.SubplotHost(self._figure, subplot)
         else:
-            raise ValueError("subplot= should be either a tuple of three values, a list of four values, or an element of a GridSpec object.")
+            raise ValueError("subplot= should be either a tuple of three values, a list of four values, or an element of a GridSpec object")
 
         self._ax1.toggle_axisline(False)
 
