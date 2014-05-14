@@ -7,6 +7,7 @@ import numpy as np
 from astropy.tests.helper import pytest
 from astropy.io import fits
 from astropy.wcs import WCS as AstropyWCS
+import astropy.utils.exceptions as aue
 
 from .helpers import generate_file, generate_hdu, generate_wcs
 from .. import FITSFigure
@@ -73,9 +74,13 @@ def test_hdu_init():
 # Test initialization through a WCS object
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    f = FITSFigure(wcs)
-    f.show_grayscale()
-    f.close()
+    if hasattr(wcs,'naxis1'):
+        f = FITSFigure(wcs)
+        f.show_grayscale()
+        f.close()
+    else:
+        with pytest.raises(aue.AstropyDeprecationWarning):
+            f = FITSFigure(wcs)
 
 
 # Test initialization through a WCS object with wcs.to_header() as a go-between
@@ -85,8 +90,8 @@ def test_wcs_toheader_init():
     wcs = generate_wcs(REFERENCE)
     header = wcs.to_header()
     wcs2 = AstropyWCS(header)
-    wcs2.naxis1 = wcs.naxis1
-    wcs2.naxis2 = wcs.naxis2
+    wcs2.naxis1 = wcs.naxis1 = header['NAXIS1']
+    wcs2.naxis2 = wcs.naxis2 = header['NAXIS2']
     f = FITSFigure(wcs2)
     f.show_grayscale()
     f.add_grid()

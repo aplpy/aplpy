@@ -7,6 +7,7 @@ import numpy as np
 
 from astropy.table import Table
 from astropy.tests.helper import pytest
+from astropy.io import fits
 from .helpers import generate_wcs
 from .. import FITSFigure
 
@@ -35,6 +36,9 @@ def test_pixel_coords(inputval):
 @pytest.mark.parametrize(('inputval'), GOOD_INPUT)
 def test_wcs_coords(inputval):
     wcs = generate_wcs(HEADER)
+    header = fits.getheader(HEADER)
+    wcs.naxis1 = header['NAXIS1']
+    wcs.naxis2 = header['NAXIS2']
     f = FITSFigure(wcs)
     f.show_markers(inputval[0], inputval[1])
     f.close()
@@ -51,6 +55,9 @@ def test_pixel_coords_bad(inputval):
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
 def test_wcs_coords_bad(inputval):
     wcs = generate_wcs(HEADER)
+    header = fits.getheader(HEADER)
+    wcs.naxis1 = header['NAXIS1']
+    wcs.naxis2 = header['NAXIS2']
     f = FITSFigure(wcs)
     with pytest.raises(Exception) as exc:
         f.show_markers(inputval[0], inputval[1])
