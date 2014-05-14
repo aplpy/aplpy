@@ -3,6 +3,7 @@ matplotlib.use('Agg')
 
 import numpy as np
 from astropy.tests.helper import pytest
+from astropy import units as u
 
 from .. import FITSFigure
 
@@ -38,6 +39,15 @@ def test_scalebar_length():
     f.add_scalebar(0.1)
     f.scalebar.set_length(0.01)
     f.scalebar.set_length(0.1)
+    f.close()
+
+
+@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+def test_scalebar_length_quantity(quantity):
+    data = np.zeros((16, 16))
+    f = FITSFigure(data)
+    f.add_scalebar(quantity)
+    f.scalebar.set_length(quantity)
     f.close()
 
 

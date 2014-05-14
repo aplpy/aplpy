@@ -2,6 +2,8 @@ import matplotlib
 matplotlib.use('Agg')
 
 import numpy as np
+from astropy.tests.helper import pytest
+from astropy import units as u
 
 from .. import FITSFigure
 
@@ -37,6 +39,16 @@ def test_beam_major():
     f.close()
 
 
+@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+def test_beam_major_quantity(quantity):
+    data = np.zeros((16, 16))
+    f = FITSFigure(data)
+    f.show_grayscale()
+    f.add_beam(major=quantity, minor=0.04, angle=10.)
+    f.beam.set_major(quantity)
+    f.close()
+
+
 def test_beam_minor():
     data = np.zeros((16, 16))
     f = FITSFigure(data)
@@ -47,6 +59,17 @@ def test_beam_minor():
     f.close()
 
 
+@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+def test_beam_minor_quantity(quantity):
+    data = np.zeros((16, 16))
+    f = FITSFigure(data)
+    f.show_grayscale()
+    f.add_beam(major=0.1, minor=quantity, angle=10.)
+    assert type(f.beam) != list
+    f.beam.set_minor(quantity)
+    f.close()
+
+
 def test_beam_angle():
     data = np.zeros((16, 16))
     f = FITSFigure(data)
@@ -54,6 +77,16 @@ def test_beam_angle():
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_angle(0.)
     f.beam.set_angle(55.)
+    f.close()
+
+
+@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+def test_beam_angle_quantity(quantity):
+    data = np.zeros((16, 16))
+    f = FITSFigure(data)
+    f.show_grayscale()
+    f.add_beam(major=0.1, minor=0.04, angle=quantity)
+    f.beam.set_angle(quantity)
     f.close()
 
 

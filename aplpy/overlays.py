@@ -8,6 +8,7 @@ from mpl_toolkits.axes_grid.anchored_artists \
 import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
+from astropy import units as u
 
 from . import wcs_util
 from .decorators import auto_refresh
@@ -167,8 +168,8 @@ class Scalebar(object):
         Parameters
         ----------
 
-        length : float
-            The length of the scalebar
+        length : float, or quantity
+            The length of the scalebar in degrees or an angular quantity
 
         label : str, optional
             Label to place below the scalebar
@@ -193,6 +194,9 @@ class Scalebar(object):
         self._base_settings['frame'] = frame
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
+
+        if type(length) == u.quantity.Quantity:
+            length = length.to(u.degree).value
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
@@ -447,13 +451,15 @@ class Beam(object):
         Parameters
         ----------
 
-        major : float, optional
-            Major axis of the beam in degrees (overrides BMAJ if present)
+        major : float or quantity, optional
+            Major axis of the beam in degrees or an angular quantity (overrides
+            BMAJ if present)
 
-        minor : float, optional
-            Minor axis of the beam in degrees (overrides BMIN if present)
+        minor : float or quantity, optional
+            Minor axis of the beam in degrees or an angular quantity (overrides
+            BMIN if present)
 
-        angle : float, optional
+        angle : float or quantity, optional
             Position angle of the beam on the sky in degrees (overrides
             BPA if present) in the anticlockwise direction.
 
@@ -478,6 +484,13 @@ class Beam(object):
 
         if isinstance(angle, basestring):
             angle = self._header[angle]
+
+        if type(major) == u.quantity.Quantity:
+            major = major.to(u.degree).value
+        if type(minor) == u.quantity.Quantity:
+            minor = minor.to(u.degree).value
+        if type(angle) == u.quantity.Quantity:
+            angle = angle.to(u.degree).value
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
