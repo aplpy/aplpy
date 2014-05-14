@@ -195,7 +195,7 @@ class Scalebar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        if type(length) == u.quantity.Quantity:
+        if isinstance(length, u.quantity.Quantity):
             length = length.to(u.degree).value
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
@@ -460,8 +460,8 @@ class Beam(object):
             BMIN if present)
 
         angle : float or quantity, optional
-            Position angle of the beam on the sky in degrees (overrides
-            BPA if present) in the anticlockwise direction.
+            Position angle of the beam on the sky in degrees or an angular
+            quantity (overrides BPA if present) in the anticlockwise direction.
 
         corner : int, optional
             The beam location. Acceptable values are 'left', 'right',
@@ -485,11 +485,11 @@ class Beam(object):
         if isinstance(angle, basestring):
             angle = self._header[angle]
 
-        if type(major) == u.quantity.Quantity:
+        if isinstance(major, u.quantity.Quantity):
             major = major.to(u.degree).value
-        if type(minor) == u.quantity.Quantity:
+        if isinstance(minor, u.quantity.Quantity):
             minor = minor.to(u.degree).value
-        if type(angle) == u.quantity.Quantity:
+        if isinstance(angle, u.quantity.Quantity):
             angle = angle.to(u.degree).value
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
