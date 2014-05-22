@@ -36,7 +36,7 @@ def test_pixel_coords(inputval):
 @pytest.mark.parametrize(('inputval'), GOOD_INPUT)
 def test_wcs_coords(inputval):
     wcs = generate_wcs(HEADER)
-    header = fits.getheader(HEADER)
+    header = fits.Header.fromtextfile(HEADER)
     wcs.naxis1 = header['NAXIS1']
     wcs.naxis2 = header['NAXIS2']
     f = FITSFigure(wcs)
@@ -55,7 +55,7 @@ def test_pixel_coords_bad(inputval):
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
 def test_wcs_coords_bad(inputval):
     wcs = generate_wcs(HEADER)
-    header = fits.getheader(HEADER)
+    header = fits.Header.fromtextfile(HEADER)
     wcs.naxis1 = header['NAXIS1']
     wcs.naxis2 = header['NAXIS2']
     f = FITSFigure(wcs)

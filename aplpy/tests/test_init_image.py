@@ -88,10 +88,11 @@ def test_wcs_init():
 # for AVM-generated headers
 def test_wcs_toheader_init():
     wcs = generate_wcs(REFERENCE)
+    header_ = fits.Header.fromtextfile(REFERENCE)
     header = wcs.to_header()
     wcs2 = AstropyWCS(header)
-    wcs2.naxis1 = wcs.naxis1 = header['NAXIS1']
-    wcs2.naxis2 = wcs.naxis2 = header['NAXIS2']
+    wcs2.naxis1 = wcs.naxis1 = header_['NAXIS1']
+    wcs2.naxis2 = wcs.naxis2 = header_['NAXIS2']
     f = FITSFigure(wcs2)
     f.show_grayscale()
     f.add_grid()
