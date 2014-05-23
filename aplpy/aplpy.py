@@ -55,6 +55,7 @@ from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
 
 from astropy import log
+import astropy.utils.exceptions as aue
 
 from . import contour_util
 from . import convolve_util
@@ -220,6 +221,11 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         if isinstance(data, WCS_TYPES):
             wcs = data
+            if not hasattr(wcs, 'naxis1'):
+                raise aue.AstropyDeprecationWarning('WCS no longer stores information about NAXISn '
+                                                    'so it is not possibly to instantiate a FITSFigure '
+                                                    'from WCS alone')
+
             if wcs.naxis != 2:
                 raise ValueError("FITSFigure initialization via WCS objects can only be done with 2-dimensional WCS objects")
             header = wcs.to_header()

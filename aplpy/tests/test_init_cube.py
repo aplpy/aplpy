@@ -6,6 +6,7 @@ matplotlib.use('Agg')
 import numpy as np
 from astropy.tests.helper import pytest
 from astropy.io import fits
+import astropy.utils.exceptions as aue
 
 from .helpers import generate_file, generate_hdu, generate_wcs
 from .. import FITSFigure
@@ -44,7 +45,8 @@ def test_hdu_init():
 # Test initialization through a WCS object (should not work)
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    with pytest.raises(ValueError):
+    exc = ValueError if hasattr(wcs,'naxis1') else aue.AstropyDeprecationWarning
+    with pytest.raises(exc):
         FITSFigure(wcs, slices=[5])
 
 
