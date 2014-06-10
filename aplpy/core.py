@@ -819,10 +819,17 @@ class FITSFigure(Layers, Regions):
             corners = (0.5, 0.5),(image.size[0]+0.5,  image.size[1]+0.5)
             lbcorners = wcs.wcs_pix2world(corners,1)
             xycorners = self._wcs.wcs_world2pix(lbcorners[:,0], lbcorners[:,1], 0)
-            extent = np.array(xycorners).T.ravel()
+            (l,r),(b,t) = xycorners
+            if r < l:
+                l,r = r,l
+            if t < b:
+                t,b = b,t
+            extent = [l,r,b,t]
             # pcolormesh doesn't support rgb (yet?) https://github.com/matplotlib/matplotlib/issues/1317
             # self._ax1.pcolormesh(x.reshape(image.size),y.reshape(image.size),np.array(image))
-            self.image = self.ax.imshow(image, extent=extent, interpolation=interpolation, origin='upper')
+            self.image = self.ax.imshow(image, extent=extent,
+                                        interpolation=interpolation,
+                                        origin='upper')
         else:
             # Elsewhere in APLpy we assume that we are using origin='lower' so here
             # we flip the image by default (since RGB images usually would require
