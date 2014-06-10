@@ -22,6 +22,7 @@ try:
     import pyfits
     HDU_TYPES.append(pyfits.PrimaryHDU)
     HDU_TYPES.append(pyfits.ImageHDU)
+    HDU_TYPES.append(pyfits.CompImageHDU)
     HDULIST_TYPES.append(pyfits.HDUList)
     del pyfits
 except ImportError:
@@ -38,6 +39,7 @@ except ImportError:
 from astropy.io import fits
 HDU_TYPES.append(fits.PrimaryHDU)
 HDU_TYPES.append(fits.ImageHDU)
+HDU_TYPES.append(fits.CompImageHDU)
 HDULIST_TYPES.append(fits.HDUList)
 
 from astropy.wcs import WCS
