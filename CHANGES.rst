@@ -16,6 +16,11 @@ CHANGES
        mywcs.naxis1 = header['NAXIS1']
        mywcs.naxis2 = header['NAXIS2']
 
+    Bug fixes
+    ~~~~~~~~~
+
+    - FITSFigure can now be instantiated using an astropy.io.fits.CompImageHDU
+      object. [#188]
 
 0.9.11 (2013-11-29)
 -------------------
