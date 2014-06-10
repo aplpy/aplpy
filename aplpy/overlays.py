@@ -359,9 +359,14 @@ class Scalebar(object):
         All arguments are passed to the matplotlib Text class. See the
         matplotlib documentation for more details.
         '''
-        for kwarg in kwargs:
-            self._label_settings[kwarg] = kwargs[kwarg]
-        self._scalebar.txt_label.get_children()[0].set(**kwargs)
+        for kwarg,val in kwargs.items():
+            try:
+                # Only set attributes that exist
+                kvpair = {kwarg:val}
+                self._scalebar.txt_label.get_children()[0].set(**kvpair)
+                self._label_settings[kwarg] = val
+            except AttributeError:
+                warnings.warn("Text labels do not have attribute {0}.  Skipping.".format(kwarg))
 
     @auto_refresh
     def _set_scalebar_properties(self, **kwargs):
@@ -371,9 +376,13 @@ class Scalebar(object):
         All arguments are passed to the matplotlib Rectangle class. See the
         matplotlib documentation for more details.
         '''
-        for kwarg in kwargs:
-            self._scalebar_settings[kwarg] = kwargs[kwarg]
-        self._scalebar.size_bar.get_children()[0].set(**kwargs)
+        for kwarg,val in kwargs.items():
+            try:
+                kvpair = {kwarg:val}
+                self._scalebar_settings[kwarg] = val
+                self._scalebar.size_bar.get_children()[0].set(**kvpair)
+            except AttributeError:
+                warnings.warn("Scalebar does not have attribute {0}.  Skipping.".format(kwarg))
 
     @auto_refresh
     def set(self, **kwargs):
