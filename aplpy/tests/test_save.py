@@ -100,7 +100,13 @@ def test_write_stringio(tmpdir, format):
         pytest.xfail()
     finally:
         f.close()
-    s.seek(0)
+    try:
+        s.seek(0)
+    except ValueError:
+        if format == 'svg' and sys.version_info[:2] >= (3, 3):
+            pytest.xfail()
+        else:
+            raise
     if format is None:
         assert is_format(s, 'png')
     else:

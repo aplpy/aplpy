@@ -4,7 +4,9 @@ include INSTALL.rst
 include LICENSE.rst
 
 include ez_setup.py
-include setuptools_bootstrap.py
+include ah_bootstrap.py
+include setup.cfg
+
 recursive-include aplpy *.pyx *.c
 
 recursive-include docs *
@@ -15,3 +17,7 @@ recursive-include scripts *
 exclude *.pyc *.o
 prune docs/_build
 prune build
+
+recursive-include astropy_helpers *
+exclude astropy_helpers/.git
+exclude astropy_helpers/.gitignore
