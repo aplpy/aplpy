@@ -39,7 +39,7 @@ def test_beam_major():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+@pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
 def test_beam_major_quantity(quantity):
     data = np.zeros((16, 16))
     f = FITSFigure(data)
@@ -59,7 +59,7 @@ def test_beam_minor():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+@pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
 def test_beam_minor_quantity(quantity):
     data = np.zeros((16, 16))
     f = FITSFigure(data)
@@ -80,7 +80,7 @@ def test_beam_angle():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [1*u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+@pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
 def test_beam_angle_quantity(quantity):
     data = np.zeros((16, 16))
     f = FITSFigure(data)

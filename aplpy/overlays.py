@@ -169,7 +169,7 @@ class Scalebar(object):
         ----------
 
         length : float, or quantity
-            The length of the scalebar in degrees or an angular quantity
+            The length of the scalebar in degrees, an angular quantity, or angular unit
 
         label : str, optional
             Label to place below the scalebar
@@ -195,8 +195,10 @@ class Scalebar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        if isinstance(length, u.quantity.Quantity):
+        if isinstance(length, u.Quantity):
             length = length.to(u.degree).value
+        elif isinstance(length, u.Unit):
+            length = length.to(u.degree)
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
@@ -451,15 +453,15 @@ class Beam(object):
         Parameters
         ----------
 
-        major : float or quantity, optional
+        major : float, quantity or unit, optional
             Major axis of the beam in degrees or an angular quantity (overrides
             BMAJ if present)
 
-        minor : float or quantity, optional
+        minor : float, quantity or unit, optional
             Minor axis of the beam in degrees or an angular quantity (overrides
             BMIN if present)
 
-        angle : float or quantity, optional
+        angle : float, quantity or unit, optional
             Position angle of the beam on the sky in degrees or an angular
             quantity (overrides BPA if present) in the anticlockwise direction.
 
@@ -485,12 +487,20 @@ class Beam(object):
         if isinstance(angle, basestring):
             angle = self._header[angle]
 
-        if isinstance(major, u.quantity.Quantity):
+        if isinstance(major, u.Quantity):
             major = major.to(u.degree).value
-        if isinstance(minor, u.quantity.Quantity):
+        elif isinstance(major, u.Unit):
+            major = major.to(u.degree)
+
+        if isinstance(minor, u.Quantity):
             minor = minor.to(u.degree).value
-        if isinstance(angle, u.quantity.Quantity):
+        elif isinstance(minor, u.Unit):
+            minor = minor.to(u.degree)
+
+        if isinstance(angle, u.Quantity):
             angle = angle.to(u.degree).value
+        elif isinstance(angle, u.Unit):
+            angle = angle.to(u.degree)
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
