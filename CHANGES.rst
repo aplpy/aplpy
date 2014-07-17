@@ -1,7 +1,7 @@
 CHANGES
 --------
 
-0.9.12 (unreleased)
+0.9.12 (2014-07-17)
 -------------------
 
     This version fixes compatibility with Astropy 0.4
