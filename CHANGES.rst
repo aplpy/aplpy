@@ -4,23 +4,40 @@ CHANGES
 0.9.12 (unreleased)
 -------------------
 
-  API Changes
-  ~~~~~~~~~~~
+    This version fixes compatibility with Astropy 0.4
 
-  - astropy.wcs.WCS no longer contains information about the original image
-    size.  Any attempt to instantiate a FITSFigure from a WCS object will raise
-    a DeprecationException.  A workaround is to add `naxisn` attributes to your
-    WCS object::
+    New features
+    ~~~~~~~~~~~~
 
-       mywcs = wcs.WCS(header)
-       mywcs.naxis1 = header['NAXIS1']
-       mywcs.naxis2 = header['NAXIS2']
+    - Added the ability to call ``fig.show_contour()`` without arguments and
+      used the data used to initialize ``FITSFigure``. [#170]
+
+    - Added the ability to format colorbar ticks in exponential notation using
+      the ``log_format`` argument. [#143]
+
+    - Added the ability to make NaNs transparent in RGB image output, using the
+      ``make_nans_transparent`` argument. [#138]
+
+    API Changes
+    ~~~~~~~~~~~
+
+    - astropy.wcs.WCS no longer contains information about the original image
+      size.  Any attempt to instantiate a FITSFigure from a WCS object will raise
+      a DeprecationException.  A workaround is to add `naxisn` attributes to your
+      WCS object::
+
+         mywcs = wcs.WCS(header)
+         mywcs.naxis1 = header['NAXIS1']
+         mywcs.naxis2 = header['NAXIS2']
 
     Bug fixes
     ~~~~~~~~~
 
     - FITSFigure can now be instantiated using an astropy.io.fits.CompImageHDU
       object. [#188]
+
+    - The coordinate grid is now plotted on the whole axes, not just the subset
+      containing the image (noticeable when zooming out). [#118]
 
 0.9.11 (2013-11-29)
 -------------------
