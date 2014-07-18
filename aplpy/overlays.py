@@ -144,7 +144,7 @@ class Scalebar(object):
     def __init__(self, parent):
 
         # Retrieve info from parent figure
-        self._ax = parent._ax1
+        self._ax = parent.ax
         self._wcs = parent._wcs
         self._figure = parent._figure
 
@@ -160,7 +160,8 @@ class Scalebar(object):
     # LAYOUT
 
     @auto_refresh
-    def show(self, length, label=None, corner='bottom right', frame=False, borderpad=0.4, pad=0.5, **kwargs):
+    def show(self, length, label=None, corner='bottom right', frame=False,
+             borderpad=0.4, pad=0.5, **kwargs):
         '''
         Overlay a scale bar on the image.
 
@@ -206,8 +207,9 @@ class Scalebar(object):
         if isinstance(corner, basestring):
             corner = corners[corner]
 
-        self._scalebar = AnchoredSizeBar(self._ax.transData, length, label, corner, \
-                              pad=pad, borderpad=borderpad, sep=5, frameon=frame)
+        self._scalebar = AnchoredSizeBar(self._ax.transData, length, label,
+                                         corner, pad=pad, borderpad=borderpad,
+                                         sep=5, frameon=frame)
 
         self._ax.add_artist(self._scalebar)
 
@@ -303,7 +305,8 @@ class Scalebar(object):
         self._set_label_properties(color=color)
 
     @auto_refresh
-    def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+    def set_font(self, family=None, style=None, variant=None, stretch=None,
+                 weight=None, size=None, fontproperties=None):
         '''
         Set the font of the tick labels
 
@@ -421,7 +424,7 @@ class Beam(object):
         # Retrieve info from parent figure
         self._figure = parent._figure
         self._header = parent._header
-        self._ax = parent._ax1
+        self._ax = parent.ax
         self._wcs = parent._wcs
 
         # Save plotting parameters (required for @auto_refresh)
@@ -434,8 +437,9 @@ class Beam(object):
     # LAYOUT
 
     @auto_refresh
-    def show(self, major='BMAJ', minor='BMIN', \
-        angle='BPA', corner='bottom left', frame=False, borderpad=0.4, pad=0.5, **kwargs):
+    def show(self, major='BMAJ', minor='BMIN', angle='BPA',
+             corner='bottom left', frame=False, borderpad=0.4, pad=0.5,
+             **kwargs):
 
         '''
         Display the beam shape and size for the primary image.
@@ -500,9 +504,10 @@ class Beam(object):
         if isinstance(corner, basestring):
             corner = corners[corner]
 
-        self._beam = AnchoredEllipse(self._ax.transData, \
-            width=minor, height=major, angle=angle, \
-            loc=corner, pad=pad, borderpad=borderpad, frameon=frame)
+        self._beam = AnchoredEllipse(self._ax.transData, width=minor,
+                                     height=major, angle=angle, loc=corner,
+                                     pad=pad, borderpad=borderpad,
+                                     frameon=frame)
 
         self._ax.add_artist(self._beam)
 
