@@ -8,8 +8,7 @@ class Frame(object):
     @auto_refresh
     def __init__(self, parent):
 
-        self._ax1 = parent._ax1
-        self._ax2 = parent._ax2
+        self._ax1 = parent.ax
         self._figure = parent._figure
 
         # Save plotting parameters (required for @auto_refresh)
@@ -25,10 +24,7 @@ class Frame(object):
         linewidth:
             The linewidth to use for the frame.
         '''
-        for key in self._ax1.spines:
-            self._ax1.spines[key].set_linewidth(linewidth)
-        for key in self._ax2.spines:
-            self._ax2.spines[key].set_linewidth(linewidth)
+        self.ax.coords.frame.set_linewidth(linewidth)
 
     @auto_refresh
     def set_color(self, color):
@@ -40,7 +36,4 @@ class Frame(object):
         color:
             The color to use for the frame.
         '''
-        for key in self._ax1.spines:
-            self._ax1.spines[key].set_edgecolor(color)
-        for key in self._ax2.spines:
-            self._ax2.spines[key].set_edgecolor(color)
+        self.ax.coords.frame.set_color(color)
