@@ -48,15 +48,13 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
     return data.astype(np.uint8)
 
 
-def make_rgb_image(data, output, indices=(0, 1, 2), \
-                   vmin_r=None, vmax_r=None, pmin_r=0.25, pmax_r=99.75, \
-                   stretch_r='linear', vmid_r=None, exponent_r=2, \
-                   vmin_g=None, vmax_g=None, pmin_g=0.25, pmax_g=99.75, \
-                   stretch_g='linear', vmid_g=None, exponent_g=2, \
-                   vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75, \
-                   stretch_b='linear', vmid_b=None, exponent_b=2, \
-                   make_nans_transparent=False, \
-                   embed_avm_tags=True):
+def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
+                   pmin_r=0.25, pmax_r=99.75, stretch_r='linear', vmid_r=None,
+                   exponent_r=2, vmin_g=None, vmax_g=None, pmin_g=0.25,
+                   pmax_g=99.75, stretch_g='linear', vmid_g=None, exponent_g=2,
+                   vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75,
+                   stretch_b='linear', vmid_b=None, exponent_b=2,
+                   make_nans_transparent=False, embed_avm_tags=True):
     '''
     Make an RGB image from a FITS RGB cube or from three FITS files.
 
@@ -175,27 +173,24 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
             image_alpha[np.isnan(im)] = 0
 
     log.info("Red:")
-    image_r = Image.fromarray(_data_stretch(image_r, \
-                                            vmin=vmin_r, vmax=vmax_r, \
-                                            pmin=pmin_r, pmax=pmax_r, \
-                                            stretch=stretch_r, \
-                                            vmid=vmid_r, \
-                                            exponent=exponent_r))
+    image_r = Image.fromarray(_data_stretch(image_r, vmin=vmin_r, vmax=vmax_r,
+                              pmin=pmin_r, pmax=pmax_r, stretch=stretch_r,
+                              vmid=vmid_r,  exponent=exponent_r))
 
     log.info("Green:")
-    image_g = Image.fromarray(_data_stretch(image_g, \
-                                            vmin=vmin_g, vmax=vmax_g, \
-                                            pmin=pmin_g, pmax=pmax_g, \
-                                            stretch=stretch_g, \
-                                            vmid=vmid_g, \
+    image_g = Image.fromarray(_data_stretch(image_g,
+                                            vmin=vmin_g, vmax=vmax_g,
+                                            pmin=pmin_g, pmax=pmax_g,
+                                            stretch=stretch_g,
+                                            vmid=vmid_g,
                                             exponent=exponent_g))
 
     log.info("Blue:")
-    image_b = Image.fromarray(_data_stretch(image_b, \
-                                            vmin=vmin_b, vmax=vmax_b, \
-                                            pmin=pmin_b, pmax=pmax_b, \
-                                            stretch=stretch_b, \
-                                            vmid=vmid_b, \
+    image_b = Image.fromarray(_data_stretch(image_b,
+                                            vmin=vmin_b, vmax=vmax_b,
+                                            pmin=pmin_b, pmax=pmax_b,
+                                            stretch=stretch_b,
+                                            vmid=vmid_b,
                                             exponent=exponent_b))
 
     img = Image.merge("RGB", (image_r, image_g, image_b))
@@ -334,8 +329,8 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     fits.writeto(output, image_cube, header, clobber=True)
 
     # Write out collapsed version of cube
-    fits.writeto(output.replace('.fits', '_2d.fits'), \
-                   np.mean(image_cube, axis=0), header, clobber=True)
+    fits.writeto(output.replace('.fits', '_2d.fits'),
+                 np.mean(image_cube, axis=0), header, clobber=True)
 
     # Remove work directory
     shutil.rmtree(work_dir)

@@ -29,8 +29,8 @@ class Layers(object):
         elif hasattr(self._layers[layer], 'remove') and hasattr(self._layers[layer], 'get_visible') and hasattr(self._layers[layer], 'set_visible'):
             return 'collection'
         else:
-            raise Exception("Unknown layer type: " + \
-                str(type(self._layers[layer])))
+            raise Exception("Unknown layer type: " +
+                            str(type(self._layers[layer])))
 
     def _initialize_layers(self):
 
