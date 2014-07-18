@@ -30,9 +30,10 @@ class Colorbar(object):
         self._axislabel_fontproperties = FontProperties()
 
     @auto_refresh
-    def show(self, location='right', width=0.2, pad=0.05, ticks=None, labels=True, log_format=False,
-             box=None, box_orientation='vertical', axis_label_text=None, axis_label_rotation=None,
-             axis_label_pad=5):
+    def show(self, location='right', width=0.2, pad=0.05, ticks=None,
+             labels=True, log_format=False, box=None,
+             box_orientation='vertical', axis_label_text=None,
+             axis_label_rotation=None, axis_label_pad=5):
         '''
         Show a colorbar on the side of the image.
 
@@ -40,13 +41,15 @@ class Colorbar(object):
         ----------
 
         location : str, optional
-            Where to place the colorbar. Should be one of 'left', 'right', 'top', 'bottom'.
+            Where to place the colorbar. Should be one of 'left', 'right',
+            'top', 'bottom'.
 
         width : float, optional
             The width of the colorbar relative to the canvas size.
 
         pad : float, optional
-            The spacing between the colorbar and the image relative to the canvas size.
+            The spacing between the colorbar and the image relative to the
+            canvas size.
 
         ticks : list, optional
             The position of the ticks on the colorbar.
@@ -120,9 +123,9 @@ class Colorbar(object):
                 orientation = box_orientation
 
             if log_format:
-                format=LogFormatterMathtext()
+                format = LogFormatterMathtext()
             else:
-                format=None
+                format = None
 
             self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes,
                                                            orientation=orientation, format=format,
@@ -211,7 +214,8 @@ class Colorbar(object):
     @auto_refresh
     def set_pad(self, pad):
         '''
-        Set the spacing between the colorbar and the image relative to the canvas size.
+        Set the spacing between the colorbar and the image relative to the
+        canvas size.
         '''
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
@@ -292,7 +296,8 @@ class Colorbar(object):
 
     @auto_refresh
     @fixdocstring
-    def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+    def set_font(self, family=None, style=None, variant=None, stretch=None,
+                 weight=None, size=None, fontproperties=None):
         '''
         Set the font of the tick labels.
 
@@ -345,7 +350,8 @@ class Colorbar(object):
     @auto_refresh
     @fixdocstring
     def set_axis_label_font(self, family=None, style=None, variant=None,
-                            stretch=None, weight=None, size=None, fontproperties=None):
+                            stretch=None, weight=None, size=None,
+                            fontproperties=None):
         '''
         Set the font of the tick labels.
 
