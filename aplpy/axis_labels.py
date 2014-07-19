@@ -10,13 +10,14 @@ position_map = {'bottom': 'b', 'top': 't', 'right': 'r', 'left': 'l'}
 
 class AxisLabels(object):
 
-    def __init__(self,  axes, x, y):
+    def __init__(self,  axes, x, y, parameters):
         self._ax = axes
+        self._wcs = self._ax.wcs
         self.x = x
         self.y = y
 
         # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
+        self._parameters = parameters
 
         # Set font
         self._label_fontproperties = FontProperties()

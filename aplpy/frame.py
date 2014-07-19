@@ -8,7 +8,7 @@ class Frame(object):
     @auto_refresh
     def __init__(self, parent):
 
-        self._ax1 = parent.ax
+        self.ax = parent.ax
         self._figure = parent._figure
 
         # Save plotting parameters (required for @auto_refresh)

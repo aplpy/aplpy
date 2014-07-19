@@ -224,8 +224,12 @@ class FITSFigure(Layers, Regions, Deprecated):
                 log.warning("north argument is ignored if data passed is a WCS object")
                 north = False
         else:
-            self._data, self._header, self._wcs = self._get_hdu(data, hdu, north, \
-                convention=convention, dimensions=dimensions, slices=slices)
+            self._data, self._header, self._wcs, self._wcsaxes_slices = self._get_hdu(data, hdu, north, convention=convention,
+                          dimensions=dimensions,
+                          slices=slices)
+            # self._data, self._header, self._wcs = self._get_hdu(data, hdu,
+            #     north, convention=convention, dimensions=dimensions,
+            #     slices=slices)
             self._wcs.nx = self._header['NAXIS%i' % (dimensions[0] + 1)]
             self._wcs.ny = self._header['NAXIS%i' % (dimensions[1] + 1)]
 
@@ -266,8 +270,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         # self._ax2.toggle_axisline(False)
 
         # Turn off autoscaling
-        self._ax.set_autoscale_on(False)
-        # self._ax2.set_autoscale_on(False)
+        # self._ax.set_autoscale_on(False)
+        # # self._ax2.set_autoscale_on(False)
 
         # Force zorder of parasite axes
         # self._ax2.xaxis.set_zorder(2.5)
@@ -288,11 +292,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.y = dimensions[1]
 
         # Initialize ticks
-        self.ticks = Ticks(self.ax, self.x, self.y)
+        self.ticks = Ticks(self.ax, self.x, self.y, self._parameters)
 
         # Initialize labels
-        self.axis_labels = AxisLabels(self.ax, self.x, self.y)
-        self.tick_labels = TickLabels(self.ax, self.x, self.y)
+        self.axis_labels = AxisLabels(self.ax, self.x, self.y, self._parameters)
+        self.tick_labels = TickLabels(self.ax, self.x, self.y, self._parameters)
 
         self.frame = Frame(self)
 
