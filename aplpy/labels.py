@@ -7,19 +7,22 @@ import warnings
 import numpy as np
 import matplotlib.pyplot as mpl
 from matplotlib.font_manager import FontProperties
+from matplotlib.ticker import Formatter
 
+from . import wcs_util
 from .decorators import auto_refresh, fixdocstring
 
 
 class TickLabels(object):
 
-    def __init__(self, axes, x, y):
+    def __init__(self, axes, x, y, parameters):
         self._ax = axes
+        self._wcs = self._ax.wcs
         self.x = x
         self.y = y
 
         # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
+        self._parameters = parameters
 
         # Set font
         self._label_fontproperties = FontProperties()
@@ -29,25 +32,28 @@ class TickLabels(object):
         system, equinox, units = wcs_util.system(self._wcs)
 
         # Set default label format
-        if self._wcs.xaxis_coord_type in ['longitude', 'latitude']:
+        if self._ax.coords[self.x].coord_type in ['longitude', 'latitude']:
+
             if system['name'] == 'equatorial':
-                if self._wcs.xaxis_coord_type == 'longitude':
+                if self._ax.coords[self.x].coord_type == 'longitude':
                     self.set_xformat("hh:mm:ss.ss")
                 else:
                     self.set_xformat("dd:mm:ss.s")
             else:
-                self.set_xformat("ddd.dddd")
+                # TODO: Figure out a way to use original 'ddd.dddd'
+                self.set_xformat("d.dddd")
         else:
             self.set_xformat('x')
 
-        if self._wcs.yaxis_coord_type in ['longitude', 'latitude']:
+        if self._ax.coords[self.y].coord_type in ['longitude', 'latitude']:
             if system['name'] == 'equatorial':
-                if self._wcs.yaxis_coord_type == 'longitude':
+                if self._ax.coords[self.y].coord_type == 'longitude':
                     self.set_yformat("hh:mm:ss.ss")
                 else:
                     self.set_yformat("dd:mm:ss.s")
             else:
-                self.set_yformat("ddd.dddd")
+                # TODO: Figure out a way to use original 'ddd.dddd'
+                self.set_yformat("d.dddd")
         else:
             self.set_yformat('x')
 

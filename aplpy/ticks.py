@@ -15,15 +15,16 @@ from .decorators import auto_refresh
 class Ticks(object):
 
     @auto_refresh
-    def __init__(self, axes, x, y):
+    def __init__(self, axes, x, y, parameters):
         self._ax = axes
         self.x = x
         self.y = y
+        self._wcs = self._ax.wcs
         self.x_unit = self._wcs.wcs.cunit[self.x]
         self.y_unit = self._wcs.wcs.cunit[self.y]
 
         # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
+        self._parameters = parameters
 
         # Set tick positions
         self.x_visible_axes = 'b'

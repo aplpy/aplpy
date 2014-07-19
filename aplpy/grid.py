@@ -67,7 +67,7 @@ class Grid(object):
         if yspacing == 'tick':
             self.ax.coords[self.y].grid(grid_type=self.grid_type)
         elif np.isreal(yspacing):
-            self.ax.coords[self.y.set_ticks(spacing=yspacing * self.y_unit)
+            self.ax.coords[self.y].set_ticks(spacing=yspacing * self.y_unit)
         else:
             raise ValueError("Grid spacing should be a scalar or 'tick'")
 
