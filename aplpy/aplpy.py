@@ -61,7 +61,6 @@ import astropy.utils.exceptions as aue
 
 from wcsaxes import WCSAxes
 
-# from . import contour_util
 from . import convolve_util
 from . import image_util
 from . import header as header_util
