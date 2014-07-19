@@ -278,16 +278,16 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Create first axis instance
         if type(subplot) == list and len(subplot) == 4:
-            self._ax1 = mpltk.HostAxes(self._figure, subplot, adjustable='datalim')
+            self.ax = mpltk.HostAxes(self._figure, subplot, adjustable='datalim')
         elif type(subplot) == tuple and len(subplot) == 3:
-            self._ax1 = mpltk.SubplotHost(self._figure, *subplot)
+            self.ax = mpltk.SubplotHost(self._figure, *subplot)
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
         # Initialize axis instance
         self.ax = WCSAxes(self._figure, [0.1, 0.1, 0.8, 0.8], wcs=self._wcs, slices=self._wcsaxes_slices)
 
-        self._ax1.toggle_axisline(False)
+        # self._ax1.toggle_axisline(False)
 
         self._figure.add_axes(self.ax)
 
@@ -313,6 +313,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         # self._initialize_view()
         # Code from self._initialize_view()
         self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)
+
+        # Set the coordinates for x and y axis
+        self.x = dimensions[0]
+        self.y = dimensions[1]
 
         # Initialize ticks
         self.ticks = Ticks(self.ax, self.x, self.y)
@@ -396,10 +400,6 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise ValueError('values of dimensions= should be between %i and %i' % (0, hdu.header['NAXIS'] - 1))
         if dimensions[1] < 0 or dimensions[1] > hdu.header['NAXIS'] - 1:
             raise ValueError('values of dimensions= should be between %i and %i' % (0, hdu.header['NAXIS'] - 1))
-
-        # Set the coordinates for x and y axis
-        self.x = dimensions[0]
-        self.y = dimensions[1]
 
         # Reproject to face north if requested
         if north:
@@ -1011,7 +1011,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        s = self._ax1.scatter(xp, yp, **kwargs)
+        s = self.ax.scatter(xp, yp, **kwargs)
 
         if layer:
             marker_set_name = layer
@@ -1530,7 +1530,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                              stretch=stretch, weight=weight, size=size,
                              horizontalalignment=horizontalalignment,
                              verticalalignment=verticalalignment,
-                             transform=self._ax1.transAxes, **kwargs)
+                             transform=self.ax.transAxes, **kwargs)
         else:
             xp, yp = wcs_util.world2pix(self._wcs, x, y)
             l = self.ax.text(xp, yp, text, color=color,
