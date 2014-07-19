@@ -61,30 +61,30 @@ class WCS(AstropyWCS):
             # result = result.transpose()
             # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
 
-        # Now guess what 'type' of values are on each axis
-        if self.ctype_x[:4] == 'RA--' or \
-           self.ctype_x[1:4] == 'LON':
-            self.set_xaxis_coord_type('longitude')
-            self.set_xaxis_coord_type('longitude')
-        elif self.ctype_x[:4] == 'DEC-' or \
-           self.ctype_x[1:4] == 'LAT':
-            self.set_xaxis_coord_type('latitude')
-            self.set_xaxis_coord_type('latitude')
-        else:
-            self.set_xaxis_coord_type('scalar')
-            self.set_xaxis_coord_type('scalar')
+        # # Now guess what 'type' of values are on each axis
+        # if self.ctype_x[:4] == 'RA--' or \
+        #    self.ctype_x[1:4] == 'LON':
+        #     self.set_xaxis_coord_type('longitude')
+        #     self.set_xaxis_coord_type('longitude')
+        # elif self.ctype_x[:4] == 'DEC-' or \
+        #    self.ctype_x[1:4] == 'LAT':
+        #     self.set_xaxis_coord_type('latitude')
+        #     self.set_xaxis_coord_type('latitude')
+        # else:
+        #     self.set_xaxis_coord_type('scalar')
+        #     self.set_xaxis_coord_type('scalar')
 
-        if self.ctype_y[:4] == 'RA--' or \
-           self.ctype_y[1:4] == 'LON':
-            self.set_yaxis_coord_type('longitude')
-            self.set_yaxis_coord_type('longitude')
-        elif self.ctype_y[:4] == 'DEC-' or \
-           self.ctype_y[1:4] == 'LAT':
-            self.set_yaxis_coord_type('latitude')
-            self.set_yaxis_coord_type('latitude')
-        else:
-            self.set_yaxis_coord_type('scalar')
-            self.set_yaxis_coord_type('scalar')
+        # if self.ctype_y[:4] == 'RA--' or \
+        #    self.ctype_y[1:4] == 'LON':
+        #     self.set_yaxis_coord_type('longitude')
+        #     self.set_yaxis_coord_type('longitude')
+        # elif self.ctype_y[:4] == 'DEC-' or \
+        #    self.ctype_y[1:4] == 'LAT':
+        #     self.set_yaxis_coord_type('latitude')
+        #     self.set_yaxis_coord_type('latitude')
+        # else:
+        #     self.set_yaxis_coord_type('scalar')
+        #     self.set_yaxis_coord_type('scalar')
 
     @property
     def is_celestial(self):
@@ -109,18 +109,6 @@ class WCS(AstropyWCS):
 
         return m
 
-    def set_xaxis_coord_type(self, coord_type):
-        if coord_type in ['longitude', 'latitude', 'scalar']:
-            self.xaxis_coord_type = coord_type
-        else:
-            raise Exception("coord_type should be one of longitude/latitude/scalar")
-
-    def set_yaxis_coord_type(self, coord_type):
-        if coord_type in ['longitude', 'latitude', 'scalar']:
-            self.yaxis_coord_type = coord_type
-        else:
-            raise Exception("coord_type should be one of longitude/latitude/scalar")
-
     def __getattr__(self, attribute):
 
         if attribute[-2:] == '_x':
@@ -143,57 +131,57 @@ class WCS(AstropyWCS):
         else:
             raise AttributeError("Attribute %s does not exist" % attribute)
 
-    def wcs_world2pix(self, x, y, origin):
-        if self.naxis == 2:
-            if self._dimensions[1] < self._dimensions[0]:
-                xp, yp = AstropyWCS.wcs_world2pix(self, y, x, origin)
-                return yp, xp
-            else:
-                return AstropyWCS.wcs_world2pix(self, x, y, origin)
-        else:
-            coords = []
-            s = 0
-            for dim in range(self.naxis):
-                if dim == self._dimensions[0]:
-                    coords.append(x)
-                elif dim == self._dimensions[1]:
-                    coords.append(y)
-                else:
-                    # The following is an approximation, and will break down if
-                    # the world coordinate changes significantly over the slice
-                    coords.append(np.repeat(self._mean_world[dim], x.shape))
-                    s += 1
-            coords = np.vstack(coords).transpose()
+    # def wcs_world2pix(self, x, y, origin):
+    #     if self.naxis == 2:
+    #         if self._dimensions[1] < self._dimensions[0]:
+    #             xp, yp = AstropyWCS.wcs_world2pix(self, y, x, origin)
+    #             return yp, xp
+    #         else:
+    #             return AstropyWCS.wcs_world2pix(self, x, y, origin)
+    #     else:
+    #         coords = []
+    #         s = 0
+    #         for dim in range(self.naxis):
+    #             if dim == self._dimensions[0]:
+    #                 coords.append(x)
+    #             elif dim == self._dimensions[1]:
+    #                 coords.append(y)
+    #             else:
+    #                 # The following is an approximation, and will break down if
+    #                 # the world coordinate changes significantly over the slice
+    #                 coords.append(np.repeat(self._mean_world[dim], x.shape))
+    #                 s += 1
+    #         coords = np.vstack(coords).transpose()
 
-            # Due to a bug in pywcs, we need to loop over each coordinate
-            # result = AstropyWCS.wcs_world2pix(self, coords, origin)
-            result = np.zeros(coords.shape)
-            for i in range(result.shape[0]):
-                result[i:i + 1, :] = AstropyWCS.wcs_world2pix(self, coords[i:i + 1, :], origin)
+    #         # Due to a bug in pywcs, we need to loop over each coordinate
+    #         # result = AstropyWCS.wcs_world2pix(self, coords, origin)
+    #         result = np.zeros(coords.shape)
+    #         for i in range(result.shape[0]):
+    #             result[i:i + 1, :] = AstropyWCS.wcs_world2pix(self, coords[i:i + 1, :], origin)
 
-            return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
+    #         return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
-    def wcs_pix2world(self, x, y, origin):
-        if self.naxis == 2:
-            if self._dimensions[1] < self._dimensions[0]:
-                xw, yw = AstropyWCS.wcs_pix2world(self, y, x, origin)
-                return yw, xw
-            else:
-                return AstropyWCS.wcs_pix2world(self, x, y, origin)
-        else:
-            coords = []
-            s = 0
-            for dim in range(self.naxis):
-                if dim == self._dimensions[0]:
-                    coords.append(x)
-                elif dim == self._dimensions[1]:
-                    coords.append(y)
-                else:
-                    coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
-                    s += 1
-            coords = np.vstack(coords).transpose()
-            result = AstropyWCS.wcs_pix2world(self, coords, origin)
-            return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
+    # def wcs_pix2world(self, x, y, origin):
+    #     if self.naxis == 2:
+    #         if self._dimensions[1] < self._dimensions[0]:
+    #             xw, yw = AstropyWCS.wcs_pix2world(self, y, x, origin)
+    #             return yw, xw
+    #         else:
+    #             return AstropyWCS.wcs_pix2world(self, x, y, origin)
+    #     else:
+    #         coords = []
+    #         s = 0
+    #         for dim in range(self.naxis):
+    #             if dim == self._dimensions[0]:
+    #                 coords.append(x)
+    #             elif dim == self._dimensions[1]:
+    #                 coords.append(y)
+    #             else:
+    #                 coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
+    #                 s += 1
+    #         coords = np.vstack(coords).transpose()
+    #         result = AstropyWCS.wcs_pix2world(self, coords, origin)
+    #         return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
 
 def convert_coords(x, y, input, output):
