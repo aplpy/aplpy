@@ -30,6 +30,7 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
     else:
 
         if slices:
+            wcsaxes_slices = slices[:]
 
             if dimensions[0] < dimensions[1]:
                 slices.insert(dimensions[0], slice(None, None, None))

@@ -928,9 +928,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             cmap = mpl.cm.get_cmap('jet')
 
         if data is not None:
-            data_contour, header_contour, wcs_contour = self._get_hdu(data, \
-                    hdu, False, convention=convention, dimensions=dimensions, \
-                    slices=slices)
+            data_contour, header_contour, wcs_contour, wcsaxes_slices = self._get_hdu(data,
+                hdu, False, convention=convention, dimensions=dimensions,
+                slices=slices)
         else:
             data_contour = self._data
             header_contour = self._header
