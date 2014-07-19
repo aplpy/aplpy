@@ -92,7 +92,7 @@ class Colorbar(object):
 
             if box is None:
 
-                divider = make_axes_locatable(self._parent._ax1)
+                divider = make_axes_locatable(self._parent.ax)
 
                 if location == 'right':
                     self._colorbar_axes = divider.new_horizontal(size=width, pad=pad, axes_class=maxes.Axes)
