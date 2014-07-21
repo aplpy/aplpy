@@ -147,6 +147,7 @@ class Scalebar(object):
         self._ax = parent.ax
         self._wcs = parent._wcs
         self._figure = parent._figure
+        self._dimensions = [parent.x, parent.y]
 
         # Save plotting parameters (required for @auto_refresh)
         self._parameters = parent._parameters
@@ -195,7 +196,7 @@ class Scalebar(object):
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs)
+        degrees_per_pixel = wcs_util.degperpix(self._wcs, dimensions=self._dimensions)
 
         length = length / degrees_per_pixel
 
@@ -426,6 +427,7 @@ class Beam(object):
         self._header = parent._header
         self._ax = parent.ax
         self._wcs = parent._wcs
+        self._dimensions = [parent.x, parent.y]
 
         # Save plotting parameters (required for @auto_refresh)
         self._parameters = parent._parameters
@@ -483,7 +485,7 @@ class Beam(object):
         if isinstance(angle, basestring):
             angle = self._header[angle]
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs)
+        degrees_per_pixel = wcs_util.degperpix(self._wcs, dimensions=self._dimensions)
 
         self._base_settings['minor'] = minor
         self._base_settings['major'] = major

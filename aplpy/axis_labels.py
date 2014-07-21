@@ -23,7 +23,7 @@ class AxisLabels(object):
         self._label_fontproperties = FontProperties()
 
         # TODO: Get rid of this part
-        system, equinox, units = wcs_util.system(self._wcs)
+        system, equinox, units = wcs_util.system(self._wcs, dimensions=[self.x, self.y])
 
         if system['name'] == 'equatorial':
 
@@ -46,24 +46,28 @@ class AxisLabels(object):
 
         elif system['name'] == 'unknown':
 
-            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
-            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
+#            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
+#            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
+            xunit = " (%s)" % self._wcs.wcs.ctype[self.x] if self._wcs.wcs.ctype[self.x] not in ["", None] else ""
+            yunit = " (%s)" % self._wcs.wcs.ctype[self.y] if self._wcs.wcs.ctype[self.y] not in ["", None] else ""
 
-            if len(self._wcs.cname_x) > 0:
-                xtext = self._wcs.cname_x + xunit
+#            if len(self._wcs.cname_x) > 0:
+#                xtext = self._wcs.cname_x + xunit
+            if len(self._wcs.wcs.cname[self.x]) > 0:
+                xtext = self._wcs.wcs.cname[self.x] + xunit
             else:
-                if len(self._wcs.ctype_x) == 8 and self._wcs.ctype_x[4] == '-':
-                    xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
+                if len(self._wcs.wcs.ctype[self.x]) == 8 and self._wcs.wcs.ctype[self.x] == '-':
+                    xtext = self._wcs.wcs.ctype[self.x][:4].replace('-', '') + xunit
                 else:
-                    xtext = self._wcs.ctype_x + xunit
+                    xtext = self._wcs.wcs.ctype[self.x] + xunit
 
-            if len(self._wcs.cname_y) > 0:
-                ytext = self._wcs.cname_y + yunit
+            if len(self._wcs.wcs.cname[self.y]) > 0:
+                ytext = self._wcs.wcs.cname[self.y] + yunit
             else:
-                if len(self._wcs.ctype_y) == 8 and self._wcs.ctype_y[4] == '-':
-                    ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+                if len(self._wcs.wcs.ctype[self.y]) == 8 and self._wcs.wcs.ctype[self.y][4] == '-':
+                    ytext = self._wcs.wcs.ctype[self.y][:4].replace('-', '') + yunit
                 else:
-                    ytext = self._wcs.ctype_y + yunit
+                    ytext = self._wcs.wcs.ctype[self.y] + yunit
 
         if system['inverted']:
             xtext, ytext = ytext, xtext
