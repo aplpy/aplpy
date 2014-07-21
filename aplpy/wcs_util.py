@@ -16,120 +16,99 @@ def decode_ascii(string):
         return string
 
 
-class WCS(AstropyWCS):
+# class WCS(AstropyWCS):
 
-    def __init__(self, *args, **kwargs):
+#     def __init__(self, *args, **kwargs):
 
-        if 'slices' in kwargs:
-            self._slices = kwargs.pop('slices')
-        else:
-            self._slices = []
+#         if 'slices' in kwargs:
+#             self._slices = kwargs.pop('slices')
 
-        if 'dimensions' in kwargs:
-            self._dimensions = kwargs.pop('dimensions')
-        else:
-            self._dimensions = [0, 1]
+#         if 'dimensions' in kwargs:
+#             self._dimensions = kwargs.pop('dimensions')
 
-        AstropyWCS.__init__(self, *args, **kwargs)
+#         AstropyWCS.__init__(self, *args, **kwargs)
 
-        # Fix common non-standard units
-        self.wcs.unitfix()
+#         # Fix common non-standard units
+#         self.wcs.unitfix()
 
-        # Now find the values of the coordinates in the slices - only needed if
-        # data has more than two dimensions
-        if len(self._slices) > 0:
+#         # Now find the values of the coordinates in the slices - only needed if
+#         # data has more than two dimensions
+#         if len(self._slices) > 0:
 
-            self.nx = args[0]['NAXIS%i' % (self._dimensions[0] + 1)]
-            self.ny = args[0]['NAXIS%i' % (self._dimensions[1] + 1)]
-            xpix = np.arange(self.nx) + 1.
-            ypix = np.arange(self.ny) + 1.
-            xpix, ypix = np.meshgrid(xpix, ypix)
-            xpix, ypix = xpix.reshape(self.nx * self.ny), ypix.reshape(self.nx * self.ny)
-            s = 0
-            coords = []
-            for dim in range(self.naxis):
-                if dim == self._dimensions[0]:
-                    coords.append(xpix)
-                elif dim == self._dimensions[1]:
-                    coords.append(ypix)
-                else:
-                    coords.append(np.repeat(self._slices[s], xpix.shape))
-                    s += 1
-            coords = np.vstack(coords).transpose()
-            result = AstropyWCS.wcs_pix2world(self, coords, 1)
-            self._mean_world = np.mean(result, axis=0)
-            # result = result.transpose()
-            # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
+#             self.nx = args[0]['NAXIS%i' % (self._dimensions[0] + 1)]
+#             self.ny = args[0]['NAXIS%i' % (self._dimensions[1] + 1)]
+#             xpix = np.arange(self.nx) + 1.
+#             ypix = np.arange(self.ny) + 1.
+#             xpix, ypix = np.meshgrid(xpix, ypix)
+#             xpix, ypix = xpix.reshape(self.nx * self.ny), ypix.reshape(self.nx * self.ny)
+#             s = 0
+#             coords = []
+#             for dim in range(self.naxis):
+#                 if dim == self._dimensions[0]:
+#                     coords.append(xpix)
+#                 elif dim == self._dimensions[1]:
+#                     coords.append(ypix)
+#                 else:
+#                     coords.append(np.repeat(self._slices[s], xpix.shape))
+#                     s += 1
+#             coords = np.vstack(coords).transpose()
+#             result = AstropyWCS.wcs_pix2world(self, coords, 1)
+#             self._mean_world = np.mean(result, axis=0)
+#             # result = result.transpose()
+#             # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
 
-        # # Now guess what 'type' of values are on each axis
-        # if self.ctype_x[:4] == 'RA--' or \
-        #    self.ctype_x[1:4] == 'LON':
-        #     self.set_xaxis_coord_type('longitude')
-        #     self.set_xaxis_coord_type('longitude')
-        # elif self.ctype_x[:4] == 'DEC-' or \
-        #    self.ctype_x[1:4] == 'LAT':
-        #     self.set_xaxis_coord_type('latitude')
-        #     self.set_xaxis_coord_type('latitude')
-        # else:
-        #     self.set_xaxis_coord_type('scalar')
-        #     self.set_xaxis_coord_type('scalar')
+#         # # Now guess what 'type' of values are on each axis
+#         # if self.ctype_x[:4] == 'RA--' or \
+#         #    self.ctype_x[1:4] == 'LON':
+#         #     self.set_xaxis_coord_type('longitude')
+#         #     self.set_xaxis_coord_type('longitude')
+#         # elif self.ctype_x[:4] == 'DEC-' or \
+#         #    self.ctype_x[1:4] == 'LAT':
+#         #     self.set_xaxis_coord_type('latitude')
+#         #     self.set_xaxis_coord_type('latitude')
+#         # else:
+#         #     self.set_xaxis_coord_type('scalar')
+#         #     self.set_xaxis_coord_type('scalar')
 
-        # if self.ctype_y[:4] == 'RA--' or \
-        #    self.ctype_y[1:4] == 'LON':
-        #     self.set_yaxis_coord_type('longitude')
-        #     self.set_yaxis_coord_type('longitude')
-        # elif self.ctype_y[:4] == 'DEC-' or \
-        #    self.ctype_y[1:4] == 'LAT':
-        #     self.set_yaxis_coord_type('latitude')
-        #     self.set_yaxis_coord_type('latitude')
-        # else:
-        #     self.set_yaxis_coord_type('scalar')
-        #     self.set_yaxis_coord_type('scalar')
+#         # if self.ctype_y[:4] == 'RA--' or \
+#         #    self.ctype_y[1:4] == 'LON':
+#         #     self.set_yaxis_coord_type('longitude')
+#         #     self.set_yaxis_coord_type('longitude')
+#         # elif self.ctype_y[:4] == 'DEC-' or \
+#         #    self.ctype_y[1:4] == 'LAT':
+#         #     self.set_yaxis_coord_type('latitude')
+#         #     self.set_yaxis_coord_type('latitude')
+#         # else:
+#         #     self.set_yaxis_coord_type('scalar')
+#         #     self.set_yaxis_coord_type('scalar')
 
-    @property
-    def is_celestial(self):
-        return self.wcs.lng in self._dimensions and self.wcs.lat in self._dimensions
+#     def get_pixel_scales(self):
+#         cdelt = np.matrix(self.wcs.get_cdelt())
+#         pc = np.matrix(self.wcs.get_pc())
+#         scale = np.array(cdelt * pc)[0,:]
+#         return scale[self._dimensions[0]], scale[self._dimensions[1]]
 
-    @property
-    def pixel_scale_matrix(self):
+#     def __getattr__(self, attribute):
 
-        # Only for the subset of dimensions used here
+#         if attribute[-2:] == '_x':
+#             axis = self._dimensions[0]
+#         elif attribute[-2:] == '_y':
+#             axis = self._dimensions[1]
+#         else:
+#             raise AttributeError("Attribute %s does not exist" % attribute)
 
-        d0 = self._dimensions[0]
-        d1 = self._dimensions[1]
-
-        cdelt = np.matrix([[self.wcs.get_cdelt()[d0],0],
-                           [0, self.wcs.get_cdelt()[d1]]])
-
-        pc_full = self.wcs.get_pc()
-        pc = np.matrix([[pc_full[d0,d0], pc_full[d0,d1]],
-                        [pc_full[d1,d0], pc_full[d1,d1]]])
-
-        m = np.array(cdelt * pc)
-
-        return m
-
-    def __getattr__(self, attribute):
-
-        if attribute[-2:] == '_x':
-            axis = self._dimensions[0]
-        elif attribute[-2:] == '_y':
-            axis = self._dimensions[1]
-        else:
-            raise AttributeError("Attribute %s does not exist" % attribute)
-
-        if attribute[:5] == 'ctype':
-            return decode_ascii(self.wcs.ctype[axis])
-        elif attribute[:5] == 'cname':
-            return decode_ascii(self.wcs.cname[axis])
-        elif attribute[:5] == 'cunit':
-            return str(self.wcs.cunit[axis])
-        elif attribute[:5] == 'crval':
-            return decode_ascii(self.wcs.crval[axis])
-        elif attribute[:5] == 'crpix':
-            return decode_ascii(self.wcs.crpix[axis])
-        else:
-            raise AttributeError("Attribute %s does not exist" % attribute)
+#         if attribute[:5] == 'ctype':
+#             return decode_ascii(self.wcs.ctype[axis])
+#         elif attribute[:5] == 'cname':
+#             return decode_ascii(self.wcs.cname[axis])
+#         elif attribute[:5] == 'cunit':
+#             return str(self.wcs.cunit[axis])
+#         elif attribute[:5] == 'crval':
+#             return decode_ascii(self.wcs.crval[axis])
+#         elif attribute[:5] == 'crpix':
+#             return decode_ascii(self.wcs.crpix[axis])
+#         else:
+#             raise AttributeError("Attribute %s does not exist" % attribute)
 
     # def wcs_world2pix(self, x, y, origin):
     #     if self.naxis == 2:
@@ -408,10 +387,10 @@ def fk52gal(ra, dec):
     return l, b
 
 
-def system(wcs):
+def system(wcs, dimensions=[0, 1]):
 
-    xcoord = wcs.ctype_x[0:4]
-    ycoord = wcs.ctype_y[0:4]
+    xcoord = wcs.wcs.ctype[dimensions[0]][0:4]
+    ycoord = wcs.wcs.ctype[dimensions[1]][0:4]
     equinox = wcs.wcs.equinox
 
     system = {}
@@ -454,6 +433,26 @@ def system(wcs):
     units = 'degrees'
 
     return system, equinox, units
+
+
+def arcperpix(wcs):
+    return degperpix(wcs) * 3600.
+
+
+def degperpix(wcs, dimensions=[0, 1]):
+    sx, sy = pixel_scale(wcs, dimensions)
+    return 0.5 * (sx + sy)
+
+
+def pixel_scale(wcs, dimensions):
+    return np.abs(get_pixel_scales(wcs, dimensions))
+
+
+def get_pixel_scales(wcs, dimensions):
+    cdelt = np.matrix(wcs.wcs.get_cdelt())
+    pc = np.matrix(wcs.wcs.get_pc())
+    scale = np.array(cdelt * pc)[0,:]
+    return scale[dimensions[0]], scale[dimensions[1]]
 
 
 def world2pix(wcs, x_world, y_world):
