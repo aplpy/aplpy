@@ -36,5 +36,9 @@ distribute-*.tar.gz
 .*.swp
 *~
 
+.project
+.pydevproject
+.settings
+
 # Mac OSX
 .DS_Store

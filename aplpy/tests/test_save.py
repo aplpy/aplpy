@@ -1,7 +1,8 @@
 import os
 import sys
+from astropy.extern import six
 
-if sys.version_info[0] > 2:
+if six.PY3:
     from io import BytesIO as StringIO
 else:
     from StringIO import StringIO
@@ -15,7 +16,7 @@ FORMATS = [None, 'png', 'pdf', 'eps', 'ps', 'svg']
 
 
 def is_format(filename, format):
-    if isinstance(filename, basestring):
+    if isinstance(filename, six.string_types):
         f = open(filename, 'rb')
     else:
         f = filename

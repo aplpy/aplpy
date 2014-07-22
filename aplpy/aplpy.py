@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 from distutils import version
 import os
 import operator
+from functools import reduce
 
 import matplotlib
 
@@ -11,6 +12,7 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
 
 import matplotlib.pyplot as mpl
 import mpl_toolkits.axes_grid.parasite_axes as mpltk
+from astropy.extern import six
 
 WCS_TYPES = []
 HDU_TYPES = []
@@ -183,7 +185,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if not 'figsize' in kwargs:
             kwargs['figsize'] = (10, 9)
 
-        if isinstance(data, basestring) and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
+        if isinstance(data, six.string_types) and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
 
             try:
                 from PIL import Image
@@ -324,7 +326,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def _get_hdu(self, data, hdu, north, convention=None, dimensions=[0, 1], slices=[]):
 
-        if isinstance(data, basestring):
+        if isinstance(data, six.string_types):
 
             filename = data
 
@@ -1577,7 +1579,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
         '''
 
-        if isinstance(filename, basestring) and format is None:
+        if isinstance(filename, six.string_types) and format is None:
             format = os.path.splitext(filename)[1].lower()[1:]
 
         if dpi is None and format in ['eps', 'ps', 'pdf']:

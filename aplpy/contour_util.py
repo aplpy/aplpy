@@ -33,9 +33,9 @@ def transform(contours, wcs_in, wcs_out, filled=False, overlap=False):
                     continue
 
             if filled:
-                polygons_out.append(Path(np.array(zip(xp_out, yp_out)), codes=polygon.codes))
+                polygons_out.append(Path(np.array(list(zip(xp_out, yp_out))), codes=polygon.codes))
             else:
-                polygons_out.append(zip(xp_out, yp_out))
+                polygons_out.append(list(zip(xp_out, yp_out)))
 
         if filled:
             contour.set_paths(polygons_out)
