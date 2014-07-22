@@ -123,7 +123,7 @@ class Colorbar(object):
                 format=LogFormatterMathtext()
             else:
                 format=None
-                
+
             self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes,
                                                            orientation=orientation, format=format,
                                                            ticks=ticks)
@@ -190,7 +190,7 @@ class Colorbar(object):
     def set_location(self, location):
         '''
         Set the location of the colorbar.
-        
+
         Should be one of 'left', 'right', 'top', 'bottom'.
         '''
         self._base_settings['location'] = location
@@ -242,7 +242,7 @@ class Colorbar(object):
     def set_box(self, box, box_orientation='vertical'):
         '''
         Set the box within which to place the colorbar.
-        
+
         This should be in the form [xmin, ymin, dx, dy] and be in relative
         figure units. The orientation of the colorbar within the box can be
         controlled with the box_orientation argument.
@@ -344,7 +344,8 @@ class Colorbar(object):
 
     @auto_refresh
     @fixdocstring
-    def set_axis_label_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+    def set_axis_label_font(self, family=None, style=None, variant=None,
+                            stretch=None, weight=None, size=None, fontproperties=None):
         '''
         Set the font of the tick labels.
 

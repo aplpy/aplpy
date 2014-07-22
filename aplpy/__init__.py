@@ -1,7 +1,6 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
-
 """
-This is an Astropy affiliated package.
+APLpy : Astronomical Plotting Library in Python
 """
 
 # Affiliated packages may add whatever they like to this file, but
@@ -12,7 +11,7 @@ from ._astropy_init import *
 
 if not _ASTROPY_SETUP_:
 
-    from .aplpy import FITSFigure
+    from .core import FITSFigure
     from .rgb import make_rgb_image, make_rgb_cube
 
     from .frame import Frame
