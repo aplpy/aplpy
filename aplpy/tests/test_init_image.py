@@ -172,3 +172,11 @@ def test_init_only_naninf():
     f = FITSFigure(data)
     f.show_grayscale()
     f.show_colorscale()
+
+
+def test_init_single_pixel():
+    data = np.zeros((4,4))
+    data[...] = np.nan
+    data[2,2] = 1
+    f = FITSFigure(data)
+    f.show_grayscale()
