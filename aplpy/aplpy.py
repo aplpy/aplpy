@@ -949,21 +949,26 @@ class FITSFigure(Layers, Regions, Deprecated):
             vmax = auto_levels(99.75)
             levels = np.linspace(vmin, vmax, levels)
 
+        if wcs_contour.wcs.ctype[self.x] == 'PIXEL' or wcs_contour.wcs.ctype[self.y] == 'PIXEL':
+            frame = 'pixel'
+        else:
+            frame = wcs_contour
+
         if filled:
             c = self.ax.contourf(image_contour, levels,
-                                 transform=self.ax.get_transform(wcs_contour),
+                                 transform=self.ax.get_transform(frame),
                                  extent=extent_contour, cmap=cmap,
                                  colors=colors, **kwargs)
         else:
             c = self.ax.contour(image_contour, levels,
-                                transform=self.ax.get_transform(wcs_contour),
+                                transform=self.ax.get_transform(frame),
                                 extent=extent_contour, cmap=cmap,
                                 colors=colors, **kwargs)
 
-        # Need to add this otherwise figure's shape changes to fit in everything
-        # of the contour
-        self.ax.set_xlim(0, self._data.shape[self.x])
-        self.ax.set_ylim(0, self._data.shape[self.y])
+        # TODO: Need to add this otherwise figure's shape changes to fit in everything
+        # of the contour. Find permanent solution..
+        self.ax.set_xlim(0.5, self._data.shape[self.x])
+        self.ax.set_ylim(0.5, self._data.shape[self.y])
 
         if layer:
             contour_set_name = layer
@@ -1248,7 +1253,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         patches = []
         xw = xw - width / 2.
         yw = yw - height / 2.
-        for i in range(len(xp)):
+        for i in range(len(xw)):
             patches.append(Rectangle((xw[i], yw[i]), width=width[i], height=height[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
