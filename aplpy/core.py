@@ -1139,8 +1139,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        s = self.ax.scatter(xp, yp, **kwargs)
+        s = self.ax.scatter(xw, yw, transform=self.ax.get_transform('world'), **kwargs)
 
         if layer:
             marker_set_name = layer
@@ -1202,16 +1201,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        rp = radius / wcs_util.celestial_pixel_scale(self._wcs)
-
         patches = []
-        for i in range(len(xp)):
-            patches.append(Circle((xp[i], yp[i]), radius=rp[i]))
+        for i in range(len(xw)):
+            patches.append(Circle((xw[i], yw[i]), radius=radius[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, **kwargs)
+        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1292,18 +1288,15 @@ class FITSFigure(Layers, Regions, Deprecated):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        wp = width / wcs_util.celestial_pixel_scale(self._wcs)
-        hp = height / wcs_util.celestial_pixel_scale(self._wcs)
         ap = angle
-
+        # TODO: Angle is 90-angle from the original APLpy code..Why??
         patches = []
-        for i in range(len(xp)):
-            patches.append(Ellipse((xp[i], yp[i]), width=wp[i], height=hp[i], angle=ap[i]))
+        for i in range(len(xw)):
+            patches.append(Ellipse((xw[i], yw[i]), width=width[i], height=height[i], angle=ap[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, **kwargs)
+        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1384,25 +1377,15 @@ class FITSFigure(Layers, Regions, Deprecated):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        xc, yc = wcs_util.world2pix(self._wcs, xw, yw)
-        wp = width / wcs_util.celestial_pixel_scale(self._wcs)
-        hp = height / wcs_util.celestial_pixel_scale(self._wcs)
-
-        # Rotate around the center position to find the lower-left corner that is
-        # used by Rectangle.
-        radeg = np.pi / 180.
-        xp = xc - wp / 2.
-        yp = yc - hp / 2.
-        xr = (xp - xc)*np.cos((angle)*radeg) - (yp - yc)*np.sin((angle)*radeg) + xc
-        yr = (xp - xc)*np.sin((angle)*radeg) + (yp - yc)*np.cos((angle)*radeg) + yc
-
         patches = []
+        xw = xw - width / 2.
+        yw = yw - height / 2.
         for i in range(len(xp)):
-            patches.append(Rectangle((xr[i], yr[i]), width=wp[i], height=hp[i], angle=ap[i]))
+            patches.append(Rectangle((xw[i], yw[i]), width=width[i], height=height[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, **kwargs)
+        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1449,10 +1432,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         lines = []
 
         for line in line_list:
-            xp, yp = wcs_util.world2pix(self._wcs, line[0, :], line[1, :])
-            lines.append(np.column_stack((xp, yp)))
+            xw, yw = line[0, :], line[1, :]
+            lines.append(np.column_stack((xw, yw)))
 
-        l = LineCollection(lines, **kwargs)
+        l = LineCollection(lines, transform=self.ax.get_transform('world'), **kwargs)
         if zorder is not None:
             l.zorder = zorder
         c = self.ax.add_collection(l)
@@ -1517,19 +1500,19 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         for i in range(len(x)):
 
-            xp1, yp1 = wcs_util.world2pix(self._wcs, x[i], y[i])
-            xp2, yp2 = wcs_util.world2pix(self._wcs, x[i] + dx[i], y[i] + dy[i])
+            xw1, yw1 = x[i], y[i]
+            xw2, yw2 = x[i] + dx[i], y[i] + dy[i]
 
             if width == 'auto':
-                width = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
+                width = 0.02 * np.sqrt((xw2 - xw1) ** 2 + (yw2 - yw1) ** 2)
 
             if head_width == 'auto':
-                head_width = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
+                head_width = 0.1 * np.sqrt((xw2 - xw1) ** 2 + (yw2 - yw1) ** 2)
 
             if head_length == 'auto':
-                head_length = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
+                head_length = 0.1 * np.sqrt((xw2 - xw1) ** 2 + (yw2 - yw1) ** 2)
 
-            arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1,
+            arrows.append(FancyArrow(xw1, yw1, xw2 - xw1, yw2 - yw1,
                                      width=width, head_width=head_width,
                                      head_length=head_length,
                                      length_includes_head=length_includes_head)
@@ -1537,7 +1520,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(arrows, **kwargs)
+        p = PatchCollection(arrows, transform=self.ax.get_transform('world'), **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1600,8 +1583,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             else:
                 raise Exception("Polygon should have dimensions 2xN or Nx2 with N>2")
 
-            xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-            pix_polygon_list.append(np.column_stack((xp, yp)))
+            pix_polygon_list.append(np.column_stack((xw, yw)))
 
         patches = []
         for i in range(len(pix_polygon_list)):
@@ -1609,7 +1591,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, **kwargs)
+        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1675,12 +1657,13 @@ class FITSFigure(Layers, Regions, Deprecated):
                              verticalalignment=verticalalignment,
                              transform=self.ax.transAxes, **kwargs)
         else:
-            xp, yp = wcs_util.world2pix(self._wcs, x, y)
-            l = self.ax.text(xp, yp, text, color=color,
+            l = self.ax.text(x, y, text, color=color,
                              family=family, style=style, variant=variant,
                              stretch=stretch, weight=weight, size=size,
                              horizontalalignment=horizontalalignment,
-                             verticalalignment=verticalalignment, **kwargs)
+                             verticalalignment=verticalalignment,
+                             transform=self.ax.get_transform('world'),
+                             **kwargs)
 
         if layer:
             label_name = layer
