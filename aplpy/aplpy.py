@@ -517,7 +517,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                        pmin=0.25, pmax=99.75,
                        stretch='linear', exponent=2, invert='default',
                        smooth=None, kernel='gauss', aspect='equal',
-                       interpolation='nearest'):
+                       interpolation='nearest', nan_color='default'):
         '''
         Show a grayscale image of the FITS file.
 
@@ -581,6 +581,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             will be output at native resolution irrespective of the dpi
             setting), 'bilinear', 'bicubic', and many more (see the
             matplotlib documentation for imshow).
+
+        nan_color : str, optional
+            The color to use to represent NaN values. The default is
+            determined by the colormap (white for grayscale). This can be 
+            any valid matplotlib color.
         '''
 
         if invert == 'default':
@@ -595,7 +600,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                              pmin=pmin, pmax=pmax,
                              stretch=stretch, exponent=exponent, cmap=cmap,
                              smooth=smooth, kernel=kernel, aspect=aspect,
-                             interpolation=interpolation)
+                             interpolation=interpolation, nan_color=nan_color)
 
     @auto_refresh
     def hide_grayscale(self, *args, **kwargs):
@@ -606,7 +611,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                              pmin=0.25, pmax=99.75,
                              stretch='linear', exponent=2, cmap='default',
                              smooth=None, kernel='gauss', aspect='equal',
-                             interpolation='nearest'):
+                             interpolation='nearest', nan_color='default'):
         '''
         Show a colorscale image of the FITS file.
 
@@ -668,6 +673,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             will be output at native resolution irrespective of the dpi
             setting), 'bilinear', 'bicubic', and many more (see the
             matplotlib documentation for imshow).
+
+        nan_color : str, optional
+            The color to use to represent NaN values. The default is
+            determined by the colormap. This can be any valid matplotlib
+            color.
         '''
 
         if cmap == 'default':
@@ -678,6 +688,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap)
+
+        if nan_color != 'default':
+            cmap.set_bad(nan_color)
 
         if min_auto:
             vmin = self._auto_v(pmin)
