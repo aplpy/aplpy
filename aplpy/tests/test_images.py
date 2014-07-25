@@ -73,8 +73,6 @@ class TestBasic(BaseImageTests):
         f.show_ellipses(330., -66., 0.15, 2., 10.)
         f.show_rectangles([355., 350.], [-71, -72], [0.5, 1], [2, 1])
         f.show_arrows([340., 360], [-72, -68], [2, -2], [2, 2])
-        f.add_label(350., -66., 'text')
-        f.add_label(0.4, 0.25, 'text', relative=True)
         self.generate_or_test(generate, f, 'overlay_shapes.png')
         f.close()
 
