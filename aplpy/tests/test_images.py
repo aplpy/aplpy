@@ -65,15 +65,50 @@ class TestBasic(BaseImageTests):
         f.close()
 
     # Test for overlaying shapes
-    def test_overlay_shapes(self, generate):
+    # def test_overlay_shapes(self, generate):
+    #     f = FITSFigure(self.filename)
+    #     f.ticks.set_color('black')
+    #     f.show_markers([360., 350., 340.], [-61., -62., -63])
+    #     f.show_circles(350., -61, 0.5, color='red')
+    #     f.show_ellipses(330., -66., 0.15, 2., 10.)
+    #     f.show_rectangles([355., 350.], [-71, -72], [0.5, 1], [2, 1])
+    #     f.show_arrows([340., 360], [-72, -68], [2, -2], [2, 2])
+    #     self.generate_or_test(generate, f, 'overlay_shapes.png')
+    #     f.close()
+
+    def test_overlay_markers(self, generate):
         f = FITSFigure(self.filename)
         f.ticks.set_color('black')
         f.show_markers([360., 350., 340.], [-61., -62., -63])
+        self.generate_or_test(generate, f, 'overlay_markers.png')
+        f.close()
+
+    def test_overlay_circles(self, generate):
+        f = FITSFigure(self.filename)
+        f.ticks.set_color('black')
         f.show_circles(350., -61, 0.5, color='red')
+        self.generate_or_test(generate, f, 'overlay_circles.png')
+        f.close()
+
+    def test_overlay_ellipses(self, generate):
+        f = FITSFigure(self.filename)
+        f.ticks.set_color('black')
         f.show_ellipses(330., -66., 0.15, 2., 10.)
+        self.generate_or_test(generate, f, 'overlay_ellipses.png')
+        f.close()
+
+    def test_overlay_rectangles(self, generate):
+        f = FITSFigure(self.filename)
+        f.ticks.set_color('black')
         f.show_rectangles([355., 350.], [-71, -72], [0.5, 1], [2, 1])
+        self.generate_or_test(generate, f, 'overlay_rectangles.png')
+        f.close()
+
+    def test_overlay_arrows(self, generate):
+        f = FITSFigure(self.filename)
+        f.ticks.set_color('black')
         f.show_arrows([340., 360], [-72, -68], [2, -2], [2, 2])
-        self.generate_or_test(generate, f, 'overlay_shapes.png')
+        self.generate_or_test(generate, f, 'overlay_arrows.png')
         f.close()
 
     # Test for grid
