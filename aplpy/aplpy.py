@@ -963,11 +963,6 @@ class FITSFigure(Layers, Regions, Deprecated):
                                 extent=extent_contour, cmap=cmap,
                                 colors=colors, **kwargs)
 
-        # TODO: Need to add this otherwise figure's shape changes to fit in everything
-        # of the contour. Find permanent solution..
-        self.ax.set_xlim(0.5, self._data.shape[self.x])
-        self.ax.set_ylim(0.5, self._data.shape[self.y])
-
         if layer:
             contour_set_name = layer
         else:
