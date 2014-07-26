@@ -314,9 +314,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # TODO: Figure out the correct way to use this here
         # Set view to whole FITS file
-        # self._initialize_view()
+        self._initialize_view()
         # Code from self._initialize_view()
-        self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)
+        # self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)
 
         # Set the coordinates for x and y axis
         self.x = dimensions[0]
@@ -327,11 +327,12 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Initialize labels
         self.axis_labels = AxisLabels(self.ax, self.x, self.y, self._parameters)
-        self.tick_labels = TickLabels(self.ax, self.x, self.y, self._parameters)
+        self.tick_labels = TickLabels(self.ax, self.x, self.y, self._figure, self._parameters)
 
         self.frame = Frame(self)
 
-        # self._ax1.format_coord = self.tick_labels._cursor_position
+        # TODO: Experiment with this in iPython
+        self.ax.format_coord = self.tick_labels._cursor_position
 
         # Initialize layers list
         self._initialize_layers()
@@ -1640,11 +1641,11 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def _initialize_view(self):
 
-        # TODO: Figure out what this is about
-        self._ax1.xaxis.set_view_interval(+0.5, self._wcs.nx + 0.5, ignore=True)
-        self._ax1.yaxis.set_view_interval(+0.5, self._wcs.ny + 0.5, ignore=True)
-        self._ax2.xaxis.set_view_interval(+0.5, self._wcs.nx + 0.5, ignore=True)
-        self._ax2.yaxis.set_view_interval(+0.5, self._wcs.ny + 0.5, ignore=True)
+        # TODO: Confirm with Tom
+        # Found this https://github.com/matplotlib/matplotlib/issues/118
+        # set_view_interval is meant to be a private mpl method
+        self.ax.set_xlim(+0.5, self._wcs.nx + 0.5)
+        self.ax.set_ylim(+0.5, self._wcs.ny + 0.5)
 
         # set the image extent to FITS pixel coordinates
         self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)

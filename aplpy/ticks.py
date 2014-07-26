@@ -4,6 +4,7 @@ import warnings
 
 import numpy as np
 from matplotlib.pyplot import Locator
+import astropy.units as u
 
 # from . import wcs_util
 # from . import angle_util as au
