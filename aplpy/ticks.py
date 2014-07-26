@@ -7,8 +7,8 @@ from matplotlib.pyplot import Locator
 import astropy.units as u
 
 # from . import wcs_util
-# from . import angle_util as au
-# from . import scalar_util as su
+from . import angle_util as au
+from . import scalar_util as su
 # from . import math_util
 from .decorators import auto_refresh
 
@@ -41,22 +41,26 @@ class Ticks(object):
         if spacing == 'auto':
             self._ax.coords[self.x].set_ticks(spacing=None)
         else:
-            if self._ax.coords[self.x].coord_type in ['longitude', 'latitude']:
-                # try:
-                #     # TODO: Fix this part
-                #     au._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.xaxis_coord_type == 'latitude'))
-                # except au.InconsistentSpacing:
-                #     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                #     return
+            coord_type = self._ax.coords[self.x].coord_type
+            x_format = self._ax.coords[self.x]._formatter_locator.format
+            if coord_type in ['longitude', 'latitude']:
+                try:
+                    # TODO: Test this
+                    if (x_format is not None):
+                        au._check_format_spacing_consistency(x_format, au.Angle(degrees=spacing, latitude=coord_type == 'latitude'))
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
                 self._ax.coords[self.x].set_ticks(spacing=spacing * u.degree)
             else:
-                # try:
-                #     su._check_format_spacing_consistency(self._ax1.xaxis.apl_label_form, spacing)
-                # except au.InconsistentSpacing:
-                #     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                #     return
+                try:
+                    su._check_format_spacing_consistency(x_formatxformat, spacing)
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
                 self._ax.coords[self.x].set_ticks(spacing=spacing * self.x_unit)
 
+        # TODO: implement
         # if hasattr(self._parent, 'grid'):
         #     self._parent.grid._update()
 
@@ -70,24 +74,27 @@ class Ticks(object):
         if spacing == 'auto':
             self._ax.coords[self.y].set_ticks(spacing=None)
         else:
+            coord_type = self._ax.coords[self.y].coord_type
+            y_format = self._ax.coords[self.y]._formatter_locator.format
 
-            if self._ax.coords[self.y].coord_type in ['longitude', 'latitude']:
-                # try:
-                #     # TODO: Fix this part
-                #     au._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, au.Angle(degrees=spacing, latitude=self._wcs.yaxis_coord_type == 'latitude'))
-                # except au.InconsistentSpacing:
-                #     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                #     return
+            if coord_type in ['longitude', 'latitude']:
+                try:
+                    # TODO: Test this
+                    au._check_format_spacing_consistency(y_format, au.Angle(degrees=spacing, latitude=coord_type == 'latitude'))
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
                 self._ax.coords[self.y].set_ticks(spacing=spacing * u.degree)
             else:
-                # try:
-                #     # TODO: Fix
-                #     su._check_format_spacing_consistency(self._ax1.yaxis.apl_label_form, spacing)
-                # except au.InconsistentSpacing:
-                #     warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                #     return
+                try:
+                    # TODO: Test
+                    su._check_format_spacing_consistency(y_format, spacing)
+                except au.InconsistentSpacing:
+                    warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
+                    return
                 self._ax.coords[self.y].set_ticks(spacing=spacing * self.y_unit)
 
+        # TODO: implement
         # if hasattr(self._parent, 'grid'):
         #     self._parent.grid._update()
 
