@@ -92,12 +92,15 @@ class TickLabels(object):
         is left unchanged.
         '''
         # TODO: Handle formatters
-        if self._ax.coords[self.x].coord_type in ['longitude', 'latitude']:
+        coord_type = self._ax.coords[self.x].coord_type
+        if coord_type in ['longitude', 'latitude']:
             if format.startswith('%'):
                 raise Exception("Cannot specify Python format for longitude or latitude")
             try:
-                if self._ax.coords[self.x]._formatter_locator.spacing is not None:
-                    au._check_format_spacing_consistency(format, self._ax.coords[self.x]._formatter_locator.spacing.value)
+                spacing = self._ax.coords[self.x]._formatter_locator.spacing
+                if spacing is not None:
+                    spacing = au.Angle(degrees=spacing.value, latitude=coord_type == 'latitude')
+                    au._check_format_spacing_consistency(format, spacing)
             except au.InconsistentSpacing:
                 warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
                 return
@@ -127,12 +130,15 @@ class TickLabels(object):
         is left unchanged.
         '''
         # TODO: Handle formatters
-        if self._ax.coords[self.x].coord_type in ['longitude', 'latitude']:
+        coord_type = self._ax.coords[self.y].coord_type
+        if coord_type in ['longitude', 'latitude']:
             if format.startswith('%'):
                 raise Exception("Cannot specify Python format for longitude or latitude")
             try:
-                if self._ax.coords[self.y]._formatter_locator.spacing is not None:
-                    au._check_format_spacing_consistency(format, self._ax.coords[self.x]._formatter_locator.spacing.value)
+                spacing = self._ax.coords[self.y]._formatter_locator.spacing
+                if spacing is not None:
+                    spacing = au.Angle(degrees=spacing.value, latitude=coord_type == 'latitude')
+                    au._check_format_spacing_consistency(format, spacing)
             except au.InconsistentSpacing:
                 warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
                 return
@@ -140,8 +146,6 @@ class TickLabels(object):
             if not format.startswith('%'):
                 raise Exception("For scalar tick labels, format should be a Python format beginning with %")
 
-        # self._ax1.yaxis.apl_label_form = format
-        # self._ax2.yaxis.apl_label_form = format
         self._ax.coords[self.y].set_major_formatter(format)
 
     @auto_refresh
