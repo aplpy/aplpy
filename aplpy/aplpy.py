@@ -1617,15 +1617,15 @@ class FITSFigure(Layers, Regions, Deprecated):
             format = os.path.splitext(filename)[1].lower()[1:]
 
         # TODO: This uses _ax1.xaxis.get_view_interval()
-        # if dpi is None and format in ['eps', 'ps', 'pdf']:
-        #     width = self.ax.get_position().width * self._figure.get_figwidth()
-        #     interval = self.ax.xaxis.get_view_interval()
-        #     nx = interval[1] - interval[0]
-        #     if max_dpi:
-        #         dpi = np.minimum(nx / width, max_dpi)
-        #     else:
-        #         dpi = nx / width
-        #     log.info("Auto-setting resolution to %g dpi" % dpi)
+        if dpi is None and format in ['eps', 'ps', 'pdf']:
+            width = self.ax.get_position().width * self._figure.get_figwidth()
+            interval = self.ax.get_xlim()
+            nx = interval[1] - interval[0]
+            if max_dpi:
+                dpi = np.minimum(nx / width, max_dpi)
+            else:
+                dpi = nx / width
+            log.info("Auto-setting resolution to %g dpi" % dpi)
 
         artists = []
         if adjust_bbox:

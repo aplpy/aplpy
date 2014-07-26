@@ -47,7 +47,8 @@ class TickLabels(object):
         else:
             # TODO: remove once PR 98 in WCSAxes is fixed
             try:
-                self.set_xformat('%g')
+                # self.set_xformat('%g')
+                self.set_xformat('x.xx')
             except:
                 pass
 
@@ -63,7 +64,8 @@ class TickLabels(object):
         else:
             try:
                 # TODO: remove once PR 98 in WCSAxes is fixed
-                self.set_yformat('%g')
+                # self.set_yformat('%g')
+                self.set_yformat('x.xx')
             except:
                 pass
 
