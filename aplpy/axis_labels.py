@@ -5,8 +5,6 @@ from matplotlib.font_manager import FontProperties
 from . import wcs_util
 from .decorators import auto_refresh, fixdocstring
 
-position_map = {'bottom': 'b', 'top': 't', 'right': 'r', 'left': 'l'}
-
 
 class AxisLabels(object):
 

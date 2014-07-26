@@ -213,8 +213,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
             self._data = np.zeros((ny, nx), dtype=float)
             self._header = header
-#            self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
-            self._wcs = WCS(header, relax=True)
+            self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
+            # self._wcs = WCS(header, relax=True)
             self._wcs.nx = nx
             self._wcs.ny = ny
             if downsample:
@@ -281,11 +281,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         # self._ax1._wcs = self._wcs
         # self._ax2._wcs = self._wcs
 
-        # TODO: Figure out the correct way to use this here
         # Set view to whole FITS file
         self._initialize_view()
-        # Code from self._initialize_view()
-        # self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)
 
         # Set the coordinates for x and y axis
         self.x = dimensions[0]
@@ -414,8 +411,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         header = header_util.check(header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
-#        wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
-        wcs = WCS(header, relax=True)
+        wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
+        # wcs = WCS(header, relax=True)
 
         return data, header, wcs, wcsaxes_slices
 
@@ -1905,7 +1902,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
         Removes the grid from the current figure.
         '''
-        self.grid._remove()
+        self.grid.hide()
         del self.grid
 
     @auto_refresh
