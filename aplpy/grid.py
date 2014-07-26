@@ -32,10 +32,6 @@ class Grid(object):
         # self.ax.callbacks.connect('ylim_changed', self._update_norefresh)
 
     @auto_refresh
-    def _remove(self):
-        self._grid.remove()
-
-    @auto_refresh
     def set_xspacing(self, xspacing):
         '''
         Set the grid line spacing in the longitudinal direction
@@ -82,10 +78,6 @@ class Grid(object):
             The color of the grid lines
         '''
         self.ax.coords.grid(color=color, grid_type=self.grid_type)
-        # if self._grid:
-        #     self._grid.set_edgecolor(color)
-        # else:
-        #     self.default_color = color
 
     @auto_refresh
     def set_alpha(self, alpha):
@@ -100,10 +92,6 @@ class Grid(object):
             transparent, and 1 is completely opaque.
         '''
         self.ax.coords.grid(alpha=alpha, grid_type=self.grid_type)
-        # if self._grid:
-        #     self._grid.set_alpha(alpha)
-        # else:
-        #     self.default_alpha = alpha
 
     @auto_refresh
     def set_linewidth(self, linewidth):
@@ -116,15 +104,7 @@ class Grid(object):
     @auto_refresh
     def show(self):
         self.ax.grid(grid_type=self.grid_type)
-        # if self._grid:
-        #     self._grid.set_visible(True)
-        # else:
-        #     self._active = True
-        #     self._update()
-        #     self.set_color(self.default_color)
-        #     self.set_alpha(self.default_alpha)
 
     @auto_refresh
     def hide(self):
-        # TODO: Doesn't work..
-        self.ax.grid(draw_grid=False, grid_type=self.grid_type)
+        self.ax.coords.grid(draw_grid=False)
