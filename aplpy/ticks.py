@@ -21,15 +21,9 @@ class Ticks(object):
         self.x = x
         self.y = y
         self._wcs = self._ax.wcs
-        self.x_unit = self._wcs.wcs.cunit[self.x]
-        self.y_unit = self._wcs.wcs.cunit[self.y]
 
         # Save plotting parameters (required for @auto_refresh)
         self._parameters = parameters
-
-        # Set tick positions
-        self.x_visible_axes = 'b'
-        self.y_visible_axes = 'l'
 
     @auto_refresh
     def set_xspacing(self, spacing):
@@ -37,33 +31,7 @@ class Ticks(object):
         Set the x-axis tick spacing, in degrees. To set the tick spacing to be
         automatically determined, set this to 'auto'.
         '''
-
-        if spacing == 'auto':
-            self._ax.coords[self.x].set_ticks(spacing=None)
-        else:
-            coord_type = self._ax.coords[self.x].coord_type
-            x_format = self._ax.coords[self.x]._formatter_locator.format
-            if (x_format is not None):
-                if coord_type in ['longitude', 'latitude']:
-                    try:
-                        # TODO: Test this
-                        if (x_format is not None):
-                            au._check_format_spacing_consistency(x_format, au.Angle(degrees=spacing, latitude=coord_type == 'latitude'))
-                    except au.InconsistentSpacing:
-                        warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                        return
-                else:
-                    try:
-                        if (x_format is not None):
-                            su._check_format_spacing_consistency(x_format, spacing)
-                    except au.InconsistentSpacing:
-                        warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                        return
-        self._ax.coords[self.x].set_ticks(spacing=spacing * self.x_unit)
-
-        # TODO: implement
-        # if hasattr(self._parent, 'grid'):
-        #     self._parent.grid._update()
+        self._set_spacing(self.x, spacing)
 
     @auto_refresh
     def set_yspacing(self, spacing):
@@ -71,32 +39,33 @@ class Ticks(object):
         Set the y-axis tick spacing, in degrees. To set the tick spacing to be
         automatically determined, set this to 'auto'.
         '''
+        self._set_spacing(self.y, spacing)
 
+    @auto_refresh
+    def _set_spacing(self, coord, spacing):
         if spacing == 'auto':
-            self._ax.coords[self.y].set_ticks(spacing=None)
+            self._ax.coords[coord].set_ticks(spacing=None)
         else:
-            coord_type = self._ax.coords[self.y].coord_type
-            y_format = self._ax.coords[self.y]._formatter_locator.format
-            if y_format is not None:
+            coord_unit = self._wcs.wcs.cunit[coord]
+
+            coord_type = self._ax.coords[coord].coord_type
+            format = self._ax.coords[coord]._formatter_locator.format
+            if format is not None:
                 if coord_type in ['longitude', 'latitude']:
                     try:
                         # TODO: Test this
-                        au._check_format_spacing_consistency(y_format, au.Angle(degrees=spacing, latitude=coord_type == 'latitude'))
+                        au._check_format_spacing_consistency(format, au.Angle(degrees=spacing, latitude=coord_type == 'latitude'))
                     except au.InconsistentSpacing:
                         warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                         return
                 else:
                     try:
                         # TODO: Test
-                        su._check_format_spacing_consistency(y_format, spacing)
+                        su._check_format_spacing_consistency(format, spacing)
                     except au.InconsistentSpacing:
                         warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
                         return
-        self._ax.coords[self.y].set_ticks(spacing=spacing * self.y_unit)
-
-        # TODO: implement
-        # if hasattr(self._parent, 'grid'):
-        #     self._parent.grid._update()
+            self._ax.coords[coord].set_ticks(spacing=spacing * coord_unit)
 
     @auto_refresh
     def set_color(self, color):
@@ -112,6 +81,7 @@ class Ticks(object):
         Set the length of the ticks (in points)
         '''
         # TODO: Can't set minor ticksize. Should we just remove that?
+        # Not mentioned in the APLpy in docs either
         self._ax.coords[self.x].set_ticks(size=length)
         self._ax.coords[self.y].set_ticks(size=length)
 
@@ -129,7 +99,6 @@ class Ticks(object):
         Set the number of subticks per major tick. Set to one to hide minor
         ticks.
         '''
-        # TODO: Possibly check for integer values of frequency
         self._ax.coords[self.x].set_minor_frequency(frequency)
         self._ax.coords[self.y].set_minor_frequency(frequency)
 
