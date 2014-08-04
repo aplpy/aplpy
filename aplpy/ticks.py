@@ -111,19 +111,9 @@ class Ticks(object):
         '''
         Set the length of the ticks (in points)
         '''
+        # TODO: Can't set minor ticksize. Should we just remove that?
         self._ax.coords[self.x].set_ticks(size=length)
         self._ax.coords[self.y].set_ticks(size=length)
-
-        # TODO: Add this once minor ticks are implemented in WCSAxes
-        # Minor ticks
-        # for line in self._ax1.xaxis.get_minorticklines():
-        #     line.set_markersize(length * minor_factor)
-        # for line in self._ax1.yaxis.get_minorticklines():
-        #     line.set_markersize(length * minor_factor)
-        # for line in self._ax2.xaxis.get_minorticklines():
-        #     line.set_markersize(length * minor_factor)
-        # for line in self._ax2.yaxis.get_minorticklines():
-        #     line.set_markersize(length * minor_factor)
 
     @auto_refresh
     def set_linewidth(self, linewidth):
@@ -139,14 +129,9 @@ class Ticks(object):
         Set the number of subticks per major tick. Set to one to hide minor
         ticks.
         '''
-        try:
-            self._ax.coords[self.x].display_minor_ticks(True)
-            self._ax.coords[self.y].display_minor_ticks(True)
-            # TODO: Possibly check for integer values of frequency
-            self._ax.coords[self.x].set_minor_frequency(frequency)
-            self._ax.coords[self.y].set_minor_frequency(frequency)
-        except:
-            pass
+        # TODO: Possibly check for integer values of frequency
+        self._ax.coords[self.x].set_minor_frequency(frequency)
+        self._ax.coords[self.y].set_minor_frequency(frequency)
 
     @auto_refresh
     def show(self):
