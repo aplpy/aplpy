@@ -49,7 +49,7 @@ def test_pixel_coords_bad(inputval):
     f = FITSFigure(data)
     with pytest.raises(Exception) as exc:
         f.show_markers(inputval[0], inputval[1])
-    assert exc.value.args[0] == "world2pix should be provided either with two scalars, two lists, or two numpy arrays"
+    assert exc.value.args[0] == "x and y must be the same size"
     f.close()
 
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
@@ -62,6 +62,4 @@ def test_wcs_coords_bad(inputval):
     with pytest.raises(Exception) as exc:
         f.show_markers(inputval[0], inputval[1])
     f.close()
-    assert exc.value.args[0] == "world2pix should be provided either with two scalars, two lists, or two numpy arrays"
-
-
+    assert exc.value.args[0] == "x and y must be the same size"
