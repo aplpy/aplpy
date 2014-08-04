@@ -93,7 +93,6 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis
         is left unchanged.
         '''
-        # TODO: Handle formatters
         coord_type = self._ax.coords[self.x].coord_type
         if coord_type in ['longitude', 'latitude']:
             if format.startswith('%'):
@@ -131,7 +130,6 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis
         is left unchanged.
         '''
-        # TODO: Handle formatters
         coord_type = self._ax.coords[self.y].coord_type
         if coord_type in ['longitude', 'latitude']:
             if format.startswith('%'):
@@ -160,7 +158,6 @@ class TickLabels(object):
             * 'colons' uses colons as separators, for example 31:41:59.26 +27:18:28.1
             * 'plain' uses letters and symbols as separators, for example 31h41m59.26s +27º18'28.1"
         """
-        # TODO: Remove pass once PR 90 in WCSAxes is merged
         if style == 'latex':
             warnings.warn("latex has now been merged with plain - whether or not to use LaTeX is controled through set_system_latex")
             style = 'plain'
@@ -168,27 +165,19 @@ class TickLabels(object):
             raise Exception("Label style should be one of colons/plain")
 
         self.style = style
+        coords = [self.x, self.y]
+        for coord in coords:
+            coord_type = self._ax.coords[coord].coord_type
+            if coord_type in ['longitude', 'latitude']:
+                if style == 'colons':
+                    sep = (':', ':', '')
+                else:
+                    sep = ('d', 'm', 's')
+                    format = self._ax.coords[coord]._formatter_locator.format
+                    if (format is not None) and 'h' in format:
+                        sep = ('h', 'm', 's')
 
-        if style == 'colons':
-            x_sep = (':', ':', '')
-            y_sep = (':', ':', '')
-
-        else:
-            x_sep = ('d', 'm', 's')
-            y_sep = ('d', 'm', 's')
-            x_format = self._ax.coords[self.x]._formatter_locator.format
-            if (x_format is not None) and 'h' in x_format:
-                x_sep = ('h', 'm', 's')
-            y_format = self._ax.coords[self.y]._formatter_locator.format
-            if (y_format is not None) and 'h' in y_format:
-                y_sep = ('h', 'm', 's')
-
-        try:
-            # TODO: take out pass once PR is merged
-            self._ax.coords[self.x].set_separator(x_sep)
-            self._ax.coords[self.y].set_separator(y_sep)
-        except:
-            pass
+                self._ax.coords[coord].set_separator(sep)
 
     @auto_refresh
     @fixdocstring
