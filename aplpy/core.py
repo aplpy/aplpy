@@ -213,8 +213,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
             self._data = np.zeros((ny, nx), dtype=float)
             self._header = header
-            self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
-            # self._wcs = WCS(header, relax=True)
+            # self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
+            self._wcs = WCS(header, relax=True)
             self._wcs.nx = nx
             self._wcs.ny = ny
             if downsample:
@@ -411,8 +411,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         header = header_util.check(header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
-        wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
-        # wcs = WCS(header, relax=True)
+        # wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
+        wcs = WCS(header, relax=True)
 
         return data, header, wcs, wcsaxes_slices
 
@@ -1753,7 +1753,6 @@ class FITSFigure(Layers, Regions, Deprecated):
         if isinstance(filename, six.string_types) and format is None:
             format = os.path.splitext(filename)[1].lower()[1:]
 
-        # TODO: This uses _ax1.xaxis.get_view_interval()
         if dpi is None and format in ['eps', 'ps', 'pdf']:
             width = self.ax.get_position().width * self._figure.get_figwidth()
             interval = self.ax.get_xlim()
