@@ -16,22 +16,22 @@ from .decorators import auto_refresh, fixdocstring
 
 class TickLabels(object):
 
-    def __init__(self, axes, x, y, figure, parameters):
-        self._ax = axes
-        self._wcs = self._ax.wcs
-        self.x = x
-        self.y = y
-        self._figure = figure
+    def __init__(self, parent):
+        self._ax = parent.ax
+        self._wcs = parent.ax.wcs
+        self.x = parent.x
+        self.y = parent.y
+        self._figure = parent._figure
 
         # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parameters
+        self._parameters = parent._parameters
 
         # Set font
         self._label_fontproperties = FontProperties()
 
         self.set_style('plain')
 
-        system, equinox, units = wcs_util.system(self._wcs)
+        system, equinox = wcs_util.system(self._wcs)
 
         # Set default label format
         if self._ax.coords[self.x].coord_type in ['longitude', 'latitude']:
