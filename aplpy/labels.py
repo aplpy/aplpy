@@ -42,15 +42,9 @@ class TickLabels(object):
                 else:
                     self.set_xformat("dd:mm:ss.s")
             else:
-                # TODO: Figure out a way to use original 'ddd.dddd'
                 self.set_xformat("d.dddd")
         else:
-            # TODO: remove once PR 98 in WCSAxes is fixed
-            try:
-                # self.set_xformat('%g')
-                self.set_xformat('x.xx')
-            except:
-                pass
+            self.set_xformat('%g')
 
         if self._ax.coords[self.y].coord_type in ['longitude', 'latitude']:
             if system['name'] == 'equatorial':
@@ -59,15 +53,9 @@ class TickLabels(object):
                 else:
                     self.set_yformat("dd:mm:ss.s")
             else:
-                # TODO: Figure out a way to use original 'ddd.dddd'
                 self.set_yformat("d.dddd")
         else:
-            try:
-                # TODO: remove once PR 98 in WCSAxes is fixed
-                # self.set_yformat('%g')
-                self.set_yformat('x.xx')
-            except:
-                pass
+            self.set_yformat('%g')
 
         # Cursor display
         self._ax._cursor_world = True
