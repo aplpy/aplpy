@@ -3,8 +3,10 @@ from __future__ import absolute_import, print_function, division
 import numpy as np
 
 
+import warnings
 from astropy import log
 from astropy.wcs import WCS as AstropyWCS
+import astropy.wcs
 
 
 def decode_ascii(string):
@@ -81,10 +83,7 @@ class WCS(AstropyWCS):
             self.set_yaxis_coord_type('scalar')
 
     def get_pixel_scales(self):
-        cdelt = np.matrix(self.wcs.get_cdelt())
-        pc = np.matrix(self.wcs.get_pc())
-        scale = np.array(cdelt * pc)[0,:]
-        return scale[self._dimensions[0]], scale[self._dimensions[1]]
+        return _get_pixel_scales(self.wcs, self._dimensions)
 
     def set_xaxis_coord_type(self, coord_type):
         if coord_type in ['longitude', 'latitude', 'scalar']:
@@ -482,3 +481,39 @@ def pix2world(wcs, x_pix, y_pix):
         return wcs.wcs_pix2world(x_pix, y_pix, 1)
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
+
+def _get_pixel_scales(mywcs, dimensions=None):
+    """
+    If the pixels are square, return the pixel scale in the spatial
+    dimensions
+    """
+    if 'PIXEL' in mywcs.ctype:
+        # aplpy allows "PIXEL" WCS, which are not celestial WCS
+        # Should this be cdelt?  I don't think we should go through
+        # the process below in this case
+        return 1,1
+    cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
+    if cwcs.naxis != 2:
+        if mywcs.naxis == 2:
+            cdelt = np.matrix(mywcs.get_cdelt())
+            pc = np.matrix(mywcs.get_pc())
+            scale = np.array(cdelt * pc)[0,:]
+            return scale[dimensions[0]], scale[dimensions[1]]
+        else:
+            warnings.warn("No celestial axes found.  Assuming pixel scale is 1.")
+            return 1,1
+    if len(cwcs.ctype[0]) == 8 and 'CAR' != cwcs.ctype[0][-3:]:
+        warnings.warn("Pixel sizes may vary over the image for "
+                      "projection class {0}".format(cwcs.ctype[0][-3:]))
+    cdelt = np.matrix([[cwcs.get_cdelt()[0],0],
+                       [0, cwcs.get_cdelt()[1]]])
+    pc = np.matrix(cwcs.get_pc())
+    pccd = np.array(cdelt * pc)
+    if pccd[1,0] == pccd[0,1] == 0:
+        # No rotation, therefore can return diagonal elements
+        return np.abs(np.diagonal(pccd))
+
+    scale = (pccd**2).sum(axis=0)**0.5
+    if scale[0] != scale[1]:
+        raise warnings.warn("Pixels are rotated and not symmetric")
+    return scale[dimensions[0]], scale[dimensions[1]]
