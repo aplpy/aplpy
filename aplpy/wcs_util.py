@@ -5,6 +5,7 @@ import numpy as np
 
 from astropy import log
 from astropy.wcs import WCS as AstropyWCS
+import astropy.wcs
 
 
 def decode_ascii(string):
@@ -81,10 +82,7 @@ class WCS(AstropyWCS):
             self.set_yaxis_coord_type('scalar')
 
     def get_pixel_scales(self):
-        cdelt = np.matrix(self.wcs.get_cdelt())
-        pc = np.matrix(self.wcs.get_pc())
-        scale = np.array(cdelt * pc)[0,:]
-        return scale[self._dimensions[0]], scale[self._dimensions[1]]
+        return _get_pixel_scales(self.wcs)
 
     def set_xaxis_coord_type(self, coord_type):
         if coord_type in ['longitude', 'latitude', 'scalar']:
@@ -482,3 +480,21 @@ def pix2world(wcs, x_pix, y_pix):
         return wcs.wcs_pix2world(x_pix, y_pix, 1)
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
+
+def _get_pixel_scales(mywcs):
+    """
+    If the pixels are square, return the pixel scale in the spatial
+    dimensions
+    """
+    cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
+    if 'CAR' != cwcs.ctype[0][-3:]:
+        warnings.warn("Pixel sizes may very over the image for "
+                      "projection class {0}".format(cwcs.ctype[0][-3:]))
+    cdelt = np.matrix([[cwcs.get_cdelt()[0],0],
+                       [0, cwcs.get_cdelt()[1]]])
+    pc = np.matrix(cwcs.get_pc())
+    pccd = np.array(cdelt * pc)
+    scale = (pccd**2).sum(axis=0)**0.5
+    if scale[0] != scale[1]:
+        raise ValueError("Pixels are not symmetric: 'pixel scale' is ambiguous")
+    return scale
