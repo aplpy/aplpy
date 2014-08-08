@@ -281,9 +281,7 @@ def system(wcs, dimensions=[0, 1]):
     else:
         equinox = 'none'
 
-    units = 'degrees'
-
-    return system, equinox, units
+    return system, equinox
 
 
 def arcperpix(wcs):

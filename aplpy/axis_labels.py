@@ -8,20 +8,20 @@ from .decorators import auto_refresh, fixdocstring
 
 class AxisLabels(object):
 
-    def __init__(self,  axes, x, y, parameters):
-        self._ax = axes
-        self._wcs = self._ax.wcs
-        self.x = x
-        self.y = y
+    def __init__(self, parent):
+        self._ax = parent.ax
+        self._wcs = parent.ax.wcs
+        self.x = parent.x
+        self.y = parent.y
 
         # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parameters
+        self._parameters = parent._parameters
 
         # Set font
         self._label_fontproperties = FontProperties()
 
         # TODO: Get rid of this part
-        system, equinox, units = wcs_util.system(self._wcs, dimensions=[self.x, self.y])
+        system, equinox = wcs_util.system(self._wcs, dimensions=[self.x, self.y])
 
         if system['name'] == 'equatorial':
 
@@ -44,13 +44,9 @@ class AxisLabels(object):
 
         elif system['name'] == 'unknown':
 
-#            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
-#            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
             xunit = " (%s)" % self._wcs.wcs.ctype[self.x] if self._wcs.wcs.ctype[self.x] not in ["", None] else ""
             yunit = " (%s)" % self._wcs.wcs.ctype[self.y] if self._wcs.wcs.ctype[self.y] not in ["", None] else ""
 
-#            if len(self._wcs.cname_x) > 0:
-#                xtext = self._wcs.cname_x + xunit
             if len(self._wcs.wcs.cname[self.x]) > 0:
                 xtext = self._wcs.wcs.cname[self.x] + xunit
             else:

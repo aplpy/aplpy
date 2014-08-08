@@ -323,8 +323,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.ticks = Ticks(self.ax, self.x, self.y, self._parameters)
 
         # Initialize labels
-        self.axis_labels = AxisLabels(self.ax, self.x, self.y, self._parameters)
-        self.tick_labels = TickLabels(self.ax, self.x, self.y, self._figure, self._parameters)
+        self.axis_labels = AxisLabels(self)
+        self.tick_labels = TickLabels(self)
 
         self.frame = Frame(self)
 
@@ -332,8 +332,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.ax.coords[self.x].display_minor_ticks(True)
         self.ax.coords[self.y].display_minor_ticks(True)
 
-        # TODO: Experiment with this in iPython
-        self.ax.format_coord = self.tick_labels._cursor_position
+        # TODO: Uncomment this once pix2world works for cube data
+        # self.ax.format_coord = self.tick_labels._cursor_position
 
         # Initialize layers list
         self._initialize_layers()
