@@ -44,7 +44,6 @@ HDULIST_TYPES.append(fits.HDUList)
 
 from astropy.wcs import WCS
 WCS_TYPES.append(WCS)
-#del WCS
 
 # Convert to tuples so that these work when calling isinstance()
 HDU_TYPES = tuple(HDU_TYPES)
@@ -246,7 +245,6 @@ class FITSFigure(Layers, Regions, Deprecated):
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
             self._data = np.zeros((ny, nx), dtype=float)
             self._header = header
-            # self._wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
             self._wcs = WCS(header, relax=True)
             self._wcs.nx = nx
             self._wcs.ny = ny
@@ -260,9 +258,6 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._data, self._header, self._wcs, self._wcsaxes_slices = self._get_hdu(data, hdu, north, convention=convention,
                           dimensions=dimensions,
                           slices=slices)
-            # self._data, self._header, self._wcs = self._get_hdu(data, hdu,
-            #     north, convention=convention, dimensions=dimensions,
-            #     slices=slices)
             self._wcs.nx = self._header['NAXIS%i' % (dimensions[0] + 1)]
             self._wcs.ny = self._header['NAXIS%i' % (dimensions[1] + 1)]
 
@@ -291,26 +286,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Initialize axis instance
         self.ax = WCSAxes(self._figure, [0.1, 0.1, 0.8, 0.8], wcs=self._wcs, slices=self._wcsaxes_slices)
 
-        # self._ax1.toggle_axisline(False)
-
         self._figure.add_axes(self.ax)
 
-        # Create second axis instance
-        # self._ax2 = self._ax1.twin()
-        # self._ax2.set_frame_on(False)
-        # self._ax2.toggle_axisline(False)
-
         # Turn off autoscaling
-        # self._ax.set_autoscale_on(False)
-        # # self._ax2.set_autoscale_on(False)
-
-        # Force zorder of parasite axes
-        # self._ax2.xaxis.set_zorder(2.5)
-        # self._ax2.yaxis.set_zorder(2.5)
-
-        # Store WCS in axes
-        # self._ax1._wcs = self._wcs
-        # self._ax2._wcs = self._wcs
+        self.ax.set_autoscale_on(False)
 
         # Set view to whole FITS file
         self._initialize_view()
@@ -320,7 +299,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.y = dimensions[1]
 
         # Initialize ticks
-        self.ticks = Ticks(self.ax, self.x, self.y, self._parameters)
+        self.ticks = Ticks(self)
 
         # Initialize labels
         self.axis_labels = AxisLabels(self)
@@ -1636,9 +1615,6 @@ class FITSFigure(Layers, Regions, Deprecated):
 
     def _initialize_view(self):
 
-        # TODO: Confirm with Tom
-        # Found this https://github.com/matplotlib/matplotlib/issues/118
-        # set_view_interval is meant to be a private mpl method
         self.ax.set_xlim(+0.5, self._wcs.nx + 0.5)
         self.ax.set_ylim(+0.5, self._wcs.ny + 0.5)
 
@@ -1744,7 +1720,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         if hasattr(self, 'grid'):
             raise Exception("Grid already exists")
         try:
-            self.grid = Grid(self, self.x, self.y)
+            self.grid = Grid(self)
             self.grid.show(*args, **kwargs)
         except:
             del self.grid

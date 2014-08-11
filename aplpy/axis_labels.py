@@ -20,7 +20,6 @@ class AxisLabels(object):
         # Set font
         self._label_fontproperties = FontProperties()
 
-        # TODO: Get rid of this part
         system, equinox = wcs_util.system(self._wcs, dimensions=[self.x, self.y])
 
         if system['name'] == 'equatorial':
@@ -91,14 +90,14 @@ class AxisLabels(object):
     @auto_refresh
     def set_xpad(self, pad):
         """
-        Set the x-axis label displacement, in points.
+        Set the x-axis label displacement in terms of the axis label font size.
         """
         self._ax.coords[self.x].set_axislabel(self._x_text, minpad=pad)
 
     @auto_refresh
     def set_ypad(self, pad):
         """
-        Set the y-axis label displacement, in points.
+        Set the y-axis label displacement in terms of the axis label font size.
         """
         self._ax.coords[self.y].set_axislabel(self._y_text, minpad=pad)
 
