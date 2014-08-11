@@ -6,24 +6,22 @@ import numpy as np
 from matplotlib.pyplot import Locator
 import astropy.units as u
 
-# from . import wcs_util
 from . import angle_util as au
 from . import scalar_util as su
-# from . import math_util
 from .decorators import auto_refresh
 
 
 class Ticks(object):
 
     @auto_refresh
-    def __init__(self, axes, x, y, parameters):
-        self._ax = axes
-        self.x = x
-        self.y = y
+    def __init__(self, parent):
+        self._ax = parent.ax
+        self.x = parent.x
+        self.y = parent.y
         self._wcs = self._ax.wcs
 
         # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parameters
+        self._parameters = parent._parameters
 
     @auto_refresh
     def set_xspacing(self, spacing):

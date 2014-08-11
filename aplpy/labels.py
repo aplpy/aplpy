@@ -7,7 +7,6 @@ import warnings
 import numpy as np
 import matplotlib.pyplot as mpl
 from matplotlib.font_manager import FontProperties
-from matplotlib.ticker import Formatter
 
 from . import wcs_util
 from . import angle_util as au

@@ -11,14 +11,14 @@ from .decorators import auto_refresh
 class Grid(object):
 
     @auto_refresh
-    def __init__(self, parent, x, y):
+    def __init__(self, parent):
 
         # Save axes and wcs information
         self.ax = parent.ax
         self._wcs = parent._wcs
         self._figure = parent._figure
-        self.x = x
-        self.y = y
+        self.x = parent.x
+        self.y = parent.y
         self.x_unit = self._wcs.wcs.cunit[self.x]
         self.y_unit = self._wcs.wcs.cunit[self.y]
         self.grid_type = parent.grid_type
@@ -30,6 +30,8 @@ class Grid(object):
         # Set grid event handler
         # self.ax.callbacks.connect('xlim_changed', self._update_norefresh)
         # self.ax.callbacks.connect('ylim_changed', self._update_norefresh)
+
+        # TODO: Put default color and alpha parameters back in.
 
     @auto_refresh
     def set_xspacing(self, xspacing):
