@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 import numpy as np
 
 
+import warnings
 from astropy import log
 from astropy.wcs import WCS as AstropyWCS
 import astropy.wcs
