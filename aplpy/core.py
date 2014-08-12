@@ -27,7 +27,7 @@ from matplotlib.collections import PatchCollection, LineCollection
 from astropy import log
 import astropy.utils.exceptions as aue
 
-from wcsaxes import WCSAxes
+from wcsaxes import WCSAxes, WCSAxesSubplot
 
 from . import convolve_util
 from . import image_util
@@ -243,18 +243,13 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             self._figure = mpl.figure(**kwargs)
 
-        # Create first axis instance
-        HostAxes = parasite_axes.host_axes_class_factory(axes_class=Axes)
+        # Initialize axis instance
         if type(subplot) == list and len(subplot) == 4:
-            self.ax = HostAxes(self._figure, subplot, adjustable='datalim')
+            self.ax = WCSAxes(self._figure, subplot, wcs=self._wcs, slices=self._wcsaxes_slices, adjustable='datalim')
         elif type(subplot) == tuple and len(subplot) == 3:
-            SubplotHost = parasite_axes.subplot_class_factory(HostAxes)
-            self.ax = SubplotHost(self._figure, *subplot)
+            self.ax = WCSAxesSubplot(self._figure, *subplot, wcs=self._wcs, slices=self._wcsaxes_slices)
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
-
-        # Initialize axis instance
-        self.ax = WCSAxes(self._figure, [0.1, 0.1, 0.8, 0.8], wcs=self._wcs, slices=self._wcsaxes_slices)
 
         self._figure.add_axes(self.ax)
 
