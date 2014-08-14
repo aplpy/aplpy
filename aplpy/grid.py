@@ -26,12 +26,14 @@ class Grid(object):
         # Save plotting parameters (required for @auto_refresh)
         self._parameters = parent._parameters
 
-        # TODO: What is this?
+        # TODO: What to do about this?
         # Set grid event handler
         # self.ax.callbacks.connect('xlim_changed', self._update_norefresh)
         # self.ax.callbacks.connect('ylim_changed', self._update_norefresh)
 
-        # TODO: Put default color and alpha parameters back in.
+        # Set defaults
+        self.default_color = 'white'
+        self.default_alpha = 0.5
 
     @auto_refresh
     def set_xspacing(self, xspacing):
@@ -79,7 +81,9 @@ class Grid(object):
         color : str
             The color of the grid lines
         '''
-        self.ax.coords.grid(color=color, grid_type=self.grid_type)
+        self.default_color = color
+        self.ax.coords[self.x].grid(color=color, grid_type=self.grid_type)
+        self.ax.coords[self.y].grid(color=color, grid_type=self.grid_type)
 
     @auto_refresh
     def set_alpha(self, alpha):
@@ -93,20 +97,30 @@ class Grid(object):
             point value between 0 and 1, where 0 is completely
             transparent, and 1 is completely opaque.
         '''
-        self.ax.coords.grid(alpha=alpha, grid_type=self.grid_type)
+        self.default_alpha = alpha
+        self.ax.coords[self.x].grid(alpha=alpha, grid_type=self.grid_type)
+        self.ax.coords[self.y].grid(alpha=alpha, grid_type=self.grid_type)
 
     @auto_refresh
     def set_linewidth(self, linewidth):
-        self.ax.coords.grid(linewidth=linewidth, grid_type=self.grid_type)
+        self.ax.coords[self.x].grid(linewidth=linewidth, grid_type=self.grid_type)
+        self.ax.coords[self.y].grid(linewidth=linewidth, grid_type=self.grid_type)
 
     @auto_refresh
     def set_linestyle(self, linestyle):
-        self.ax.coords.grid(linestyle=linestyle, grid_type=self.grid_type)
+        self.ax.coords[self.x].grid(linestyle=linestyle, grid_type=self.grid_type)
+        self.ax.coords[self.y].grid(linestyle=linestyle, grid_type=self.grid_type)
 
     @auto_refresh
     def show(self):
-        self.ax.grid(grid_type=self.grid_type)
+        self.ax.coords[self.x].grid(grid_type=self.grid_type,
+                                    color=self.default_color,
+                                    alpha=self.default_alpha)
+        self.ax.coords[self.y].grid(grid_type=self.grid_type,
+                                    color=self.default_color,
+                                    alpha=self.default_alpha)
 
     @auto_refresh
     def hide(self):
-        self.ax.coords.grid(draw_grid=False)
+        self.ax.coords[self.x].grid(grid_type=self.grid_type, draw_grid=False)
+        self.ax.coords[self.y].grid(grid_type=self.grid_type, draw_grid=False)

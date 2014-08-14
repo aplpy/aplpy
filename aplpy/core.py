@@ -11,8 +11,6 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
     raise Exception("matplotlib 1.0.0 or later is required for APLpy")
 
 import matplotlib.pyplot as mpl
-from mpl_toolkits.axes_grid1 import parasite_axes
-from mpl_toolkits.axisartist.axislines import Axes
 from astropy.extern import six
 
 from astropy.wcs import WCS
@@ -49,6 +47,7 @@ from .frame import Frame
 from .decorators import auto_refresh, fixdocstring
 
 from .deprecated import Deprecated
+
 
 class Parameters():
     '''
@@ -137,11 +136,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             interactive.
 
         kwargs
-            Any additional arguments are passed on to matplotlib's Figure() class.
-            For example, to set the figure size, use the figsize=(xsize, ysize)
-            argument (where xsize and ysize are in inches). For more information
-            on these additional arguments, see the *Optional keyword arguments*
-            section in the documentation for `Figure
+            Any additional arguments are passed on to matplotlib's Figure()
+            class. For example, to set the figure size, use the
+            figsize=(xsize, ysize) argument (where xsize and ysize are in
+            inches). For more information on these additional arguments, see
+            the *Optional keyword arguments* section in the documentation for
+            `Figure
             <http://matplotlib.org/api/figure_api.html?#matplotlib.figure.Figure>`_
         '''
 
@@ -246,12 +246,12 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Initialize axis instance
         if type(subplot) == list and len(subplot) == 4:
             self.ax = WCSAxes(self._figure, subplot, wcs=self._wcs, slices=self._wcsaxes_slices, adjustable='datalim')
+            self._figure.add_axes(self.ax)
         elif type(subplot) == tuple and len(subplot) == 3:
             self.ax = WCSAxesSubplot(self._figure, *subplot, wcs=self._wcs, slices=self._wcsaxes_slices)
+            self._figure.add_subplot(self.ax)
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
-
-        self._figure.add_axes(self.ax)
 
         # Turn off autoscaling
         self.ax.set_autoscale_on(False)
@@ -390,7 +390,6 @@ class FITSFigure(Layers, Regions, Deprecated):
         header = header_util.check(header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
-        # wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
         wcs = WCS(header, relax=True)
 
         return data, header, wcs, wcsaxes_slices
@@ -431,7 +430,8 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def set_system_latex(self, usetex):
         '''
-        Set whether to use a real LaTeX installation or the built-in matplotlib LaTeX.
+        Set whether to use a real LaTeX installation or the built-in matplotlib
+        LaTeX.
 
         Parameters
         ----------
@@ -476,7 +476,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         if self._wcs.is_celestial:
             sx = sy = wcs_util.celestial_pixel_scale(self._wcs)
         else:
-            sx, sy = wcs_util.non_celestial_pixel_scales(self._wcs)
+            s = wcs_util.non_celestial_pixel_scales(self._wcs)
+            sx = s[self.x]
+            sy = s[self.y]
 
         if radius:
             dx_pix = radius / sx
@@ -734,7 +736,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image.set_cmap(cm)
 
     @auto_refresh
-    def show_rgb(self, filename=None, interpolation='nearest', vertical_flip=False, horizontal_flip=False, flip=False):
+    def show_rgb(self, filename=None, interpolation='nearest',
+                 vertical_flip=False, horizontal_flip=False, flip=False):
         '''
         Show a 3-color image instead of the FITS file data.
 
@@ -803,7 +806,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         data : see below
 
-            The FITS file to plot contours for. The following data types can be passed:
+            The FITS file to plot contours for. The following data types can be
+            passed:
 
                  string
                  astropy.io.fits.PrimaryHDU
@@ -1126,8 +1130,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         self._layers[marker_set_name] = s
 
-    # Show circles. Different from markers as this method allows more definitions
-    # for the circles.
+    # Show circles. Different from markers as this method allows more
+    # definitions for the circles.
     @auto_refresh
     def show_circles(self, xw, yw, radius, layer=False, zorder=None, **kwargs):
         '''
@@ -1199,7 +1203,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[circle_set_name] = c
 
     @auto_refresh
-    def show_ellipses(self, xw, yw, width, height, angle=0, layer=False, zorder=None, **kwargs):
+    def show_ellipses(self, xw, yw, width, height, angle=0, layer=False,
+                      zorder=None, **kwargs):
         '''
         Overlay ellipses on the current plot.
 
@@ -1744,12 +1749,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         artists = []
         if adjust_bbox:
-            for artist in self._layers.values():
-                if isinstance(artist, matplotlib.text.Text):
-                    artists.append(artist)
             self._figure.savefig(filename, dpi=dpi, transparent=transparent,
-                                 bbox_inches='tight',
-                                 bbox_extra_artists=artists, format=format)
+                                 bbox_inches='tight', format=format)
         else:
             self._figure.savefig(filename, dpi=dpi, transparent=transparent,
                                  format=format)
@@ -1771,7 +1772,8 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def set_theme(self, theme):
         '''
-        Set the axes, ticks, grid, and image colors to a certain style (experimental).
+        Set the axes, ticks, grid, and image colors to a certain style
+        (experimental).
 
         Parameters
         ----------
@@ -1844,7 +1846,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         return wcs_util.pix2world(self._wcs, xp, yp)
 
     @auto_refresh
-    def add_grid(self, *args, **kwargs):
+    def add_grid(self):
         '''
         Add a coordinate to the current figure.
 
@@ -1862,7 +1864,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             raise Exception("Grid already exists")
         try:
             self.grid = Grid(self)
-            self.grid.show(*args, **kwargs)
+            self.grid.show()
         except:
             del self.grid
             raise

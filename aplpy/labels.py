@@ -28,8 +28,6 @@ class TickLabels(object):
         # Set font
         self._label_fontproperties = FontProperties()
 
-        self.set_style('plain')
-
         system, equinox = wcs_util.system(self._wcs)
 
         # Set default label format
@@ -56,6 +54,8 @@ class TickLabels(object):
         else:
             self.set_yformat('%g')
 
+        self.set_style('plain')
+
         # Cursor display
         self._ax._cursor_world = True
         self._figure.canvas.mpl_connect('key_press_event', self._set_cursor_prefs)
@@ -80,22 +80,7 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis
         is left unchanged.
         '''
-        coord_type = self._ax.coords[self.x].coord_type
-        if coord_type in ['longitude', 'latitude']:
-            if format.startswith('%'):
-                raise Exception("Cannot specify Python format for longitude or latitude")
-            try:
-                spacing = self._ax.coords[self.x]._formatter_locator.spacing
-                if spacing is not None:
-                    spacing = au.Angle(degrees=spacing.value, latitude=coord_type == 'latitude')
-                    au._check_format_spacing_consistency(format, spacing)
-            except au.InconsistentSpacing:
-                warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
-                return
-        else:
-            if not format.startswith('%'):
-                raise Exception("For scalar tick labels, format should be a Python format beginning with %")
-        self._ax.coords[self.x].set_major_formatter(format)
+        self._set_format(self.x, format)
 
     @auto_refresh
     def set_yformat(self, format):
@@ -117,23 +102,32 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis
         is left unchanged.
         '''
-        coord_type = self._ax.coords[self.y].coord_type
+        self._set_format(self.y, format)
+
+    @auto_refresh
+    def _set_format(self, coord, format):
+        coord_type = self._ax.coords[coord].coord_type
         if coord_type in ['longitude', 'latitude']:
             if format.startswith('%'):
                 raise Exception("Cannot specify Python format for longitude or latitude")
             try:
-                spacing = self._ax.coords[self.y]._formatter_locator.spacing
+                spacing = self._ax.coords[coord]._formatter_locator.spacing
                 if spacing is not None:
                     spacing = au.Angle(degrees=spacing.value, latitude=coord_type == 'latitude')
                     au._check_format_spacing_consistency(format, spacing)
             except au.InconsistentSpacing:
                 warnings.warn("WARNING: Requested label format is not accurate enough to display ticks. The label format will not be changed.")
                 return
+            if 'h' in format:
+                self._ax.coords[coord].set_separator(('h', 'm', 's'))
+            else:
+                self._ax.coords[coord].set_separator(('\u00b0', "'", '"'))
+
         else:
             if not format.startswith('%'):
                 raise Exception("For scalar tick labels, format should be a Python format beginning with %")
 
-        self._ax.coords[self.y].set_major_formatter(format)
+        self._ax.coords[coord].set_major_formatter(format)
 
     @auto_refresh
     def set_style(self, style):
@@ -159,7 +153,7 @@ class TickLabels(object):
                 if style == 'colons':
                     sep = (':', ':', '')
                 else:
-                    sep = ('d', 'm', 's')
+                    sep = ('\u00b0', "'", '"')
                     format = self._ax.coords[coord]._formatter_locator.format
                     if (format is not None) and 'h' in format:
                         sep = ('h', 'm', 's')
