@@ -121,7 +121,7 @@ class Ticks(object):
         """
         Show the x-axis ticks
         """
-        self._ax.coords[self.x].set_ticks_position('all')
+        self._ax.coords[self.x].set_ticks_position('bt')
 
     @auto_refresh
     def hide_x(self):
@@ -135,7 +135,7 @@ class Ticks(object):
         """
         Show the y-axis ticks
         """
-        self._ax.coords[self.y].set_ticks_position('all')
+        self._ax.coords[self.y].set_ticks_position('lr')
 
     @auto_refresh
     def hide_y(self):
