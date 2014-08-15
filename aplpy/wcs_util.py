@@ -449,8 +449,7 @@ def arcperpix(wcs):
 
 
 def degperpix(wcs):
-    sx, sy = pixel_scale(wcs)
-    return 0.5 * (sx + sy)
+    return pixel_scale(wcs)
 
 
 def pixel_scale(wcs):
@@ -487,6 +486,10 @@ def _get_pixel_scales(mywcs):
     If the pixels are square, return the pixel scale in the spatial
     dimensions
     """
+    if 'PIXEL' in mywcs.ctype:
+        # aplpy allows "PIXEL" WCS, which are not celestial WCS and therefore
+        # have a plate scale of 1
+        return 1
     cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
     if 'CAR' != cwcs.ctype[0][-3:]:
         warnings.warn("Pixel sizes may very over the image for "
