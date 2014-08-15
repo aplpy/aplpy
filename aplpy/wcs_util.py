@@ -449,7 +449,8 @@ def arcperpix(wcs):
 
 
 def degperpix(wcs):
-    return pixel_scale(wcs)
+    sx, sy = pixel_scale(wcs)
+    return 0.5 * (sx + sy)
 
 
 def pixel_scale(wcs):
@@ -487,18 +488,23 @@ def _get_pixel_scales(mywcs):
     dimensions
     """
     if 'PIXEL' in mywcs.ctype:
-        # aplpy allows "PIXEL" WCS, which are not celestial WCS and therefore
-        # have a plate scale of 1
-        return 1
+        # aplpy allows "PIXEL" WCS, which are not celestial WCS
+        # Should this be cdelt?  I don't think we should go through
+        # the process below in this case
+        return 1,1
     cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
-    if 'CAR' != cwcs.ctype[0][-3:]:
+    if len(cwcs.ctype[0]) == 8 and 'CAR' != cwcs.ctype[0][-3:]:
         warnings.warn("Pixel sizes may very over the image for "
                       "projection class {0}".format(cwcs.ctype[0][-3:]))
     cdelt = np.matrix([[cwcs.get_cdelt()[0],0],
                        [0, cwcs.get_cdelt()[1]]])
     pc = np.matrix(cwcs.get_pc())
     pccd = np.array(cdelt * pc)
+    if pccd[1,0] == pccd[0,1] == 0:
+        # No rotation, therefore can return diagonal elements
+        return np.abs(np.diagonal(pccd))
+
     scale = (pccd**2).sum(axis=0)**0.5
     if scale[0] != scale[1]:
-        raise ValueError("Pixels are not symmetric: 'pixel scale' is ambiguous")
+        raise warnings.warn("Pixels are rotated and not symmetric")
     return scale

@@ -491,7 +491,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         xpix, ypix = wcs_util.world2pix(self._wcs, x, y)
 
-        sx = sy = wcs_util.pixel_scale(self._wcs)
+        sx,sy = wcs_util.pixel_scale(self._wcs)
 
         if radius:
             dx_pix = radius / sx
