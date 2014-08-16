@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 from distutils import version
 import os
 import operator
+from copy import copy
 
 import matplotlib
 
@@ -687,7 +688,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         max_auto = np.equal(vmax, None)
 
         # The set of available functions
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = copy(mpl.cm.get_cmap(cmap))
 
         if nan_color != 'default':
             cmap.set_bad(nan_color)
@@ -908,9 +909,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         if cmap:
-            cmap = mpl.cm.get_cmap(cmap)
+            cmap = copy(mpl.cm.get_cmap(cmap))
         elif not colors:
-            cmap = mpl.cm.get_cmap('jet')
+            cmap = copy(mpl.cm.get_cmap('jet'))
 
         if data is not None:
             data_contour, header_contour, wcs_contour = self._get_hdu(data, \
@@ -1650,7 +1651,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'jet'
             if self.image:
-                self.image.set_cmap(cmap=mpl.cm.get_cmap('jet'))
+                self.image.set_cmap(copy(cmap=mpl.cm.get_cmap('jet')))
         elif theme == 'publication':
             self.frame.set_color('black')
             self.frame.set_linewidth(1.0)
@@ -1659,7 +1660,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
             if self.image:
-                self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg'))
+                self.image.set_cmap(cmap=copy(mpl.cm.get_cmap('gist_yarg')))
 
     def world2pixel(self, xw, yw):
         '''
