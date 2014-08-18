@@ -494,7 +494,7 @@ def _get_pixel_scales(mywcs):
         return 1,1
     cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
     if len(cwcs.ctype[0]) == 8 and 'CAR' != cwcs.ctype[0][-3:]:
-        warnings.warn("Pixel sizes may very over the image for "
+        warnings.warn("Pixel sizes may vary over the image for "
                       "projection class {0}".format(cwcs.ctype[0][-3:]))
     cdelt = np.matrix([[cwcs.get_cdelt()[0],0],
                        [0, cwcs.get_cdelt()[1]]])
