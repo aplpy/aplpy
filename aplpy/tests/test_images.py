@@ -31,15 +31,18 @@ class BaseImageTests(object):
         header_1 = os.path.join(cls._data_dir, '2d_fits/1904-66_AIR.hdr')
         cls.filename_1 = generate_file(header_1, str(tempfile.mkdtemp()))
 
-        header_2 = os.path.join(cls._data_dir, '3d_fits/cube.hdr')
+        header_2 = os.path.join(cls._data_dir, '2d_fits/2MASS_k.hdr')
         cls.filename_2 = generate_file(header_2, str(tempfile.mkdtemp()))
 
+        header_3 = os.path.join(cls._data_dir, '3d_fits/cube.hdr')
+        cls.filename_3 = generate_file(header_3, str(tempfile.mkdtemp()))
+
     # method to create baseline or test images
-    def generate_or_test(self, generate, FITSfigure, image):
+    def generate_or_test(self, generate, FITSfigure, image, adjust_bbox=True):
         baseline_image = os.path.join(self._baseline_images_dir, image)
         test_image = os.path.join(self._result_dir, image)
         if generate:
-            FITSfigure.save(baseline_image, adjust_bbox=True)
+            FITSfigure.save(baseline_image, adjust_bbox=adjust_bbox)
             pytest.skip("Skipping test, since generating data")
         else:
             FITSfigure.save(test_image)
@@ -51,8 +54,14 @@ class TestBasic(BaseImageTests):
 
     # Test for showing grayscale
     def test_basic_image(self, generate):
-        f = FITSFigure(self.filename_1)
+        f = FITSFigure(self.filename_2)
         f.show_grayscale()
+        self.generate_or_test(generate, f, 'basic_image.png')
+        f.close()
+
+    def test_ticks_labels_options(self, generate):
+        f = FITSFigure(self.filename_2)
+        f.ticks.set_color('black')
         f.axis_labels.set_xposition('top')
         f.axis_labels.set_yposition('right')
         f.axis_labels.set_font(size='medium', weight='medium',
@@ -60,10 +69,10 @@ class TestBasic(BaseImageTests):
         f.tick_labels.set_xformat('dd:mm:ss.ss')
         f.tick_labels.set_yformat('hh:mm:ss.ss')
         f.tick_labels.set_style('colons')
-        f.ticks.set_xspacing(10)
-        f.ticks.set_yspacing(2)
+        f.ticks.set_xspacing(0.2)
+        f.ticks.set_yspacing(0.2)
         f.ticks.set_minor_frequency(10)
-        self.generate_or_test(generate, f, 'basic_image.png')
+        self.generate_or_test(generate, f, 'tick_labels_options.png')
         f.close()
 
     # Test for showing colorscale
@@ -109,9 +118,9 @@ class TestBasic(BaseImageTests):
 
     # Test recenter
     def test_recenter(self, generate):
-        f = FITSFigure(self.filename_1)
+        f = FITSFigure(self.filename_2)
         f.ticks.set_color('black')
-        f.recenter(350., -68., width=20., height=3)
+        f.recenter(266.5, -29.0, width=0.1, height=0.1)
         f.axis_labels.set_xpad(20)
         f.axis_labels.set_ypad(20)
         self.generate_or_test(generate, f, 'recenter.png')
@@ -128,7 +137,7 @@ class TestBasic(BaseImageTests):
 
     # Test cube slice
     def test_cube_slice(self, generate):
-        f = FITSFigure(self.filename_2, dimensions=[2, 0], slices=[10])
+        f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10])
         f.ticks.set_color('black')
         f.add_grid()
         f.grid.set_color('black')
