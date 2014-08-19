@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 from distutils import version
 import os
 import operator
+from copy import copy
 
 import matplotlib
 
@@ -517,7 +518,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                        pmin=0.25, pmax=99.75,
                        stretch='linear', exponent=2, invert='default',
                        smooth=None, kernel='gauss', aspect='equal',
-                       interpolation='nearest'):
+                       interpolation='nearest', nan_color='default'):
         '''
         Show a grayscale image of the FITS file.
 
@@ -581,6 +582,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             will be output at native resolution irrespective of the dpi
             setting), 'bilinear', 'bicubic', and many more (see the
             matplotlib documentation for imshow).
+
+        nan_color : str, optional
+            The color to use to represent NaN values. The default is
+            determined by the colormap (white for grayscale). This can be 
+            any valid matplotlib color.
         '''
 
         if invert == 'default':
@@ -595,7 +601,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                              pmin=pmin, pmax=pmax,
                              stretch=stretch, exponent=exponent, cmap=cmap,
                              smooth=smooth, kernel=kernel, aspect=aspect,
-                             interpolation=interpolation)
+                             interpolation=interpolation, nan_color=nan_color)
 
     @auto_refresh
     def hide_grayscale(self, *args, **kwargs):
@@ -606,7 +612,7 @@ class FITSFigure(Layers, Regions, Deprecated):
                              pmin=0.25, pmax=99.75,
                              stretch='linear', exponent=2, cmap='default',
                              smooth=None, kernel='gauss', aspect='equal',
-                             interpolation='nearest'):
+                             interpolation='nearest', nan_color='default'):
         '''
         Show a colorscale image of the FITS file.
 
@@ -668,6 +674,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             will be output at native resolution irrespective of the dpi
             setting), 'bilinear', 'bicubic', and many more (see the
             matplotlib documentation for imshow).
+
+        nan_color : str, optional
+            The color to use to represent NaN values. The default is
+            determined by the colormap. This can be any valid matplotlib
+            color.
         '''
 
         if cmap == 'default':
@@ -677,7 +688,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         max_auto = np.equal(vmax, None)
 
         # The set of available functions
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = copy(mpl.cm.get_cmap(cmap))
+
+        if nan_color != 'default':
+            cmap.set_bad(nan_color)
 
         if min_auto:
             vmin = self._auto_v(pmin)
@@ -895,9 +909,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         if cmap:
-            cmap = mpl.cm.get_cmap(cmap)
+            cmap = copy(mpl.cm.get_cmap(cmap))
         elif not colors:
-            cmap = mpl.cm.get_cmap('jet')
+            cmap = copy(mpl.cm.get_cmap('jet'))
 
         if data is not None:
             data_contour, header_contour, wcs_contour = self._get_hdu(data, \
@@ -1637,7 +1651,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'jet'
             if self.image:
-                self.image.set_cmap(cmap=mpl.cm.get_cmap('jet'))
+                self.image.set_cmap(copy(cmap=mpl.cm.get_cmap('jet')))
         elif theme == 'publication':
             self.frame.set_color('black')
             self.frame.set_linewidth(1.0)
@@ -1646,7 +1660,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
             if self.image:
-                self.image.set_cmap(cmap=mpl.cm.get_cmap('gist_yarg'))
+                self.image.set_cmap(cmap=copy(mpl.cm.get_cmap('gist_yarg')))
 
     def world2pixel(self, xw, yw):
         '''
