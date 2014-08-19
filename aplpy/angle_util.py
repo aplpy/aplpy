@@ -246,8 +246,8 @@ class Angle(object):
 
     def __eq__(self, other):
         return self.angle[0] == other.angle[0] \
-           and self.angle[1] == other.angle[1] \
-           and almost_equal(self.angle[2], other.angle[2])
+            and self.angle[1] == other.angle[1] \
+            and almost_equal(self.angle[2], other.angle[2])
 
     def __div__(self, other):
         '''

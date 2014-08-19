@@ -106,7 +106,7 @@ class APLpyNormalize(Normalize):
             if clip:
                 mask = ma.getmask(val)
                 val = ma.array(np.clip(val.filled(vmax), vmin, vmax),
-                                mask=mask)
+                               mask=mask)
             result = (val - vmin) * (1.0 / (vmax - vmin))
 
             # CUSTOM APLPY CODE

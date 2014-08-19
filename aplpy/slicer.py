@@ -19,25 +19,33 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
         raise Exception("FITS file does not have enough dimensions")
 
     elif len(shape) == 2:
+        wcsaxes_slices = ('x', 'y')
 
         if dimensions[1] < dimensions[0]:
             data = data.transpose()
+            wcsaxes_slices = ('y', 'x')
 
-        return data
+        return data, wcsaxes_slices
 
     else:
 
         if slices:
+            wcsaxes_slices = slices[:]
 
             if dimensions[0] < dimensions[1]:
                 slices.insert(dimensions[0], slice(None, None, None))
                 slices.insert(dimensions[1], slice(None, None, None))
+                wcsaxes_slices.insert(dimensions[0], 'x')
+                wcsaxes_slices.insert(dimensions[1], 'y')
             else:
                 slices.insert(dimensions[1], slice(None, None, None))
                 slices.insert(dimensions[0], slice(None, None, None))
+                wcsaxes_slices.insert(dimensions[1], 'y')
+                wcsaxes_slices.insert(dimensions[0], 'x')
 
             if type(slices) == list:
                 slices = tuple(slices)
+                wcsaxes_slices = tuple(wcsaxes_slices)
 
             data = data[slices[::-1]]
 
@@ -61,4 +69,4 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
 
             raise Exception(message)
 
-        return data
+        return data, wcsaxes_slices

@@ -5,7 +5,7 @@ from matplotlib.testing.compare import compare_images
 from matplotlib import cbook
 from astropy.tests.helper import pytest
 from .. import FITSFigure
-from .helpers import generate_file, generate_hdu, generate_wcs
+from .helpers import generate_file
 
 
 class BaseImageTests(object):
@@ -121,8 +121,8 @@ class TestBasic(BaseImageTests):
         f = FITSFigure(self.filename_2)
         f.ticks.set_color('black')
         f.recenter(266.5, -29.0, width=0.1, height=0.1)
-        f.axis_labels.set_xpad(20)
-        f.axis_labels.set_ypad(20)
+        # f.axis_labels.set_xpad(20)
+        # f.axis_labels.set_ypad(20)
         self.generate_or_test(generate, f, 'recenter.png')
         f.close()
 
@@ -148,4 +148,3 @@ class TestBasic(BaseImageTests):
         f.tick_labels.set_yformat('dd:mm:ss.ss')
         self.generate_or_test(generate, f, 'cube_slice.png')
         f.close()
-
