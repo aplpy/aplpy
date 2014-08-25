@@ -15,7 +15,7 @@ argument as follows::
     
 The above will place a subplot inside the ``fig`` figure instance. The ``f``
 object can be used as normal to control the FITS figure inside the
-subplot. The above however is not very insteresting compared to just
+subplot. The above however is not very interesting compared to just
 creating a FITSFigure instance from scratch. What this is useful for is
 only using sub-regions of the figure to display the FITS data, to leave
 place for other subplots, whether histograms, scatter, or other matplotlib
@@ -72,3 +72,45 @@ subplots, as in some cases there is no need to repeat the tick labels. Alternati
     # some code here with ax2
 
     fig.canvas.draw()
+
+Layouts can also be specified by the use of tuples of the form
+(numrows, numcols, fignum) in the same manner as MATLAB and matplotlib.
+
+Complex layouts can be specified with the use of ``GridSpec`` objects. For
+example, the following code makes a 9 by 9 grid of axes, and uses a 2 by 2
+slice (``gs[1:3, 0:2]``) to display a figure.::
+
+    from astropy.io import fits
+    from aplpy import FITSFigure
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from matplotlib.gridspec import GridSpec
+
+    data = fits.open('F555W-u2sa2104b.c0.fits')[0]
+
+    fig = plt.figure(figsize=(9,9))
+    gs = GridSpec(3,3, hspace=0.01, wspace=0.01, left=0.1)
+
+    gc = FITSFigure(data, subplot=gs[1:3, 0:2], slices=[0], figure=fig)
+    gc.show_grayscale()
+    for label in gc._ax1.get_xticklabels():
+        label.set_rotation(30)
+
+    ax1 = plt.subplot(gs[0, :2])
+    ax1.plot(data.data[0].mean(axis=0), 'k')
+    plt.setp(ax1.get_xticklabels(), visible=False)
+    ax1.set_ylim(-5)
+    ax1.grid()
+
+    ax2 = plt.subplot(gs[1:, 2])
+    ax2.plot(data.data[0].mean(axis=0), np.arange(len(data.data[0,:,0])), 'k')
+    plt.setp(ax2.get_yticklabels(), visible=False)
+    ax2.set_xlim(-5)
+    ax2.grid()
+
+    fig.suptitle('NGC5307, with average intensities along each axis')
+    plt.savefig('gridspec-sample.png', bbox_inches='tight')
+
+This produces a the following image:
+
+.. image:: gridspec-sample.png

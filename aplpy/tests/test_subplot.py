@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+from matplotlib.gridspec import GridSpec
 
 from .. import FITSFigure
 
@@ -15,9 +16,14 @@ def test_subplot_box():
     f.show_grayscale()
     f.close()
 
+def test_subplot_subplotspec():
+    gs = GridSpec(2,3)
+    f = FITSFigure(np.zeros((10,10)), subplot=gs[1,1])
+    f.show_grayscale()
+    f.close()
 
 @pytest.mark.parametrize('subplot', [(1, 2, 3, 4), [1, 2, 3], '111', 1.2])
 def test_subplot_invalid(subplot):
     with pytest.raises(ValueError) as exc:
         FITSFigure(np.zeros((10, 10)), subplot=subplot)
-    assert exc.value.args[0] == "subplot= should be either a tuple of three values, or a list of four values"
+    assert exc.value.args[0] == "subplot= should be either a tuple of three values, a list of four values, or an element of a GridSpec object"
