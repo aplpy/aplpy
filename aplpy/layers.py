@@ -36,6 +36,7 @@ class Layers(object):
 
         self._layers = {}
         self._contour_counter = 0
+        self._vector_counter = 0
         self._scatter_counter = 0
         self._circle_counter = 0
         self._ellipse_counter = 0
