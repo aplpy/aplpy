@@ -83,7 +83,7 @@ class WCS(AstropyWCS):
             self.set_yaxis_coord_type('scalar')
 
     def get_pixel_scales(self):
-        return _get_pixel_scales(self.wcs)
+        return _get_pixel_scales(self.wcs, self._dimensions)
 
     def set_xaxis_coord_type(self, coord_type):
         if coord_type in ['longitude', 'latitude', 'scalar']:
@@ -482,7 +482,7 @@ def pix2world(wcs, x_pix, y_pix):
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
 
-def _get_pixel_scales(mywcs):
+def _get_pixel_scales(mywcs, dimensions=None):
     """
     If the pixels are square, return the pixel scale in the spatial
     dimensions
@@ -498,7 +498,7 @@ def _get_pixel_scales(mywcs):
             cdelt = np.matrix(mywcs.get_cdelt())
             pc = np.matrix(mywcs.get_pc())
             scale = np.array(cdelt * pc)[0,:]
-            return scale[self._dimensions[0]], scale[self._dimensions[1]]
+            return scale[dimensions[0]], scale[dimensions[1]]
         else:
             warnings.warn("No celestial axes found.  Assuming pixel scale is 1.")
             return 1,1
@@ -516,4 +516,4 @@ def _get_pixel_scales(mywcs):
     scale = (pccd**2).sum(axis=0)**0.5
     if scale[0] != scale[1]:
         raise warnings.warn("Pixels are rotated and not symmetric")
-    return scale
+    return scale[dimensions[0]], scale[dimensions[1]]
