@@ -494,8 +494,14 @@ def _get_pixel_scales(mywcs):
         return 1,1
     cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
     if cwcs.naxis != 2:
-        warnings.warn("No celestial axes found.  Assuming pixel scale is 1.")
-        return 1,1
+        if mywcs.naxis == 2:
+            cdelt = np.matrix(mywcs.get_cdelt())
+            pc = np.matrix(mywcs.get_pc())
+            scale = np.array(cdelt * pc)[0,:]
+            return scale[self._dimensions[0]], scale[self._dimensions[1]]
+        else:
+            warnings.warn("No celestial axes found.  Assuming pixel scale is 1.")
+            return 1,1
     if len(cwcs.ctype[0]) == 8 and 'CAR' != cwcs.ctype[0][-3:]:
         warnings.warn("Pixel sizes may vary over the image for "
                       "projection class {0}".format(cwcs.ctype[0][-3:]))
