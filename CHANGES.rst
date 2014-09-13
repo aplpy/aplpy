@@ -4,6 +4,23 @@ CHANGES
 0.9.13 (unreleased)
 -------------------
 
+    New features
+    ~~~~~~~~~~~~
+
+    - Added ``FITSFigure.set_title`` method that can be used to set the title
+      of a figure. [#175]
+
+    Improvements
+    ~~~~~~~~~~~~
+
+    - Beams and scalebars can now optionally be instantiated with Astropy
+      angular units and quantities. [#186]
+
+    - APLpy now includes image tests to ensure reliability over time. [#200]
+
+    - The code is now all Python 2 and 3 compatible without requiring 2to3.
+      [#198]
+
     Bug fixes
     ~~~~~~~~~
 
