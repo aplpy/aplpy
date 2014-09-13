@@ -8,6 +8,7 @@ from mpl_toolkits.axes_grid.anchored_artists \
 import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
+from astropy import units as u
 
 from astropy.extern import six
 
@@ -169,8 +170,8 @@ class Scalebar(object):
         Parameters
         ----------
 
-        length : float
-            The length of the scalebar
+        length : float, or quantity
+            The length of the scalebar in degrees, an angular quantity, or angular unit
 
         label : str, optional
             Label to place below the scalebar
@@ -195,6 +196,11 @@ class Scalebar(object):
         self._base_settings['frame'] = frame
         self._base_settings['borderpad'] = borderpad
         self._base_settings['pad'] = pad
+
+        if isinstance(length, u.Quantity):
+            length = length.to(u.degree).value
+        elif isinstance(length, u.Unit):
+            length = length.to(u.degree)
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
 
@@ -449,15 +455,17 @@ class Beam(object):
         Parameters
         ----------
 
-        major : float, optional
-            Major axis of the beam in degrees (overrides BMAJ if present)
+        major : float, quantity or unit, optional
+            Major axis of the beam in degrees or an angular quantity (overrides
+            BMAJ if present)
 
-        minor : float, optional
-            Minor axis of the beam in degrees (overrides BMIN if present)
+        minor : float, quantity or unit, optional
+            Minor axis of the beam in degrees or an angular quantity (overrides
+            BMIN if present)
 
-        angle : float, optional
-            Position angle of the beam on the sky in degrees (overrides
-            BPA if present) in the anticlockwise direction.
+        angle : float, quantity or unit, optional
+            Position angle of the beam on the sky in degrees or an angular
+            quantity (overrides BPA if present) in the anticlockwise direction.
 
         corner : int, optional
             The beam location. Acceptable values are 'left', 'right',
@@ -480,6 +488,21 @@ class Beam(object):
 
         if isinstance(angle, six.string_types):
             angle = self._header[angle]
+
+        if isinstance(major, u.Quantity):
+            major = major.to(u.degree).value
+        elif isinstance(major, u.Unit):
+            major = major.to(u.degree)
+
+        if isinstance(minor, u.Quantity):
+            minor = minor.to(u.degree).value
+        elif isinstance(minor, u.Unit):
+            minor = minor.to(u.degree)
+
+        if isinstance(angle, u.Quantity):
+            angle = angle.to(u.degree).value
+        elif isinstance(angle, u.Unit):
+            angle = angle.to(u.degree)
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
 

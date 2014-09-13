@@ -240,6 +240,11 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_scalebar` has been called, the ``fig.sca
 
     fig.scalebar.set_length(0.02)  # degrees
 
+* Specify the length of the scalebar in different units::
+
+    from astropy import units as u
+    fig.scalebar.set_length(72 * u.arcsecond)
+
 * Change the label of the scalebar::
 
     fig.scalebar.set_label('5 pc')
@@ -293,11 +298,18 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_beam` has been called, the ``fig.beam`` 
     fig.beam.show()
     fig.beam.hide()
 
-* Change the major and major axes, and the position angle::
+* Change the major and minor axes, and the position angle::
 
     fig.beam.set_major(0.03)  # degrees
     fig.beam.set_minor(0.02)  # degrees
     fig.beam.set_angle(45.)  # degrees
+
+* Specify the major and minor axes, and the position angle, in explicit units::
+
+    from astropy import units as u
+    fig.beam.set_major(108 * u.arcsecond)
+    fig.beam.set_minor(349 * u.microradian)
+    fig.beam.set_angle(45 * u.degree)
 
 * Change the corner that the beam is shown in::
 
