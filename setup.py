@@ -104,7 +104,7 @@ setup(name='APLpy',
       long_description=LONG_DESCRIPTION,
       cmdclass=cmdclassd,
       zip_safe=False,
-      use_2to3=True,
+      use_2to3=False,
       classifiers=[
                    "Development Status :: 4 - Beta",
                    "Programming Language :: Python",

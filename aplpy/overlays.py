@@ -9,6 +9,8 @@ import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
 
+from astropy.extern import six
+
 from . import wcs_util
 from .decorators import auto_refresh
 
@@ -203,7 +205,7 @@ class Scalebar(object):
         except:
             pass
 
-        if isinstance(corner, basestring):
+        if isinstance(corner, six.string_types):
             corner = corners[corner]
 
         self._scalebar = AnchoredSizeBar(self._ax.transData, length, label, corner, \
@@ -470,13 +472,13 @@ class Beam(object):
             See the matplotlib documentation for more details.
         '''
 
-        if isinstance(major, basestring):
+        if isinstance(major, six.string_types):
             major = self._header[major]
 
-        if isinstance(minor, basestring):
+        if isinstance(minor, six.string_types):
             minor = self._header[minor]
 
-        if isinstance(angle, basestring):
+        if isinstance(angle, six.string_types):
             angle = self._header[angle]
 
         degrees_per_pixel = wcs_util.degperpix(self._wcs)
@@ -497,7 +499,7 @@ class Beam(object):
         except:
             pass
 
-        if isinstance(corner, basestring):
+        if isinstance(corner, six.string_types):
             corner = corners[corner]
 
         self._beam = AnchoredEllipse(self._ax.transData, \

@@ -1,7 +1,8 @@
 import os
 import sys
+from astropy.extern import six
 
-if sys.version_info[0] > 2:
+if six.PY3:
     from io import BytesIO as StringIO
 else:
     from StringIO import StringIO
@@ -15,7 +16,7 @@ FORMATS = [None, 'png', 'pdf', 'eps', 'ps', 'svg']
 
 
 def is_format(filename, format):
-    if isinstance(filename, basestring):
+    if isinstance(filename, six.string_types):
         f = open(filename, 'rb')
     else:
         f = filename
@@ -29,7 +30,7 @@ def is_format(filename, format):
         return f.read(14) == b'%!PS-Adobe-3.0'
     elif format == 'svg':
         from xml.dom import minidom
-        return minidom.parse(f).childNodes[2].attributes['xmlns'].value == u'http://www.w3.org/2000/svg'
+        return minidom.parse(f).childNodes[2].attributes['xmlns'].value == 'http://www.w3.org/2000/svg'
     else:
         raise Exception("Unknown format: %s" % format)
 

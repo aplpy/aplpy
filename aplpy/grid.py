@@ -354,7 +354,7 @@ def plot_grid_y(ax, grid_x, grid_y, gy, alpha=0.5):
         x_world = math_util.complete_range(grid_x_min, grid_x_max, 100)
         y_world = np.repeat(gy, len(x_world))
         x_pix, y_pix = wcs_util.world2pix(wcs, x_world, y_world)
-        lines_out.append(zip(x_pix, y_pix))
+        lines_out.append(list(zip(x_pix, y_pix)))
 
     return lines_out
 
@@ -412,7 +412,7 @@ def plot_grid_x(ax, grid_x, grid_y, gx, alpha=0.5):
         y_world = math_util.complete_range(grid_y_min, grid_y_max, 100)
         x_world = np.repeat(gx, len(y_world))
         x_pix, y_pix = wcs_util.world2pix(wcs, x_world, y_world)
-        lines_out.append(zip(x_pix, y_pix))
+        lines_out.append(list(zip(x_pix, y_pix)))
 
     return lines_out
 

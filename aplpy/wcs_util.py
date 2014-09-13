@@ -377,9 +377,9 @@ def fk52gal(ra, dec):
 
     ra, dec = np.radians(ra), np.radians(dec)
 
-    np.sinb = np.sin(dec) * np.cos(DEC_0) - np.cos(dec) * np.sin(ra - RA_0) * np.sin(DEC_0)
+    sinb = np.sin(dec) * np.cos(DEC_0) - np.cos(dec) * np.sin(ra - RA_0) * np.sin(DEC_0)
 
-    b = np.arcsin(np.sinb)
+    b = np.arcsin(sinb)
 
     cosl = np.cos(dec) * np.cos(ra - RA_0) / np.cos(b)
     sinl = (np.sin(dec) * np.sin(DEC_0) + np.cos(dec) * np.sin(ra - RA_0) * np.cos(DEC_0)) / np.cos(b)

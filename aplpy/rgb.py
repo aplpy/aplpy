@@ -8,6 +8,7 @@ import tempfile
 import shutil
 
 import numpy as np
+from astropy.extern import six
 from astropy import log
 from astropy.io import fits
 
@@ -128,7 +129,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
         except ImportError:
             raise ImportError("The Python Imaging Library (PIL) is required to make an RGB image")
 
-    if isinstance(data, basestring):
+    if isinstance(data, six.string_types):
 
         image = fits.getdata(data)
         image_r = image[indices[0], :, :]
