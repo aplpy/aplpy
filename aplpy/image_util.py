@@ -62,6 +62,16 @@ def percentile_function(array):
     array = array[np.where(np.isinf(array) == False)]
 
     n_total = np.shape(array)[0]
+
+    if n_total == 0:
+        def return_zero(x):
+            return 0
+        return return_zero
+    elif n_total == 1:
+        def return_single(x):
+            return array[0]
+        return return_single
+
     array = np.sort(array)
 
     x = np.linspace(0., 100., num=n_total)

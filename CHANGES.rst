@@ -4,7 +4,11 @@ CHANGES
 0.9.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+    Bug fixes
+    ~~~~~~~~~
+
+    - Fix bug that caused a crash when plotting an image with a single valid
+      pixel [#197]
 
 0.9.12 (2014-07-17)
 -------------------
