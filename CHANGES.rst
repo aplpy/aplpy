@@ -26,6 +26,9 @@ CHANGES
 
     - Fix bug that caused a crash when plotting an image with a single valid
       pixel [#197]
+      
+    - Fixed a severe bug that caused rotated images to have incorrect pixel
+      scales determined. [#211]
 
 0.9.12 (2014-07-17)
 -------------------

@@ -116,7 +116,7 @@ class Compass(object):
 
         len_pix = length * (ymax - ymin)
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs)
+        degrees_per_pixel = wcs_util.celestial_pixel_scale(self._wcs)
 
         len_deg = len_pix * degrees_per_pixel
 
@@ -202,7 +202,7 @@ class Scalebar(object):
         elif isinstance(length, u.Unit):
             length = length.to(u.degree)
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs)
+        degrees_per_pixel = wcs_util.celestial_pixel_scale(self._wcs)
 
         length = length / degrees_per_pixel
 
@@ -504,7 +504,7 @@ class Beam(object):
         elif isinstance(angle, u.Unit):
             angle = angle.to(u.degree)
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs)
+        degrees_per_pixel = wcs_util.celestial_pixel_scale(self._wcs)
 
         self._base_settings['minor'] = minor
         self._base_settings['major'] = major
