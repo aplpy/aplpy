@@ -500,7 +500,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         xpix, ypix = wcs_util.world2pix(self._wcs, x, y)
 
-        sx,sy = wcs_util.pixel_scale(self._wcs)
+        if self._wcs.is_celestial:
+            sx = sy = wcs_util.celestial_pixel_scale(self._wcs)
+        else:
+            sx, sy = wcs_util.non_celestial_pixel_scales(self._wcs)
 
         if radius:
             dx_pix = radius / sx
@@ -1050,7 +1053,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        rp = 3600.0 * radius / wcs_util.arcperpix(self._wcs)
+        rp = radius / wcs_util.celestial_pixel_scale(self._wcs)
 
         patches = []
         for i in range(len(xp)):
@@ -1140,8 +1143,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        wp = 3600.0 * width / wcs_util.arcperpix(self._wcs)
-        hp = 3600.0 * height / wcs_util.arcperpix(self._wcs)
+        wp = width / wcs_util.celestial_pixel_scale(self._wcs)
+        hp = height / wcs_util.celestial_pixel_scale(self._wcs)
         ap = angle
 
         patches = []
@@ -1223,8 +1226,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             self.remove_layer(layer, raise_exception=False)
 
         xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
-        wp = 3600.0 * width / wcs_util.arcperpix(self._wcs)
-        hp = 3600.0 * height / wcs_util.arcperpix(self._wcs)
+        wp = width / wcs_util.celestial_pixel_scale(self._wcs)
+        hp = height / wcs_util.celestial_pixel_scale(self._wcs)
 
         patches = []
         xp = xp - wp / 2.

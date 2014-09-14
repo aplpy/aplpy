@@ -22,9 +22,13 @@ class WCS(AstropyWCS):
 
         if 'slices' in kwargs:
             self._slices = kwargs.pop('slices')
+        else:
+            self._slices = []
 
         if 'dimensions' in kwargs:
             self._dimensions = kwargs.pop('dimensions')
+        else:
+            self._dimensions = [0, 1]
 
         AstropyWCS.__init__(self, *args, **kwargs)
 
@@ -82,8 +86,28 @@ class WCS(AstropyWCS):
             self.set_yaxis_coord_type('scalar')
             self.set_yaxis_coord_type('scalar')
 
-    def get_pixel_scales(self):
-        return _get_pixel_scales(self.wcs, self._dimensions)
+    @property
+    def is_celestial(self):
+        return self.wcs.lng in self._dimensions and self.wcs.lat in self._dimensions
+
+    @property
+    def pixel_scale_matrix(self):
+
+        # Only for the subset of dimensions used here
+
+        d0 = self._dimensions[0]
+        d1 = self._dimensions[1]
+
+        cdelt = np.matrix([[self.wcs.get_cdelt()[d0],0],
+                           [0, self.wcs.get_cdelt()[d1]]])
+
+        pc_full = self.wcs.get_pc()
+        pc = np.matrix([[pc_full[d0,d0], pc_full[d0,d1]],
+                        [pc_full[d1,d0], pc_full[d1,d1]]])
+
+        m = np.array(cdelt * pc)
+
+        return m
 
     def set_xaxis_coord_type(self, coord_type):
         if coord_type in ['longitude', 'latitude', 'scalar']:
@@ -444,19 +468,6 @@ def system(wcs):
     return system, equinox, units
 
 
-def arcperpix(wcs):
-    return degperpix(wcs) * 3600.
-
-
-def degperpix(wcs):
-    sx, sy = pixel_scale(wcs)
-    return 0.5 * (sx + sy)
-
-
-def pixel_scale(wcs):
-    return np.abs(wcs.get_pixel_scales())
-
-
 def world2pix(wcs, x_world, y_world):
     if np.isscalar(x_world) and np.isscalar(y_world):
         x_pix, y_pix = wcs.wcs_world2pix(np.array([x_world]), np.array([y_world]), 1)
@@ -482,38 +493,39 @@ def pix2world(wcs, x_pix, y_pix):
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
 
-def _get_pixel_scales(mywcs, dimensions=None):
+
+def celestial_pixel_scale(wcs):
     """
     If the pixels are square, return the pixel scale in the spatial
     dimensions
     """
-    if 'PIXEL' in mywcs.ctype:
-        # aplpy allows "PIXEL" WCS, which are not celestial WCS
-        # Should this be cdelt?  I don't think we should go through
-        # the process below in this case
-        return 1,1
-    cwcs = mywcs.sub([astropy.wcs.WCSSUB_CELESTIAL])
-    if cwcs.naxis != 2:
-        if mywcs.naxis == 2:
-            cdelt = np.matrix(mywcs.get_cdelt())
-            pc = np.matrix(mywcs.get_pc())
-            scale = np.array(cdelt * pc)[0,:]
-            return scale[dimensions[0]], scale[dimensions[1]]
-        else:
-            warnings.warn("No celestial axes found.  Assuming pixel scale is 1.")
-            return 1,1
-    if len(cwcs.ctype[0]) == 8 and 'CAR' != cwcs.ctype[0][-3:]:
-        warnings.warn("Pixel sizes may vary over the image for "
-                      "projection class {0}".format(cwcs.ctype[0][-3:]))
-    cdelt = np.matrix([[cwcs.get_cdelt()[0],0],
-                       [0, cwcs.get_cdelt()[1]]])
-    pc = np.matrix(cwcs.get_pc())
-    pccd = np.array(cdelt * pc)
-    if pccd[1,0] == pccd[0,1] == 0:
-        # No rotation, therefore can return diagonal elements
-        return np.abs(np.diagonal(pccd))
 
-    scale = (pccd**2).sum(axis=0)**0.5
-    if scale[0] != scale[1]:
-        raise warnings.warn("Pixels are rotated and not symmetric")
-    return scale[dimensions[0]], scale[dimensions[1]]
+    if not wcs.is_celestial:
+        raise ValueError("WCS is not celestial, cannot determine celestial pixel scale")
+
+    # Extract celestial part of WCS and sanitize
+    from astropy.wcs import WCSSUB_CELESTIAL
+    wcs = wcs.sub([WCSSUB_CELESTIAL])
+
+    pccd = wcs.pixel_scale_matrix
+
+    scale = np.sqrt((pccd ** 2).sum(axis=0))
+
+    if not np.allclose(scale[0], scale[1]):
+        warnings.warn("Pixels are not square, using an average pixel scale")
+        return np.mean(scale)
+    else:
+        return scale[0]
+
+
+def non_celestial_pixel_scales(wcs):
+
+    if wcs.is_celestial:
+        raise ValueError("WCS is celestial, use celestial_pixel_scale instead")
+
+    pccd = wcs.pixel_scale_matrix
+
+    if np.allclose(pccd[1,0], 0) and np.allclose(pccd[0,1], 0):
+        return np.abs(np.diagonal(pccd))
+    else:
+        raise ValueError("WCS is rotated, cannot determine consistent pixel scales")

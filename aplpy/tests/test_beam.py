@@ -1,16 +1,24 @@
+import os
+
 import matplotlib
 matplotlib.use('Agg')
 
 import numpy as np
 from astropy.tests.helper import pytest
 from astropy import units as u
+from astropy.io import fits
 
 from .. import FITSFigure
 
 
+header_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits')
+
+HEADER = fits.Header.fromtextfile(os.path.join(header_dir, '1904-66_TAN.hdr'))
+HDU = fits.PrimaryHDU(np.zeros((16, 16)), HEADER)
+
+
 def test_beam_addremove():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.remove_beam()
@@ -20,8 +28,7 @@ def test_beam_addremove():
 
 
 def test_beam_showhide():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.hide()
@@ -30,8 +37,7 @@ def test_beam_showhide():
 
 
 def test_beam_major():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_major(0.5)
@@ -41,8 +47,7 @@ def test_beam_major():
 
 @pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
 def test_beam_major_quantity(quantity):
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=quantity, minor=0.04, angle=10.)
     f.beam.set_major(quantity)
@@ -50,8 +55,7 @@ def test_beam_major_quantity(quantity):
 
 
 def test_beam_minor():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_minor(0.05)
@@ -61,8 +65,7 @@ def test_beam_minor():
 
 @pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
 def test_beam_minor_quantity(quantity):
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=quantity, angle=10.)
     assert type(f.beam) != list
@@ -71,8 +74,7 @@ def test_beam_minor_quantity(quantity):
 
 
 def test_beam_angle():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_angle(0.)
@@ -82,8 +84,7 @@ def test_beam_angle():
 
 @pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
 def test_beam_angle_quantity(quantity):
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=quantity)
     f.beam.set_angle(quantity)
@@ -91,8 +92,7 @@ def test_beam_angle_quantity(quantity):
 
 
 def test_beam_corner():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     for corner in ['top', 'bottom', 'left', 'right', 'top left', 'top right',
                    'bottom left', 'bottom right']:
@@ -101,8 +101,7 @@ def test_beam_corner():
 
 
 def test_beam_frame():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_frame(True)
     f.beam.set_frame(False)
@@ -110,8 +109,7 @@ def test_beam_frame():
 
 
 def test_beam_borderpad():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_borderpad(0.1)
     f.beam.set_borderpad(0.3)
@@ -119,8 +117,7 @@ def test_beam_borderpad():
 
 
 def test_beam_pad():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_pad(0.1)
     f.beam.set_pad(0.3)
@@ -128,8 +125,7 @@ def test_beam_pad():
 
 
 def test_beam_alpha():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_alpha(0.1)
     f.beam.set_alpha(0.2)
@@ -138,8 +134,7 @@ def test_beam_alpha():
 
 
 def test_beam_color():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_color('black')
     f.beam.set_color('#003344')
@@ -148,8 +143,7 @@ def test_beam_color():
 
 
 def test_beam_facecolor():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_facecolor('black')
     f.beam.set_facecolor('#003344')
@@ -158,8 +152,7 @@ def test_beam_facecolor():
 
 
 def test_beam_edgecolor():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_edgecolor('black')
     f.beam.set_edgecolor('#003344')
@@ -168,8 +161,7 @@ def test_beam_edgecolor():
 
 
 def test_beam_linestyle():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_linestyle('solid')
     f.beam.set_linestyle('dotted')
@@ -178,8 +170,7 @@ def test_beam_linestyle():
 
 
 def test_beam_linewidth():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     f.beam.set_linewidth(0)
     f.beam.set_linewidth(1)
@@ -188,8 +179,7 @@ def test_beam_linewidth():
 
 
 def test_beam_hatch():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     for hatch in ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']:
         f.beam.set_hatch(hatch)
