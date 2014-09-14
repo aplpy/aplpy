@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
+import warnings
+
 import numpy as np
 
 
@@ -20,9 +22,13 @@ class WCS(AstropyWCS):
 
         if 'slices' in kwargs:
             self._slices = kwargs.pop('slices')
+        else:
+            self._slices = []
 
         if 'dimensions' in kwargs:
             self._dimensions = kwargs.pop('dimensions')
+        else:
+            self._dimensions = [0, 1]
 
         AstropyWCS.__init__(self, *args, **kwargs)
 
@@ -445,13 +451,48 @@ def system(wcs):
     return system, equinox, units
 
 
-def arcperpix(wcs):
-    return degperpix(wcs) * 3600.
+def celestial_pixel_scale(wcs, x_ref=0, y_ref=0):
+    """
+    Find celestial pixel scale in degrees per pixel in the pixel x and y
+    directions.
+    """
+
+    # Extract celestial part of WCS and sanitize
+    from astropy.wcs import WCSSUB_CELESTIAL
+    wcs = wcs.sub([WCSSUB_CELESTIAL])
+
+    if wcs.naxis == 0:
+        raise ValueError("WCS is not celestial")
+
+    # We convert pixel coordinates around the reference point
+    xw0, yw0 = wcs.all_pix2world(x_ref, y_ref, 0)
+    xw1, yw1 = wcs.all_pix2world(x_ref + 1, y_ref, 0)
+    xw2, yw2 = wcs.all_pix2world(x_ref, y_ref + 1, 0)
+
+    # Convert to radians
+    xw0, yw0 = np.radians(xw0), np.radians(yw0)
+    xw1, yw1 = np.radians(xw1), np.radians(yw1)
+    xw2, yw2 = np.radians(xw2), np.radians(yw2)
+
+    # Find separation in radians in both directions
+    from astropy.coordinates.angle_utilities import angular_separation
+    dx = angular_separation(xw0, yw0, xw1, yw1)
+    dy = angular_separation(xw0, yw0, xw2, yw2)
+
+    # Find scales in degrees per pixel
+    scale_x = np.degrees(dx)
+    scale_y = np.degrees(dx)
+
+    return abs(scale_x), abs(scale_y)
 
 
-def degperpix(wcs):
-    sx, sy = pixel_scale(wcs)
-    return 0.5 * (sx + sy)
+def degperpix(wcs, x_ref=0, y_ref=0):
+    scale_x, scale_y = celestial_pixel_scale(wcs, x_ref=x_ref, y_ref=y_ref)
+    if np.allclose(scale_x, scale_y):
+        return scale_x
+    else:
+        warnings.warn("Pixels are not square - will use an average of the scale in both directions")
+        return (scale_x + scale_y) * 0.5
 
 
 def pixel_scale(wcs):

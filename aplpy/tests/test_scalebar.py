@@ -8,16 +8,23 @@ from astropy import units as u
 from .. import FITSFigure
 
 
+HEADER_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits')
+HEADER = fits.Header.fromtextfile(os.path.join(HEADER_DIR, '1904-66_TAN.hdr'))
+HDU = fits.PrimaryHDU(np.zeros((16, 16)), HEADER)
+
+# def test_scalebar_add_invalid():
+# #     f = FITSFigure(HDU)
+#     with pytest.raises(TypeError):
+#         f.add_scalebar()
+
 def test_scalebar_add_invalid():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     with pytest.raises(TypeError):
         f.add_scalebar()
 
 
 def test_scalebar_addremove():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.remove_scalebar()
     f.add_scalebar(0.1)
@@ -25,8 +32,7 @@ def test_scalebar_addremove():
 
 
 def test_scalebar_showhide():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.hide()
     f.scalebar.show(0.1)
@@ -34,8 +40,7 @@ def test_scalebar_showhide():
 
 
 def test_scalebar_length():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.set_length(0.01)
     f.scalebar.set_length(0.1)
@@ -44,16 +49,14 @@ def test_scalebar_length():
 
 @pytest.mark.parametrize('quantity', [1*u.arcsec, u.arcsec, 2*u.degree, 5*u.radian])
 def test_scalebar_length_quantity(quantity):
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(quantity)
     f.scalebar.set_length(quantity)
     f.close()
 
 
 def test_scalebar_label():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.set_label('1 pc')
     f.scalebar.set_label('5 AU')
@@ -62,8 +65,7 @@ def test_scalebar_label():
 
 
 def test_scalebar_corner():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     for corner in ['top', 'bottom', 'left', 'right', 'top left', 'top right',
                    'bottom left', 'bottom right']:
@@ -72,8 +74,7 @@ def test_scalebar_corner():
 
 
 def test_scalebar_frame():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.set_frame(True)
     f.scalebar.set_frame(False)
@@ -81,8 +82,7 @@ def test_scalebar_frame():
 
 
 def test_scalebar_color():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.set_color('black')
     f.scalebar.set_color('#003344')
@@ -91,8 +91,7 @@ def test_scalebar_color():
 
 
 def test_scalebar_alpha():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.set_alpha(0.1)
     f.scalebar.set_alpha(0.2)
@@ -101,8 +100,7 @@ def test_scalebar_alpha():
 
 
 def test_scalebar_font():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(HDU)
     f.add_scalebar(0.1)
     f.scalebar.set_font(size='small', weight='bold', stretch='normal',
                         family='serif', style='normal', variant='normal')
