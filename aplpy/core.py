@@ -756,7 +756,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         color : str
             This can be any valid matplotlib color
         '''
-        cm = self.image.get_cmap()
+        from copy import deepcopy
+        cm = deepcopy(self.image.get_cmap())
         cm.set_bad(color)
         self.image.set_cmap(cm)
 
