@@ -4,7 +4,10 @@ CHANGES
 0.9.14 (unreleased)
 -------------------
 
-    - No changes yet
+    Bug fixes
+    ~~~~~~~~~
+
+    - Fix a bug that caused smoothing to fail with integer arrays. [#165]
 
 0.9.13 (2014-10-04)
 -------------------

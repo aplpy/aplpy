@@ -43,3 +43,11 @@ def test_convolve_custom():
     f.show_grayscale(kernel=np.ones((3,3)))
     f.close()
 
+
+def test_convolve_default():
+    # Regression test for aplpy/aplpy#165
+    data = np.ones((16, 16), dtype=int)
+    hdu = fits.PrimaryHDU(data)
+    f = FITSFigure(hdu)
+    f.show_grayscale(smooth=3)
+    f.close()
