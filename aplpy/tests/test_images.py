@@ -90,7 +90,7 @@ class TestBasic(BaseImageTests):
     def test_show_colorbar_scalebar_beam(self, generate):
         f = FITSFigure(self.filename_1)
         f.ticks.set_color('black')
-        f.show_colorscale()
+        f.show_colorscale(vmin=-0.1, vmax=0.1)
         f.add_colorbar()
         f.add_scalebar(7.5)
         f.add_beam(major=0.5, minor=0.2, angle=10.)
