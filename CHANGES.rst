@@ -9,6 +9,11 @@ CHANGES
 
     - Fix a bug that caused smoothing to fail with integer arrays. [#165]
 
+    Improvements
+    ~~~~~~~~~~~~
+
+    - Fix deprecation warnings from Astropy. [#173]
+
 0.9.13 (2014-10-04)
 -------------------
 
