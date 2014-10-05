@@ -21,7 +21,7 @@ def convolve(image, smooth=3, kernel='gauss'):
     # The Astropy convolution doesn't treat +/-Inf values correctly yet, so we
     # convert to NaN here.
 
-    image_fixed = image.copy()
+    image_fixed = np.array(image, dtype=float, copy=True)
     image_fixed[np.isinf(image)] = np.nan
 
     if kernel == 'gauss':
