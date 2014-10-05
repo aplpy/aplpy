@@ -19,6 +19,11 @@ CHANGES
 0.9.14 (2014-11-05)
 -------------------
 
+    New features
+    ~~~~~~~~~~~~
+
+    - Added new ``show_vectors`` to show vector maps. [#220]
+
     Bug fixes
     ~~~~~~~~~
 

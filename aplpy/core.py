@@ -954,10 +954,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         if returnlevels:
             return levels
 
-# This method plots polarization vectors
-
     @auto_refresh
-    def show_vectors(self, pdata, adata, phdu=0, ahdu=0, step=1, scale=1, rotate=0, cutoff=0, units='degrees', layer=None, convention=None, dimensions=[0, 1], slices=[], **kwargs):
+    def show_vectors(self, pdata, adata, phdu=0, ahdu=0, step=1, scale=1,
+                     rotate=0, cutoff=0, units='degrees', layer=None,
+                     convention=None, dimensions=[0, 1], slices=[], **kwargs):
         '''
         Overlay vectors on the current plot.
 
@@ -1070,9 +1070,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         if (wcs_p.nx!=wcs_a.nx or wcs_p.ny!=wcs_a.ny):
             raise Exception("Angle and magnitude images must be same size")
 
-        angle=data_a+rotate
-        if (units=='degrees'):
-            angle*=np.pi/180.0
+        angle = data_a + rotate
+        if units == 'degrees':
+            angle = np.radians(angle)
 
         linelist=[]
         for y in range(0,wcs_p.ny-1,step):
