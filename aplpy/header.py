@@ -12,14 +12,14 @@ def check(header, convention=None, dimensions=[0, 1]):
     # missing or incomplete, and replace it with a 1-to-1 pixel mapping
     if 'CTYPE%i' % ix not in header or 'CTYPE%i' % iy not in header:
         log.warning("No WCS information found in header - using pixel coordinates")
-        header.update('CTYPE%i' % ix, 'PIXEL')
-        header.update('CTYPE%i' % iy, 'PIXEL')
-        header.update('CRVAL%i' % ix, 0.)
-        header.update('CRVAL%i' % iy, 0.)
-        header.update('CRPIX%i' % ix, 0.)
-        header.update('CRPIX%i' % iy, 0.)
-        header.update('CDELT%i' % ix, 1.)
-        header.update('CDELT%i' % iy, 1.)
+        header['CTYPE%i' % ix] = 'PIXEL'
+        header['CTYPE%i' % iy] = 'PIXEL'
+        header['CRVAL%i' % ix] = 0.
+        header['CRVAL%i' % iy] = 0.
+        header['CRPIX%i' % ix] = 0.
+        header['CRPIX%i' % iy] = 0.
+        header['CDELT%i' % ix] = 1.
+        header['CDELT%i' % iy] = 1.
 
     if header['CTYPE%i' % ix][4:] == '-CAR' and header['CTYPE%i' % iy][4:] == '-CAR':
 
