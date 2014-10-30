@@ -14,8 +14,7 @@ def random_id():
 def generate_header(header_file):
 
     # Read in header
-    header = fits.Header()
-    header.fromTxtFile(header_file)
+    header = fits.Header.fromtextfile(header_file)
 
     return header
 
