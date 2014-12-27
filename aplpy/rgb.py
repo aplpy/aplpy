@@ -8,39 +8,22 @@ import tempfile
 import shutil
 
 import numpy as np
+
 from astropy.extern import six
 from astropy import log
 from astropy.io import fits
 
-from . import image_util
-from . import math_util
+
+from .image_util import get_stretch, PVInterval
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
                   stretch='linear', vmid=None, exponent=2):
 
-    min_auto = not math_util.isnumeric(vmin)
-    max_auto = not math_util.isnumeric(vmax)
+    interval = PVInterval(vmin=vmin, vmax=vmax, pmin=pmin, pmax=pmax)
+    stretch = get_stretch(stretch=stretch, exponent=exponent, vmin=vmin, vmid=vmid, vmax=vmax)
 
-    if min_auto or max_auto:
-        auto_v = image_util.percentile_function(image)
-        vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
-
-    if min_auto:
-        log.info("vmin = %10.3e (auto)" % vmin_auto)
-        vmin = vmin_auto
-    else:
-        log.info("vmin = %10.3e" % vmin)
-
-    if max_auto:
-        log.info("vmax = %10.3e (auto)" % vmax_auto)
-        vmax = vmax_auto
-    else:
-        log.info("vmax = %10.3e" % vmax)
-
-    image = (image - vmin) / (vmax - vmin)
-
-    data = image_util.stretch(image, stretch, exponent=exponent, midpoint=vmid)
+    data = (stretch + interval)(image)
 
     data = np.nan_to_num(data)
     data = np.clip(data * 255., 0., 255.)
@@ -113,7 +96,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
         If stretch_x is set to 'power', this is the exponent to use.
 
     make_nans_transparent : bool, optional
-        If set AND output is png, will add an alpha layer that sets pixels 
+        If set AND output is png, will add an alpha layer that sets pixels
         containing a NaN to transparent.
 
     embed_avm_tags : bool, optional

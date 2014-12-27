@@ -1,36 +1,11 @@
 from __future__ import absolute_import, print_function, division
 
 import numpy as np
+
 from astropy import log
-
-from . import math_util as m
-
-
-class interp1d(object):
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.dy = np.zeros(y.shape, dtype=y.dtype)
-        self.dy[:-1] = (self.y[1:] - self.y[:-1]) / (self.x[1:] - self.x[:-1])
-        self.dy[-1] = self.dy[-2]
-
-    def __call__(self, x_new):
-
-        ipos = np.searchsorted(self.x, x_new)
-
-        if m.isnumeric(x_new):
-            if ipos == 0:
-                ipos = 1
-            if ipos == len(self.x):
-                ipos = len(self.x) - 1
-        else:
-            ipos[ipos == 0] = 1
-            ipos[ipos == len(self.x)] = len(self.x) - 1
-
-        ipos = ipos - 1
-
-        return (x_new - self.x[ipos]) * self.dy[ipos] + self.y[ipos]
+from astropy.visualization import (LinearStretch, LogStretch, SqrtStretch,
+                                   PowerStretch, AsinhStretch, BaseInterval,
+                                   AsymmetricPercentileInterval)
 
 
 def resample(array, factor):
@@ -51,60 +26,60 @@ def resample(array, factor):
     return array3
 
 
-def percentile_function(array):
+class PVInterval(BaseInterval):
 
-    if np.all(np.isnan(array) | np.isinf(array)):
-        log.warning("Image contains only NaN or Inf values")
-        return lambda x: 0
+    def __init__(self, vmin=None, vmax=None, pmin=0., pmax=100.):
+        self.vmin = vmin
+        self.vmax = vmax
+        self.pmin = pmin
+        self.pmax = pmax
 
-    array = array.ravel()
-    array = array[np.where(np.isnan(array) == False)]
-    array = array[np.where(np.isinf(array) == False)]
+    def get_limits(self, values):
 
-    n_total = np.shape(array)[0]
+        if self.vmin is None or self.vmax is None:
+            interval = AsymmetricPercentileInterval(self.pmin, self.pmax, n_samples=10000)
+            vmin_auto, vmax_auto = interval.get_limits(values)
 
-    if n_total == 0:
-        def return_zero(x):
-            return 0
-        return return_zero
-    elif n_total == 1:
-        def return_single(x):
-            return array[0]
-        return return_single
+        if self.vmin is None:
+            vmin = vmin_auto
+        else:
+            vmin = self.vmin
 
-    array = np.sort(array)
+        if self.vmax is None:
+            vmax = vmax_auto
+        else:
+            vmax = self.vmax
 
-    x = np.linspace(0., 100., num=n_total)
-
-    spl = interp1d(x=x, y=array)
-
-    if n_total > 10000:
-        x = np.linspace(0., 100., num=10000)
-        spl = interp1d(x=x, y=spl(x))
-
-    array = None
-
-    return spl
+        return vmin, vmax
 
 
-def stretch(array, function, exponent=2, midpoint=None):
+def get_stretch(stretch=None, exponent=None, vmin=None, vmid=None, vmax=None):
 
-    if function == 'linear':
-        return array
-    elif function == 'log':
-        if not m.isnumeric(midpoint):
-            midpoint = 0.05
-        return np.log10(array / midpoint + 1.) / np.log10(1. / midpoint + 1.)
-    elif function == 'sqrt':
-        return np.sqrt(array)
-    elif function == 'arcsinh':
-        if not m.isnumeric(midpoint):
-            midpoint = -0.033
-        return np.arcsinh(array / midpoint) / np.arcsinh(1. / midpoint)
-    elif function == 'power':
-        return np.power(array, exponent)
+    if stretch == 'linear':
+        stretch = LinearStretch()
+    elif stretch == 'sqrt':
+        stretch = SqrtStretch()
+    elif stretch == 'power':
+        stretch = PowerStretch(exponent)
+    elif stretch == 'log':
+        if vmid is None:
+            if vmin > 0:
+                a = vmax / vmin
+            else:
+                raise Exception("When using a log stretch, if vmin < 0, then vmid has to be specified")
+        else:
+            a = (vmax - vmid) / (vmin - vmid) - 1
+        stretch = LogStretch(a)
+    elif stretch == 'arcsinh':
+        if vmid is None:
+            a = -1. / 30.
+        else:
+            a = (vmid - vmin) / (vmax - vmin)
+        stretch = AsinhStretch(a)
     else:
-        raise Exception("Unknown function : " + function)
+        raise ValueError('Unknown stretch: {0}'.format(stretch))
+
+    return stretch
 
 
 def _matplotlib_pil_bug_present():
@@ -121,8 +96,6 @@ def _matplotlib_pil_bug_present():
         from PIL import Image
     except:
         import Image
-
-    from astropy import log
 
     array1 = np.array([[1,2],[3,4]], dtype=np.uint8)
     image = Image.fromarray(array1)
