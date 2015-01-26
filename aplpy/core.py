@@ -522,6 +522,9 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         self._ax1.set_xlim(xpix - dx_pix, xpix + dx_pix)
         self._ax1.set_ylim(ypix - dy_pix, ypix + dy_pix)
+        self._auto_v = image_util.percentile_function(
+                        self._data[xpix - dx_pix:xpix + dx_pix,
+                                    ypix - dy_pix:ypix + dy_pix])
 
     @auto_refresh
     def show_grayscale(self, vmin=None, vmid=None, vmax=None,
