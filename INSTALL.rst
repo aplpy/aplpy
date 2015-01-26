@@ -24,7 +24,7 @@ Optional:
   http://astrofrog.github.io/pyavm/
 
 - pyregion
-  http://leejjoon.github.com/pyregion/
+  http://pyregion.readthedocs.org/
 
 - Python Imaging Library (PIL)
   http://www.pythonware.com/products/pil/
