@@ -175,8 +175,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             argument (where xsize and ysize are in inches). For more information
             on these additional arguments, see the *Optional keyword arguments*
             section in the documentation for `Figure
-            <http://matplotlib.sourceforge.net/api/figure_api.html?
-            #matplotlib.figure.Figure>`_
+            <http://matplotlib.org/api/figure_api.html?#matplotlib.figure.Figure>`_
         '''
 
         # Set whether to automatically refresh the display

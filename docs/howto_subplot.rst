@@ -15,7 +15,7 @@ argument as follows::
     
 The above will place a subplot inside the ``fig`` figure instance. The ``f``
 object can be used as normal to control the FITS figure inside the
-subplot. The above however is not very insteresting compared to just
+subplot. The above however is not very interesting compared to just
 creating a FITSFigure instance from scratch. What this is useful for is
 only using sub-regions of the figure to display the FITS data, to leave
 place for other subplots, whether histograms, scatter, or other matplotlib
