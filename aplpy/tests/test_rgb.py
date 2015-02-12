@@ -1,4 +1,5 @@
 import os
+import warnings
 
 import matplotlib
 matplotlib.use('Agg')
@@ -17,6 +18,11 @@ HEADER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits'
 class TestRGB(BaseImageTests):
 
     def test_rgb(self, generate, tmpdir):
+
+        warnings.filterwarnings(
+            "always",
+            "tostring() is deprecated. Please call tobytes() instead.",
+            DeprecationWarning)
 
         # Regression test to check that RGB recenter works properly
 
