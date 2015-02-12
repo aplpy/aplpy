@@ -49,5 +49,5 @@ class TestRGB(BaseImageTests):
 
         f.recenter(359.3, -72.1, radius=0.05)
 
-        self.generate_or_test(generate, f, 'test_rgb.png')
+        self.generate_or_test(generate, f, 'test_rgb.png', tolerance=2)
         f.close()
