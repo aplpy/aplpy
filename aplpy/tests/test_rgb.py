@@ -19,11 +19,6 @@ class TestRGB(BaseImageTests):
 
     def test_rgb(self, generate, tmpdir):
 
-        warnings.filterwarnings(
-            "always",
-            "tostring() is deprecated. Please call tobytes() instead.",
-            DeprecationWarning)
-
         # Regression test to check that RGB recenter works properly
 
         r_file = tmpdir.join('r.fits').strpath
@@ -48,7 +43,9 @@ class TestRGB(BaseImageTests):
 
         f = FITSFigure(r_file, figsize=(3,3))
 
-        f.show_rgb(rgb_file)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            f.show_rgb(rgb_file)
 
         f.tick_labels.set_xformat('dd.d')
         f.tick_labels.set_yformat('dd.d')
