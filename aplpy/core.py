@@ -809,9 +809,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         if horizontal_flip:
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
-        # We need to explicitly say origin='upper' to override any
-        # matplotlibrc settings.
-        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='upper')
+        # Elsewhere in APLpy we assume that we are using origin='lower' so here
+        # we flip the image by default (since RGB images usually would require
+        # origin='upper') then we use origin='lower'
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)
+        self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
     def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):

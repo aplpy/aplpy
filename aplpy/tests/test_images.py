@@ -18,8 +18,6 @@ class BaseImageTests(object):
         cls._data_dir = os.path.abspath(os.path.join(cls._moduledir, 'data'))
         cls._baseline_images_dir = os.path.abspath(os.path.join(cls._moduledir, 'baseline_images'))
 
-        cls._tolerance = 1
-
         header_1 = os.path.join(cls._data_dir, '2d_fits/1904-66_AIR.hdr')
         cls.filename_1 = generate_file(header_1, str(tempfile.mkdtemp()))
 
@@ -30,7 +28,7 @@ class BaseImageTests(object):
         cls.filename_3 = generate_file(header_3, str(tempfile.mkdtemp()))
 
     # method to create baseline or test images
-    def generate_or_test(self, generate, figure, image, adjust_bbox=True):
+    def generate_or_test(self, generate, figure, image, adjust_bbox=True, tolerance=1):
         if generate is None:
             result_dir = tempfile.mkdtemp()
             test_image = os.path.abspath(os.path.join(result_dir, image))
@@ -50,7 +48,7 @@ class BaseImageTests(object):
                                 This is expected for new tests.""".format(
                                     test=test_image))
 
-            msg = compare_images(baseline_image, test_image, tol=self._tolerance)
+            msg = compare_images(baseline_image, test_image, tol=tolerance)
 
             if msg is None:
                 shutil.rmtree(result_dir)

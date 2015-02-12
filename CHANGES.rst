@@ -4,7 +4,11 @@ CHANGES
 0.9.15 (unreleased)
 -------------------
 
-    - No changes yet
+    Bug fixes
+    ~~~~~~~~~
+
+    - Fix a bug that caused RGB images to be incorrectly displayed when zooming
+      in.
 
 0.9.14 (2014-11-05)
 -------------------
