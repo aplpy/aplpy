@@ -2,21 +2,6 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 
-from . import math_util
-
-
-def smart_round_angle_decimal(x, latitude=False):
-
-    x = np.log10(x)
-    e = np.floor(x)
-    x -= e
-    x = 10. ** x
-    divisors_10 = math_util.divisors(10)
-    x = math_util.closest(divisors_10, x)
-    x = x * 10. ** e
-
-    return x
-
 
 def _get_label_precision(format):
 

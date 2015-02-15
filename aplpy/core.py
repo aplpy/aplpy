@@ -46,8 +46,6 @@ from .frame import Frame
 
 from .decorators import auto_refresh, fixdocstring
 
-from .deprecated import Deprecated
-
 HDU_TYPES = tuple([fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU])
 
 
@@ -58,7 +56,7 @@ class Parameters():
     pass
 
 
-class FITSFigure(Layers, Regions, Deprecated):
+class FITSFigure(Layers, Regions):
 
     "A class for plotting FITS files."
 

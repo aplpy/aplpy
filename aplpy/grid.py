@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
 import warnings
+import numbers
 
 import numpy as np
 from matplotlib.collections import LineCollection
@@ -48,7 +49,7 @@ class Grid(object):
         '''
         if xspacing == 'tick':
             self.ax.coords[self.x].grid(grid_type=self.grid_type)
-        elif np.isreal(xspacing):
+        elif isinstance(xspacing, (numbers.Integral, numbers.Real)):
             self.ax.coords[self.x].set_ticks(spacing=xspacing * self.x_unit)
         else:
             raise ValueError("Grid spacing should be a scalar or 'tick'")
@@ -66,7 +67,7 @@ class Grid(object):
         '''
         if yspacing == 'tick':
             self.ax.coords[self.y].grid(grid_type=self.grid_type)
-        elif np.isreal(yspacing):
+        elif isinstance(yspacing, (numbers.Integral, numbers.Real)):
             self.ax.coords[self.y].set_ticks(spacing=yspacing * self.y_unit)
         else:
             raise ValueError("Grid spacing should be a scalar or 'tick'")

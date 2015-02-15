@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, division
 
+import numbers
+
 import numpy as np
 from astropy import log
-
-from . import math_util as m
 
 
 class interp1d(object):
@@ -19,7 +19,7 @@ class interp1d(object):
 
         ipos = np.searchsorted(self.x, x_new)
 
-        if m.isnumeric(x_new):
+        if isinstance(x_new, (numbers.Integral, numbers.Real)):
             if ipos == 0:
                 ipos = 1
             if ipos == len(self.x):
@@ -92,13 +92,13 @@ def stretch(array, function, exponent=2, midpoint=None):
     if function == 'linear':
         return array
     elif function == 'log':
-        if not m.isnumeric(midpoint):
+        if isinstance(midpoint, (numbers.Integral, numbers.Real)):
             midpoint = 0.05
         return np.log10(array / midpoint + 1.) / np.log10(1. / midpoint + 1.)
     elif function == 'sqrt':
         return np.sqrt(array)
     elif function == 'arcsinh':
-        if not m.isnumeric(midpoint):
+        if isinstance(midpoint, (numbers.Integral, numbers.Real)):
             midpoint = -0.033
         return np.arcsinh(array / midpoint) / np.arcsinh(1. / midpoint)
     elif function == 'power':

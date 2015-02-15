@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 from distutils import version
 import os
 import warnings
+import numbers
 
 import tempfile
 import shutil
@@ -13,14 +14,13 @@ from astropy import log
 from astropy.io import fits
 
 from . import image_util
-from . import math_util
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
                   stretch='linear', vmid=None, exponent=2):
 
-    min_auto = not math_util.isnumeric(vmin)
-    max_auto = not math_util.isnumeric(vmax)
+    min_auto = not isinstance(vmin, (numbers.Integral, numbers.Real))
+    max_auto = not isinstance(vmax, (numbers.Integral, numbers.Real))
 
     if min_auto or max_auto:
         auto_v = image_util.percentile_function(image)
