@@ -15,7 +15,6 @@ from astropy.extern import six
 
 from astropy.wcs import WCS
 from astropy.io import fits
-HDU_TYPES = (fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU)
 
 import numpy as np
 
@@ -47,6 +46,8 @@ from .frame import Frame
 from .decorators import auto_refresh, fixdocstring
 
 from .deprecated import Deprecated
+
+HDU_TYPES = tuple([fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU])
 
 
 class Parameters():
