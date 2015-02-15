@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, division, unicode_literals
 
+import re
 import warnings
 
 import numpy as np
@@ -90,7 +91,7 @@ class TickLabels(object):
         If the y-axis type is ``longitude`` or ``latitude``, then the options
         are:
 
-            * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
+            * ``d.ddddd`` - decimal degrees, where the number of decimal places can be varied
             * ``hh`` or ``dd`` - hours (or degrees)
             * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
             * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
@@ -126,6 +127,11 @@ class TickLabels(object):
         else:
             if not format.startswith('%'):
                 raise Exception("For scalar tick labels, format should be a Python format beginning with %")
+
+        # Backward-compatibility for dd.* and ddd.*
+        if re.match('^(d)+\.(d)+?$', format) is not None:
+            p = format.index('.')
+            format = format[p-1:]
 
         self._ax.coords[coord].set_major_formatter(format)
 
