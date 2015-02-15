@@ -1,7 +1,7 @@
 CHANGES
 --------
 
-0.9.15 (unreleased)
+1.0rc1 (2015-02-15)
 -------------------
 
     Improvements
