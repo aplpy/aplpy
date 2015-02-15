@@ -4,6 +4,12 @@ CHANGES
 0.9.15 (unreleased)
 -------------------
 
+    Improvements
+    ~~~~~~~~~~~~
+
+    - The ``auto_refresh`` option now defaults to ``False`` unless IPython is
+      being used and the Matplotlib backend is interactive.
+
     Bug fixes
     ~~~~~~~~~
 

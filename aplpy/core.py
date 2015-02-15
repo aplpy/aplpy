@@ -99,7 +99,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     @auto_refresh
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
-                 dimensions=[0, 1], slices=[], auto_refresh=True,
+                 dimensions=[0, 1], slices=[], auto_refresh=None,
                  **kwargs):
         '''
         Create a FITSFigure instance.
@@ -164,10 +164,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             then these are the slices to extract. If all extra dimensions
             only have size 1, then this is not required.
 
-        auto_refresh : str, optional
+        auto_refresh : bool, optional
             Whether to refresh the figure automatically every time a
             plotting method is called. This can also be set using the
-            set_auto_refresh method.
+            set_auto_refresh method. This defaults to `True` if and only if
+            APLpy is being used from IPython and the Matplotlib backend is
+            interactive.
 
         kwargs
             Any additional arguments are passed on to matplotlib's Figure() class.
@@ -1532,12 +1534,25 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         Parameters
         ----------
-        refresh : str
-            Whether to refresh the display every time a FITSFigure
-            method is called. The default is True. If set to false,
-            the display can be refreshed manually using the refresh()
-            method
+        refresh : bool
+            Whether to refresh the display every time a FITSFigure method is
+            called. This defaults to `True` if and only if APLpy is being used
+            from IPython and the Matplotlib backend is interactive.
         '''
+
+        if refresh is None:
+            if matplotlib.is_interactive():
+                try:
+                    get_ipython()
+                except NameError:
+                    refresh = False
+                else:
+                    refresh = True
+            else:
+                refresh = False
+        elif not isinstance(refresh, bool):
+            raise TypeError("refresh argument should be boolean or `None`")
+
         self._parameters.auto_refresh = refresh
 
     def refresh(self, force=True):
