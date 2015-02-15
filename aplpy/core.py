@@ -11,9 +11,10 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
     raise Exception("matplotlib 1.0.0 or later is required for APLpy")
 
 import matplotlib.pyplot as mpl
-from astropy.extern import six
 
+from astropy.extern import six
 from astropy.wcs import WCS
+from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 
 import numpy as np
@@ -474,12 +475,8 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         xpix, ypix = wcs_util.world2pix(self._wcs, x, y)
 
-        if self._wcs.is_celestial:
-            sx = sy = wcs_util.celestial_pixel_scale(self._wcs)
-        else:
-            s = wcs_util.non_celestial_pixel_scales(self._wcs)
-            sx = s[self.x]
-            sy = s[self.y]
+        pix_scale = proj_plane_pixel_scales(self._wcs)
+        sx, sy = pix_scale[self.x], pix_scale[self.y]
 
         if radius:
             dx_pix = radius / sx

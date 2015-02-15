@@ -8,8 +8,9 @@ from mpl_toolkits.axes_grid1.anchored_artists \
 import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
-from astropy import units as u
 
+from astropy import units as u
+from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.extern import six
 
 from . import wcs_util
@@ -24,122 +25,6 @@ corners['right'] = 5
 corners['left'] = 6
 corners['bottom'] = 8
 corners['top'] = 9
-
-
-class Compass(object):
-
-    def _initialize_compass(self):
-
-        # Initialize compass holder
-        self._compass = None
-
-        self._compass_show = False
-
-        # Set grid event handler
-        self._ax1.callbacks.connect('xlim_changed', self.update_compass)
-        self._ax1.callbacks.connect('ylim_changed', self.update_compass)
-
-    @auto_refresh
-    def show_compass(self, color='red', length=0.1, corner=4, frame=True):
-        '''
-        Display a scalebar.
-
-        Parameters
-        ----------
-
-        length : float, optional
-            The length of the scalebar
-
-        label : str, optional
-            Label to place above the scalebar
-
-        corner : int, optional
-            Where to place the scalebar. Acceptable values are:, 'left', 'right', 'top', 'bottom', 'top left', 'top right', 'bottom left' (default), 'bottom right'
-
-        frame : str, optional
-            Whether to display a frame behind the scalebar (default is False)
-
-        kwargs
-            Additional keyword arguments can be used to control the appearance
-            of the scalebar, which is made up of an instance of the matplotlib
-            Rectangle class and a an instance of the Text class. For more
-            information on available arguments, see
-
-        `Rectangle <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.patches.Rectangle>`_
-
-        and
-
-        `Text <http://matplotlib.sourceforge.net/api/artist_api.html#matplotlib.text.Text>`_`.
-
-        In cases where the same argument exists for the two objects, the
-        argument is passed to both the Text and Rectangle instance
-
-        '''
-
-        w = 2 * length
-
-        pos = {1: (1 - w, 1 - w),
-               2: (w, 1 - w),
-               3: (w, w),
-               4: (1 - w, w),
-               5: (1 - w, 0.5),
-               6: (w, 0.5),
-               7: (1 - w, 0.5),
-               8: (0.5, w),
-               9: (0.5, 1 - w)}
-
-        self._compass_position = pos[corner]
-        self._compass_length = length
-        self._compass_color = color
-        self._compass = None
-        self._compass_show = True
-
-        self.update_compass()
-
-    @auto_refresh
-    def update_compass(self, *args, **kwargs):
-
-        if not self._compass_show:
-            return
-
-        rx, ry = self._compass_position
-        length = self._compass_length
-        color = self._compass_color
-
-        xmin, xmax = self._ax1.get_xlim()
-        ymin, ymax = self._ax1.get_ylim()
-
-        x0 = rx * (xmax - xmin) + xmin
-        y0 = ry * (ymax - ymin) + ymin
-
-        xw, yw = self.pixel2world(x0, y0)
-
-        len_pix = length * (ymax - ymin)
-
-        degrees_per_pixel = wcs_util.celestial_pixel_scale(self._wcs)
-
-        len_deg = len_pix * degrees_per_pixel
-
-        # Should really only do tiny displacement then magnify the vectors - important if there is curvature
-
-        x1, y1 = self.world2pixel(xw + len_deg / np.cos(np.radians(yw)), yw)
-        x2, y2 = self.world2pixel(xw, yw + len_deg)
-
-        if self._compass:
-            self._compass[0].remove()
-            self._compass[1].remove()
-
-        arrow1 = FancyArrowPatch(posA=(x0, y0), posB=(x1, y1), arrowstyle='-|>', mutation_scale=20., fc=color, ec=color, shrinkA=0., shrinkB=0.)
-        arrow2 = FancyArrowPatch(posA=(x0, y0), posB=(x2, y2), arrowstyle='-|>', mutation_scale=20., fc=color, ec=color, shrinkA=0., shrinkB=0.)
-
-        self._compass = (arrow1, arrow2)
-
-        self._ax1.add_patch(arrow1)
-        self._ax1.add_patch(arrow2)
-
-    @auto_refresh
-    def hide_compass(self):
-        pass
 
 
 class Scalebar(object):
@@ -204,7 +89,13 @@ class Scalebar(object):
         elif isinstance(length, u.Unit):
             length = length.to(u.degree)
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs, dimensions=self._dimensions)
+        if self._wcs.is_celestial:
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            sx = pix_scale[self._dimensions[0]]
+            sy = pix_scale[self._dimensions[1]]
+            degrees_per_pixel = np.sqrt(sx * sy)
+        else:
+            raise ValueError("Cannot show scalebar when WCS is not celestial")
 
         length = length / degrees_per_pixel
 
@@ -519,7 +410,13 @@ class Beam(object):
         elif isinstance(angle, u.Unit):
             angle = angle.to(u.degree)
 
-        degrees_per_pixel = wcs_util.degperpix(self._wcs, dimensions=self._dimensions)
+        if self._wcs.is_celestial:
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            sx = pix_scale[self._dimensions[0]]
+            sy = pix_scale[self._dimensions[1]]
+            degrees_per_pixel = np.sqrt(sx * sy)
+        else:
+            raise ValueError("Cannot show beam when WCS is not celestial")
 
         self._base_settings['minor'] = minor
         self._base_settings['major'] = major

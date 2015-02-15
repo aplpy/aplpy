@@ -286,26 +286,6 @@ def system(wcs, dimensions=[0, 1]):
     return system, equinox
 
 
-def arcperpix(wcs):
-    return degperpix(wcs) * 3600.
-
-
-def degperpix(wcs, dimensions=[0, 1]):
-    sx, sy = pixel_scale(wcs, dimensions)
-    return 0.5 * (sx + sy)
-
-
-def pixel_scale(wcs, dimensions):
-    return np.abs(get_pixel_scales(wcs, dimensions))
-
-
-def get_pixel_scales(wcs, dimensions):
-    cdelt = np.matrix(wcs.wcs.get_cdelt())
-    pc = np.matrix(wcs.wcs.get_pc())
-    scale = np.array(cdelt * pc)[0,:]
-    return scale[dimensions[0]], scale[dimensions[1]]
-
-
 def world2pix(wcs, x_world, y_world):
     if np.isscalar(x_world) and np.isscalar(y_world):
         x_pix, y_pix = wcs.wcs_world2pix(np.array([x_world]), np.array([y_world]), 1)
@@ -330,40 +310,3 @@ def pix2world(wcs, x_pix, y_pix):
         return wcs.wcs_pix2world(x_pix, y_pix, 1)
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
-
-
-def celestial_pixel_scale(wcs):
-    """
-    If the pixels are square, return the pixel scale in the spatial
-    dimensions
-    """
-
-    if not wcs.is_celestial:
-        raise ValueError("WCS is not celestial, cannot determine celestial pixel scale")
-
-    # Extract celestial part of WCS and sanitize
-    from astropy.wcs import WCSSUB_CELESTIAL
-    wcs = wcs.sub([WCSSUB_CELESTIAL])
-
-    pccd = wcs.pixel_scale_matrix
-
-    scale = np.sqrt((pccd ** 2).sum(axis=0))
-
-    if not np.allclose(scale[0], scale[1]):
-        warnings.warn("Pixels are not square, using an average pixel scale")
-        return np.mean(scale)
-    else:
-        return scale[0]
-
-
-def non_celestial_pixel_scales(wcs):
-
-    if wcs.is_celestial:
-        raise ValueError("WCS is celestial, use celestial_pixel_scale instead")
-
-    pccd = wcs.pixel_scale_matrix
-
-    if np.allclose(pccd[1,0], 0) and np.allclose(pccd[0,1], 0):
-        return np.abs(np.diagonal(pccd))
-    else:
-        raise ValueError("WCS is rotated, cannot determine consistent pixel scales")
