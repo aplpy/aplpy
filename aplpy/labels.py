@@ -155,7 +155,7 @@ class TickLabels(object):
         """
 
         if style == 'latex':
-            warnings.warn("latex has now been merged with plain - whether or not to use LaTeX is controled through set_system_latex")
+            warnings.warn("latex has now been merged with plain - whether or not to use LaTeX is controlled through set_system_latex")
             style = 'plain'
 
         if not style in ['colons', 'plain']:

@@ -254,7 +254,7 @@ class Angle(object):
         Divide an angle by another
 
         This method calculates the division using the angles in degrees, and
-        then corrects for any rouding errors if the division should be exact.
+        then corrects for any rounding errors if the division should be exact.
         '''
 
         # Find division of angles in degrees
