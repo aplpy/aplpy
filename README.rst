@@ -19,8 +19,8 @@ APLpy is released under an MIT open-source license
 Important Note
 --------------
 
-The current master branch in this repository contains a new version of APLpy
-that relies on the [WCSAxes](http://wcsaxes.readthedocs.org) package. If you
+The current master branch in this repository contains a new version of APLpy (``v2.x``)
+that relies on the `WCSAxes <http://wcsaxes.readthedocs.org>`_ package. If you
 are interested in the latest developer version of the current standard version
 of APLpy, checkout the ``v1.x`` branch::
 
@@ -28,3 +28,4 @@ of APLpy, checkout the ``v1.x`` branch::
     cd aplpy
     git checkout v1.x
 
+The ``v2.x`` version is not guaranteed to be backward-compatible at this time.
