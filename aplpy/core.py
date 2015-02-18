@@ -374,6 +374,10 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             raise Exception("data argument should either be a filename, an HDU object from astropy.io.fits or pyfits, a WCS object from astropy.wcs or pywcs, or a Numpy array.")
 
+        # Check that we have at least 2-dimensional data
+        if hdu.header['NAXIS'] < 2:
+            raise ValueError("Data should have at least two dimensions")
+
         # Check dimensions= argument
         if type(dimensions) not in [list, tuple]:
             raise ValueError('dimensions= should be a list or a tuple')
@@ -1050,9 +1054,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         '''
 
         # over-ride default color (none) that will otherwise be set by
-        #show_lines() 
+        #show_lines()
         if not 'color' in kwargs:
-            kwargs.setdefault('color', 'white')
+            kwargs.setdefault('color', 'black')
 
         if layer:
             self.remove_layer(layer, raise_exception=False)
@@ -1075,15 +1079,15 @@ class FITSFigure(Layers, Regions, Deprecated):
             angle = np.radians(angle)
 
         linelist=[]
-        for y in range(0,wcs_p.ny-1,step):
-            for x in range(0,wcs_p.nx-1,step):
+        for y in range(0,wcs_p.ny,step):
+            for x in range(0,wcs_p.nx,step):
                 if data_p[y,x]>cutoff and np.isfinite(angle[y,x]):
                     r=data_p[y,x]*0.5*scale
                     a=angle[y,x]
-                    x1=x+r*np.sin(a)
-                    y1=y-r*np.cos(a)
-                    x2=x-r*np.sin(a)
-                    y2=y+r*np.cos(a)
+                    x1=1 + x + r*np.sin(a)
+                    y1=1 + y - r*np.cos(a)
+                    x2=1 + x - r*np.sin(a)
+                    y2=1 + y + r*np.cos(a)
 
                     x_world,y_world=wcs_util.pix2world(wcs_p, [x1,x2],[y1,y2] )
                     line=np.array([x_world,y_world])
