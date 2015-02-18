@@ -339,7 +339,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             try:
                 hdulist = fits.open(filename)
             except:
-                raise IOError("An error occured while reading the FITS file")
+                raise IOError("An error occurred while reading the FITS file")
 
             # Check whether the HDU specified contains any data, otherwise
             # cycle through all HDUs to find one that contains valid image data
@@ -966,7 +966,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         ----------
 
         xw : list or `~numpy.ndarray`
-            The x postions of the markers (in world coordinates)
+            The x positions of the markers (in world coordinates)
 
         yw : list or `~numpy.ndarray`
             The y positions of the markers (in world coordinates)
@@ -1767,7 +1767,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             >>> ...
 
         If more than one beam is added, the beam object becomes a list. In
-        this case, to control the aspect of one of the beams, you will need tp
+        this case, to control the aspect of one of the beams, you will need to
         specify the beam index::
 
             >>> ...

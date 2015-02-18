@@ -16,7 +16,7 @@ from . import image_util
 from . import math_util
 
 
-def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75, \
+def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
                   stretch='linear', vmid=None, exponent=2):
 
     min_auto = not math_util.isnumeric(vmin)
@@ -113,7 +113,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
         If stretch_x is set to 'power', this is the exponent to use.
 
     make_nans_transparent : bool, optional
-        If set AND output is png, will add an alpha layer that sets pixels 
+        If set AND output is png, will add an alpha layer that sets pixels
         containing a NaN to transparent.
 
     embed_avm_tags : bool, optional
@@ -316,7 +316,7 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     nx = int(header['NAXIS1'])
     ny = int(header['NAXIS2'])
 
-    # Generate emtpy datacube
+    # Generate empty datacube
     image_cube = np.zeros((len(files), ny, nx), dtype=np.float32)
 
     # Loop through files

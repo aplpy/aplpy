@@ -8,10 +8,10 @@ from .decorators import auto_refresh
 
 class Regions:
     """
-    Regions sub-class of APLpy
+    Regions sub-class of APLpy.
 
     Used for overplotting various shapes and annotations on APLpy
-    fitsfigures
+    fitsfigures.
 
     Example:
     # DS9 region file called "test.reg"
@@ -63,7 +63,7 @@ class Regions:
 
         PC, TC = ds9(region_file, self._header, **kwargs)
 
-        #ffpc = self._ax1.add_collection(PC)
+        # ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)
         TC.add_to_axes(self._ax1)
 

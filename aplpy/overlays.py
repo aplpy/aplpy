@@ -476,7 +476,7 @@ class Beam(object):
             Whether to display a frame behind the beam (default is False)
 
         kwargs
-            Additional arguments are passed to the matplotlib Ellipse classe.
+            Additional arguments are passed to the matplotlib Ellipse class.
             See the matplotlib documentation for more details.
         '''
 
@@ -677,7 +677,7 @@ class Beam(object):
     def set(self, **kwargs):
         '''
         Modify the beam properties. All arguments are passed to the matplotlib
-        Ellipse classe. See the matplotlib documentation for more details.
+        Ellipse class. See the matplotlib documentation for more details.
         '''
         for kwarg in kwargs:
             self._beam_settings[kwarg] = kwargs[kwarg]

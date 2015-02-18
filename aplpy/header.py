@@ -53,7 +53,7 @@ def check(header, convention=None, dimensions=[0, 1]):
 
             else:
                 raise Exception('''WARNING: projection is Plate Caree (-CAR) and
-                CRVALy is not zero. This can be intepreted either according to
+                CRVALy is not zero. This can be interpreted either according to
                 Wells (1981) or Calabretta (2002). The former defines the
                 projection as rectilinear regardless of the value of CRVALy,
                 whereas the latter defines the projection as rectilinear only when
