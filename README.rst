@@ -22,11 +22,9 @@ Important Note
 The current master branch in this repository contains a new version of APLpy
 that relies on the [WCSAxes](http://wcsaxes.readthedocs.org) package. If you
 are interested in the latest developer version of the current standard version
-of APLpy, checkout the ``v1.x`` branch:
+of APLpy, checkout the ``v1.x`` branch::
 
-```
-git clone http://github.com/aplpy/aplpy.git
-cd aplpy
-git checkout v1.x
-```
+    git clone http://github.com/aplpy/aplpy.git
+    cd aplpy
+    git checkout v1.x
 
