@@ -19,13 +19,13 @@ class TestVectors(BaseImageTests):
         f = FITSFigure(IMAGE, figsize=(4,4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, color='orange')
-        self.generate_or_test(generate, f, 'vectors_default.png')
+        self.generate_or_test(generate, f, 'vectors_default.png', tolerance=2.5)
         f.close()
 
     def test_step_scale(self, generate):
         f = FITSFigure(IMAGE, figsize=(4,4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, step=2, scale=0.8, color='orange')
-        self.generate_or_test(generate, f, 'vectors_step_scale.png')
+        self.generate_or_test(generate, f, 'vectors_step_scale.png', tolerance=2.5)
         f.close()
 
