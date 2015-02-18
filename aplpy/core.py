@@ -49,6 +49,15 @@ from .decorators import auto_refresh, fixdocstring
 HDU_TYPES = tuple([fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU])
 
 
+def uniformize_1d(*args):
+    if len(args) > 1:
+        return np.broadcast_arrays(np.atleast_1d(args[0]), *args[1:])
+    elif len(args) == 1:
+        return np.atleast_1d(args[0])
+    else:
+        raise ValueError("No arguments passed to uniformize_1d")
+
+
 class Parameters():
     '''
     A class to contain the current plotting parameters
@@ -1060,12 +1069,12 @@ class FITSFigure(Layers, Regions):
                 if data_p[y,x]>cutoff and np.isfinite(angle[y,x]):
                     r=data_p[y,x]*0.5*scale
                     a=angle[y,x]
-                    x1=1 + x + r*np.sin(a)
-                    y1=1 + y - r*np.cos(a)
-                    x2=1 + x - r*np.sin(a)
-                    y2=1 + y + r*np.cos(a)
+                    x1=x + r*np.sin(a)
+                    y1=y - r*np.cos(a)
+                    x2=x - r*np.sin(a)
+                    y2=y + r*np.cos(a)
 
-                    x_world,y_world=wcs_util.pix2world(wcs_p, [x1,x2],[y1,y2] )
+                    x_world,y_world=wcs_util.pix2world(wcs_p, [x1,x2],[y1,y2])
                     line=np.array([x_world,y_world])
                     linelist.append(line)
 
@@ -1158,20 +1167,7 @@ class FITSFigure(Layers, Regions):
             used to control the appearance of the circles.
         '''
 
-        if np.isscalar(xw):
-            xw = np.array([xw])
-        else:
-            xw = np.array(xw)
-
-        if np.isscalar(yw):
-            yw = np.array([yw])
-        else:
-            yw = np.array(yw)
-
-        if np.isscalar(radius):
-            radius = np.repeat(radius, len(xw))
-        else:
-            radius = np.array(radius)
+        xw, yw, radius = uniformize_1d(xw, yw, radius)
 
         if 'facecolor' not in kwargs:
             kwargs.setdefault('facecolor', 'none')
@@ -1201,7 +1197,7 @@ class FITSFigure(Layers, Regions):
 
     @auto_refresh
     def show_ellipses(self, xw, yw, width, height, angle=0, layer=False,
-                      zorder=None, **kwargs):
+                      zorder=None, coords_frame='world', angle_frame='pixel', **kwargs):
         '''
         Overlay ellipses on the current plot.
 
@@ -1229,6 +1225,17 @@ class FITSFigure(Layers, Regions):
             custom names to layers (instead of ellipse_set_n) and for
             replacing existing layers.
 
+        coords_frame : 'pixel' or 'world'
+            The reference frame in which the coordinates are defined. This is
+            used to interpret the values of ``xw``, ``yw``, ``width``, and
+            ``height``.
+
+        angle_frame : 'pixel' or 'world'
+            The reference frame in which ``angle`` is defined. If set to
+            'pixel', the angle will be measured from the positive y-axis. If
+            set to 'world', it will be measured from the north in the
+            coordinate frame of the image WCS.
+
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
@@ -1236,30 +1243,7 @@ class FITSFigure(Layers, Regions):
             used to control the appearance of the ellipses.
         '''
 
-        if np.isscalar(xw):
-            xw = np.array([xw])
-        else:
-            xw = np.array(xw)
-
-        if np.isscalar(yw):
-            yw = np.array([yw])
-        else:
-            yw = np.array(yw)
-
-        if np.isscalar(width):
-            width = np.repeat(width, len(xw))
-        else:
-            width = np.array(width)
-
-        if np.isscalar(angle):
-            angle = np.repeat(angle, len(xw))
-        else:
-            angle = np.array(angle)
-
-        if np.isscalar(height):
-            height = np.repeat(height, len(xw))
-        else:
-            height = np.array(height)
+        xw, yw, width, height, angle = uniformize_1d(xw, yw, width, height, angle)
 
         if 'facecolor' not in kwargs:
             kwargs.setdefault('facecolor', 'none')
@@ -1267,15 +1251,48 @@ class FITSFigure(Layers, Regions):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        ap = angle
-        # TODO: Angle is 90-angle from the original APLpy code..Why??
+        if coords_frame not in ['pixel', 'world']:
+            raise ValueError("coords_frame should be set to 'pixel' or 'world'")
+
+        if angle_frame not in ['pixel', 'world']:
+            raise ValueError("angle_frame should be set to 'pixel' or 'world'")
+
+        if coords_frame == 'pixel' and angle_frame != 'pixel':
+            raise ValueError("if coords_frame is 'pixel', angle_frame has to be 'pixel' too")
+
+        # While we could plot the shape using the get_transform('world') mode
+        # from WCSAxes, the issue is that the rotation angle is also measured in
+        # world coordinates so will not be what the user is expecting. So we allow the user to specify the reference frame for the coordinates and for the rotation.
+
+        if coords_frame == 'pixel':
+            x, y = xw, yw
+            w = width
+            h = height
+            a = angle
+            transform = self.ax.transData
+        else:
+            if angle_frame == 'pixel':
+                x, y = wcs_util.world2pix(self._wcs, xw, yw)
+                pix_scale = proj_plane_pixel_scales(self._wcs)
+                sx, sy = pix_scale[self.x], pix_scale[self.y]
+                w = width / sx
+                h = height / sy
+                a = angle
+                transform = self.ax.transData
+            else:
+                x, y = xw, yw
+                w = width
+                h = height
+                a = angle
+                transform = self.ax.get_transform('world')
+
         patches = []
-        for i in range(len(xw)):
-            patches.append(Ellipse((xw[i], yw[i]), width=width[i], height=height[i], angle=ap[i]))
+        for i in range(len(x)):
+            patches.append(Ellipse((x[i], y[i]), width=w[i], height=h[i], angle=a[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
+        p = PatchCollection(patches, transform=transform, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1290,8 +1307,8 @@ class FITSFigure(Layers, Regions):
         self._layers[ellipse_set_name] = c
 
     @auto_refresh
-    def show_rectangles(self, xw, yw, width, height, angle=0.0, layer=False,
-                        zorder=None, **kwargs):
+    def show_rectangles(self, xw, yw, width, height, angle=0, layer=False,
+                        zorder=None, coords_frame='world', angle_frame='pixel', **kwargs):
         '''
         Overlay rectangles on the current plot.
 
@@ -1310,13 +1327,25 @@ class FITSFigure(Layers, Regions):
         height : int or float or list or `~numpy.ndarray`
             The height of the rectangle (in world coordinates)
 
-        angle : int or float or list or `~numpy.ndarray`
-            The rotation angle about xw, yw in degrees.
+        angle : int or float or list or `~numpy.ndarray`, optional
+            rotation in degrees (anti-clockwise). Default
+            angle is 0.0.
 
         layer : str, optional
             The name of the rectangle layer. This is useful for giving
             custom names to layers (instead of rectangle_set_n) and for
             replacing existing layers.
+
+        coords_frame : 'pixel' or 'world'
+            The reference frame in which the coordinates are defined. This is
+            used to interpret the values of ``xw``, ``yw``, ``width``, and
+            ``height``.
+
+        angle_frame : 'pixel' or 'world'
+            The reference frame in which ``angle`` is defined. If set to
+            'pixel', the angle will be measured from the positive y-axis. If
+            set to 'world', it will be measured from the north in the
+            coordinate frame of the image WCS.
 
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
@@ -1325,25 +1354,7 @@ class FITSFigure(Layers, Regions):
             used to control the appearance of the rectangles.
         '''
 
-        if np.isscalar(xw):
-            xw = np.array([xw])
-        else:
-            xw = np.array(xw)
-
-        if np.isscalar(yw):
-            yw = np.array([yw])
-        else:
-            yw = np.array(yw)
-
-        if np.isscalar(width):
-            width = np.repeat(width, len(xw))
-        else:
-            width = np.array(width)
-
-        if np.isscalar(height):
-            height = np.repeat(height, len(xw))
-        else:
-            height = np.array(height)
+        xw, yw, width, height, angle = uniformize_1d(xw, yw, width, height, angle)
 
         if np.isscalar(angle):
             ap = np.repeat(angle, len(xw))
@@ -1356,15 +1367,53 @@ class FITSFigure(Layers, Regions):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
+        if coords_frame not in ['pixel', 'world']:
+            raise ValueError("coords_frame should be set to 'pixel' or 'world'")
+
+        if angle_frame not in ['pixel', 'world']:
+            raise ValueError("angle_frame should be set to 'pixel' or 'world'")
+
+        if coords_frame == 'pixel' and angle_frame != 'pixel':
+            raise ValueError("if coords_frame is 'pixel', angle_frame has to be 'pixel' too")
+
+        # While we could plot the shape using the get_transform('world') mode
+        # from WCSAxes, the issue is that the rotation angle is also measured in
+        # world coordinates so will not be what the user is expecting. So we
+        # allow the user to specify the reference frame for the coordinates and
+        # for the rotation.
+
+        if coords_frame == 'pixel':
+            x, y = xw, yw
+            w = width
+            h = height
+            a = angle
+            transform = self.ax.transData
+        else:
+            if angle_frame == 'pixel':
+                x, y = wcs_util.world2pix(self._wcs, xw, yw)
+                pix_scale = proj_plane_pixel_scales(self._wcs)
+                sx, sy = pix_scale[self.x], pix_scale[self.y]
+                w = width / sx
+                h = height / sy
+                a = angle
+                transform = self.ax.transData
+            else:
+                x, y = xw, yw
+                w = width
+                h = height
+                a = angle
+                transform = self.ax.get_transform('world')
+
+        x = x - w / 2.
+        y = y - h / 2.
+
         patches = []
-        xw = xw - width / 2.
-        yw = yw - height / 2.
-        for i in range(len(xw)):
-            patches.append(Rectangle((xw[i], yw[i]), width=width[i], height=height[i]))
+        for i in range(len(x)):
+            patches.append(Rectangle((x[i], y[i]), width=w[i], height=h[i], angle=a[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
+        p = PatchCollection(patches, transform=transform, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1469,29 +1518,32 @@ class FITSFigure(Layers, Regions):
             used to control the appearance of the arrows.
         '''
 
+        x, y, dx, dy = uniformize_1d(x, y, dx, dy)
+
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
         arrows = []
 
-        if np.isscalar(x):
-            x, y, dx, dy = [x], [y], [dx], [dy]
+        # Here we don't make use of WCSAxes.get_transform('world') because
+        # otherwise the arrow heads will be distored. Instead, we work in pixel
+        # coordinates.
 
         for i in range(len(x)):
 
-            xw1, yw1 = x[i], y[i]
-            xw2, yw2 = x[i] + dx[i], y[i] + dy[i]
+            xp1, yp1 = wcs_util.world2pix(self._wcs, x[i], y[i])
+            xp2, yp2 = wcs_util.world2pix(self._wcs, x[i] + dx[i], y[i] + dy[i])
 
             if width == 'auto':
-                width = 0.02 * np.sqrt((xw2 - xw1) ** 2 + (yw2 - yw1) ** 2)
+                width = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
 
             if head_width == 'auto':
-                head_width = 0.1 * np.sqrt((xw2 - xw1) ** 2 + (yw2 - yw1) ** 2)
+                head_width = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
 
             if head_length == 'auto':
-                head_length = 0.1 * np.sqrt((xw2 - xw1) ** 2 + (yw2 - yw1) ** 2)
+                head_length = 0.1 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
 
-            arrows.append(FancyArrow(xw1, yw1, xw2 - xw1, yw2 - yw1,
+            arrows.append(FancyArrow(xp1, yp1, xp2 - xp1, yp2 - yp1,
                                      width=width, head_width=head_width,
                                      head_length=head_length,
                                      length_includes_head=length_includes_head)
@@ -1499,7 +1551,7 @@ class FITSFigure(Layers, Regions):
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(arrows, transform=self.ax.get_transform('world'), **kwargs)
+        p = PatchCollection(arrows, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder

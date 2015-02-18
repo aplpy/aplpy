@@ -53,25 +53,25 @@ def system(wcs, dimensions=[0, 1]):
 
 def world2pix(wcs, x_world, y_world):
     if np.isscalar(x_world) and np.isscalar(y_world):
-        x_pix, y_pix = wcs.wcs_world2pix(np.array([x_world]), np.array([y_world]), 1)
+        x_pix, y_pix = wcs.wcs_world2pix(np.array([x_world]), np.array([y_world]), 0)
         return x_pix[0], y_pix[0]
     elif (type(x_world) == list) and (type(y_world) == list):
-        x_pix, y_pix = wcs.wcs_world2pix(np.array(x_world), np.array(y_world), 1)
+        x_pix, y_pix = wcs.wcs_world2pix(np.array(x_world), np.array(y_world), 0)
         return x_pix.tolist(), y_pix.tolist()
     elif isinstance(x_world, np.ndarray) and isinstance(y_world, np.ndarray):
-        return wcs.wcs_world2pix(x_world, y_world, 1)
+        return wcs.wcs_world2pix(x_world, y_world, 0)
     else:
         raise Exception("world2pix should be provided either with two scalars, two lists, or two numpy arrays")
 
 
 def pix2world(wcs, x_pix, y_pix):
     if np.isscalar(x_pix) and np.isscalar(y_pix):
-        x_world, y_world = wcs.wcs_pix2world(np.array([x_pix]), np.array([y_pix]), 1)
+        x_world, y_world = wcs.wcs_pix2world(np.array([x_pix]), np.array([y_pix]), 0)
         return x_world[0], y_world[0]
     elif (type(x_pix) == list) and (type(y_pix) == list):
-        x_world, y_world = wcs.wcs_pix2world(np.array(x_pix), np.array(y_pix), 1)
+        x_world, y_world = wcs.wcs_pix2world(np.array(x_pix), np.array(y_pix), 0)
         return x_world.tolist(), y_world.tolist()
     elif isinstance(x_pix, np.ndarray) and isinstance(y_pix, np.ndarray):
-        return wcs.wcs_pix2world(x_pix, y_pix, 1)
+        return wcs.wcs_pix2world(x_pix, y_pix, 0)
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
