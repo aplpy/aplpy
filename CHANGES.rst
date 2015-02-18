@@ -4,25 +4,25 @@ CHANGES
 1.0 (unreleased)
 ----------------
 
+    New features
+    ~~~~~~~~~~~~
+
+    - Added new ``show_vectors`` to show vector maps. [#220]
+
     Improvements
     ~~~~~~~~~~~~
 
     - The ``auto_refresh`` option now defaults to ``False`` unless IPython is
-      being used and the Matplotlib backend is interactive.
+      being used and the Matplotlib backend is interactive. [#238]
 
     Bug fixes
     ~~~~~~~~~
 
     - Fix a bug that caused RGB images to be incorrectly displayed when zooming
-      in.
+      in. [#235]
 
 0.9.14 (2014-11-05)
 -------------------
-
-    New features
-    ~~~~~~~~~~~~
-
-    - Added new ``show_vectors`` to show vector maps. [#220]
 
     Bug fixes
     ~~~~~~~~~
