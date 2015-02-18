@@ -485,10 +485,10 @@ class FITSFigure(Layers, Regions):
         else:
             raise Exception("Need to specify either radius= or width= and height= arguments")
 
-        if xpix + dx_pix < self._extent[0] or \
-           xpix - dx_pix > self._extent[1] or \
-           ypix + dy_pix < self._extent[2] or \
-           ypix - dy_pix > self._extent[3]:
+        if (xpix + dx_pix < -0.5 or
+            xpix - dx_pix > self._wcs.nx - 0.5 or
+            ypix + dy_pix < -0.5 or
+            ypix - dy_pix > self._wcs.ny):
 
             raise Exception("Zoom region falls outside the image")
 
@@ -699,7 +699,7 @@ class FITSFigure(Layers, Regions):
             self.image = self.ax.imshow(
                 convolve_util.convolve(self._data, smooth=smooth, kernel=kernel),
                 cmap=cmap, interpolation=interpolation, origin='lower',
-                extent=self._extent, norm=normalizer, aspect=aspect)
+                norm=normalizer, aspect=aspect)
 
         xmin, xmax = self.ax.get_xbound()
         if xmin == 0.0:
@@ -785,7 +785,7 @@ class FITSFigure(Layers, Regions):
         # we flip the image by default (since RGB images usually would require
         # origin='upper') then we use origin='lower'
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
-        self.image = self.ax.imshow(image, extent=self._extent,
+        self.image = self.ax.imshow(image,
                                     interpolation=interpolation,
                                     origin='lower')
 
@@ -902,7 +902,6 @@ class FITSFigure(Layers, Regions):
         wcs_contour.ny = header_contour['NAXIS%i' % (dimensions[1] + 1)]
 
         image_contour = convolve_util.convolve(data_contour, smooth=smooth, kernel=kernel)
-        extent_contour = (0.5, wcs_contour.nx + 0.5, 0.5, wcs_contour.ny + 0.5)
 
         if type(levels) == int:
             auto_levels = image_util.percentile_function(image_contour)
@@ -918,12 +917,12 @@ class FITSFigure(Layers, Regions):
         if filled:
             c = self.ax.contourf(image_contour, levels,
                                  transform=self.ax.get_transform(frame),
-                                 extent=extent_contour, cmap=cmap,
+                                 cmap=cmap,
                                  colors=colors, **kwargs)
         else:
             c = self.ax.contour(image_contour, levels,
                                 transform=self.ax.get_transform(frame),
-                                extent=extent_contour, cmap=cmap,
+                                cmap=cmap,
                                 colors=colors, **kwargs)
 
         if layer:
@@ -1036,10 +1035,12 @@ class FITSFigure(Layers, Regions):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        data_p, header_p, wcs_p = self._get_hdu(pdata, phdu, False, \
+        data_p, header_p, wcs_p, slices_p = self._get_hdu(pdata, phdu, False, \
             convention=convention, dimensions=dimensions, slices=slices)
-        data_a, header_a, wcs_a = self._get_hdu(adata, ahdu, False, \
+        data_a, header_a, wcs_a, slices_a = self._get_hdu(adata, ahdu, False, \
             convention=convention, dimensions=dimensions, slices=slices)
+
+        # TODO: use slices correctly
 
         wcs_p.nx = header_p['NAXIS%i' % (dimensions[0] + 1)]
         wcs_p.ny = header_p['NAXIS%i' % (dimensions[1] + 1)]
@@ -1753,11 +1754,8 @@ class FITSFigure(Layers, Regions):
 
     def _initialize_view(self):
 
-        self.ax.set_xlim(+0.5, self._wcs.nx + 0.5)
-        self.ax.set_ylim(+0.5, self._wcs.ny + 0.5)
-
-        # set the image extent to FITS pixel coordinates
-        self._extent = (0.5, self._wcs.nx + 0.5, 0.5, self._wcs.ny + 0.5)
+        self.ax.set_xlim(-0.5, self._wcs.nx - 0.5)
+        self.ax.set_ylim(-0.5, self._wcs.ny - 0.5)
 
     def _get_invert_default(self):
         return self._figure.apl_grayscale_invert_default
