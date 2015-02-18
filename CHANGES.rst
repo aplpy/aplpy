@@ -1,7 +1,7 @@
 CHANGES
 --------
 
-1.0 (unreleased)
+1.0 (2015-02-18)
 ----------------
 
     New features
