@@ -1,12 +1,18 @@
 import os
 import shutil
 import tempfile
+from distutils.version import LooseVersion
 
 import numpy as np
+
+import matplotlib
 from matplotlib.testing.compare import compare_images
 from astropy.tests.helper import pytest
+
 from .. import FITSFigure
 from .helpers import generate_file
+
+MATPLOTLIB_GE_12 = LooseVersion(matplotlib.__version__) >= LooseVersion("1.2")
 
 
 class BaseImageTests(object):
@@ -85,6 +91,7 @@ class TestBasic(BaseImageTests):
         f.close()
 
     # Test for showing colorscale
+    @pytest.mark.skipif("not MATPLOTLIB_GE_12")
     def test_show_colorbar_scalebar_beam(self, generate):
         f = FITSFigure(self.filename_1)
         f.ticks.set_color('black')
@@ -157,4 +164,3 @@ class TestBasic(BaseImageTests):
         f.tick_labels.set_yformat('dd:mm:ss.ss')
         self.generate_or_test(generate, f, 'cube_slice.png')
         f.close()
-
