@@ -1975,6 +1975,29 @@ class FITSFigure(Layers, Regions, Deprecated):
             >>> f.add_scalebar(0.01) # length has to be specified
             >>> f.scalebar.set_label('100 AU')
             >>> ...
+
+        Parameters
+        ----------
+
+        length : float, or quantity
+            The length of the scalebar in degrees, an angular quantity, or angular unit
+
+        label : str, optional
+            Label to place below the scalebar
+
+        corner : int, optional
+            Where to place the scalebar. Acceptable values are:, 'left',
+            'right', 'top', 'bottom', 'top left', 'top right', 'bottom
+            left' (default), 'bottom right'
+
+        frame : str, optional
+            Whether to display a frame behind the scalebar (default is False)
+
+        kwargs
+            Additional arguments are passed to the matplotlib Rectangle and
+            Text classes. See the matplotlib documentation for more details.
+            In cases where the same argument exists for the two objects, the
+            argument is passed to both the Text and Rectangle instance.
         '''
         if hasattr(self, 'scalebar'):
             raise Exception("Scalebar already exists")
