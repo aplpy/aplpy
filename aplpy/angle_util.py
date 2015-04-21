@@ -185,7 +185,7 @@ class Angle(object):
 
         string = []
 
-        if 'dd' in format:
+        if 'd' in format:
             if '.d' in format:
                 string.append(("%0" + str(nd + 3) + "." + str(nd) + "f") % \
                     tup[0] + sep[0])
