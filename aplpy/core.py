@@ -78,6 +78,7 @@ from .regions import Regions
 from .colorbar import Colorbar
 from .normalize import APLpyNormalize
 from .frame import Frame
+from .contour_util import insert_rasterized_contour_plot
 
 from .decorators import auto_refresh, fixdocstring
 
@@ -822,7 +823,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
-    def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
+    def show_contour(self, data=None, hdu=0, layer=None, levels=5,
+                     filled=False, cmap=None, colors=None, returnlevels=False,
+                     convention=None, dimensions=[0, 1], slices=[], smooth=None,
+                     kernel='gauss', overlap=False, rasterize=False, **kwargs):
         '''
         Overlay contours on the current plot.
 
@@ -944,6 +948,9 @@ class FITSFigure(Layers, Regions, Deprecated):
             c = self._ax1.contourf(image_contour, levels, extent=extent_contour, cmap=cmap, colors=colors, **kwargs)
         else:
             c = self._ax1.contour(image_contour, levels, extent=extent_contour, cmap=cmap, colors=colors, **kwargs)
+
+        if rasterize:
+            insert_rasterized_contour_plot(c, self._ax1)
 
         if layer:
             contour_set_name = layer
