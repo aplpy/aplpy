@@ -907,7 +907,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             a much larger area than the image.
 
         rasterize : bool, optional
-            Rasterizes the contour set. This is drastically decreases the
+            Rasterizes the contour set. This drastically decreases the
             file size when saving as a vector graphic at the expense of
             saving the contour as a vector itself.
 
