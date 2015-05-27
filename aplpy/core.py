@@ -900,11 +900,16 @@ class FITSFigure(Layers, Regions, Deprecated):
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
 
-        overlap str, optional
+        overlap : str, optional
             Whether to include only contours that overlap with the image
             area. This significantly speeds up the drawing of contours and
             reduces file size when using a file for the contours covering
             a much larger area than the image.
+
+        rasterize : bool, optional
+            Rasterizes the contour set. This is drastically decreases the
+            file size when saving as a vector graphic at the expense of
+            saving the contour as a vector itself.
 
         kwargs
             Additional keyword arguments (such as alpha, linewidths, or
