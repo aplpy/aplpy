@@ -2,6 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from matplotlib.path import Path
+from matplotlib.collections import Collection
+from matplotlib.artist import allow_rasterization
 
 from . import wcs_util
 
@@ -43,3 +45,29 @@ def transform(contours, wcs_in, wcs_out, filled=False, overlap=False):
             contour.set_verts(polygons_out)
 
         contour.apl_converted = True
+
+
+class ListCollection(Collection):
+    def __init__(self, collections, **kwargs):
+        Collection.__init__(self, **kwargs)
+        self.set_collections(collections)
+
+    def set_collections(self, collections):
+        self._collections = collections
+
+    def get_collections(self):
+        return self._collections
+
+    @allow_rasterization
+    def draw(self, renderer):
+        for _c in self._collections:
+            _c.draw(renderer)
+
+
+def insert_rasterized_contour_plot(c, ax):
+    collections = c.collections
+    for _c in collections:
+        _c.remove()
+    cc = ListCollection(collections, rasterized=True)
+    ax.add_artist(cc)
+    return cc
