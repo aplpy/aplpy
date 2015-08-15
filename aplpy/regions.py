@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, division
 
 from astropy.extern import six
 from astropy import log
+from astropy import wcs
 
 from .decorators import auto_refresh
 
@@ -61,7 +62,7 @@ class Regions:
             ds9 call and onto the patchcollections.
         """
 
-        PC, TC = ds9(region_file, self._header, **kwargs)
+        PC, TC = ds9(region_file, wcs.WCS(self._header).sub([wcs.WCSSUB_CELESTIAL]), **kwargs)
 
         # ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)
