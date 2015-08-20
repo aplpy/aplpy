@@ -429,10 +429,16 @@ class WCSFormatter(mpl.Formatter):
 
             if len(label) > 1:
 
-                if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
-                    comp_ipos = ipos - 1
+                if self.coord_type == 'longitude':
+                    # longitude increases the other direction....
+                    sign = -1
                 else:
-                    comp_ipos = ipos + 1
+                    sign = 1
+
+                if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
+                    comp_ipos = ipos - sign
+                else:
+                    comp_ipos = ipos + sign
 
                 if comp_ipos >= 0 and comp_ipos <= len(self.axis.apl_tick_positions_pix) - 1:
 
