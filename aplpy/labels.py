@@ -311,6 +311,48 @@ class TickLabels(object):
         else:
             raise ValueError("position should be one of 'left' or 'right'")
 
+    @auto_refresh
+    def set_y_full_label_side(self, position):
+        """
+        For labels of the form dd:mm:ss.ss, most of the ticks will show only
+        the ss.ss part.  The dd:mm component will be shown only once, either
+        at the top or bottom.
+
+        Parameters
+        ----------
+        position : 'top' or 'bottom'
+            The position to show the dd:mm part of the label
+        """
+        if position == 'top':
+            self._ax1.get_major_formatter().full_coordinate_string = 'end'
+            self._ax2.get_major_formatter().full_coordinate_string = 'end'
+        elif position == 'bottom':
+            self._ax1.get_major_formatter().full_coordinate_string = 'start'
+            self._ax2.get_major_formatter().full_coordinate_string = 'start'
+        else:
+            raise ValueError("position should be one of 'top' or 'bottom'")
+
+    @auto_refresh
+    def set_x_full_label_side(self, position):
+        """
+        For labels of the form hh:mm:ss.ss, most of the ticks will show only
+        the ss.ss part.  The hh:mm component will be shown only once, either
+        at the left or right.
+
+        Parameters
+        ----------
+        position : 'left' or 'right'
+            The position to show the hh:mm part of the label
+        """
+        if position == 'right':
+            self._ax1.get_major_formatter().full_coordinate_string = 'end'
+            self._ax2.get_major_formatter().full_coordinate_string = 'end'
+        elif position == 'left':
+            self._ax1.get_major_formatter().full_coordinate_string = 'start'
+            self._ax2.get_major_formatter().full_coordinate_string = 'start'
+        else:
+            raise ValueError("position should be one of 'left' or 'right'")
+
     def _set_cursor_prefs(self, event, **kwargs):
         if event.key == 'c':
             self._ax1._cursor_world = not self._ax1._cursor_world
@@ -379,9 +421,19 @@ class TickLabels(object):
 
 class WCSFormatter(mpl.Formatter):
 
-    def __init__(self, wcs=False, coord='x'):
+    def __init__(self, wcs=False, coord='x', full_coordinate_string='end'):
+        """
+        Parameters
+        ----------
+        full_coordinate_string : 'start' or 'end'
+            Determines where the full string (hh:mm:ss.ss) should be: at the
+            start or end of the row/column.  For vertical, start=bottom,
+            end=top.  For horizontal, start=left, end=right.
+
+        """
         self._wcs = wcs
         self.coord = coord
+        self.full_coordinate_string = full_coordinate_string
 
     def __call__(self, x, pos=None):
         """
@@ -429,11 +481,13 @@ class WCSFormatter(mpl.Formatter):
 
             if len(label) > 1:
 
-                if self.coord_type == 'longitude':
+                if self.full_coordinate_string == 'end':
                     # longitude increases the other direction....
                     sign = -1
-                else:
+                elif self.full_coordinate_string == 'start':
                     sign = 1
+                else:
+                    raise ValueError("full_coordinate_string must be 'start' or 'end'")
 
                 if self.coord == x or self.axis.apl_tick_positions_world[ipos] > 0:
                     comp_ipos = ipos - sign
