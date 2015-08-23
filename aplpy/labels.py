@@ -324,11 +324,11 @@ class TickLabels(object):
             The position to show the dd:mm part of the label
         """
         if position == 'top':
-            self._ax1.get_major_formatter().full_coordinate_string = 'end'
-            self._ax2.get_major_formatter().full_coordinate_string = 'end'
+            self._ax1.yaxis.get_major_formatter().full_coordinate_string = 'end'
+            self._ax2.yaxis.get_major_formatter().full_coordinate_string = 'end'
         elif position == 'bottom':
-            self._ax1.get_major_formatter().full_coordinate_string = 'start'
-            self._ax2.get_major_formatter().full_coordinate_string = 'start'
+            self._ax1.yaxis.get_major_formatter().full_coordinate_string = 'start'
+            self._ax2.yaxis.get_major_formatter().full_coordinate_string = 'start'
         else:
             raise ValueError("position should be one of 'top' or 'bottom'")
 
@@ -345,11 +345,11 @@ class TickLabels(object):
             The position to show the hh:mm part of the label
         """
         if position == 'right':
-            self._ax1.get_major_formatter().full_coordinate_string = 'end'
-            self._ax2.get_major_formatter().full_coordinate_string = 'end'
+            self._ax1.xaxis.get_major_formatter().full_coordinate_string = 'end'
+            self._ax2.xaxis.get_major_formatter().full_coordinate_string = 'end'
         elif position == 'left':
-            self._ax1.get_major_formatter().full_coordinate_string = 'start'
-            self._ax2.get_major_formatter().full_coordinate_string = 'start'
+            self._ax1.xaxis.get_major_formatter().full_coordinate_string = 'start'
+            self._ax2.xaxis.get_major_formatter().full_coordinate_string = 'start'
         else:
             raise ValueError("position should be one of 'left' or 'right'")
 
