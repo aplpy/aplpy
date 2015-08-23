@@ -344,10 +344,10 @@ class TickLabels(object):
         position : 'left' or 'right'
             The position to show the hh:mm part of the label
         """
-        if position == 'right':
+        if position == 'left':
             self._ax1.xaxis.get_major_formatter().full_coordinate_string = 'end'
             self._ax2.xaxis.get_major_formatter().full_coordinate_string = 'end'
-        elif position == 'left':
+        elif position == 'right':
             self._ax1.xaxis.get_major_formatter().full_coordinate_string = 'start'
             self._ax2.xaxis.get_major_formatter().full_coordinate_string = 'start'
         else:
