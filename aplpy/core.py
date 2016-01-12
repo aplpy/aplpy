@@ -221,8 +221,8 @@ class FITSFigure(Layers, Regions, Deprecated):
             data.wcs.crpix = [data.wcs.crpix[0] / nx * float(nx), data.wcs.crpix[1] / ny * float(ny)]
 
             # Update the NAXIS values with the true dimensions of the RGB image
-            data.nx = nx
-            data.ny = ny
+            data.naxis1 = data.nx = nx
+            data.naxis2 = data.ny = ny
 
         if isinstance(data, WCS_TYPES):
             wcs = data
