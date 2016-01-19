@@ -23,7 +23,7 @@ env:
         # to repeat them for all configurations.
         - NUMPY_VERSION=stable
         - ASTROPY_VERSION=stable
-        - MATPLOTLIB_VERSION=1.4
+        - MATPLOTLIB_VERSION=1.4.*
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow'
 
     matrix:
