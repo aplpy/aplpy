@@ -12,17 +12,16 @@ addons:
             - dvipng
 
 python:
-    - 2.6
     - 2.7
-    - 3.3
     - 3.4
+    - 3.5
 
 env:
     global:
         # The following versions are the 'default' for tests, unless
         # overidden underneath. They are defined here in order to save having
         # to repeat them for all configurations.
-        - NUMPY_VERSION=1.9
+        - NUMPY_VERSION=stable
         - ASTROPY_VERSION=stable
         - MATPLOTLIB_VERSION=1.4
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow'
@@ -43,17 +42,29 @@ matrix:
         - python: 2.7
           env: SETUP_CMD='build_sphinx -w'
 
-        # Try Astropy development version
+        # Try Astropy development and LTS version
         - python: 2.7
           env: ASTROPY_VERSION=development SETUP_CMD='test'
-        - python: 3.3
+        - python: 3.5
           env: ASTROPY_VERSION=development SETUP_CMD='test'
+        - python: 2.7
+          env: ASTROPY_VERSION=lts SETUP_CMD='test'
+        - python: 3.5
+          env: ASTROPY_VERSION=lts SETUP_CMD='test'
+
+        # Try all python versions with the latest numpy
+        - python: 3.3
+          env: SETUP_CMD='test --remote-data' NUMPY_VERSION=1.9
 
         # Try older numpy versions
         - python: 2.7
-          env: NUMPY_VERSION=1.7 SETUP_CMD='test' MATPLOTLIB_VERSION=1.2
+          env: NUMPY_VERSION=1.9 SETUP_CMD='test'
         - python: 2.7
-          env: NUMPY_VERSION=1.6 SETUP_CMD='test' MATPLOTLIB_VERSION=1.1
+          env: NUMPY_VERSION=1.8 SETUP_CMD='test'
+        - python: 2.7
+          env: NUMPY_VERSION=1.7 SETUP_CMD='test'
+        - python: 2.7
+          env: NUMPY_VERSION=1.6 SETUP_CMD='test'
 
 before_install:
 
