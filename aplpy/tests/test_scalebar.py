@@ -105,3 +105,11 @@ def test_scalebar_font():
     f.scalebar.set_font(size='small', weight='bold', stretch='normal',
                         family='serif', style='normal', variant='normal')
     f.close()
+
+
+def test_regression_exception_type():
+    # In Matplotlib 1.5, the exception type changed for when a property doesn't
+    # exist, so we need to catch both AttributeError and TypeError.
+    f = FITSFigure(HDU)
+    f.add_scalebar(0.1, family='serif')
+    f.close()

@@ -389,11 +389,11 @@ class Scalebar(object):
             kwargs_single = {kwarg: kwargs[kwarg]}
             try:
                 self._set_label_properties(**kwargs_single)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
             try:
                 self._set_scalebar_properties(**kwargs_single)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
 
     # DEPRECATED
