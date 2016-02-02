@@ -4,7 +4,10 @@ CHANGES
 2.0 (unreleased)
 ----------------
 
-    - No changes yet
+1.0.1 (unreleased)
+------------------
+
+- Fixed compatibility of Scalebar.set with Matplotlib 1.5.x. [#286]
 
 1.0 (2015-02-18)
 ----------------
