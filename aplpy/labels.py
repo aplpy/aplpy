@@ -412,7 +412,7 @@ class WCSFormatter(mpl.Formatter):
                 sep = (':', ':', '')
             elif label_style == 'plain_tex':
                 if hours:
-                    sep = ('^{h}', '^{m}', '^{s}')
+                    sep = ('^{\\rm h}', '^{\\rm m}', '^{\\rm s}')
                 else:
                     sep = ('^{\circ}', '^{\prime}', '^{\prime\prime}')
 
