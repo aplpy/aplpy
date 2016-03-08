@@ -206,15 +206,21 @@ class Ticks(object):
             line.set_mew(linewidth)
 
     @auto_refresh
-    def set_minor_frequency(self, frequency):
+    def set_minor_frequency(self, frequency, frequency_y=None):
         '''
         Set the number of subticks per major tick. Set to one to hide minor
         ticks.
+        If not frequency_y given, frequency is the same in both axis.
+        Otherwise, frequency represents the frequency in the xaxis and
+        frequency_y the one in the yaxis.
         '''
+        if frequency_y is None:
+            frequency_y = frequency
+
         self._ax1.xaxis.get_minor_locator().subticks = frequency
-        self._ax1.yaxis.get_minor_locator().subticks = frequency
+        self._ax1.yaxis.get_minor_locator().subticks = frequency_y
         self._ax2.xaxis.get_minor_locator().subticks = frequency
-        self._ax2.yaxis.get_minor_locator().subticks = frequency
+        self._ax2.yaxis.get_minor_locator().subticks = frequency_y
 
     @auto_refresh
     def show(self):
