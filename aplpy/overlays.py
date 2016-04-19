@@ -366,7 +366,7 @@ class Scalebar(object):
                 self._scalebar.txt_label.get_children()[0].set(**kvpair)
                 self._label_settings[kwarg] = val
             except AttributeError:
-                warnings.warn("Text labels do not have attribute {0}.  Skipping.".format(kwarg))
+                warnings.warn("Text labels do not have attribute {0}. Skipping.".format(kwarg))
 
     @auto_refresh
     def _set_scalebar_properties(self, **kwargs):
@@ -379,10 +379,10 @@ class Scalebar(object):
         for kwarg,val in kwargs.items():
             try:
                 kvpair = {kwarg:val}
-                self._scalebar_settings[kwarg] = val
                 self._scalebar.size_bar.get_children()[0].set(**kvpair)
+                self._scalebar_settings[kwarg] = val
             except AttributeError:
-                warnings.warn("Scalebar does not have attribute {0}.  Skipping.".format(kwarg))
+                warnings.warn("Scalebar does not have attribute {0}. Skipping.".format(kwarg))
 
     @auto_refresh
     def set(self, **kwargs):

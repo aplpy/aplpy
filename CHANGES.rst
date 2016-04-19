@@ -7,7 +7,7 @@ CHANGES
 1.0.1 (unreleased)
 ------------------
 
-- Fixed compatibility of Scalebar.set with Matplotlib 1.5.x. [#286]
+- Fixed compatibility of Scalebar.set with Matplotlib 1.5.x. [#272, #286]
 
 1.0 (2015-02-18)
 ----------------
