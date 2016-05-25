@@ -83,7 +83,7 @@ def test_colorbar_axis_label():
     f = FITSFigure(data)
     f.show_grayscale()
     f.add_colorbar()
-    f.colorbar.set_axis_label_text('Flux (MJy/sr)')
+    f.colorbar.set_axis_label_text('Surface Brightness (MJy/sr)')
     f.colorbar.set_axis_label_rotation(45.)
     f.colorbar.set_axis_label_font(size='small', weight='bold', stretch='normal',
                                    family='serif', style='normal', variant='normal')
