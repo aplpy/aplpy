@@ -174,7 +174,7 @@ Once :meth:`~aplpy.aplpy.FITSFigure.add_colorbar` has been called, the ``fig.col
 
 * Add a colorbar label::
 
-    f.colorbar.set_axis_label_text('Flux (Jy/beam)')
+    f.colorbar.set_axis_label_text('Surface Brightness (Jy/beam)')
 
 * Set some of the colorbar label properties::
 
