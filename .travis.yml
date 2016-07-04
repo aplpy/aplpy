@@ -51,9 +51,7 @@ matrix:
         - python: 3.5
           env: ASTROPY_VERSION=lts SETUP_CMD='test'
 
-        # Try all python versions with the latest numpy
-        - python: 2.6
-          env: SETUP_CMD='test --remote-data' NUMPY_VERSION=1.9
+        # Try python 3.3 with np 1.9 as it's the latest with available conda build
         - python: 3.3
           env: SETUP_CMD='test --remote-data' NUMPY_VERSION=1.9
 
