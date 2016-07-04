@@ -21,7 +21,10 @@ env:
         # The following versions are the 'default' for tests, unless
         # overidden underneath. They are defined here in order to save having
         # to repeat them for all configurations.
-        - NUMPY_VERSION=stable
+
+        # Note that we DO NOT use stable for numpy as there are no mpl 1.4.x
+        # builds available on conda for numpy 1.11
+        - NUMPY_VERSION=1.10   
         - ASTROPY_VERSION=stable
         - MATPLOTLIB_VERSION=1.4.*
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow'
@@ -48,9 +51,7 @@ matrix:
         - python: 3.5
           env: ASTROPY_VERSION=lts SETUP_CMD='test'
 
-        # Try all python versions with the latest numpy
-        - python: 2.6
-          env: SETUP_CMD='test --remote-data' NUMPY_VERSION=1.9
+        # Try python 3.3 with np 1.9 as it's the latest with available conda build
         - python: 3.3
           env: SETUP_CMD='test --remote-data' NUMPY_VERSION=1.9
 
@@ -61,8 +62,6 @@ matrix:
           env: NUMPY_VERSION=1.8 SETUP_CMD='test'
         - python: 2.7
           env: NUMPY_VERSION=1.7 SETUP_CMD='test'
-        - python: 2.7
-          env: NUMPY_VERSION=1.6 SETUP_CMD='test'
 
 before_install:
 
