@@ -89,3 +89,16 @@ def test_colorbar_axis_label():
                                    family='serif', style='normal', variant='normal')
     f.colorbar.set_axis_label_pad(5.)
     f.close()
+
+def test_colorbar_format():
+    x = np.arange(0, 20, 0.1)
+    y = np.arange(0, 20, 0.1)
+    data, _ = np.meshgrid(x, y)
+    f = FITSFigure(data)
+    f.show_grayscale()
+    f.add_colorbar(format='exp')
+    f.remove_colorbar()
+    f.add_colorbar(format='sci')
+    f.remove_colorbar()
+    f.add_colorbar(format='sci', sig_digits=1)
+    f.close()
