@@ -24,10 +24,11 @@ env:
 
         # Note that we DO NOT use stable for numpy as there are no mpl 1.4.x
         # builds available on conda for numpy 1.11
-        - NUMPY_VERSION=1.10   
+        - NUMPY_VERSION=1.10
         - ASTROPY_VERSION=stable
         - MATPLOTLIB_VERSION=1.4.*
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow'
+        - CONDA_CHANNELS='astropy-ci-extras'
 
     matrix:
         - SETUP_CMD='egg_info'
