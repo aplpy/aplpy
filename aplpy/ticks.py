@@ -306,11 +306,11 @@ class WCSLocator(Locator):
 
         self.coord_type = self._wcs.xaxis_coord_type if self.coord == 'x' else self._wcs.yaxis_coord_type
 
-        ymin, ymax = self.axis.get_axes().yaxis.get_view_interval()
-        xmin, xmax = self.axis.get_axes().xaxis.get_view_interval()
+        ymin, ymax = self.axis.axes.yaxis.get_view_interval()
+        xmin, xmax = self.axis.axes.xaxis.get_view_interval()
 
         if self.axis.apl_auto_tick_spacing:
-            self.axis.apl_tick_spacing = default_spacing(self.axis.get_axes(), self.coord, self.axis.apl_label_form)
+            self.axis.apl_tick_spacing = default_spacing(self.axis.axes, self.coord, self.axis.apl_label_form)
             if self.axis.apl_tick_spacing is None:
                 self.axis.apl_tick_positions_pix = []
                 self.axis.apl_tick_positions_world = []
