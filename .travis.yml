@@ -29,6 +29,7 @@ env:
         - MATPLOTLIB_VERSION=1.4.*
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow qt=4 pyqt=4'
         - CONDA_CHANNELS='astropy-ci-extras'
+        - PIP_DEPENDENCIES='pytest-mpl'
 
     matrix:
         - SETUP_CMD='egg_info'
