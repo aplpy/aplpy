@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/aplpy/aplpy.svg?branch=master)](https://travis-ci.org/aplpy/aplpy)
+[![Coverage Status](https://coveralls.io/repos/aplpy/aplpy/badge.svg?branch=master)](https://coveralls.io/r/aplpy/aplpy?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/aplpy/badge/?version=latest)](https://aplpy.readthedocs.io/en/latest/)
+
+
 About
 -----
 
@@ -9,7 +14,7 @@ PyPI: https://pypi.python.org/pypi/APLpy
 
 Website: http://aplpy.github.io
 
-Documentation: http://aplpy.readthedocs.org/
+Documentation: http://aplpy.readthedocs.io
 
 APLpy is released under an MIT open-source license.
 
