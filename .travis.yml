@@ -27,7 +27,7 @@ env:
         - NUMPY_VERSION=1.10
         - ASTROPY_VERSION=stable
         - MATPLOTLIB_VERSION=1.4.*
-        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow'
+        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow qt=4 pyqt=4'
         - CONDA_CHANNELS='astropy-ci-extras'
 
     matrix:
