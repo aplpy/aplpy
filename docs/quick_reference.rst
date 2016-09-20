@@ -510,11 +510,9 @@ The color for NaN values can be controlled using the following method::
 The order of figure elements (eg lines, shapes, imagemap) can be controlled using the zorder parameter using for example::
 
     fig.show_ellipses(x_world, y_world, width, height, zorder=1)
-    
-Increasing integers from 0 will place elements towards the front.  Setting zorder=0 places layer at the bottom.  
+
+Increasing integers from 0 will place elements towards the front.  Setting zorder=0 places layer at the bottom.
 
 Finally, to change the look of the plot using pre-set themes, use::
 
     fig.set_theme('publication')
-    
-
