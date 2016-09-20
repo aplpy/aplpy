@@ -44,12 +44,8 @@ def check(header, convention=None, dimensions=[0, 1]):
                 crval = header['CRVAL%i' % ilat]
                 cdelt = header['CDELT%i' % ilat]
                 crpix = crpix - crval / cdelt
-                try:
-                    header['CRPIX%i' % ilat] = crpix
-                    header['CRVAL%i' % ilat] = 0.
-                except:  # older versions of PyFITS
-                    header.update('CRPIX%i' % ilat, crpix)
-                    header.update('CRVAL%i' % ilon, 0.)
+                header['CRPIX%i' % ilat] = crpix
+                header['CRVAL%i' % ilat] = 0.
 
             else:
                 raise Exception('''WARNING: projection is Plate Caree (-CAR) and

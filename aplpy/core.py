@@ -14,44 +14,9 @@ import matplotlib.pyplot as mpl
 import mpl_toolkits.axes_grid.parasite_axes as mpltk
 from astropy.extern import six
 
-WCS_TYPES = []
-HDU_TYPES = []
-HDULIST_TYPES = []
-
-# We need to be able to accept PyFITS objects if users have old scripts that
-# are reading FITS files with this instead of Astropy
-try:
-    import pyfits
-    HDU_TYPES.append(pyfits.PrimaryHDU)
-    HDU_TYPES.append(pyfits.ImageHDU)
-    HDU_TYPES.append(pyfits.CompImageHDU)
-    HDULIST_TYPES.append(pyfits.HDUList)
-    del pyfits
-except ImportError:
-    pass
-
-# Similarly, we need to accept PyWCS objects
-try:
-    import pywcs
-    WCS_TYPES.append(pywcs.WCS)
-    del pywcs
-except ImportError:
-    pass
-
-from astropy.io import fits
-HDU_TYPES.append(fits.PrimaryHDU)
-HDU_TYPES.append(fits.ImageHDU)
-HDU_TYPES.append(fits.CompImageHDU)
-HDULIST_TYPES.append(fits.HDUList)
-
 from astropy.wcs import WCS
-WCS_TYPES.append(WCS)
-del WCS
-
-# Convert to tuples so that these work when calling isinstance()
-HDU_TYPES = tuple(HDU_TYPES)
-HDULIST_TYPES = tuple(HDULIST_TYPES)
-WCS_TYPES = tuple(WCS_TYPES)
+from astropy.io import fits
+HDU_TYPES = (fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU)
 
 import numpy as np
 
@@ -224,7 +189,7 @@ class FITSFigure(Layers, Regions, Deprecated):
             data.nx = nx
             data.ny = ny
 
-        if isinstance(data, WCS_TYPES):
+        if isinstance(data, WCS):
             wcs = data
             if not hasattr(wcs, 'naxis1'):
                 raise aue.AstropyDeprecationWarning('WCS no longer stores information about NAXISn '
@@ -366,7 +331,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             hdu = data
 
-        elif isinstance(data, HDULIST_TYPES):
+        elif isinstance(data, HDUList):
 
             hdu = data[hdu]
 

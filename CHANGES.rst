@@ -8,6 +8,9 @@ CHANGES
 
 - Fixed compatibility with Python 3.5.
 
+- Astropy is now a required dependency, and PyFITS and PyWCS are no longer
+  supported.
+
 1.0 (2015-02-18)
 ----------------
 
