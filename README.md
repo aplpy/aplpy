@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/aplpy/aplpy.svg?branch=master)](https://travis-ci.org/aplpy/aplpy)
 [![Coverage Status](https://coveralls.io/repos/aplpy/aplpy/badge.svg?branch=master)](https://coveralls.io/r/aplpy/aplpy?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/aplpy/badge/?version=latest)](https://aplpy.readthedocs.io/en/latest/)
+[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://aplpy.readthedocs.io/en/latest/)
 
 
 About
