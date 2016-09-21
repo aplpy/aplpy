@@ -3,7 +3,7 @@ import warnings
 
 import numpy as np
 from astropy.io import fits
-from astropy.tests.helper import pytest
+from astropy.tests.helper import pytest, remote_data
 
 from .. import FITSFigure
 from ..rgb import make_rgb_image
@@ -16,6 +16,7 @@ HEADER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits'
 
 class TestRGB(BaseImageTests):
 
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_rgb(self, generate, tmpdir):
 

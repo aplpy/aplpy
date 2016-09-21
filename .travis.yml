@@ -33,7 +33,7 @@ env:
 
     matrix:
         - SETUP_CMD='egg_info'
-        - SETUP_CMD='test'
+        - SETUP_CMD='test --remote-data'
 
 matrix:
     include:
@@ -47,11 +47,11 @@ matrix:
         - python: 2.7
           env: ASTROPY_VERSION=development SETUP_CMD='test --coverage'
         - python: 3.5
-          env: ASTROPY_VERSION=development SETUP_CMD='test'
+          env: ASTROPY_VERSION=development SETUP_CMD='test --remote-data'
         - python: 2.7
-          env: ASTROPY_VERSION=lts SETUP_CMD='test'
+          env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
         - python: 3.5
-          env: ASTROPY_VERSION=lts SETUP_CMD='test'
+          env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
 
         # Try python 3.3 with np 1.9 as it's the latest with available conda build
         - python: 3.3
@@ -59,11 +59,11 @@ matrix:
 
         # Try older numpy versions
         - python: 2.7
-          env: NUMPY_VERSION=1.9 SETUP_CMD='test'
+          env: NUMPY_VERSION=1.9 SETUP_CMD='test --remote-data'
         - python: 2.7
-          env: NUMPY_VERSION=1.8 SETUP_CMD='test'
+          env: NUMPY_VERSION=1.8 SETUP_CMD='test --remote-data'
         - python: 2.7
-          env: NUMPY_VERSION=1.7 SETUP_CMD='test'
+          env: NUMPY_VERSION=1.7 SETUP_CMD='test --remote-data'
 
 before_install:
 

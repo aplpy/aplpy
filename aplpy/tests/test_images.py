@@ -3,7 +3,7 @@ import tempfile
 
 import numpy as np
 
-from astropy.tests.helper import pytest
+from astropy.tests.helper import pytest, remote_data
 
 from .. import FITSFigure
 from .helpers import generate_file
@@ -32,12 +32,14 @@ class BaseImageTests(object):
 class TestBasic(BaseImageTests):
 
     # Test for showing grayscale
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_basic_image(self, generate):
         f = FITSFigure(self.filename_2)
         f.show_grayscale()
         return f
 
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_ticks_labels_options(self, generate):
         f = FITSFigure(self.filename_2)
@@ -55,6 +57,7 @@ class TestBasic(BaseImageTests):
         return f
 
     # Test for showing colorscale
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_show_colorbar_scalebar_beam(self, generate):
         f = FITSFigure(self.filename_1)
@@ -67,6 +70,7 @@ class TestBasic(BaseImageTests):
         return f
 
     # Test for overlaying shapes
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_overlay_shapes(self, generate):
         f = FITSFigure(self.filename_1)
@@ -83,6 +87,7 @@ class TestBasic(BaseImageTests):
         return f
 
     # Test for grid
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_grid(self, generate):
         f = FITSFigure(self.filename_1)
@@ -96,6 +101,7 @@ class TestBasic(BaseImageTests):
         return f
 
     # Test recenter
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_recenter(self, generate):
         f = FITSFigure(self.filename_2)
@@ -106,6 +112,7 @@ class TestBasic(BaseImageTests):
         return f
 
     # Test overlaying contours
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_contours(self, generate):
         data = np.arange(256).reshape((16, 16))
@@ -115,6 +122,7 @@ class TestBasic(BaseImageTests):
         return f
 
     # Test cube slice
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_cube_slice(self, generate):
         f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10])

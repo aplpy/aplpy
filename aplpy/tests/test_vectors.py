@@ -1,5 +1,5 @@
 import numpy as np
-from astropy.tests.helper import pytest
+from astropy.tests.helper import pytest, remote_data
 
 from ..core import FITSFigure
 
@@ -18,6 +18,7 @@ ADATA = np.degrees(np.arctan2(Y, X))
 
 class TestVectors(BaseImageTests):
 
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_default(self, generate):
         f = FITSFigure(IMAGE, figsize=(4, 4))
@@ -25,6 +26,7 @@ class TestVectors(BaseImageTests):
         f.show_vectors(PDATA, ADATA, color='orange')
         return f
 
+    @remote_data
     @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
     def test_step_scale(self, generate):
         f = FITSFigure(IMAGE, figsize=(4, 4))
