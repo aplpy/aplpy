@@ -79,8 +79,6 @@ class FITSFigure(Layers, Regions, Deprecated):
                  string
                  astropy.io.fits.PrimaryHDU
                  astropy.io.fits.ImageHDU
-                 pyfits.PrimaryHDU
-                 pyfits.ImageHDU
                  astropy.wcs.WCS
                  np.ndarray
                  RGB image with AVM meta-data
@@ -337,7 +335,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         else:
 
-            raise Exception("data argument should either be a filename, an HDU object from astropy.io.fits or pyfits, a WCS object from astropy.wcs or pywcs, or a Numpy array.")
+            raise Exception("data argument should either be a filename, an HDU object from astropy.io.fits, a WCS object from astropy.wcs, or a Numpy array.")
 
         # Check that we have at least 2-dimensional data
         if hdu.header['NAXIS'] < 2:
@@ -801,8 +799,6 @@ class FITSFigure(Layers, Regions, Deprecated):
                  string
                  astropy.io.fits.PrimaryHDU
                  astropy.io.fits.ImageHDU
-                 pyfits.PrimaryHDU
-                 pyfits.ImageHDU
                  astropy.wcs.WCS
                  np.ndarray
 
@@ -940,8 +936,6 @@ class FITSFigure(Layers, Regions, Deprecated):
                  string
                  astropy.io.fits.PrimaryHDU
                  astropy.io.fits.ImageHDU
-                 pyfits.PrimaryHDU
-                 pyfits.ImageHDU
                  astropy.wcs.WCS
                  np.ndarray
 
@@ -952,8 +946,6 @@ class FITSFigure(Layers, Regions, Deprecated):
                  string
                  astropy.io.fits.PrimaryHDU
                  astropy.io.fits.ImageHDU
-                 pyfits.PrimaryHDU
-                 pyfits.ImageHDU
                  astropy.wcs.WCS
                  np.ndarray
 
@@ -2020,3 +2012,5 @@ class FITSFigure(Layers, Regions, Deprecated):
         Close the figure and free up the memory.
         '''
         mpl.close(self._figure)
+
+    savefig = save
