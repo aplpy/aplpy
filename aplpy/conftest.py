@@ -8,6 +8,9 @@ from astropy.tests.pytest_plugins import pytest_addoption as astropy_pytest_addo
 # This is to figure out APLpy version, rather than using Astropy's
 from . import version
 
+import matplotlib
+matplotlib.use('Agg')
+
 try:
     packagename = os.path.basename(os.path.dirname(__file__))
     TESTED_VERSIONS[packagename] = version.version
