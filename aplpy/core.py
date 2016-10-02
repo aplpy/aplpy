@@ -329,7 +329,7 @@ class FITSFigure(Layers, Regions, Deprecated):
 
             hdu = data
 
-        elif isinstance(data, HDUList):
+        elif isinstance(data, fits.HDUList):
 
             hdu = data[hdu]
 
