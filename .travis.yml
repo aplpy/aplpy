@@ -27,7 +27,7 @@ env:
         - NUMPY_VERSION=1.10
         - ASTROPY_VERSION=stable
         - MATPLOTLIB_VERSION=1.5
-        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow qt=4 pyqt=4 pyregion'
+        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow pyregion'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
         - PIP_DEPENDENCIES='pytest-mpl'
 
