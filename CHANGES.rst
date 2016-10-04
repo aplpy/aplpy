@@ -1,6 +1,13 @@
 CHANGES
 --------
 
+1.1.1 (2016-10-04)
+------------------
+
+- Added missing LICENSE and README to tarball.
+
+- Fix undefined ``HDUList``. [#317]
+
 1.1 (2016-09-23)
 ----------------
 
