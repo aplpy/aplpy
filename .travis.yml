@@ -24,7 +24,7 @@ env:
 
         # Note that we DO NOT use stable for numpy as there are no mpl 1.4.x
         # builds available on conda for numpy 1.11
-        - NUMPY_VERSION=1.10
+        - NUMPY_VERSION=stable
         - ASTROPY_VERSION=stable
         - MATPLOTLIB_VERSION=1.4.*
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow qt=4 pyqt=4'
@@ -59,7 +59,7 @@ matrix:
 
         # Try older numpy versions
         - python: 2.7
-          env: NUMPY_VERSION=1.9 SETUP_CMD='test --remote-data'
+          env: NUMPY_VERSION=1.10 SETUP_CMD='test --remote-data'
         - python: 2.7
           env: NUMPY_VERSION=1.8 SETUP_CMD='test --remote-data'
         - python: 2.7
