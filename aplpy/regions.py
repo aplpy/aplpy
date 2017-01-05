@@ -192,6 +192,6 @@ def flatten_header(header):
         except IndexError:
             # if len(key) < 2
             pass
-    newheader.update('NAXIS',2)
+    newheader['NAXIS'] = 2
 
     return newheader
