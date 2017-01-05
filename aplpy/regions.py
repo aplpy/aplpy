@@ -2,12 +2,11 @@ from __future__ import absolute_import, print_function, division
 
 from astropy.extern import six
 from astropy import log
-from astropy import wcs
 
 from .decorators import auto_refresh
 
 
-class Regions:
+class Regions(object):
     """
     Regions sub-class of APLpy.
 
