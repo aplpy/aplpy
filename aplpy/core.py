@@ -243,7 +243,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             if hasattr(axis,'toggle_axisline'):
                 self._ax1 = axis
             else:
-                # Hack-ish; there must be a better way
+                # If the axis is an incompatible axis type, create a compatible
+                # axis type that is in the same location
+                log.warning("The specified axis is missing some features "
+                            "aplpy needs.  A new axis at the same location "
+                            "is being created.")
                 lower_corner = axis.get_position()[0,:]
                 extent = axis.get_position()[1:] - lower_corner
                 cornerpars = np.concatenate([lower_corner,extent])
