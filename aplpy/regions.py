@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, division
 
 from astropy.extern import six
 from astropy import log
+from astropy import wcs
 
 from .decorators import auto_refresh
 
@@ -179,18 +180,10 @@ def flatten_header(header):
     Turns all CRPIX[>2] etc. into new keywords with suffix 'A'
     """
 
-    newheader = header.copy()
-
-    for key in newheader.keys():
-        try:
-            if int(key[-1]) >= 3 and key[:2] in ['CD','CR','CT','CU','NA']:
-                newheader.rename_key(key,'A'+key,force=True)
-        except ValueError:
-            # if key[-1] is not an int
-            pass
-        except IndexError:
-            # if len(key) < 2
-            pass
+    orig_wcs = wcs.WCS(header)
+    newheader = orig_wcs.celestial.to_header()
     newheader['NAXIS'] = 2
+    newheader['NAXIS1'] = header['NAXIS{0}'.format(orig_wcs.wcs.lng+1)]
+    newheader['NAXIS2'] = header['NAXIS{0}'.format(orig_wcs.wcs.lat+1)]
 
     return newheader
