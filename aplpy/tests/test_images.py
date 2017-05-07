@@ -9,23 +9,24 @@ from .. import FITSFigure
 from .helpers import generate_file
 from . import baseline_dir
 
+MODULEDIR = os.path.dirname(__file__)
+DATADIR = os.path.abspath(os.path.join(MODULEDIR, 'data'))
+
 
 class BaseImageTests(object):
 
     @classmethod
     def setup_class(cls):
 
-        cls._moduledir = os.path.dirname(__file__)
-        cls._data_dir = os.path.abspath(os.path.join(cls._moduledir, 'data'))
-        cls._baseline_images_dir = os.path.abspath(os.path.join(cls._moduledir, 'baseline_images'))
+        cls._baseline_images_dir = os.path.abspath(os.path.join(MODULEDIR, 'baseline_images'))
 
-        header_1 = os.path.join(cls._data_dir, '2d_fits/1904-66_AIR.hdr')
+        header_1 = os.path.join(DATADIR, '2d_fits/1904-66_AIR.hdr')
         cls.filename_1 = generate_file(header_1, str(tempfile.mkdtemp()))
 
-        header_2 = os.path.join(cls._data_dir, '2d_fits/2MASS_k.hdr')
+        header_2 = os.path.join(DATADIR, '2d_fits/2MASS_k.hdr')
         cls.filename_2 = generate_file(header_2, str(tempfile.mkdtemp()))
 
-        header_3 = os.path.join(cls._data_dir, '3d_fits/cube.hdr')
+        header_3 = os.path.join(DATADIR, '3d_fits/cube.hdr')
         cls.filename_3 = generate_file(header_3, str(tempfile.mkdtemp()))
 
 
@@ -134,4 +135,16 @@ class TestBasic(BaseImageTests):
         f.grid.set_yspacing(0.01)
         f.tick_labels.set_xformat('%g')
         f.tick_labels.set_yformat('dd:mm:ss.ss')
+        return f
+
+    # Test for ds9 regions
+    @remote_data
+    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    def test_regions(self, generate):
+        f = FITSFigure(self.filename_2, figsize=(5, 4))
+        f.show_grayscale()
+        f.show_regions(os.path.join(DATADIR, 'shapes.reg'))
+        f.axis_labels.hide()
+        f.tick_labels.hide()
+        f.ticks.hide()
         return f
