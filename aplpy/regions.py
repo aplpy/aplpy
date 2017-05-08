@@ -7,7 +7,7 @@ from astropy import wcs
 from .decorators import auto_refresh
 
 
-class Regions:
+class Regions(object):
     """
     Regions sub-class of APLpy.
 
@@ -62,7 +62,7 @@ class Regions:
             ds9 call and onto the patchcollections.
         """
 
-        PC, TC = ds9(region_file, wcs.WCS(self._header).sub([wcs.WCSSUB_CELESTIAL]), **kwargs)
+        PC, TC = ds9(region_file, flatten_header(self._header), **kwargs)
 
         # ffpc = self._ax1.add_collection(PC)
         PC.add_to_axes(self._ax1)
@@ -172,3 +172,18 @@ class ArtistCollection():
     def set_zorder(self, zorder):
         for T in self.artistlist:
             T.set_zorder(zorder)
+
+
+def flatten_header(header):
+    """
+    Attempt to turn an N-dimensional fits header into a 2-dimensional header
+    Turns all CRPIX[>2] etc. into new keywords with suffix 'A'
+    """
+
+    orig_wcs = wcs.WCS(header)
+    newheader = orig_wcs.celestial.to_header()
+    newheader['NAXIS'] = 2
+    newheader['NAXIS1'] = header['NAXIS{0}'.format(orig_wcs.wcs.lng+1)]
+    newheader['NAXIS2'] = header['NAXIS{0}'.format(orig_wcs.wcs.lat+1)]
+
+    return newheader
