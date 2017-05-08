@@ -19,7 +19,7 @@ ADATA = np.degrees(np.arctan2(Y, X))
 class TestVectors(BaseImageTests):
 
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_default(self, generate):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
@@ -27,7 +27,7 @@ class TestVectors(BaseImageTests):
         return f
 
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_step_scale(self, generate):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()

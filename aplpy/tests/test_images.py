@@ -34,16 +34,17 @@ class TestBasic(BaseImageTests):
 
     # Test for showing grayscale
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_basic_image(self, generate):
-        f = FITSFigure(self.filename_2)
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale()
         return f
 
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_ticks_labels_options(self, generate):
-        f = FITSFigure(self.filename_2)
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
+        f.show_grayscale()
         f.ticks.set_color('black')
         f.axis_labels.set_xposition('top')
         f.axis_labels.set_yposition('right')
@@ -59,9 +60,9 @@ class TestBasic(BaseImageTests):
 
     # Test for showing colorscale
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_show_colorbar_scalebar_beam(self, generate):
-        f = FITSFigure(self.filename_1)
+        f = FITSFigure(self.filename_1, figsize=(7, 5))
         f.ticks.set_color('black')
         f.show_colorscale(vmin=-0.1, vmax=0.1)
         f.add_colorbar()
@@ -72,9 +73,10 @@ class TestBasic(BaseImageTests):
 
     # Test for overlaying shapes
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_overlay_shapes(self, generate):
-        f = FITSFigure(self.filename_1)
+        f = FITSFigure(self.filename_1, figsize=(7, 5))
+        f.show_grayscale()
         f.ticks.set_color('black')
         f.show_markers([360., 350., 340.], [-61., -62., -63])
         f.show_ellipses(330., -66., 0.15, 2., 10.)
@@ -89,9 +91,10 @@ class TestBasic(BaseImageTests):
 
     # Test for grid
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_grid(self, generate):
-        f = FITSFigure(self.filename_1)
+        f = FITSFigure(self.filename_1, figsize=(7, 5))
+        f.show_grayscale()
         f.ticks.set_color('black')
         f.add_grid()
         f.grid.set_color('red')
@@ -103,9 +106,10 @@ class TestBasic(BaseImageTests):
 
     # Test recenter
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_recenter(self, generate):
-        f = FITSFigure(self.filename_2)
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
+        f.show_grayscale()
         f.ticks.set_color('black')
         f.recenter(266.5, -29.0, width=0.1, height=0.1)
         f.axis_labels.set_xpad(20)
@@ -114,19 +118,20 @@ class TestBasic(BaseImageTests):
 
     # Test overlaying contours
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_contours(self, generate):
         data = np.arange(256).reshape((16, 16))
-        f = FITSFigure(data)
+        f = FITSFigure(data, figsize=(7, 5))
+        f.show_grayscale()
         f.ticks.set_color('black')
         f.show_contour(data, levels=np.linspace(1., 254., 10), filled=False)
         return f
 
     # Test cube slice
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_cube_slice(self, generate):
-        f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10])
+        f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10], figsize=(7, 5), subplot=[0.25, 0.1, 0.7, 0.8])
         f.ticks.set_color('black')
         f.add_grid()
         f.grid.set_color('black')
@@ -139,9 +144,9 @@ class TestBasic(BaseImageTests):
 
     # Test for ds9 regions
     @remote_data
-    @pytest.mark.mpl_image_compare(baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_regions(self, generate):
-        f = FITSFigure(self.filename_2, figsize=(5, 4))
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale()
         f.show_regions(os.path.join(DATADIR, 'shapes.reg'))
         f.axis_labels.hide()
