@@ -1,0 +1,11 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+circle(17:46:26.948,-28:45:11.89,330.498")
+ellipse(17:44:59.122,-28:44:47.18,505",185",360) # color=red width=2
+box(17:45:50.090,-28:55:04.94,320",485",360) # color=blue width=4
+line(17:46:39.285,-29:01:56.56,17:45:47.446,-29:06:42.46) # line=0 0
+# vector(17:45:32.185,-29:06:07.48,924.175",13.1336) vector=1 color=yellow width=3
+# text(17:45:40.580,-29:09:07.48) text={All you regions are belong to us}
+panda(17:46:26.192,-28:45:41.91,360,720,4,39.1095",78.2191",1)
+ellipse(17:45:09.384,-28:45:32.33,120",37.5",240",75",360)
