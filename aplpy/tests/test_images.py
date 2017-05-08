@@ -144,7 +144,7 @@ class TestBasic(BaseImageTests):
 
     # Test for ds9 regions
     @remote_data
-    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=3)
     def test_regions(self, generate):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale()
