@@ -44,7 +44,11 @@ class TestBasic(BaseImageTests):
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_ticks_labels_options(self, generate):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
+
+        # Force aspect ratio
         f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.axis_labels.set_xposition('top')
         f.axis_labels.set_yposition('right')
@@ -76,7 +80,11 @@ class TestBasic(BaseImageTests):
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_overlay_shapes(self, generate):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
+
+        # Force aspect ratio
         f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.show_markers([360., 350., 340.], [-61., -62., -63])
         f.show_ellipses(330., -66., 0.15, 2., 10.)
@@ -94,7 +102,11 @@ class TestBasic(BaseImageTests):
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_grid(self, generate):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
+
+        # Force aspect ratio
         f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.add_grid()
         f.grid.set_color('red')
@@ -109,7 +121,11 @@ class TestBasic(BaseImageTests):
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_recenter(self, generate):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
+
+        # Force aspect ratio
         f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.recenter(266.5, -29.0, width=0.1, height=0.1)
         f.axis_labels.set_xpad(20)
@@ -122,7 +138,11 @@ class TestBasic(BaseImageTests):
     def test_contours(self, generate):
         data = np.arange(256).reshape((16, 16))
         f = FITSFigure(data, figsize=(7, 5))
+
+        # Force aspect ratio
         f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.show_contour(data, levels=np.linspace(1., 254., 10), filled=False)
         return f
@@ -144,10 +164,14 @@ class TestBasic(BaseImageTests):
 
     # Test for ds9 regions
     @remote_data
-    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=3)
+    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_regions(self, generate):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
+
+        # Force aspect ratio
         f.show_grayscale()
+        f.hide_grayscale()
+
         f.show_regions(os.path.join(DATADIR, 'shapes.reg'))
         f.axis_labels.hide()
         f.tick_labels.hide()
