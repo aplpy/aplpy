@@ -56,7 +56,7 @@ class WCS(AstropyWCS):
                     coords.append(np.repeat(self._slices[s], xpix.shape))
                     s += 1
             coords = np.vstack(coords).transpose()
-            result = AstropyWCS.wcs_pix2world(self, coords, 1)
+            result = AstropyWCS.all_pix2world(self, coords, 1)
             self._mean_world = np.mean(result, axis=0)
             # result = result.transpose()
             # result = result.reshape((result.shape[0],) + (self.ny, self.nx))
@@ -146,10 +146,10 @@ class WCS(AstropyWCS):
     def wcs_world2pix(self, x, y, origin):
         if self.naxis == 2:
             if self._dimensions[1] < self._dimensions[0]:
-                xp, yp = AstropyWCS.wcs_world2pix(self, y, x, origin)
+                xp, yp = AstropyWCS.all_world2pix(self, y, x, origin)
                 return yp, xp
             else:
-                return AstropyWCS.wcs_world2pix(self, x, y, origin)
+                return AstropyWCS.all_world2pix(self, x, y, origin)
         else:
             coords = []
             s = 0
@@ -169,17 +169,17 @@ class WCS(AstropyWCS):
             # result = AstropyWCS.wcs_world2pix(self, coords, origin)
             result = np.zeros(coords.shape)
             for i in range(result.shape[0]):
-                result[i:i + 1, :] = AstropyWCS.wcs_world2pix(self, coords[i:i + 1, :], origin)
+                result[i:i + 1, :] = AstropyWCS.all_world2pix(self, coords[i:i + 1, :], origin)
 
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
     def wcs_pix2world(self, x, y, origin):
         if self.naxis == 2:
             if self._dimensions[1] < self._dimensions[0]:
-                xw, yw = AstropyWCS.wcs_pix2world(self, y, x, origin)
+                xw, yw = AstropyWCS.all_pix2world(self, y, x, origin)
                 return yw, xw
             else:
-                return AstropyWCS.wcs_pix2world(self, x, y, origin)
+                return AstropyWCS.all_pix2world(self, x, y, origin)
         else:
             coords = []
             s = 0
@@ -192,7 +192,7 @@ class WCS(AstropyWCS):
                     coords.append(np.repeat(self._slices[s] + 0.5, x.shape))
                     s += 1
             coords = np.vstack(coords).transpose()
-            result = AstropyWCS.wcs_pix2world(self, coords, origin)
+            result = AstropyWCS.all_pix2world(self, coords, origin)
             return result[:, self._dimensions[0]], result[:, self._dimensions[1]]
 
 
@@ -470,26 +470,26 @@ def system(wcs):
 
 def world2pix(wcs, x_world, y_world):
     if np.isscalar(x_world) and np.isscalar(y_world):
-        x_pix, y_pix = wcs.wcs_world2pix(np.array([x_world]), np.array([y_world]), 1)
+        x_pix, y_pix = wcs.all_world2pix(np.array([x_world]), np.array([y_world]), 1)
         return x_pix[0], y_pix[0]
     elif (type(x_world) == list) and (type(y_world) == list):
-        x_pix, y_pix = wcs.wcs_world2pix(np.array(x_world), np.array(y_world), 1)
+        x_pix, y_pix = wcs.all_world2pix(np.array(x_world), np.array(y_world), 1)
         return x_pix.tolist(), y_pix.tolist()
     elif isinstance(x_world, np.ndarray) and isinstance(y_world, np.ndarray):
-        return wcs.wcs_world2pix(x_world, y_world, 1)
+        return wcs.all_world2pix(x_world, y_world, 1)
     else:
         raise Exception("world2pix should be provided either with two scalars, two lists, or two numpy arrays")
 
 
 def pix2world(wcs, x_pix, y_pix):
     if np.isscalar(x_pix) and np.isscalar(y_pix):
-        x_world, y_world = wcs.wcs_pix2world(np.array([x_pix]), np.array([y_pix]), 1)
+        x_world, y_world = wcs.all_pix2world(np.array([x_pix]), np.array([y_pix]), 1)
         return x_world[0], y_world[0]
     elif (type(x_pix) == list) and (type(y_pix) == list):
-        x_world, y_world = wcs.wcs_pix2world(np.array(x_pix), np.array(y_pix), 1)
+        x_world, y_world = wcs.all_pix2world(np.array(x_pix), np.array(y_pix), 1)
         return x_world.tolist(), y_world.tolist()
     elif isinstance(x_pix, np.ndarray) and isinstance(y_pix, np.ndarray):
-        return wcs.wcs_pix2world(x_pix, y_pix, 1)
+        return wcs.all_pix2world(x_pix, y_pix, 1)
     else:
         raise Exception("pix2world should be provided either with two scalars, two lists, or two numpy arrays")
 
