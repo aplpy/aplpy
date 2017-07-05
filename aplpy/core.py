@@ -11,7 +11,7 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
     raise Exception("matplotlib 1.0.0 or later is required for APLpy")
 
 import matplotlib.pyplot as mpl
-import mpl_toolkits.axes_grid.parasite_axes as mpltk
+import mpl_toolkits.axes_grid1.parasite_axes as mpltk
 from astropy.extern import six
 
 from astropy.wcs import WCS
