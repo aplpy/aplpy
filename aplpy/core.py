@@ -472,7 +472,7 @@ class FITSFigure(Layers, Regions):
             conjunction with the width argument.
         """
 
-        xpix, ypix = self.world2pix(x, y)
+        xpix, ypix = self.world2pixel(x, y)
 
         pix_scale = proj_plane_pixel_scales(self._wcs)
         sx, sy = pix_scale[self.x], pix_scale[self.y]
@@ -664,7 +664,6 @@ class FITSFigure(Layers, Regions):
 
         if min_auto or max_auto:
 
-            # TODO: see if we can speed this up by avoiding instantiating every time.
             interval = AsymmetricPercentileInterval(pmin, pmax, n_samples=10000)
             try:
                 vmin_auto, vmax_auto = interval.get_limits(self._data)
@@ -1075,7 +1074,7 @@ class FITSFigure(Layers, Regions):
                     x2 = x - r * np.sin(a)
                     y2 = y + r * np.cos(a)
 
-                    x_world, y_world=wcs_util.pix2world(wcs_p, [x1, x2],[y1, y2])
+                    x_world, y_world = self.pixel2world([x1, x2], [y1, y2], wcs=wcs_p)
                     line = np.array([x_world, y_world])
                     linelist.append(line)
 
@@ -1273,7 +1272,7 @@ class FITSFigure(Layers, Regions):
             transform = self.ax.transData
         else:
             if angle_frame == 'pixel':
-                x, y = wcs_util.world2pix(self._wcs, xw, yw)
+                x, y = self.world2pixel(xw, yw)
                 pix_scale = proj_plane_pixel_scales(self._wcs)
                 sx, sy = pix_scale[self.x], pix_scale[self.y]
                 w = width / sx
@@ -1391,7 +1390,7 @@ class FITSFigure(Layers, Regions):
             transform = self.ax.transData
         else:
             if angle_frame == 'pixel':
-                x, y = wcs_util.world2pix(self._wcs, xw, yw)
+                x, y = self.world2pixel(xw, yw)
                 pix_scale = proj_plane_pixel_scales(self._wcs)
                 sx, sy = pix_scale[self.x], pix_scale[self.y]
                 w = width / sx
@@ -1532,8 +1531,8 @@ class FITSFigure(Layers, Regions):
 
         for i in range(len(x)):
 
-            xp1, yp1 = wcs_util.world2pix(self._wcs, x[i], y[i])
-            xp2, yp2 = wcs_util.world2pix(self._wcs, x[i] + dx[i], y[i] + dy[i])
+            xp1, yp1 = self.world2pixel(x[i], y[i])
+            xp2, yp2 = self.world2pixel(x[i] + dx[i], y[i] + dy[i])
 
             if width == 'auto':
                 width = 0.02 * np.sqrt((xp2 - xp1) ** 2 + (yp2 - yp1) ** 2)
@@ -1846,7 +1845,7 @@ class FITSFigure(Layers, Regions):
             if self.image:
                 self.image.set_cmap(cmap=plt.cm.get_cmap('gist_yarg'))
 
-    def world2pixel(self, xw, yw):
+    def world2pixel(self, xw, yw, wcs=None):
         """
         Convert world to pixel coordinates.
 
@@ -1864,9 +1863,11 @@ class FITSFigure(Layers, Regions):
         yp : float or iterable
             y pixel coordinate
         """
-        return self._wcs.wcs_world2pix(xw, yw, 0)
+        if wcs is None:
+            wcs = self._wcs
+        return wcs.wcs_world2pix(xw, yw, 0)
 
-    def pixel2world(self, xp, yp):
+    def pixel2world(self, xp, yp, wcs=None):
         """
         Convert pixel to world coordinates.
 
@@ -1884,7 +1885,9 @@ class FITSFigure(Layers, Regions):
         yw : float or iterable
             y world coordinate
         """
-        return self._wcs.pix2world(xp, yp, 0)
+        if wcs is None:
+            wcs = self._wcs
+        return wcs.pix2world(xp, yp, 0)
 
     @auto_refresh
     def add_grid(self):

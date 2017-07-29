@@ -24,7 +24,7 @@ class TickLabels(object):
         If the x-axis type is ``longitude`` or ``latitude``, then the options
         are:
 
-            * ``ddd.ddddd`` - decimal degrees, where the number of decimal places can be varied
+            * ``d.ddddd`` - decimal degrees, where the number of decimal places can be varied
             * ``hh`` or ``dd`` - hours (or degrees)
             * ``hh:mm`` or ``dd:mm`` - hours and minutes (or degrees and arcminutes)
             * ``hh:mm:ss`` or ``dd:mm:ss`` - hours, minutes, and seconds (or degrees, arcminutes, and arcseconds)
@@ -36,6 +36,8 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis
         is left unchanged.
         """
+        if 'dd.' in xformat:
+            xformat = xformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.x].set_major_formatter(xformat)
 
     @auto_refresh
@@ -58,6 +60,8 @@ class TickLabels(object):
         If one of these arguments is not specified, the format for that axis
         is left unchanged.
         """
+        if 'dd.' in yformat:
+            yformat = yformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.y].set_major_formatter(yformat)
 
     @auto_refresh
