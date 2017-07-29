@@ -15,8 +15,6 @@ from astropy.extern import six
 from astropy import log
 from astropy.io import fits
 
-from . import image_util
-
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
                   stretch='linear', vmid=None, exponent=2):

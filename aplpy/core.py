@@ -17,18 +17,16 @@ from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 from astropy.nddata.utils import block_reduce
-
+from astropy.visualization import AsymmetricPercentileInterval, simple_norm
 import numpy as np
 
 from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
 
 from astropy import log
-import astropy.utils.exceptions as aue
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 
 from . import convolve_util
-from . import image_util
 from . import header as header_util
 from . import slicer
 
@@ -40,7 +38,6 @@ from .axis_labels import AxisLabels
 from .overlays import Beam, Scalebar
 from .regions import Regions
 from .colorbar import Colorbar
-from .normalize import APLpyNormalize
 from .frame import Frame
 
 from .decorators import auto_refresh, fixdocstring
@@ -283,10 +280,6 @@ class FITSFigure(Layers, Regions):
 
         # Initialize layers list
         self._initialize_layers()
-
-        # Find generating function for vmin/vmax
-        # TODO: replace this with astropy stretches
-        self._auto_v = image_util.percentile_function(self._data)
 
         # Set image holder to be empty
         self.image = None
@@ -663,22 +656,32 @@ class FITSFigure(Layers, Regions):
         if cmap == 'default':
             cmap = self._get_colormap_default()
 
-        min_auto = np.equal(vmin, None)
-        max_auto = np.equal(vmax, None)
+        min_auto = vmin is None
+        max_auto = vmax is None
 
         # The set of available functions
         cmap = plt.cm.get_cmap(cmap)
 
-        if min_auto:
-            vmin = self._auto_v(pmin)
+        if min_auto or max_auto:
 
-        if max_auto:
-            vmax = self._auto_v(pmax)
+            # TODO: see if we can speed this up by avoiding instantiating every time.
+            interval = AsymmetricPercentileInterval(pmin, pmax, n_samples=10000)
+            try:
+                vmin_auto, vmax_auto = interval.get_limits(self._data)
+            except IndexError:  # no valid values
+                vmin_auto = vmax_auto = 0
+
+            if min_auto:
+                vmin = vmin_auto
+
+            if max_auto:
+                vmax = vmax_auto
 
         # Prepare normalizer object
-        # TODO: replace with astropy normalization
-        normalizer = APLpyNormalize(stretch=stretch, exponent=exponent,
-                                    vmid=vmid, vmin=vmin, vmax=vmax)
+        if stretch == 'arcsinh':
+            stretch = 'asinh'
+        normalizer = simple_norm(self._data, stretch=stretch, power=exponent,
+                                 asinh_a=vmid, min_cut=vmin, max_cut=vmax)
 
         # Adjust vmin/vmax if auto
         if min_auto:
@@ -705,10 +708,11 @@ class FITSFigure(Layers, Regions):
                                                        smooth=smooth,
                                                        kernel=kernel))
         else:
-            self.image = self.ax.imshow(
-                convolve_util.convolve(self._data, smooth=smooth, kernel=kernel),
-                cmap=cmap, interpolation=interpolation, origin='lower',
-                norm=normalizer, aspect=aspect)
+            convolved_data = convolve_util.convolve(self._data, smooth=smooth, kernel=kernel)
+            self.image = self.ax.imshow(convolved_data, cmap=cmap,
+                                        interpolation=interpolation,
+                                        origin='lower', norm=normalizer,
+                                        aspect=aspect)
 
         xmin, xmax = self.ax.get_xbound()
         if xmin == 0.0:
@@ -780,9 +784,6 @@ class FITSFigure(Layers, Regions):
                 raise Exception("Need to specify the filename of an RGB image")
         else:
             image = Image.open(filename)
-
-        if image_util._matplotlib_pil_bug_present():
-            vertical_flip = True
 
         if vertical_flip:
             image = image.transpose(Image.FLIP_TOP_BOTTOM)
@@ -1056,7 +1057,7 @@ class FITSFigure(Layers, Regions):
         wcs_a.nx = header_a['NAXIS%i' % (dimensions[0] + 1)]
         wcs_a.ny = header_a['NAXIS%i' % (dimensions[1] + 1)]
 
-        if (wcs_p.nx!=wcs_a.nx or wcs_p.ny!=wcs_a.ny):
+        if (wcs_p.nx != wcs_a.nx or wcs_p.ny != wcs_a.ny):
             raise Exception("Angle and magnitude images must be same size")
 
         angle = data_a + rotate
