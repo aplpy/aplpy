@@ -2,13 +2,13 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 try:
-    from astropy.convolution import convolve as astropy_convolve, Gaussian2DKernel, Box2DKernel
+    from astropy.convolution import convolve as astropy_convolve, convolve_fft as astropy_fft_convolve, Gaussian2DKernel, Box2DKernel
     make_kernel = None
 except ImportError:
-    from astropy.nddata import convolve as astropy_convolve, make_kernel
+    from astropy.nddata import convolve as astropy_convolve, convolve_fft as astropy_fft_convolve, make_kernel
 
 
-def convolve(image, smooth=3, kernel='gauss'):
+def convolve(image, smooth=3, kernel='gauss', fft=False):
 
     if smooth is None and kernel in ['box', 'gauss']:
         return image
@@ -24,17 +24,25 @@ def convolve(image, smooth=3, kernel='gauss'):
     image_fixed = np.array(image, dtype=float, copy=True)
     image_fixed[np.isinf(image)] = np.nan
 
+    if smooth % 2 == 0:
+        kernelsize = smooth*5+1
+    else:
+        kernelsize = smooth*5
+
     if kernel == 'gauss':
         if make_kernel is None:
-            kernel = Gaussian2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
+            kernel = Gaussian2DKernel(smooth, x_size=kernelsize, y_size=kernelsize)
         else:
-            kernel = make_kernel((smooth * 5, smooth * 5), smooth, 'gaussian')
+            kernel = make_kernel((kernelsize, kernelsize), smooth, 'gaussian')
     elif kernel == 'box':
         if make_kernel is None:
-            kernel = Box2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
+            kernel = Box2DKernel(smooth, x_size=kernelsize, y_size=kernelsize)
         else:
-            kernel = make_kernel((smooth * 5, smooth * 5), smooth, 'boxcar')
+            kernel = make_kernel((kernelsize, kernelsize), smooth, 'boxcar')
     else:
         kernel = kernel
 
-    return astropy_convolve(image, kernel, boundary='extend')
+    if fft:
+        return astropy_fft_convolve(image, kernel, boundary='extend')
+    else:
+        return astropy_convolve(image, kernel, boundary='extend')
