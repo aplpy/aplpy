@@ -12,13 +12,17 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
 
 import matplotlib.pyplot as mpl
 import mpl_toolkits.axes_grid.parasite_axes as mpltk
+
 from astropy.extern import six
+from astropy.visualization import AsymmetricPercentileInterval
 
 from astropy.wcs import WCS
 from astropy.io import fits
 HDU_TYPES = (fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU)
 
 import numpy as np
+
+from astropy.visualization.mpl_normalize import ImageNormalize
 
 from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
@@ -41,7 +45,6 @@ from .axis_labels import AxisLabels
 from .overlays import Beam, Scalebar
 from .regions import Regions
 from .colorbar import Colorbar
-from .normalize import APLpyNormalize
 from .frame import Frame
 
 from .decorators import auto_refresh, fixdocstring
@@ -278,9 +281,6 @@ class FITSFigure(Layers, Regions, Deprecated):
 
         # Initialize layers list
         self._initialize_layers()
-
-        # Find generating function for vmin/vmax
-        self._auto_v = image_util.percentile_function(self._data)
 
         # Set image holder to be empty
         self.image = None
@@ -653,21 +653,18 @@ class FITSFigure(Layers, Regions, Deprecated):
         if cmap == 'default':
             cmap = self._get_colormap_default()
 
-        min_auto = np.equal(vmin, None)
-        max_auto = np.equal(vmax, None)
+        min_auto = vmin is None
+        max_auto = vmax is None
 
         # The set of available functions
         cmap = mpl.cm.get_cmap(cmap)
 
-        if min_auto:
-            vmin = self._auto_v(pmin)
-
-        if max_auto:
-            vmax = self._auto_v(pmax)
+        interval = image_util.PVInterval(vmin=vmin, vmax=vmax, pmin=pmin, pmax=pmax)
+        vmin, vmax = interval.get_limits(self._data)
 
         # Prepare normalizer object
-        normalizer = APLpyNormalize(stretch=stretch, exponent=exponent,
-                                    vmid=vmid, vmin=vmin, vmax=vmax)
+        stretch = image_util.get_stretch(stretch, exponent=exponent, vmin=vmin, vmid=vmid, vmax=vmax)
+        normalizer = ImageNormalize(stretch=stretch, vmin=vmin, vmax=vmax)
 
         # Adjust vmin/vmax if auto
         if min_auto:
@@ -895,10 +892,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         image_contour = convolve_util.convolve(data_contour, smooth=smooth, kernel=kernel)
         extent_contour = (0.5, wcs_contour.nx + 0.5, 0.5, wcs_contour.ny + 0.5)
 
-        if type(levels) == int:
-            auto_levels = image_util.percentile_function(image_contour)
-            vmin = auto_levels(0.25)
-            vmax = auto_levels(99.75)
+        if isinstance(levels, six.integer_types):
+            interval = AsymmetricPercentileInterval(0.25, 99.75, n_samples=10000)
+            vmin, vmax = interval.get_limits(self._data)
             levels = np.linspace(vmin, vmax, levels)
 
         if filled:
