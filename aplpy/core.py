@@ -1280,7 +1280,7 @@ class FITSFigure(Layers, Regions, Deprecated):
         self._layers[ellipse_set_name] = c
 
     @auto_refresh
-    def show_rectangles(self, xw, yw, width, height, layer=False, zorder=None, **kwargs):
+    def show_rectangles(self, xw, yw, width, height, angle=0.0, layer=False, zorder=None, **kwargs):
         '''
         Overlay rectangles on the current plot.
 
@@ -1299,6 +1299,9 @@ class FITSFigure(Layers, Regions, Deprecated):
         height : int or float or list or `~numpy.ndarray`
             The height of the rectangle (in world coordinates)
 
+        angle : int or float or list or `~numpy.ndarray`
+            The rotation angle about xw, yw in degrees.
+            
         layer : str, optional
             The name of the rectangle layer. This is useful for giving
             custom names to layers (instead of rectangle_set_n) and for
@@ -1331,21 +1334,32 @@ class FITSFigure(Layers, Regions, Deprecated):
         else:
             height = np.array(height)
 
+        if np.isscalar(angle):
+            ap = np.repeat(angle, len(xw))
+        else:
+            ap = np.array(angle)
+            
         if not 'facecolor' in kwargs:
             kwargs.setdefault('facecolor', 'none')
 
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        xp, yp = wcs_util.world2pix(self._wcs, xw, yw)
+        xc, yc = wcs_util.world2pix(self._wcs, xw, yw)
         wp = width / wcs_util.celestial_pixel_scale(self._wcs)
         hp = height / wcs_util.celestial_pixel_scale(self._wcs)
 
+        # Rotate around the center position to find the lower-left corner that is 
+        # used by Rectangle.
+        radeg = np.pi / 180.
+        xp = xc - wp / 2.
+        yp = yc - hp / 2.
+        xr = (xp - xc)*np.cos((angle)*radeg) - (yp - yc)*np.sin((angle)*radeg) + xc
+        yr = (xp - xc)*np.sin((angle)*radeg) + (yp - yc)*np.cos((angle)*radeg) + yc
+        
         patches = []
-        xp = xp - wp / 2.
-        yp = yp - hp / 2.
         for i in range(len(xp)):
-            patches.append(Rectangle((xp[i], yp[i]), width=wp[i], height=hp[i]))
+            patches.append(Rectangle((xr[i], yr[i]), width=wp[i], height=hp[i], angle=ap[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
