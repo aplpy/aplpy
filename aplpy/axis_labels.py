@@ -1,7 +1,8 @@
 from __future__ import absolute_import, print_function, division
 
 from astropy.wcs.utils import wcs_to_celestial_frame
-from astropy.coordinates import ICRS, FK5, FK4, Galactic, BaseEclipticFrame
+from astropy.coordinates import (ICRS, FK5, FK4, Galactic,
+                                 HeliocentricTrueEcliptic, BarycentricTrueEcliptic)
 
 from .decorators import auto_refresh, fixdocstring
 
@@ -54,7 +55,9 @@ class AxisLabels(object):
             xtext = 'Galactic Longitude'
             ytext = 'Galactic Latitude'
 
-        elif isinstance(frame, BaseEclipticFrame):
+        elif isinstance(frame, (HeliocentricTrueEcliptic, BarycentricTrueEcliptic)):
+
+            # NOTE: once we support only Astropy 2.0+, we can use BaseEclipticFrame
 
             xtext = 'Ecliptic Longitude'
             ytext = 'Ecliptic Latitude'
