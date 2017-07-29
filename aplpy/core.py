@@ -788,6 +788,30 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
+    def adjust_hsv(self, hue=0, saturation=0, value=0):
+        """
+        Adjust the hue, saturation, and/or value of the image
+        *only works for RGB images!*
+
+        Parameters
+        ----------
+        hue : 0-360
+            Hue rotation angle
+        saturation : 0-1 (float)
+            Goes from greyscale (0) to fully colored (1)
+        value : 0-1 (float)
+            Goes from black (0) to white/color (1)
+        """
+
+        image = self.image.get_array()
+        if image.ndim != 3:
+            raise TypeError("Image must be an RGB image to adjust its hsv")
+
+        image = image_util.adjust_hsv(image, hue_rotation=hue,
+                saturation=saturation, value=value)
+        self.image.set_array(image)
+
+    @auto_refresh
     def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
         '''
         Overlay contours on the current plot.
