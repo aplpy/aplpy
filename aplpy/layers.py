@@ -47,9 +47,9 @@ class Layers(object):
         self._poly_counter = 0
 
     def list_layers(self):
-        '''
+        """
         Print a list of layers to standard output.
-        '''
+        """
 
         layers_list = []
 
@@ -81,14 +81,14 @@ class Layers(object):
 
     @auto_refresh
     def remove_layer(self, layer, raise_exception=True):
-        '''
+        """
         Remove a layer.
 
         Parameters
         ----------
         layer : str
             The name of the layer to remove
-        '''
+        """
 
         if layer in self._layers:
 
@@ -112,7 +112,7 @@ class Layers(object):
 
     @auto_refresh
     def hide_layer(self, layer, raise_exception=True):
-        '''
+        """
         Hide a layer.
 
         This differs from remove_layer in that if a layer is hidden
@@ -122,7 +122,7 @@ class Layers(object):
         ----------
         layer : str
             The name of the layer to hide
-        '''
+        """
         if layer in self._layers:
 
             layer_type = self._layer_type(layer)
@@ -140,7 +140,7 @@ class Layers(object):
 
     @auto_refresh
     def show_layer(self, layer, raise_exception=True):
-        '''
+        """
         Show a layer.
 
         This shows a layer previously hidden with hide_layer
@@ -149,7 +149,7 @@ class Layers(object):
         ----------
         layer : str
             The name of the layer to show
-        '''
+        """
         if layer in self._layers:
 
             layer_type = self._layer_type(layer)
@@ -165,14 +165,14 @@ class Layers(object):
                 raise Exception("Layer " + layer + " does not exist")
 
     def get_layer(self, layer, raise_exception=True):
-        '''
+        """
         Return a layer object.
 
         Parameters
         ----------
         layer : str
             The name of the layer to return
-        '''
+        """
         if layer in self._layers:
             return self._layers[layer]
         else:

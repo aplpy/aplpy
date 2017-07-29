@@ -9,11 +9,6 @@ from matplotlib.ticker import LogFormatterMathtext
 
 from .decorators import auto_refresh, fixdocstring
 
-# As of matplotlib 0.99.1.1, any time a colorbar property is updated, the axes
-# need to be removed and re-created. This has been fixed in svn r8213 but we
-# should wait until we up the required version of matplotlib before changing the
-# code here
-
 
 class Colorbar(object):
 
@@ -21,9 +16,6 @@ class Colorbar(object):
         self._figure = parent._figure
         self._colorbar_axes = None
         self._parent = parent
-
-        # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
 
         self._base_settings = {}
         self._ticklabel_fontproperties = FontProperties()
@@ -34,7 +26,7 @@ class Colorbar(object):
              labels=True, log_format=False, box=None,
              box_orientation='vertical', axis_label_text=None,
              axis_label_rotation=None, axis_label_pad=5):
-        '''
+        """
         Show a colorbar on the side of the image.
 
         Parameters
@@ -71,7 +63,7 @@ class Colorbar(object):
 
         axis_label_text str, optional
             Optional text label of the colorbar.
-        '''
+        """
 
         self._base_settings['location'] = location
         self._base_settings['width'] = width
@@ -88,7 +80,7 @@ class Colorbar(object):
         if self._parent.image:
 
             if self._colorbar_axes:
-                self._parent._figure.delaxes(self._colorbar_axes)
+                self._figure.delaxes(self._colorbar_axes)
 
             if box is None:
 
@@ -115,11 +107,11 @@ class Colorbar(object):
                 else:
                     raise Exception("location should be one of: right/top")
 
-                self._parent._figure.add_axes(self._colorbar_axes)
+                self._figure.add_axes(self._colorbar_axes)
 
             else:
 
-                self._colorbar_axes = self._parent._figure.add_axes(box)
+                self._colorbar_axes = self._figure.add_axes(box)
                 orientation = box_orientation
 
             if log_format:
@@ -127,7 +119,7 @@ class Colorbar(object):
             else:
                 format = None
 
-            self._colorbar = self._parent._figure.colorbar(self._parent.image, cax=self._colorbar_axes,
+            self._colorbar = self._figure.colorbar(self._parent.image, cax=self._colorbar_axes,
                                                            orientation=orientation, format=format,
                                                            ticks=ticks)
             if axis_label_text:
@@ -180,22 +172,22 @@ class Colorbar(object):
 
     @auto_refresh
     def hide(self):
-        self._parent._figure.delaxes(self._colorbar_axes)
+        self._figure.delaxes(self._colorbar_axes)
         self._colorbar_axes = None
 
     @auto_refresh
     def _remove(self):
-        self._parent._figure.delaxes(self._colorbar_axes)
+        self._figure.delaxes(self._colorbar_axes)
 
     # LOCATION AND SIZE
 
     @auto_refresh
     def set_location(self, location):
-        '''
+        """
         Set the location of the colorbar.
 
         Should be one of 'left', 'right', 'top', 'bottom'.
-        '''
+        """
         self._base_settings['location'] = location
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -203,9 +195,9 @@ class Colorbar(object):
 
     @auto_refresh
     def set_width(self, width):
-        '''
+        """
         Set the width of the colorbar relative to the canvas size.
-        '''
+        """
         self._base_settings['width'] = width
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -213,10 +205,10 @@ class Colorbar(object):
 
     @auto_refresh
     def set_pad(self, pad):
-        '''
+        """
         Set the spacing between the colorbar and the image relative to the
         canvas size.
-        '''
+        """
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -224,9 +216,9 @@ class Colorbar(object):
 
     @auto_refresh
     def set_ticks(self, ticks):
-        '''
+        """
         Set the position of the ticks on the colorbar.
-        '''
+        """
         self._base_settings['ticks'] = ticks
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -234,9 +226,9 @@ class Colorbar(object):
 
     @auto_refresh
     def set_labels(self, labels):
-        '''
+        """
         Set whether to show numerical labels.
-        '''
+        """
         self._base_settings['labels'] = labels
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -244,13 +236,13 @@ class Colorbar(object):
 
     @auto_refresh
     def set_box(self, box, box_orientation='vertical'):
-        '''
+        """
         Set the box within which to place the colorbar.
 
         This should be in the form [xmin, ymin, dx, dy] and be in relative
         figure units. The orientation of the colorbar within the box can be
         controlled with the box_orientation argument.
-        '''
+        """
         self._base_settings['box'] = box
         self._base_settings['box_orientation'] = box_orientation
         self.show(**self._base_settings)
@@ -259,9 +251,9 @@ class Colorbar(object):
 
     @auto_refresh
     def set_axis_label_text(self, axis_label_text):
-        '''
+        """
         Set the colorbar label text.
-        '''
+        """
         self._base_settings['axis_label_text'] = axis_label_text
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -269,9 +261,9 @@ class Colorbar(object):
 
     @auto_refresh
     def set_axis_label_rotation(self, axis_label_rotation):
-        '''
+        """
         Set the colorbar label rotation.
-        '''
+        """
         self._base_settings['axis_label_rotation'] = axis_label_rotation
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -279,9 +271,9 @@ class Colorbar(object):
 
     @auto_refresh
     def set_axis_label_pad(self, axis_label_pad):
-        '''
+        """
         Set the colorbar label displacement, in points.
-        '''
+        """
         self._base_settings['axis_label_pad'] = axis_label_pad
         self.show(**self._base_settings)
         self.set_font(fontproperties=self._ticklabel_fontproperties)
@@ -298,7 +290,7 @@ class Colorbar(object):
     @fixdocstring
     def set_font(self, family=None, style=None, variant=None, stretch=None,
                  weight=None, size=None, fontproperties=None):
-        '''
+        """
         Set the font of the tick labels.
 
         Parameters
@@ -312,7 +304,7 @@ class Colorbar(object):
         Default values are set by matplotlib or previously set values if
         set_font has already been called. Global default values can be set by
         editing the matplotlibrc file.
-        '''
+        """
 
         if family:
             self._ticklabel_fontproperties.set_family(family)
@@ -352,7 +344,7 @@ class Colorbar(object):
     def set_axis_label_font(self, family=None, style=None, variant=None,
                             stretch=None, weight=None, size=None,
                             fontproperties=None):
-        '''
+        """
         Set the font of the tick labels.
 
         Parameters
@@ -366,7 +358,7 @@ class Colorbar(object):
         Default values are set by matplotlib or previously set values if
         set_font has already been called. Global default values can be set by
         editing the matplotlibrc file.
-        '''
+        """
 
         if family:
             self._axislabel_fontproperties.set_family(family)
@@ -399,18 +391,18 @@ class Colorbar(object):
 
     @auto_refresh
     def set_frame_linewidth(self, linewidth):
-        '''
+        """
         Set the linewidth of the colorbar frame, in points.
-        '''
+        """
         warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
             self._colorbar_axes.spines[key].set_linewidth(linewidth)
 
     @auto_refresh
     def set_frame_color(self, color):
-        '''
+        """
         Set the color of the colorbar frame, in points.
-        '''
+        """
         warnings.warn("This method is not functional at this time")
         for key in self._colorbar_axes.spines:
             self._colorbar_axes.spines[key].set_edgecolor(color)

@@ -1,3 +1,5 @@
+# NOT YET CHECKED/SIMPLIFIED
+
 from __future__ import absolute_import, print_function, division
 
 # The APLpyNormalize class is largely based on code provided by Sarah Graves.

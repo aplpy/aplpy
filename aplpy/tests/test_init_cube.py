@@ -42,13 +42,12 @@ def test_hdu_init():
     f.close()
 
 
-# Test initialization through a WCS object (should not work)
+# Test initialization through a WCS object
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    exc = ValueError if hasattr(wcs,'naxis1') else aue.AstropyDeprecationWarning
-    with pytest.raises(exc):
+    with pytest.raises(ValueError) as exc:
         FITSFigure(wcs, slices=[5])
-
+    assert exc.value.args[0] == "FITSFigure initialization via WCS objects can only be done with 2-dimensional WCS objects"
 
 # Test initialization through an HDU object (no WCS)
 def test_hdu_nowcs_init():

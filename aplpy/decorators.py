@@ -2,32 +2,37 @@ from __future__ import absolute_import, print_function, division
 
 import threading
 
-from .decorator import decorator
-
+from astropy.utils.decorators import wraps
 
 mydata = threading.local()
 
+__all__ = ['auto_refresh', 'fixdocstring']
+
 
 def auto_refresh(f):
-    return decorator(_auto_refresh, f)
 
+    @wraps(f)
+    def wrapper(*args, **kwargs):
 
-def _auto_refresh(f, *args, **kwargs):
-    if 'refresh' in kwargs:
-        refresh = kwargs.pop('refresh')
-    else:
-        refresh = True
-    # The following is necessary rather than using mydata.nesting = 0 at the
-    # start of the file, because doing the latter caused issues with the Django
-    # development server.
-    mydata.nesting = getattr(mydata, 'nesting', 0) + 1
-    try:
-        return f(*args, **kwargs)
-    finally:
-        mydata.nesting -= 1
-        if hasattr(args[0], '_figure'):
-            if refresh and mydata.nesting == 0 and args[0]._parameters.auto_refresh:
-                args[0]._figure.canvas.draw()
+        if 'refresh' in kwargs:
+            refresh = kwargs.pop('refresh')
+        else:
+            refresh = True
+
+        # The following is necessary rather than using mydata.nesting = 0 at the
+        # start of the file, because doing the latter caused issues with the Django
+        # development server.
+        mydata.nesting = getattr(mydata, 'nesting', 0) + 1
+
+        try:
+            return f(*args, **kwargs)
+        finally:
+            mydata.nesting -= 1
+            if hasattr(args[0], '_figure'):
+                if refresh and mydata.nesting == 0 and args[0]._figure._auto_refresh:
+                    args[0]._figure.canvas.draw()
+
+    return wrapper
 
 
 doc = {}

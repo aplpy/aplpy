@@ -74,13 +74,9 @@ def test_hdu_init():
 # Test initialization through a WCS object
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    if hasattr(wcs,'naxis1'):
-        f = FITSFigure(wcs)
-        f.show_grayscale()
-        f.close()
-    else:
-        with pytest.raises(aue.AstropyDeprecationWarning):
-            f = FITSFigure(wcs)
+    f = FITSFigure(wcs)
+    f.show_grayscale()
+    f.close()
 
 
 # Test initialization through a WCS object with wcs.to_header() as a go-between
@@ -91,8 +87,8 @@ def test_wcs_toheader_init():
     header_ = fits.Header.fromtextfile(REFERENCE)
     header = wcs.to_header()
     wcs2 = AstropyWCS(header)
-    wcs2.naxis1 = wcs.naxis1 = header_['NAXIS1']
-    wcs2.naxis2 = wcs.naxis2 = header_['NAXIS2']
+    wcs2._naxis1 = wcs._naxis1 = header_['NAXIS1']
+    wcs2._naxis2 = wcs._naxis2 = header_['NAXIS2']
     f = FITSFigure(wcs2)
     f.show_grayscale()
     f.add_grid()

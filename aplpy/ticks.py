@@ -1,13 +1,5 @@
 from __future__ import absolute_import, print_function, division
 
-import warnings
-
-import numpy as np
-from matplotlib.pyplot import Locator
-import astropy.units as u
-
-from . import angle_util as au
-from . import scalar_util as su
 from .decorators import auto_refresh
 
 
@@ -15,13 +7,11 @@ class Ticks(object):
 
     @auto_refresh
     def __init__(self, parent):
+        self._figure = parent._figure
         self._ax = parent.ax
         self.x = parent.x
         self.y = parent.y
         self._wcs = self._ax.wcs
-
-        # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
 
     @auto_refresh
     def set_xspacing(self, spacing):
@@ -45,24 +35,6 @@ class Ticks(object):
             self._ax.coords[coord].set_ticks(spacing=None)
         else:
             coord_unit = self._wcs.wcs.cunit[coord]
-
-            coord_type = self._ax.coords[coord].coord_type
-            format = self._ax.coords[coord]._formatter_locator.format
-            if format is not None:
-                if coord_type in ['longitude', 'latitude']:
-                    try:
-                        # TODO: Test this
-                        au._check_format_spacing_consistency(format, au.Angle(degrees=spacing, latitude=coord_type == 'latitude'))
-                    except au.InconsistentSpacing:
-                        warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                        return
-                else:
-                    try:
-                        # TODO: Test
-                        su._check_format_spacing_consistency(format, spacing)
-                    except au.InconsistentSpacing:
-                        warnings.warn("WARNING: Requested tick spacing format cannot be shown by current label format. The tick spacing will not be changed.")
-                        return
             self._ax.coords[coord].set_ticks(spacing=spacing * coord_unit)
 
     @auto_refresh
@@ -128,25 +100,25 @@ class Ticks(object):
         """
         Show the x-axis ticks
         """
-        self._ax.coords[self.x].set_ticks_position('bt')
+        self._ax.coords[self.x].set_ticks_visible(True)
 
     @auto_refresh
     def hide_x(self):
         """
         Hide the x-axis ticks
         """
-        self._ax.coords[self.x].set_ticks_position('')
+        self._ax.coords[self.x].set_ticks_visible(False)
 
     @auto_refresh
     def show_y(self):
         """
         Show the y-axis ticks
         """
-        self._ax.coords[self.y].set_ticks_position('lr')
+        self._ax.coords[self.y].set_ticks_visible(True)
 
     @auto_refresh
     def hide_y(self):
         """
         Hide the y-axis ticks
         """
-        self._ax.coords[self.y].set_ticks_position('')
+        self._ax.coords[self.y].set_ticks_visible(False)

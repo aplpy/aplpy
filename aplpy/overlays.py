@@ -1,3 +1,5 @@
+# NOT YET CHECKED/SIMPLIFIED
+
 from __future__ import absolute_import, print_function, division
 
 import warnings
@@ -6,14 +8,12 @@ from mpl_toolkits.axes_grid1.anchored_artists \
     import AnchoredEllipse, AnchoredSizeBar
 
 import numpy as np
-from matplotlib.patches import FancyArrowPatch
 from matplotlib.font_manager import FontProperties
 
 from astropy import units as u
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.extern import six
 
-from . import wcs_util
 from .decorators import auto_refresh
 
 corners = {}
@@ -36,9 +36,6 @@ class Scalebar(object):
         self._wcs = parent._wcs
         self._figure = parent._figure
         self._dimensions = [parent.x, parent.y]
-
-        # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
 
         # Initialize settings
         self._base_settings = {}
@@ -336,9 +333,6 @@ class Beam(object):
         self._ax = parent.ax
         self._wcs = parent._wcs
         self._dimensions = [parent.x, parent.y]
-
-        # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
 
         # Initialize settings
         self._base_settings = {}
