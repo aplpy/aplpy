@@ -68,8 +68,6 @@ def test_tick_labels_font():
 def test_single_d_format():
     hdu = generate_hdu(REFERENCE)
     f = FITSFigure(hdu)
-    #f = FITSFigure(hdu, auto_refresh=True)
     f.show_grayscale()
     f.tick_labels.set_yformat('d.d')
     f.save('test_label_format.png')
-    #f.close()
