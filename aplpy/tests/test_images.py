@@ -3,6 +3,13 @@ import tempfile
 
 import numpy as np
 
+try:
+    import pyregion  # noqa
+except ImportError:
+    PYREGION_INSTALLED = False
+else:
+    PYREGION_INSTALLED = True
+
 from astropy.tests.helper import pytest, remote_data
 
 from .. import FITSFigure
@@ -164,6 +171,7 @@ class TestBasic(BaseImageTests):
 
     # Test for ds9 regions
     @remote_data
+    @pytest.mark.skipif("not PYREGION_INSTALLED")
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_regions(self, generate):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
