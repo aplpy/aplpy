@@ -267,6 +267,10 @@ class FITSFigure(Layers, Regions):
         self.x = dimensions[0]
         self.y = dimensions[1]
 
+        # Default to inwards ticks
+        self.ax.coords[self.x].ticks.set_tick_out(False)
+        self.ax.coords[self.y].ticks.set_tick_out(False)
+
         # Initialize tick, label, and frame convenience wrappers (these dispatch
         # calls to WCSAxes)
         self.ticks = Ticks(self)
@@ -1825,12 +1829,15 @@ class FITSFigure(Layers, Regions):
             The theme to use. At the moment, this can be 'pretty' (for
             viewing on-screen) and 'publication' (which makes the ticks
             and grid black, and displays the image in inverted grayscale)
-       """
+        """
 
         if theme == 'pretty':
             self.frame.set_color('black')
             self.frame.set_linewidth(1.0)
-            self.ticks.set_color('black')
+            if self.ax.coords[self.x].ticks.get_tick_out():
+                self.ticks.set_color('black')
+            else:
+                self.ticks.set_color('white')
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'viridis'
             if self.image:

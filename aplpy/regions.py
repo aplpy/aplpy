@@ -66,9 +66,8 @@ class Regions(object):
 
         PC, TC = ds9(region_file, flatten_header(self._header), **kwargs)
 
-        # ffpc = self._ax1.add_collection(PC)
-        PC.add_to_axes(self._ax1)
-        TC.add_to_axes(self._ax1)
+        PC.add_to_axes(self.ax)
+        TC.add_to_axes(self.ax)
 
         if layer:
             region_set_name = layer

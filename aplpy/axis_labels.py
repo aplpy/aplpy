@@ -1,5 +1,8 @@
 from __future__ import absolute_import, print_function, division
 
+from astropy.wcs.utils import wcs_to_celestial_frame
+from astropy.coordinates import ICRS, FK5, FK4, Galactic, BaseEclipticFrame
+
 from .decorators import auto_refresh, fixdocstring
 
 
@@ -11,6 +14,86 @@ class AxisLabels(object):
         self._wcs = parent.ax.wcs
         self.x = parent.x
         self.y = parent.y
+
+        xcoord_type = self._ax.coords[self.x].coord_type
+        ycoord_type = self._ax.coords[self.y].coord_type
+
+        if xcoord_type == 'longitude' and ycoord_type == 'latitude':
+            celestial = True
+            inverted = False
+        elif xcoord_type == 'latitude' and ycoord_type == 'longitude':
+            celestial = True
+            inverted = True
+        else:
+            celestial = inverted = False
+
+        if celestial:
+            frame = wcs_to_celestial_frame(self._wcs)
+        else:
+            frame = None
+
+        if isinstance(frame, ICRS):
+
+            xtext = 'RA (ICRS)'
+            ytext = 'Dec (ICRS)'
+
+        elif isinstance(frame, FK5):
+
+            equinox = "{:g}".format(FK5.equinox.jyear)
+            xtext = 'RA (J{0})'.format(equinox)
+            ytext = 'Dec (J{0})'.format(equinox)
+
+        elif isinstance(frame, FK4):
+
+            equinox = "{:g}".format(FK4.equinox.byear)
+            xtext = 'RA (B{0})'.format(equinox)
+            ytext = 'Dec (B{0})'.format(equinox)
+
+        elif isinstance(frame, Galactic):
+
+            xtext = 'Galactic Longitude'
+            ytext = 'Galactic Latitude'
+
+        elif isinstance(frame, BaseEclipticFrame):
+
+            xtext = 'Ecliptic Longitude'
+            ytext = 'Ecliptic Latitude'
+
+        else:
+
+            cunit_x = self._wcs.wcs.cunit[self.x]
+            cunit_y = self._wcs.wcs.cunit[self.y]
+
+            cname_x = self._wcs.wcs.cname[self.x]
+            cname_y = self._wcs.wcs.cname[self.y]
+
+            ctype_x = self._wcs.wcs.ctype[self.x]
+            ctype_y = self._wcs.wcs.ctype[self.y]
+
+            xunit = " (%s)" % cunit_x if cunit_x not in ["", None] else ""
+            yunit = " (%s)" % cunit_y if cunit_y not in ["", None] else ""
+
+            if len(cname_x) > 0:
+                xtext = cname_x + xunit
+            else:
+                if len(ctype_x) == 8 and ctype_x[4] == '-':
+                    xtext = ctype_x[:4].replace('-', '') + xunit
+                else:
+                    xtext = ctype_x + xunit
+
+            if len(cname_y) > 0:
+                ytext = cname_y + yunit
+            else:
+                if len(ctype_y) == 8 and ctype_y[4] == '-':
+                    ytext = ctype_y[:4].replace('-', '') + yunit
+                else:
+                    ytext = ctype_y + yunit
+
+        if inverted:
+            xtext, ytext = ytext, xtext
+
+        self.set_xtext(xtext)
+        self.set_ytext(ytext)
 
         self.set_xposition('bottom')
         self.set_yposition('left')
