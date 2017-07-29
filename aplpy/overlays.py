@@ -249,10 +249,10 @@ class Scalebar(object):
         All arguments are passed to the matplotlib Text class. See the
         matplotlib documentation for more details.
         """
-        for kwarg,val in kwargs.items():
+        for kwarg, val in kwargs.items():
             try:
                 # Only set attributes that exist
-                kvpair = {kwarg:val}
+                kvpair = {kwarg: val}
                 self._scalebar.txt_label.get_children()[0].set(**kvpair)
                 self._label_settings[kwarg] = val
             except AttributeError:
@@ -266,9 +266,9 @@ class Scalebar(object):
         All arguments are passed to the matplotlib Rectangle class. See the
         matplotlib documentation for more details.
         """
-        for kwarg,val in kwargs.items():
+        for kwarg, val in kwargs.items():
             try:
-                kvpair = {kwarg:val}
+                kvpair = {kwarg: val}
                 self._scalebar.size_bar.get_children()[0].set(**kvpair)
                 self._scalebar_settings[kwarg] = val
             except AttributeError:
@@ -317,6 +317,7 @@ class Scalebar(object):
         warnings.warn("scalebar.set_font_style is deprecated - use scalebar.set_font instead", DeprecationWarning)
         self.set_font(style=style)
 
+
 # For backward-compatibility
 ScaleBar = Scalebar
 
@@ -342,7 +343,6 @@ class Beam(object):
     def show(self, major='BMAJ', minor='BMIN', angle='BPA',
              corner='bottom left', frame=False, borderpad=0.4, pad=0.5,
              **kwargs):
-
         """
         Display the beam shape and size for the primary image.
 

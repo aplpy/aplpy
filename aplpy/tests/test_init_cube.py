@@ -49,6 +49,7 @@ def test_wcs_init():
         FITSFigure(wcs, slices=[5])
     assert exc.value.args[0] == "FITSFigure initialization via WCS objects can only be done with 2-dimensional WCS objects"
 
+
 # Test initialization through an HDU object (no WCS)
 def test_hdu_nowcs_init():
     data = np.zeros((16, 16, 16))
@@ -73,6 +74,7 @@ def test_hdu_noslices():
     with pytest.raises(Exception):
         FITSFigure(hdu)
 
+
 # Test that initialization without specifying slices does *not* raise an
 # exception if the remaining dimensions have size 1.
 def test_hdu_noslices_2d():
@@ -80,6 +82,7 @@ def test_hdu_noslices_2d():
     f = FITSFigure(data)
     f.show_grayscale()
     f.close()
+
 
 # Now check initialization with valid and invalid dimensions. We just need to
 # tes with HDU objects since we already tested that reading from files is ok.
@@ -117,6 +120,7 @@ def test_init_extensive_wcs(tmpdir, header, dimensions):
     f = FITSFigure(filename, dimensions=dimensions, slices=[5])
     f.show_grayscale()
     f.close()
+
 
 # Test that recenter works for cube slices
 # TODO: remove xfail once pix2world transformations work for multidimensional

@@ -135,6 +135,7 @@ def test_init_dimensions_invalid(dimensions):
 # Now check initialization of different WCS projections, and we check only
 # valid dimensions
 
+
 valid_parameters = []
 for h in HEADERS:
     for d in VALID_DIMENSIONS:
@@ -162,17 +163,19 @@ def test_init_car_invalid(dimensions):
         FITSFigure(hdu, dimensions=dimensions)
 
 # Check that images containing only NaN or Inf values don't crash FITSFigure
+
+
 def test_init_only_naninf():
-    data = np.ones((10,10)) * np.nan
-    data[::2,::2] = np.inf
+    data = np.ones((10, 10)) * np.nan
+    data[::2, ::2] = np.inf
     f = FITSFigure(data)
     f.show_grayscale()
     f.show_colorscale()
 
 
 def test_init_single_pixel():
-    data = np.zeros((4,4))
+    data = np.zeros((4, 4))
     data[...] = np.nan
-    data[2,2] = 1
+    data[2, 2] = 1
     f = FITSFigure(data)
     f.show_grayscale()

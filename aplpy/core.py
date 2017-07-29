@@ -492,7 +492,7 @@ class FITSFigure(Layers, Regions):
         if (xpix + dx_pix < -0.5 or
             xpix - dx_pix > self._wcs.nx - 0.5 or
             ypix + dy_pix < -0.5 or
-            ypix - dy_pix > self._wcs.ny):
+                ypix - dy_pix > self._wcs.ny):
 
             raise Exception("Zoom region falls outside the image")
 
@@ -902,9 +902,9 @@ class FITSFigure(Layers, Regions):
             cmap = plt.cm.get_cmap('viridis')
 
         if data is not None:
-            data_contour, header_contour, wcs_contour, wcsaxes_slices = self._get_hdu(data,
-                hdu, False, convention=convention, dimensions=dimensions,
-                slices=slices)
+            data_contour, header_contour, wcs_contour, wcsaxes_slices = \
+                self._get_hdu(data, hdu, False, convention=convention,
+                              dimensions=dimensions, slices=slices)
         else:
             data_contour = self._data
             header_contour = self._header
@@ -1040,17 +1040,19 @@ class FITSFigure(Layers, Regions):
         """
 
         # over-ride default color (none) that will otherwise be set by
-        #show_lines()
+        # show_lines()
         if not 'color' in kwargs:
             kwargs.setdefault('color', 'black')
 
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        data_p, header_p, wcs_p, slices_p = self._get_hdu(pdata, phdu, False, \
-            convention=convention, dimensions=dimensions, slices=slices)
-        data_a, header_a, wcs_a, slices_a = self._get_hdu(adata, ahdu, False, \
-            convention=convention, dimensions=dimensions, slices=slices)
+        data_p, header_p, wcs_p, slices_p = \
+            self._get_hdu(pdata, phdu, False, convention=convention,
+                          dimensions=dimensions, slices=slices)
+        data_a, header_a, wcs_a, slices_a = \
+            self._get_hdu(adata, ahdu, False, convention=convention,
+                          dimensions=dimensions, slices=slices)
 
         # TODO: use slices correctly
 

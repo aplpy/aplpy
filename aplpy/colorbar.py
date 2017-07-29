@@ -120,8 +120,8 @@ class Colorbar(object):
                 format = None
 
             self._colorbar = self._figure.colorbar(self._parent.image, cax=self._colorbar_axes,
-                                                           orientation=orientation, format=format,
-                                                           ticks=ticks)
+                                                   orientation=orientation, format=format,
+                                                   ticks=ticks)
             if axis_label_text:
                 if axis_label_rotation:
                     self._colorbar.set_label(axis_label_text, rotation=axis_label_rotation)

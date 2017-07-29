@@ -175,8 +175,8 @@ def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
 
     log.info("Red:")
     image_r = Image.fromarray(_data_stretch(image_r, vmin=vmin_r, vmax=vmax_r,
-                              pmin=pmin_r, pmax=pmax_r, stretch=stretch_r,
-                              vmid=vmid_r,  exponent=exponent_r))
+                                            pmin=pmin_r, pmax=pmax_r, stretch=stretch_r,
+                                            vmid=vmid_r, exponent=exponent_r))
 
     log.info("Green:")
     image_g = Image.fromarray(_data_stretch(image_g,

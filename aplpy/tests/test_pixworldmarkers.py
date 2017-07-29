@@ -13,18 +13,19 @@ from .. import FITSFigure
 
 HEADER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits', '1904-66_TAN.hdr')
 
-tab = Table({'RA':[347.,349.], 'DEC':[-68.,-68]})
+tab = Table({'RA': [347., 349.], 'DEC': [-68., -68]})
 
-GOOD_INPUT = [ [1,2],
-               [[1,2],[3,4]],
-               [np.arange(2), np.arange(2)],
-               [tab['RA'], tab['DEC']]
+GOOD_INPUT = [[1, 2],
+              [[1, 2], [3, 4]],
+              [np.arange(2), np.arange(2)],
+              [tab['RA'], tab['DEC']]
+              ]
+
+BAD_INPUT = [[1, ['s', 'e']],
+             [np.arange(2), np.sum],
+             [tab['RA'], 'ewr']
              ]
 
-BAD_INPUT = [ [1,['s', 'e']],
-              [np.arange(2), np.sum],
-              [tab['RA'], 'ewr']
-            ]
 
 @pytest.mark.parametrize(('inputval'), GOOD_INPUT)
 def test_pixel_coords(inputval):
@@ -32,6 +33,7 @@ def test_pixel_coords(inputval):
     f = FITSFigure(data)
     f.show_markers(inputval[0], inputval[1])
     f.close()
+
 
 @pytest.mark.parametrize(('inputval'), GOOD_INPUT)
 def test_wcs_coords(inputval):
@@ -43,6 +45,7 @@ def test_wcs_coords(inputval):
     f.show_markers(inputval[0], inputval[1])
     f.close()
 
+
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
 def test_pixel_coords_bad(inputval):
     data = np.zeros((16, 16))
@@ -51,6 +54,7 @@ def test_pixel_coords_bad(inputval):
         f.show_markers(inputval[0], inputval[1])
     assert exc.value.args[0] == "x and y must be the same size"
     f.close()
+
 
 @pytest.mark.parametrize(('inputval'), BAD_INPUT)
 def test_wcs_coords_bad(inputval):

@@ -71,8 +71,8 @@ class Layers(object):
             if n_layers == 1:
                 print("\n  There is one layer in this figure:\n")
             else:
-                print("\n  There are " + str(n_layers) + \
-                    " layers in this figure:\n")
+                print("\n  There are " + str(n_layers) +
+                      " layers in this figure:\n")
             for layer in layers_list:
                 if layer['visible']:
                     print("   -> " + layer['name'])
