@@ -58,10 +58,10 @@ matrix:
           env: NUMPY_VERSION=1.9 MATPLOTLIB_VERSION=1.4 SETUP_CMD='test --remote-data'
         - python: 2.7
           env: NUMPY_VERSION=1.8 MATPLOTLIB_VERSION=1.4 SETUP_CMD='test --remote-data'
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow'
+               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow pyregion'
         - python: 2.7
           env: NUMPY_VERSION=1.7 MATPLOTLIB_VERSION=1.4 SETUP_CMD='test --remote-data'
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow'
+               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow pyregion'
 
 before_install:
 
