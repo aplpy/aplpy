@@ -180,3 +180,11 @@ def test_init_single_pixel():
     data[2,2] = 1
     f = FITSFigure(data)
     f.show_grayscale()
+
+def test_axis_init():
+    hdu = generate_hdu(REFERENCE)
+    fig = matplotlib.pyplot.figure()
+    axis = fig.gca()
+    f = FITSFigure(hdu, axis=axis)
+    f.show_grayscale()
+    f.close()

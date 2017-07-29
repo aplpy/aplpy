@@ -65,7 +65,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=None,
-                 **kwargs):
+                 axis=None, **kwargs):
         '''
         Create a FITSFigure instance.
 
@@ -229,6 +229,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Open the figure
         if figure:
             self._figure = figure
+        elif axis:
+            self._figure = axis.get_figure()
         else:
             self._figure = mpl.figure(**kwargs)
 
@@ -237,6 +239,22 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._ax1 = mpltk.HostAxes(self._figure, subplot, adjustable='datalim')
         elif type(subplot) == tuple and len(subplot) == 3:
             self._ax1 = mpltk.SubplotHost(self._figure, *subplot)
+        elif axis is not None:
+            if hasattr(axis,'toggle_axisline'):
+                self._ax1 = axis
+            else:
+                # If the axis is an incompatible axis type, create a compatible
+                # axis type that is in the same location
+                log.warning("The specified axis is missing some features "
+                            "aplpy needs.  A new axis at the same location "
+                            "is being created.")
+                lower_corner = axis.get_position()[0,:]
+                extent = axis.get_position()[1:] - lower_corner
+                cornerpars = np.concatenate([lower_corner,extent])
+                self._figure = axis.get_figure()
+                self._ax1 = mpltk.HostAxes(self._figure, cornerpars)
+                axis.set_visible(False)
+                self._figure.add_axes(self._ax1)
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
@@ -785,7 +803,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         self.image = self._ax1.imshow(image, extent=self._extent, interpolation=interpolation, origin='lower')
 
     @auto_refresh
-    def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False, cmap=None, colors=None, returnlevels=False, convention=None, dimensions=[0, 1], slices=[], smooth=None, kernel='gauss', overlap=False, **kwargs):
+    def show_contour(self, data=None, hdu=0, layer=None, levels=5, filled=False,
+                     cmap=None, colors=None, returnlevels=False, convention=None,
+                     dimensions=[0, 1], slices=[], smooth=None, kernel='gauss',
+                     overlap=False, **kwargs):
         '''
         Overlay contours on the current plot.
 
