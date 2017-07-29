@@ -19,5 +19,5 @@ if not _ASTROPY_SETUP_:
     from .colorbar import Colorbar
     from .grid import Grid
     from .ticks import Ticks
-    from .labels import TickLabels
+    from .tick_labels import TickLabels
     from .axis_labels import AxisLabels

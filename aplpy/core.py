@@ -32,7 +32,7 @@ from . import slicer
 from .layers import Layers
 from .grid import Grid
 from .ticks import Ticks
-from .labels import TickLabels
+from .tick_labels import TickLabels
 from .axis_labels import AxisLabels
 from .overlays import Beam, Scalebar
 from .regions import Regions
@@ -54,91 +54,92 @@ def uniformize_1d(*args):
 
 
 class FITSFigure(Layers, Regions):
+    """
+    Create a FITSFigure instance.
 
-    "A class for plotting FITS files."
+    This class is a wrapper around the Astropy WCSAxes class and provides
+    the same API as historical versions of APLpy.
+
+    Parameters
+    ----------
+
+    data : see below
+
+        The FITS file to open. The following data types can be passed:
+
+             string
+             astropy.io.fits.PrimaryHDU
+             astropy.io.fits.ImageHDU
+             astropy.wcs.WCS
+             np.ndarray
+             RGB image with AVM meta-data
+
+    hdu : int, optional
+        By default, the image in the primary HDU is read in. If a
+        different HDU is required, use this argument.
+
+    figure : ~matplotlib.figure.Figure, optional
+        If specified, a subplot will be added to this existing
+        matplotlib figure() instance, rather than a new figure
+        being created from scratch.
+
+    subplot : tuple or list, optional
+        If specified, a subplot will be added at this position. If a tuple
+        of three values, the tuple should contain the standard matplotlib
+        subplot parameters, i.e. (ny, nx, subplot). If a list of four
+        values, the list should contain [xmin, ymin, dx, dy] where xmin
+        and ymin are the position of the bottom left corner of the
+        subplot, and dx and dy are the width and height of the subplot
+        respectively. These should all be given in units of the figure
+        width and height. For example, [0.1, 0.1, 0.8, 0.8] will almost
+        fill the entire figure, leaving a 10 percent margin on all sides.
+
+    downsample : int, optional
+        If this option is specified, the image will be downsampled
+        by a factor *downsample* when reading in the data.
+
+    north : str, optional
+        Whether to rotate the image so that the North Celestial
+        Pole is up. Note that this option requires Montage to be
+        installed.
+
+    convention : str, optional
+        This is used in cases where a FITS header can be interpreted
+        in multiple ways. For example, for files with a -CAR
+        projection and CRVAL2=0, this can be set to 'wells' or
+        'calabretta' to choose the appropriate convention.
+
+    dimensions : tuple or list, optional
+        The index of the axes to use if the data has more than three
+        dimensions.
+
+    slices : tuple or list, optional
+        If a FITS file with more than two dimensions is specified,
+        then these are the slices to extract. If all extra dimensions
+        only have size 1, then this is not required.
+
+    auto_refresh : bool, optional
+        Whether to refresh the figure automatically every time a
+        plotting method is called. This can also be set using the
+        set_auto_refresh method. This defaults to `True` if and only if
+        APLpy is being used from IPython and the Matplotlib backend is
+        interactive.
+
+    kwargs
+        Any additional arguments are passed on to matplotlib's Figure()
+        class. For example, to set the figure size, use the
+        figsize=(xsize, ysize) argument (where xsize and ysize are in
+        inches). For more information on these additional arguments, see
+        the *Optional keyword arguments* section in the documentation for
+        `Figure
+        <http://matplotlib.org/api/figure_api.html?#matplotlib.figure.Figure>`_
+    """
 
     @auto_refresh
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=None,
                  **kwargs):
-        """
-        Create a FITSFigure instance.
-
-        Parameters
-        ----------
-
-        data : see below
-
-            The FITS file to open. The following data types can be passed:
-
-                 string
-                 astropy.io.fits.PrimaryHDU
-                 astropy.io.fits.ImageHDU
-                 astropy.wcs.WCS
-                 np.ndarray
-                 RGB image with AVM meta-data
-
-        hdu : int, optional
-            By default, the image in the primary HDU is read in. If a
-            different HDU is required, use this argument.
-
-        figure : ~matplotlib.figure.Figure, optional
-            If specified, a subplot will be added to this existing
-            matplotlib figure() instance, rather than a new figure
-            being created from scratch.
-
-        subplot : tuple or list, optional
-            If specified, a subplot will be added at this position. If a tuple
-            of three values, the tuple should contain the standard matplotlib
-            subplot parameters, i.e. (ny, nx, subplot). If a list of four
-            values, the list should contain [xmin, ymin, dx, dy] where xmin
-            and ymin are the position of the bottom left corner of the
-            subplot, and dx and dy are the width and height of the subplot
-            respectively. These should all be given in units of the figure
-            width and height. For example, [0.1, 0.1, 0.8, 0.8] will almost
-            fill the entire figure, leaving a 10 percent margin on all sides.
-
-        downsample : int, optional
-            If this option is specified, the image will be downsampled
-            by a factor *downsample* when reading in the data.
-
-        north : str, optional
-            Whether to rotate the image so that the North Celestial
-            Pole is up. Note that this option requires Montage to be
-            installed.
-
-        convention : str, optional
-            This is used in cases where a FITS header can be interpreted
-            in multiple ways. For example, for files with a -CAR
-            projection and CRVAL2=0, this can be set to 'wells' or
-            'calabretta' to choose the appropriate convention.
-
-        dimensions : tuple or list, optional
-            The index of the axes to use if the data has more than three
-            dimensions.
-
-        slices : tuple or list, optional
-            If a FITS file with more than two dimensions is specified,
-            then these are the slices to extract. If all extra dimensions
-            only have size 1, then this is not required.
-
-        auto_refresh : bool, optional
-            Whether to refresh the figure automatically every time a
-            plotting method is called. This can also be set using the
-            set_auto_refresh method. This defaults to `True` if and only if
-            APLpy is being used from IPython and the Matplotlib backend is
-            interactive.
-
-        kwargs
-            Any additional arguments are passed on to matplotlib's Figure()
-            class. For example, to set the figure size, use the
-            figsize=(xsize, ysize) argument (where xsize and ysize are in
-            inches). For more information on these additional arguments, see
-            the *Optional keyword arguments* section in the documentation for
-            `Figure
-            <http://matplotlib.org/api/figure_api.html?#matplotlib.figure.Figure>`_
-        """
 
         self._wcsaxes_slices = ('x', 'y')
 
@@ -151,7 +152,8 @@ class FITSFigure(Layers, Regions):
         else:
             self.grid_type = 'lines'
 
-        if isinstance(data, six.string_types) and data.split('.')[-1].lower() in ['png', 'jpg', 'tif']:
+        if (isinstance(data, six.string_types) and
+                data.split('.')[-1].lower() in ['png', 'jpg', 'tif']):
 
             try:
                 from PIL import Image
@@ -159,12 +161,14 @@ class FITSFigure(Layers, Regions):
                 try:
                     import Image
                 except ImportError:
-                    raise ImportError("The Python Imaging Library (PIL) is required to read in RGB images")
+                    raise ImportError("The Python Imaging Library (PIL) is "
+                                      "required to read in RGB images")
 
             try:
                 import pyavm
             except ImportError:
-                raise ImportError("PyAVM is required to read in AVM meta-data from RGB images")
+                raise ImportError("PyAVM is required to read in AVM "
+                                  "meta-data from RGB images")
 
             if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
                 raise ImportError("PyAVM installation is not recent enough "
@@ -181,7 +185,8 @@ class FITSFigure(Layers, Regions):
             # Now convert AVM information to WCS
             data = AVM.from_image(data).to_wcs()
 
-            # Need to scale CDELT values sometimes the AVM meta-data is only really valid for the full-resolution image
+            # Need to scale CDELT values sometimes the AVM meta-data is only
+            # really valid for the full-resolution image
             data.wcs.cdelt = [data.wcs.cdelt[0] * nx / float(nx), data.wcs.cdelt[1] * ny / float(ny)]
             data.wcs.crpix = [data.wcs.crpix[0] / nx * float(nx), data.wcs.crpix[1] / ny * float(ny)]
 
@@ -194,10 +199,13 @@ class FITSFigure(Layers, Regions):
             wcs = data
 
             if wcs.naxis != 2:
-                raise ValueError("FITSFigure initialization via WCS objects can only be done with 2-dimensional WCS objects")
+                raise ValueError("FITSFigure initialization via WCS objects "
+                                 "can only be done with 2-dimensional WCS "
+                                 "objects")
 
             if wcs._naxis1 == 0 or wcs._naxis2 == 0:
-                raise ValueError("The WCS object does not contain any size information")
+                raise ValueError("The WCS object does not contain any size "
+                                 "information")
 
             header = wcs.to_header()
             header['NAXIS1'] = wcs._naxis1
@@ -211,11 +219,13 @@ class FITSFigure(Layers, Regions):
             self._wcs.ny = ny
 
             if downsample:
-                log.warning("downsample argument is ignored if data passed is a WCS object")
+                log.warning("downsample argument is ignored if data "
+                            "passed is a WCS object")
                 downsample = False
 
             if north:
-                log.warning("north argument is ignored if data passed is a WCS object")
+                log.warning("north argument is ignored if data "
+                            "passed is a WCS object")
                 north = False
 
         else:
@@ -1360,11 +1370,6 @@ class FITSFigure(Layers, Regions):
         """
 
         xw, yw, width, height, angle = uniformize_1d(xw, yw, width, height, angle)
-
-        if np.isscalar(angle):
-            ap = np.repeat(angle, len(xw))
-        else:
-            ap = np.array(angle)
 
         if 'facecolor' not in kwargs:
             kwargs.setdefault('facecolor', 'none')
