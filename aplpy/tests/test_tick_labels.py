@@ -1,10 +1,17 @@
+import os
+
 import matplotlib
 matplotlib.use('Agg')
 
 import numpy as np
 from astropy.tests.helper import pytest
+from .helpers import generate_hdu
 
 from .. import FITSFigure
+
+header_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits')
+
+REFERENCE = os.path.join(header_dir, '1904-66_TAN.hdr')
 
 
 def test_tick_labels_show_hide():
@@ -57,3 +64,12 @@ def test_tick_labels_font():
     f.tick_labels.set_font(size='small', weight='bold', stretch='normal',
                            family='serif', style='normal', variant='normal')
     f.close()
+
+def test_single_d_format():
+    hdu = generate_hdu(REFERENCE)
+    f = FITSFigure(hdu)
+    #f = FITSFigure(hdu, auto_refresh=True)
+    f.show_grayscale()
+    f.tick_labels.set_yformat('d.d')
+    f.save('test_label_format.png')
+    #f.close()
