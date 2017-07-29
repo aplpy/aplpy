@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 import warnings
 
 import matplotlib.axes as maxes
-from mpl_toolkits.axes_grid import make_axes_locatable
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.font_manager import FontProperties
 from matplotlib.ticker import LogFormatterMathtext
 

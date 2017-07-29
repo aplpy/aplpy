@@ -11,7 +11,8 @@ if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
     raise Exception("matplotlib 1.0.0 or later is required for APLpy")
 
 import matplotlib.pyplot as mpl
-import mpl_toolkits.axes_grid.parasite_axes as mpltk
+from mpl_toolkits.axes_grid1 import parasite_axes
+from mpl_toolkits.axisartist.axislines import Axes
 from astropy.extern import six
 
 from astropy.wcs import WCS
@@ -233,10 +234,12 @@ class FITSFigure(Layers, Regions, Deprecated):
             self._figure = mpl.figure(**kwargs)
 
         # Create first axis instance
+        HostAxes = parasite_axes.host_axes_class_factory(axes_class=Axes)
         if type(subplot) == list and len(subplot) == 4:
-            self._ax1 = mpltk.HostAxes(self._figure, subplot, adjustable='datalim')
+            self._ax1 = HostAxes(self._figure, subplot, adjustable='datalim')
         elif type(subplot) == tuple and len(subplot) == 3:
-            self._ax1 = mpltk.SubplotHost(self._figure, *subplot)
+            SubplotHost = parasite_axes.subplot_class_factory(HostAxes)
+            self._ax1 = SubplotHost(self._figure, *subplot)
         else:
             raise ValueError("subplot= should be either a tuple of three values, or a list of four values")
 
