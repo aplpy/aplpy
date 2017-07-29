@@ -66,7 +66,7 @@ class FITSFigure(Layers, Regions, Deprecated):
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=None,
-                 **kwargs):
+                 rgb_cube=False, **kwargs):
         '''
         Create a FITSFigure instance.
 
@@ -134,6 +134,11 @@ class FITSFigure(Layers, Regions, Deprecated):
             set_auto_refresh method. This defaults to `True` if and only if
             APLpy is being used from IPython and the Matplotlib backend is
             interactive.
+
+        rgb_cube : bool, optional
+            If set, data will be treated as an RGB cube, with 1st dimension as
+            the rgb or rgba value.  This prevents slicing along other
+            dimensions.
 
         kwargs
             Any additional arguments are passed on to matplotlib's Figure() class.
@@ -214,8 +219,9 @@ class FITSFigure(Layers, Regions, Deprecated):
                 log.warning("north argument is ignored if data passed is a WCS object")
                 north = False
         else:
-            self._data, self._header, self._wcs = self._get_hdu(data, hdu, north, \
-                convention=convention, dimensions=dimensions, slices=slices)
+            self._data, self._header, self._wcs = self._get_hdu(data, hdu,
+                    north, convention=convention, dimensions=dimensions,
+                    slices=slices, rgb_cube=rgb_cube)
             self._wcs.nx = self._header['NAXIS%i' % (dimensions[0] + 1)]
             self._wcs.ny = self._header['NAXIS%i' % (dimensions[1] + 1)]
 
@@ -291,7 +297,8 @@ class FITSFigure(Layers, Regions, Deprecated):
         # Set default theme
         self.set_theme(theme='pretty')
 
-    def _get_hdu(self, data, hdu, north, convention=None, dimensions=[0, 1], slices=[]):
+    def _get_hdu(self, data, hdu, north, convention=None, dimensions=[0, 1],
+            slices=[], rgb_cube=False):
 
         if isinstance(data, six.string_types):
 
@@ -382,13 +389,17 @@ class FITSFigure(Layers, Regions, Deprecated):
                 slices = [0 for i in range(1, len(shape) - 1)]
                 log.info("Setting slices=%s" % str(slices))
 
-        # Extract slices
-        data = slicer.slice_hypercube(data, header, dimensions=dimensions, slices=slices)
+        if not rgb_cube:
+            # Extract slices
+            data = slicer.slice_hypercube(data, header, dimensions=dimensions, slices=slices)
 
         # Check header
         header = header_util.check(header, convention=convention, dimensions=dimensions)
 
         # Parse WCS info
+        if rgb_cube:
+            del header['NAXIS3']
+            header['NAXIS'] = 2
         wcs = wcs_util.WCS(header, dimensions=dimensions, slices=slices, relax=True)
 
         return data, header, wcs
@@ -767,6 +778,11 @@ class FITSFigure(Layers, Regions, Deprecated):
         if filename is None:
             if hasattr(self, '_rgb_image'):
                 image = Image.open(self._rgb_image)
+            elif self._data.ndim == 3 and self._data.shape[0] in (3,4):
+                # allow initialization from a valid cube
+                # (allows rgb, rgba)
+                # FITS and PIL have opposite conventions - but do 0 and 1 need to be swapped too?
+                image = self._data.swapaxes(0,2)
             else:
                 raise Exception("Need to specify the filename of an RGB image")
         else:
@@ -775,10 +791,10 @@ class FITSFigure(Layers, Regions, Deprecated):
         if image_util._matplotlib_pil_bug_present():
             vertical_flip = True
 
-        if vertical_flip:
+        if vertical_flip and isinstance(image,Image.Image):
             image = image.transpose(Image.FLIP_TOP_BOTTOM)
 
-        if horizontal_flip:
+        if horizontal_flip and isinstance(image,Image.Image):
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
         # Elsewhere in APLpy we assume that we are using origin='lower' so here
