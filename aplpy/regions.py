@@ -1,5 +1,3 @@
-# NOT YET CHECKED/SIMPLIFIED
-
 from __future__ import absolute_import, print_function, division
 
 from astropy.extern import six

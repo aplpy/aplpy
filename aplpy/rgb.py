@@ -1,11 +1,8 @@
-# NOT YET CHECKED/SIMPLIFIED
-
 from __future__ import absolute_import, print_function, division
 
 from distutils import version
 import os
 import warnings
-import numbers
 
 import tempfile
 import shutil

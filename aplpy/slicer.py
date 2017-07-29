@@ -1,13 +1,11 @@
-# NOT YET CHECKED/SIMPLIFIED
-
 from __future__ import absolute_import, print_function, division
 
 
 def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
-    '''
+    """
     Extract a slice from an n-dimensional HDU data/header pair, and return the
     new data (without changing the header).
-    '''
+    """
 
     if type(slices) == int:
         slices = (slices, )
@@ -56,11 +54,11 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
 
         else:
 
-            message = '''
+            message = """
     Attempted to read in %i-dimensional FITS cube, but
     dimensions and slices were not specified. Please specify these
     using the dimensions= and slices= argument. The cube dimensions
-    are:\n\n''' % len(shape)
+    are:\n\n""" % len(shape)
 
             for i in range(1, len(shape) + 1):
 

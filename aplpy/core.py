@@ -7,23 +7,22 @@ from functools import reduce
 
 import matplotlib
 
-if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.0.0'):
-    raise Exception("matplotlib 1.0.0 or later is required for APLpy")
+if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.5.0'):
+    raise Exception("matplotlib 1.5.0 or later is required for APLpy")
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
+from matplotlib.collections import PatchCollection, LineCollection
 
+import numpy as np
+
+from astropy import log
 from astropy.extern import six
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 from astropy.nddata.utils import block_reduce
 from astropy.visualization import AsymmetricPercentileInterval, simple_norm
-import numpy as np
-
-from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
-from matplotlib.collections import PatchCollection, LineCollection
-
-from astropy import log
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 
 from . import convolve_util

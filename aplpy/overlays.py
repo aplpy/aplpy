@@ -1,11 +1,9 @@
-# NOT YET CHECKED/SIMPLIFIED
-
 from __future__ import absolute_import, print_function, division
 
 import warnings
 
-from mpl_toolkits.axes_grid1.anchored_artists \
-    import AnchoredEllipse, AnchoredSizeBar
+from mpl_toolkits.axes_grid1.anchored_artists import (AnchoredEllipse,
+                                                      AnchoredSizeBar)
 
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -48,7 +46,7 @@ class Scalebar(object):
     @auto_refresh
     def show(self, length, label=None, corner='bottom right', frame=False,
              borderpad=0.4, pad=0.5, **kwargs):
-        '''
+        """
         Overlay a scale bar on the image.
 
         Parameters
@@ -73,7 +71,7 @@ class Scalebar(object):
             Text classes. See the matplotlib documentation for more details.
             In cases where the same argument exists for the two objects, the
             argument is passed to both the Text and Rectangle instance.
-        '''
+        """
 
         self._length = length
         self._base_settings['corner'] = corner
@@ -118,9 +116,9 @@ class Scalebar(object):
 
     @auto_refresh
     def hide(self):
-        '''
+        """
         Hide the scalebar.
-        '''
+        """
         try:
             self._scalebar.remove()
         except:
@@ -128,28 +126,28 @@ class Scalebar(object):
 
     @auto_refresh
     def set_length(self, length):
-        '''
+        """
         Set the length of the scale bar.
-        '''
+        """
         self.show(length, **self._base_settings)
         self._set_scalebar_properties(**self._scalebar_settings)
         self._set_label_properties(**self._scalebar_settings)
 
     @auto_refresh
     def set_label(self, label):
-        '''
+        """
         Set the label of the scale bar.
-        '''
+        """
         self._set_label_properties(text=label)
 
     @auto_refresh
     def set_corner(self, corner):
-        '''
+        """
         Set where to place the scalebar.
 
         Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
         'top right', 'bottom left' (default), and 'bottom right'.
-        '''
+        """
         self._base_settings['corner'] = corner
         self.show(self._length, **self._base_settings)
         self._set_scalebar_properties(**self._scalebar_settings)
@@ -157,9 +155,9 @@ class Scalebar(object):
 
     @auto_refresh
     def set_frame(self, frame):
-        '''
+        """
         Set whether to display a frame around the scalebar.
-        '''
+        """
         self._base_settings['frame'] = frame
         self.show(self._length, **self._base_settings)
         self._set_scalebar_properties(**self._scalebar_settings)
@@ -169,42 +167,42 @@ class Scalebar(object):
 
     @auto_refresh
     def set_linewidth(self, linewidth):
-        '''
+        """
         Set the linewidth of the scalebar, in points.
-        '''
+        """
         self._set_scalebar_properties(linewidth=linewidth)
 
     @auto_refresh
     def set_linestyle(self, linestyle):
-        '''
+        """
         Set the linestyle of the scalebar.
 
         Should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
-        '''
+        """
         self._set_scalebar_properties(linestyle=linestyle)
 
     @auto_refresh
     def set_alpha(self, alpha):
-        '''
+        """
         Set the alpha value (transparency).
 
         This should be a floating point value between 0 and 1.
-        '''
+        """
         self._set_scalebar_properties(alpha=alpha)
         self._set_label_properties(alpha=alpha)
 
     @auto_refresh
     def set_color(self, color):
-        '''
+        """
         Set the label and scalebar color.
-        '''
+        """
         self._set_scalebar_properties(color=color)
         self._set_label_properties(color=color)
 
     @auto_refresh
     def set_font(self, family=None, style=None, variant=None, stretch=None,
                  weight=None, size=None, fontproperties=None):
-        '''
+        """
         Set the font of the tick labels
 
         Parameters
@@ -218,7 +216,7 @@ class Scalebar(object):
         Default values are set by matplotlib or previously set values if
         set_font has already been called. Global default values can be set by
         editing the matplotlibrc file.
-        '''
+        """
 
         if family:
             self._label_settings['fontproperties'].set_family(family)
@@ -245,12 +243,12 @@ class Scalebar(object):
 
     @auto_refresh
     def _set_label_properties(self, **kwargs):
-        '''
+        """
         Modify the scalebar label properties.
 
         All arguments are passed to the matplotlib Text class. See the
         matplotlib documentation for more details.
-        '''
+        """
         for kwarg,val in kwargs.items():
             try:
                 # Only set attributes that exist
@@ -262,12 +260,12 @@ class Scalebar(object):
 
     @auto_refresh
     def _set_scalebar_properties(self, **kwargs):
-        '''
+        """
         Modify the scalebar properties.
 
         All arguments are passed to the matplotlib Rectangle class. See the
         matplotlib documentation for more details.
-        '''
+        """
         for kwarg,val in kwargs.items():
             try:
                 kvpair = {kwarg:val}
@@ -278,14 +276,14 @@ class Scalebar(object):
 
     @auto_refresh
     def set(self, **kwargs):
-        '''
+        """
         Modify the scalebar and scalebar properties.
 
         All arguments are passed to the matplotlib Rectangle and Text classes.
         See the matplotlib documentation for more details. In cases where the
         same argument exists for the two objects, the argument is passed to
         both the Text and Rectangle instance.
-        '''
+        """
         for kwarg in kwargs:
             kwargs_single = {kwarg: kwargs[kwarg]}
             try:
@@ -345,7 +343,7 @@ class Beam(object):
              corner='bottom left', frame=False, borderpad=0.4, pad=0.5,
              **kwargs):
 
-        '''
+        """
         Display the beam shape and size for the primary image.
 
         By default, this method will search for the BMAJ, BMIN, and BPA
@@ -378,7 +376,7 @@ class Beam(object):
         kwargs
             Additional arguments are passed to the matplotlib Ellipse class.
             See the matplotlib documentation for more details.
-        '''
+        """
 
         if isinstance(major, six.string_types):
             major = self._header[major]
@@ -446,9 +444,9 @@ class Beam(object):
 
     @auto_refresh
     def hide(self):
-        '''
+        """
         Hide the beam
-        '''
+        """
         try:
             self._beam.remove()
         except:
@@ -456,68 +454,68 @@ class Beam(object):
 
     @auto_refresh
     def set_major(self, major):
-        '''
+        """
         Set the major axis of the beam, in degrees.
-        '''
+        """
         self._base_settings['major'] = major
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
 
     @auto_refresh
     def set_minor(self, minor):
-        '''
+        """
         Set the minor axis of the beam, in degrees.
-        '''
+        """
         self._base_settings['minor'] = minor
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
 
     @auto_refresh
     def set_angle(self, angle):
-        '''
+        """
         Set the position angle of the beam on the sky, in degrees.
-        '''
+        """
         self._base_settings['angle'] = angle
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
 
     @auto_refresh
     def set_corner(self, corner):
-        '''
+        """
         Set the beam location.
 
         Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
         'top right', 'bottom left' (default), and 'bottom right'.
-        '''
+        """
         self._base_settings['corner'] = corner
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
 
     @auto_refresh
     def set_frame(self, frame):
-        '''
+        """
         Set whether to display a frame around the beam.
-        '''
+        """
         self._base_settings['frame'] = frame
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
 
     @auto_refresh
     def set_borderpad(self, borderpad):
-        '''
+        """
         Set the amount of padding within the beam object, relative to the
         canvas size.
-        '''
+        """
         self._base_settings['borderpad'] = borderpad
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
 
     @auto_refresh
     def set_pad(self, pad):
-        '''
+        """
         Set the amount of padding between the beam object and the image
         corner/edge, relative to the canvas size.
-        '''
+        """
         self._base_settings['pad'] = pad
         self.show(**self._base_settings)
         self.set(**self._beam_settings)
@@ -526,66 +524,66 @@ class Beam(object):
 
     @auto_refresh
     def set_alpha(self, alpha):
-        '''
+        """
         Set the alpha value (transparency).
 
         This should be a floating point value between 0 and 1.
-        '''
+        """
         self.set(alpha=alpha)
 
     @auto_refresh
     def set_color(self, color):
-        '''
+        """
         Set the beam color.
-        '''
+        """
         self.set(color=color)
 
     @auto_refresh
     def set_edgecolor(self, edgecolor):
-        '''
+        """
         Set the color for the edge of the beam.
-        '''
+        """
         self.set(edgecolor=edgecolor)
 
     @auto_refresh
     def set_facecolor(self, facecolor):
-        '''
+        """
         Set the color for the interior of the beam.
-        '''
+        """
         self.set(facecolor=facecolor)
 
     @auto_refresh
     def set_linestyle(self, linestyle):
-        '''
+        """
         Set the line style for the edge of the beam.
 
         This should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
-        '''
+        """
         self.set(linestyle=linestyle)
 
     @auto_refresh
     def set_linewidth(self, linewidth):
-        '''
+        """
         Set the line width for the edge of the beam, in points.
-        '''
+        """
         self.set(linewidth=linewidth)
 
     @auto_refresh
     def set_hatch(self, hatch):
-        '''
+        """
         Set the hatch pattern.
 
         This should be one of '/', '\', '|', '-', '+', 'x', 'o', 'O', '.', or
         '*'.
-        '''
+        """
         self.set(hatch=hatch)
 
     @auto_refresh
     def set(self, **kwargs):
-        '''
+        """
         Modify the beam properties. All arguments are passed to the matplotlib
         Ellipse class. See the matplotlib documentation for more details.
-        '''
+        """
         for kwarg in kwargs:
             self._beam_settings[kwarg] = kwargs[kwarg]
         self._beam.ellipse.set(**kwargs)
