@@ -1900,7 +1900,7 @@ class FITSFigure(Layers, Regions):
         """
         if wcs is None:
             wcs = self._wcs
-        return wcs.pix2world(xp, yp, 0)
+        return wcs.wcs_pix2world(xp, yp, 0)
 
     @auto_refresh
     def add_grid(self):
