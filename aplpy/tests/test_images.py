@@ -38,7 +38,7 @@ class TestBasic(BaseImageTests):
     def test_basic_image(self, generate):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale()
-        return f
+        return f._figure
 
     @remote_data
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
@@ -60,7 +60,7 @@ class TestBasic(BaseImageTests):
         f.ticks.set_xspacing(0.2)
         f.ticks.set_yspacing(0.2)
         f.ticks.set_minor_frequency(10)
-        return f
+        return f._figure
 
     # Test for showing colorscale
     @remote_data
@@ -73,7 +73,7 @@ class TestBasic(BaseImageTests):
         f.add_scalebar(7.5)
         f.add_beam(major=0.5, minor=0.2, angle=10.)
         f.tick_labels.hide()
-        return f
+        return f._figure
 
     # Test for overlaying shapes
     @remote_data
@@ -95,7 +95,7 @@ class TestBasic(BaseImageTests):
         f.frame.set_linewidth(1)  # points
         f.frame.set_color('black')
         f.axis_labels.hide()
-        return f
+        return f._figure
 
     # Test for grid
     @remote_data
@@ -114,7 +114,7 @@ class TestBasic(BaseImageTests):
         f.grid.set_linestyle('solid')
         f.grid.set_xspacing('tick')
         f.grid.set_yspacing(3)
-        return f
+        return f._figure
 
     # Test recenter
     @remote_data
@@ -130,7 +130,7 @@ class TestBasic(BaseImageTests):
         f.recenter(266.5, -29.0, width=0.1, height=0.1)
         f.axis_labels.set_xpad(20)
         f.axis_labels.set_ypad(20)
-        return f
+        return f._figure
 
     # Test overlaying contours
     @remote_data
@@ -145,7 +145,7 @@ class TestBasic(BaseImageTests):
 
         f.ticks.set_color('black')
         f.show_contour(data, levels=np.linspace(1., 254., 10), filled=False)
-        return f
+        return f._figure
 
     # Test cube slice
     @remote_data
@@ -160,7 +160,7 @@ class TestBasic(BaseImageTests):
         f.grid.set_yspacing(0.01)
         f.tick_labels.set_xformat('%g')
         f.tick_labels.set_yformat('dd:mm:ss.ss')
-        return f
+        return f._figure
 
     # Test for ds9 regions
     @remote_data
@@ -176,4 +176,4 @@ class TestBasic(BaseImageTests):
         f.axis_labels.hide()
         f.tick_labels.hide()
         f.ticks.hide()
-        return f
+        return f._figure

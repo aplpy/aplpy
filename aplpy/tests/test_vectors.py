@@ -24,7 +24,7 @@ class TestVectors(BaseImageTests):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, color='orange')
-        return f
+        return f._figure
 
     @remote_data
     @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
@@ -32,4 +32,4 @@ class TestVectors(BaseImageTests):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, step=2, scale=0.8, color='orange')
-        return f
+        return f._figure
