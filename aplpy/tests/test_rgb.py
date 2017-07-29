@@ -53,4 +53,4 @@ class TestRGB(BaseImageTests):
 
         f.recenter(359.3, -72.1, radius=0.05)
 
-        return f
+        return f._figure
