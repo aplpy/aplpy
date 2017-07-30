@@ -16,7 +16,7 @@ Now, start up ``ipython``::
 
     ipython --pylab
 
- and import the ``aplpy`` module as follows::
+and import the ``aplpy`` module as follows::
 
     import aplpy
 
@@ -48,7 +48,7 @@ The colormap used for the colorscale image can be changed. Try the following::
 
     gc.show_colorscale(cmap='gist_heat')
 
-to show the image showing a 'heat' map. You can find more information in the 
+to show the image showing a 'heat' map. You can find more information in the
 :meth:`~aplpy.aplpy.FITSFigure.show_grayscale` and
 :meth:`~aplpy.aplpy.FITSFigure.show_colorscale` documentation. For
 example, you can control the minimum and maximum pixel values to show and the
@@ -93,7 +93,7 @@ or numpy arrays that are already defined::
     import numpy
     data = numpy.loadtxt('data/yso_wcs_only.txt')
     ra, dec = data[:, 0], data[:, 1]
-    gc.show_markers(ra, dec, edgecolor='green', facecolor='none', 
+    gc.show_markers(ra, dec, edgecolor='green', facecolor='none',
                     marker='o', s=10, alpha=0.5)
 
 For more information, see the :meth:`~aplpy.aplpy.FITSFigure.show_markers`
@@ -120,7 +120,7 @@ the layer you are creating with the name provided, and can also be used to
 replace an existing layer. For example, let's change the color of the markers
 from green to red::
 
-    gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='red', 
+    gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='red',
                     facecolor='none', marker='o', s=10, alpha=0.5)
 
 Note the presence of the ``layer='marker_set_1'`` which means that the
@@ -152,7 +152,7 @@ To summarize, the above plot was made using the following commands::
     data = numpy.loadtxt('data/yso_wcs_only.txt')
     ra, dec = data[:, 0], data[:, 1]
 
-    gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='red', 
+    gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='red',
                     facecolor='none', marker='o', s=10, alpha=0.5)
 
     gc.save('myfirstplot.png')

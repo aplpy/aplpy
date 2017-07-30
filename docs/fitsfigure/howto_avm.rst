@@ -1,3 +1,5 @@
+.. _howto-avm:
+
 AVM tagging
 ===========
 
