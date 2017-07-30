@@ -13,6 +13,13 @@ class Ticks(object):
         self.y = parent.y
         self._wcs = self._ax.wcs
 
+    def set_tick_direction(self, direction):
+        if direction in ('in', 'out'):
+            self.ax.coords[self.x].ticks.set_tick_out(direction == 'out')
+            self.ax.coords[self.y].ticks.set_tick_out(direction == 'out')
+        else:
+            raise ValueError("direction should be 'in' or 'out'")
+
     @auto_refresh
     def set_xspacing(self, spacing):
         """

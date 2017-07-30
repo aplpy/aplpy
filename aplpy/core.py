@@ -276,10 +276,6 @@ class FITSFigure(Layers, Regions):
         self.x = dimensions[0]
         self.y = dimensions[1]
 
-        # Default to inwards ticks
-        self.ax.coords[self.x].ticks.set_tick_out(False)
-        self.ax.coords[self.y].ticks.set_tick_out(False)
-
         # Initialize tick, label, and frame convenience wrappers (these dispatch
         # calls to WCSAxes)
         self.ticks = Ticks(self)
