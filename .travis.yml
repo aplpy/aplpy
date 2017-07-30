@@ -47,12 +47,9 @@ matrix:
         - python: 3.6
           env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
 
-        # Try older numpy versions
+        # Try older numpy version
         - python: 2.7
           env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
-        - python: 2.7
-          env: NUMPY_VERSION=1.10 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
                CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
 
 before_install:
