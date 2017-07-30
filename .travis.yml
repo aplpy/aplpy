@@ -21,13 +21,14 @@ env:
         - ASTROPY_VERSION=2.0
         - NUMPY_VERSION=1.13
         - MATPLOTLIB_VERSION=2.0
+        - SETUP_XVFB=True
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
         - PIP_DEPENDENCIES='pytest-mpl https://github.com/astropy/pyregion/archive/master.zip'
 
     matrix:
         - SETUP_CMD='egg_info'
-        - SETUP_CMD='test --remote-data'
+        - SETUP_CMD='test --remote-data --coverage'
 
 matrix:
     include:
@@ -37,29 +38,20 @@ matrix:
         - python: 2.7
           env: SETUP_CMD='build_sphinx -w'
 
-        # Try Astropy development and LTS version and also a coverage test
+        # Try Astropy development and LTS version
         - python: 2.7
-          env: ASTROPY_VERSION=development SETUP_CMD='test --coverage'
+          env: ASTROPY_VERSION=development
         - python: 3.6
-          env: ASTROPY_VERSION=development SETUP_CMD='test --remote-data'
+          env: ASTROPY_VERSION=development
         - python: 2.7
-          env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
+          env: ASTROPY_VERSION=lts
         - python: 3.6
-          env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
+          env: ASTROPY_VERSION=lts
 
         # Try older numpy version
         - python: 2.7
-          env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
+          env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5
                CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
-
-before_install:
-
-    # Make sure that interactive matplotlib backends work
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
-
-    # Make sure matplotlib uses PyQT not PySide
-    - export QT_API=pyqt
 
 install:
     - git clone git://github.com/astropy/ci-helpers.git
