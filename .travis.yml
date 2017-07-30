@@ -13,21 +13,15 @@ addons:
 
 python:
     - 2.7
-    - 3.4
     - 3.5
+    - 3.6
 
 env:
     global:
-        # The following versions are the 'default' for tests, unless
-        # overidden underneath. They are defined here in order to save having
-        # to repeat them for all configurations.
-
-        # Note that we DO NOT use stable for numpy as there are no mpl 1.4.x
-        # builds available on conda for numpy 1.11
-        - NUMPY_VERSION=1.10
-        - ASTROPY_VERSION=1.3
-        - MATPLOTLIB_VERSION=1.5
-        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image pyregion'
+        - ASTROPY_VERSION=2.0
+        - NUMPY_VERSION=1.13
+        - MATPLOTLIB_VERSION=2.0
+        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image pyregion numpy astropy'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
         - PIP_DEPENDENCIES='pytest-mpl'
 
@@ -46,21 +40,19 @@ matrix:
         # Try Astropy development and LTS version and also a coverage test
         - python: 2.7
           env: ASTROPY_VERSION=development SETUP_CMD='test --coverage'
-        - python: 3.5
+        - python: 3.6
           env: ASTROPY_VERSION=development SETUP_CMD='test --remote-data'
         - python: 2.7
           env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
-        - python: 3.5
+        - python: 3.6
           env: ASTROPY_VERSION=lts SETUP_CMD='test --remote-data'
 
         # Try older numpy versions
         - python: 2.7
-          env: NUMPY_VERSION=1.9 MATPLOTLIB_VERSION=1.4 SETUP_CMD='test --remote-data'
-        - python: 2.7
-          env: NUMPY_VERSION=1.8 MATPLOTLIB_VERSION=1.4 SETUP_CMD='test --remote-data'
+          env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
                CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow pyregion'
         - python: 2.7
-          env: NUMPY_VERSION=1.7 MATPLOTLIB_VERSION=1.4 SETUP_CMD='test --remote-data'
+          env: NUMPY_VERSION=1.10 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
                CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow pyregion'
 
 before_install:
