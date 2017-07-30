@@ -21,7 +21,7 @@ env:
         - ASTROPY_VERSION=2.0
         - NUMPY_VERSION=1.13
         - MATPLOTLIB_VERSION=2.0
-        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image numpy astropy'
+        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
         - PIP_DEPENDENCIES='pytest-mpl https://github.com/astropy/pyregion/archive/master.zip'
 
@@ -50,10 +50,10 @@ matrix:
         # Try older numpy versions
         - python: 2.7
           env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow'
+               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
         - python: 2.7
           env: NUMPY_VERSION=1.10 MATPLOTLIB_VERSION=1.5 SETUP_CMD='test --remote-data'
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow'
+               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
 
 before_install:
 
