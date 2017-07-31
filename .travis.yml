@@ -25,10 +25,10 @@ env:
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
         - PIP_DEPENDENCIES='pytest-mpl https://github.com/astropy/pyregion/archive/master.zip'
+        - SETUP_CMD='test --remote-data --coverage'
 
     matrix:
         - SETUP_CMD='egg_info'
-        - SETUP_CMD='test --remote-data --coverage'
 
 matrix:
     include:
