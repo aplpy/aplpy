@@ -1,11 +1,9 @@
 from __future__ import absolute_import, print_function, division
 
 import numpy as np
-try:
-    from astropy.convolution import convolve as astropy_convolve, Gaussian2DKernel, Box2DKernel
-    make_kernel = None
-except ImportError:
-    from astropy.nddata import convolve as astropy_convolve, make_kernel
+
+from astropy.convolution import (convolve as astropy_convolve,
+                                 Gaussian2DKernel, Box2DKernel)
 
 
 def convolve(image, smooth=3, kernel='gauss'):
@@ -25,15 +23,9 @@ def convolve(image, smooth=3, kernel='gauss'):
     image_fixed[np.isinf(image)] = np.nan
 
     if kernel == 'gauss':
-        if make_kernel is None:
-            kernel = Gaussian2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
-        else:
-            kernel = make_kernel((smooth * 5, smooth * 5), smooth, 'gaussian')
+        kernel = Gaussian2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
     elif kernel == 'box':
-        if make_kernel is None:
-            kernel = Box2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
-        else:
-            kernel = make_kernel((smooth * 5, smooth * 5), smooth, 'boxcar')
+        kernel = Box2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
     else:
         kernel = kernel
 

@@ -47,7 +47,7 @@ def test_scalebar_length():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [1*u.arcsec, u.arcsec, 2*u.degree, 5*u.radian])
+@pytest.mark.parametrize('quantity', [1 * u.arcsec, u.arcsec, 2 * u.degree, 5 * u.radian])
 def test_scalebar_length_quantity(quantity):
     f = FITSFigure(HDU)
     f.add_scalebar(quantity)

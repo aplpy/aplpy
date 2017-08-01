@@ -17,7 +17,7 @@ HEADER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits'
 class TestRGB(BaseImageTests):
 
     @remote_data
-    @pytest.mark.mpl_image_compare(savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_rgb(self, generate, tmpdir):
 
         # Regression test to check that RGB recenter works properly

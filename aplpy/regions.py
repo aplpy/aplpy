@@ -64,9 +64,8 @@ class Regions(object):
 
         PC, TC = ds9(region_file, flatten_header(self._header), **kwargs)
 
-        # ffpc = self._ax1.add_collection(PC)
-        PC.add_to_axes(self._ax1)
-        TC.add_to_axes(self._ax1)
+        PC.add_to_axes(self.ax)
+        TC.add_to_axes(self.ax)
 
         if layer:
             region_set_name = layer
@@ -183,7 +182,7 @@ def flatten_header(header):
     orig_wcs = wcs.WCS(header)
     newheader = orig_wcs.celestial.to_header()
     newheader['NAXIS'] = 2
-    newheader['NAXIS1'] = header['NAXIS{0}'.format(orig_wcs.wcs.lng+1)]
-    newheader['NAXIS2'] = header['NAXIS{0}'.format(orig_wcs.wcs.lat+1)]
+    newheader['NAXIS1'] = header['NAXIS{0}'.format(orig_wcs.wcs.lng + 1)]
+    newheader['NAXIS2'] = header['NAXIS{0}'.format(orig_wcs.wcs.lat + 1)]
 
     return newheader

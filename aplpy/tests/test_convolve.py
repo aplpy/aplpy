@@ -40,7 +40,7 @@ def test_convolve_custom():
     data = np.random.random((16, 16))
     hdu = fits.PrimaryHDU(data)
     f = FITSFigure(hdu)
-    f.show_grayscale(kernel=np.ones((3,3)))
+    f.show_grayscale(kernel=np.ones((3, 3)))
     f.close()
 
 

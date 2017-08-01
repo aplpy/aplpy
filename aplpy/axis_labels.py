@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, division
 
-from matplotlib.font_manager import FontProperties
+from astropy.wcs.utils import wcs_to_celestial_frame
+from astropy.coordinates import (ICRS, FK5, FK4, Galactic,
+                                 HeliocentricTrueEcliptic, BarycentricTrueEcliptic)
 
-from . import wcs_util
 from .decorators import auto_refresh, fixdocstring
 
 
@@ -10,64 +11,88 @@ class AxisLabels(object):
 
     def __init__(self, parent):
 
-        # Store references to axes
-        self._ax1 = parent._ax1
-        self._ax2 = parent._ax2
-        self._wcs = parent._wcs
-        self._figure = parent._figure
+        self._ax = parent.ax
+        self._wcs = parent.ax.wcs
+        self.x = parent.x
+        self.y = parent.y
 
-        # Save plotting parameters (required for @auto_refresh)
-        self._parameters = parent._parameters
+        xcoord_type = self._ax.coords[self.x].coord_type
+        ycoord_type = self._ax.coords[self.y].coord_type
 
-        # Set font
-        self._label_fontproperties = FontProperties()
+        if xcoord_type == 'longitude' and ycoord_type == 'latitude':
+            celestial = True
+            inverted = False
+        elif xcoord_type == 'latitude' and ycoord_type == 'longitude':
+            celestial = True
+            inverted = True
+        else:
+            celestial = inverted = False
 
-        self._ax2.yaxis.set_label_position('right')
-        self._ax2.xaxis.set_label_position('top')
+        if celestial:
+            frame = wcs_to_celestial_frame(self._wcs)
+        else:
+            frame = None
 
-        system, equinox, units = wcs_util.system(self._wcs)
+        if isinstance(frame, ICRS):
 
-        if system['name'] == 'equatorial':
+            xtext = 'RA (ICRS)'
+            ytext = 'Dec (ICRS)'
 
-            if equinox == 'b1950':
-                xtext = 'RA (B1950)'
-                ytext = 'Dec (B1950)'
-            else:
-                xtext = 'RA (J2000)'
-                ytext = 'Dec (J2000)'
+        elif isinstance(frame, FK5):
 
-        elif system['name'] == 'galactic':
+            equinox = "{:g}".format(FK5.equinox.jyear)
+            xtext = 'RA (J{0})'.format(equinox)
+            ytext = 'Dec (J{0})'.format(equinox)
+
+        elif isinstance(frame, FK4):
+
+            equinox = "{:g}".format(FK4.equinox.byear)
+            xtext = 'RA (B{0})'.format(equinox)
+            ytext = 'Dec (B{0})'.format(equinox)
+
+        elif isinstance(frame, Galactic):
 
             xtext = 'Galactic Longitude'
             ytext = 'Galactic Latitude'
 
-        elif system['name'] == 'ecliptic':
+        elif isinstance(frame, (HeliocentricTrueEcliptic, BarycentricTrueEcliptic)):
+
+            # NOTE: once we support only Astropy 2.0+, we can use BaseEclipticFrame
 
             xtext = 'Ecliptic Longitude'
             ytext = 'Ecliptic Latitude'
 
-        elif system['name'] == 'unknown':
+        else:
 
-            xunit = " (%s)" % self._wcs.cunit_x if self._wcs.cunit_x not in ["", None] else ""
-            yunit = " (%s)" % self._wcs.cunit_y if self._wcs.cunit_y not in ["", None] else ""
+            cunit_x = self._wcs.wcs.cunit[self.x]
+            cunit_y = self._wcs.wcs.cunit[self.y]
 
-            if len(self._wcs.cname_x) > 0:
-                xtext = self._wcs.cname_x + xunit
+            cname_x = self._wcs.wcs.cname[self.x]
+            cname_y = self._wcs.wcs.cname[self.y]
+
+            ctype_x = self._wcs.wcs.ctype[self.x]
+            ctype_y = self._wcs.wcs.ctype[self.y]
+
+            xunit = " (%s)" % cunit_x if cunit_x not in ["", None] else ""
+            yunit = " (%s)" % cunit_y if cunit_y not in ["", None] else ""
+
+            if len(cname_x) > 0:
+                xtext = cname_x + xunit
             else:
-                if len(self._wcs.ctype_x) == 8 and self._wcs.ctype_x[4] == '-':
-                    xtext = self._wcs.ctype_x[:4].replace('-', '') + xunit
+                if len(ctype_x) == 8 and ctype_x[4] == '-':
+                    xtext = ctype_x[:4].replace('-', '') + xunit
                 else:
-                    xtext = self._wcs.ctype_x + xunit
+                    xtext = ctype_x + xunit
 
-            if len(self._wcs.cname_y) > 0:
-                ytext = self._wcs.cname_y + yunit
+            if len(cname_y) > 0:
+                ytext = cname_y + yunit
             else:
-                if len(self._wcs.ctype_y) == 8 and self._wcs.ctype_y[4] == '-':
-                    ytext = self._wcs.ctype_y[:4].replace('-', '') + yunit
+                if len(ctype_y) == 8 and ctype_y[4] == '-':
+                    ytext = ctype_y[:4].replace('-', '') + yunit
                 else:
-                    ytext = self._wcs.ctype_y + yunit
+                    ytext = ctype_y + yunit
 
-        if system['inverted']:
+        if inverted:
             xtext, ytext = ytext, xtext
 
         self.set_xtext(xtext)
@@ -81,36 +106,34 @@ class AxisLabels(object):
         """
         Set the x-axis label text.
         """
-        self._xlabel1 = self._ax1.set_xlabel(label)
-        self._xlabel2 = self._ax2.set_xlabel(label)
+        self._x_text = label
+        self._ax.coords[self.x].set_axislabel(label)
 
     @auto_refresh
     def set_ytext(self, label):
         """
         Set the y-axis label text.
         """
-        self._ylabel1 = self._ax1.set_ylabel(label)
-        self._ylabel2 = self._ax2.set_ylabel(label)
+        self._y_text = label
+        self._ax.coords[self.y].set_axislabel(label)
 
     @auto_refresh
     def set_xpad(self, pad):
         """
-        Set the x-axis label displacement, in points.
+        Set the x-axis label displacement in terms of the axis label font size.
         """
-        self._xlabel1 = self._ax1.set_xlabel(self._xlabel1.get_text(), labelpad=pad)
-        self._xlabel2 = self._ax2.set_xlabel(self._xlabel2.get_text(), labelpad=pad)
+        self._ax.coords[self.x].axislabels.set_minpad(pad)
 
     @auto_refresh
     def set_ypad(self, pad):
         """
-        Set the y-axis label displacement, in points.
+        Set the y-axis label displacement in terms of the axis label font size.
         """
-        self._ylabel1 = self._ax1.set_ylabel(self._ylabel1.get_text(), labelpad=pad)
-        self._ylabel2 = self._ax2.set_ylabel(self._ylabel2.get_text(), labelpad=pad)
+        self._ax.coords[self.y].axislabels.set_minpad(pad)
 
     @auto_refresh
     @fixdocstring
-    def set_font(self, family=None, style=None, variant=None, stretch=None, weight=None, size=None, fontproperties=None):
+    def set_font(self, **kwargs):
         """
         Set the font of the axis labels.
 
@@ -126,32 +149,8 @@ class AxisLabels(object):
         set_font has already been called. Global default values can be set by
         editing the matplotlibrc file.
         """
-
-        if family:
-            self._label_fontproperties.set_family(family)
-
-        if style:
-            self._label_fontproperties.set_style(style)
-
-        if variant:
-            self._label_fontproperties.set_variant(variant)
-
-        if stretch:
-            self._label_fontproperties.set_stretch(stretch)
-
-        if weight:
-            self._label_fontproperties.set_weight(weight)
-
-        if size:
-            self._label_fontproperties.set_size(size)
-
-        if fontproperties:
-            self._label_fontproperties = fontproperties
-
-        self._xlabel1.set_fontproperties(self._label_fontproperties)
-        self._xlabel2.set_fontproperties(self._label_fontproperties)
-        self._ylabel1.set_fontproperties(self._label_fontproperties)
-        self._ylabel2.set_fontproperties(self._label_fontproperties)
+        self._ax.coords[self.x].axislabels.set(**kwargs)
+        self._ax.coords[self.y].axislabels.set(**kwargs)
 
     @auto_refresh
     def show(self):
@@ -175,19 +174,16 @@ class AxisLabels(object):
         Show the x-axis label.
         """
         if self._xposition == 'bottom':
-            self._xlabel1.set_visible(True)
+            self._ax.coords[self.x].set_axislabel_position('b')
         else:
-            self._xlabel2.set_visible(True)
+            self._ax.coords[self.x].set_axislabel_position('t')
 
     @auto_refresh
     def hide_x(self):
         """
         Hide the x-axis label.
         """
-        if self._xposition == 'bottom':
-            self._xlabel1.set_visible(False)
-        else:
-            self._xlabel2.set_visible(False)
+        self._ax.coords[self.x].set_axislabel_position('')
 
     @auto_refresh
     def show_y(self):
@@ -195,42 +191,39 @@ class AxisLabels(object):
         Show the y-axis label.
         """
         if self._yposition == 'left':
-            self._ylabel1.set_visible(True)
+            self._ax.coords[self.y].set_axislabel_position('l')
         else:
-            self._ylabel2.set_visible(True)
+            self._ax.coords[self.y].set_axislabel_position('r')
 
     @auto_refresh
     def hide_y(self):
         """
         Hide the y-axis label.
         """
-        if self._yposition == 'left':
-            self._ylabel1.set_visible(False)
-        else:
-            self._ylabel2.set_visible(False)
+        self._ax.coords[self.y].set_axislabel_position('')
 
     @auto_refresh
     def set_xposition(self, position):
-        "Set the position of the x-axis label ('top' or 'bottom')"
+        """
+        Set the position of the x-axis label ('top' or 'bottom')
+        """
         if position == 'bottom':
-            self._xlabel1.set_visible(True)
-            self._xlabel2.set_visible(False)
+            self._ax.coords[self.x].set_axislabel_position('b')
         elif position == 'top':
-            self._xlabel1.set_visible(False)
-            self._xlabel2.set_visible(True)
+            self._ax.coords[self.x].set_axislabel_position('t')
         else:
             raise ValueError("position should be one of 'top' or 'bottom'")
         self._xposition = position
 
     @auto_refresh
     def set_yposition(self, position):
-        "Set the position of the y-axis label ('left' or 'right')"
+        """
+        Set the position of the y-axis label ('left' or 'right')
+        """
         if position == 'left':
-            self._ylabel1.set_visible(True)
-            self._ylabel2.set_visible(False)
+            self._ax.coords[self.y].set_axislabel_position('l')
         elif position == 'right':
-            self._ylabel1.set_visible(False)
-            self._ylabel2.set_visible(True)
+            self._ax.coords[self.y].set_axislabel_position('r')
         else:
             raise ValueError("position should be one of 'left' or 'right'")
         self._yposition = position

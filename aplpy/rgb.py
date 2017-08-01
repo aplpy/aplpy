@@ -11,53 +11,52 @@ import numpy as np
 from astropy.extern import six
 from astropy import log
 from astropy.io import fits
-
-from . import image_util
-from . import math_util
+from astropy.visualization import AsymmetricPercentileInterval, simple_norm
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
                   stretch='linear', vmid=None, exponent=2):
 
-    min_auto = not math_util.isnumeric(vmin)
-    max_auto = not math_util.isnumeric(vmax)
+    if vmin is None or vmax is None:
+        interval = AsymmetricPercentileInterval(pmin, pmax, n_samples=10000)
+        try:
+            vmin_auto, vmax_auto = interval.get_limits(image)
+        except IndexError:  # no valid values
+            vmin_auto = vmax_auto = 0
 
-    if min_auto or max_auto:
-        auto_v = image_util.percentile_function(image)
-        vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
-
-    if min_auto:
+    if vmin is None:
         log.info("vmin = %10.3e (auto)" % vmin_auto)
         vmin = vmin_auto
     else:
         log.info("vmin = %10.3e" % vmin)
 
-    if max_auto:
+    if vmax is None:
         log.info("vmax = %10.3e (auto)" % vmax_auto)
         vmax = vmax_auto
     else:
         log.info("vmax = %10.3e" % vmax)
 
-    image = (image - vmin) / (vmax - vmin)
+    if stretch == 'arcsinh':
+        stretch = 'asinh'
 
-    data = image_util.stretch(image, stretch, exponent=exponent, midpoint=vmid)
+    normalizer = simple_norm(image, stretch=stretch, power=exponent,
+                             asinh_a=vmid, min_cut=vmin, max_cut=vmax)
 
+    data = normalizer(image, clip=True).filled(0)
     data = np.nan_to_num(data)
     data = np.clip(data * 255., 0., 255.)
 
     return data.astype(np.uint8)
 
 
-def make_rgb_image(data, output, indices=(0, 1, 2), \
-                   vmin_r=None, vmax_r=None, pmin_r=0.25, pmax_r=99.75, \
-                   stretch_r='linear', vmid_r=None, exponent_r=2, \
-                   vmin_g=None, vmax_g=None, pmin_g=0.25, pmax_g=99.75, \
-                   stretch_g='linear', vmid_g=None, exponent_g=2, \
-                   vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75, \
-                   stretch_b='linear', vmid_b=None, exponent_b=2, \
-                   make_nans_transparent=False, \
-                   embed_avm_tags=True):
-    '''
+def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
+                   pmin_r=0.25, pmax_r=99.75, stretch_r='linear', vmid_r=None,
+                   exponent_r=2, vmin_g=None, vmax_g=None, pmin_g=0.25,
+                   pmax_g=99.75, stretch_g='linear', vmid_g=None, exponent_g=2,
+                   vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75,
+                   stretch_b='linear', vmid_b=None, exponent_b=2,
+                   make_nans_transparent=False, embed_avm_tags=True):
+    """
     Make an RGB image from a FITS RGB cube or from three FITS files.
 
     Parameters
@@ -119,7 +118,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     embed_avm_tags : bool, optional
         Whether to embed AVM tags inside the image - this can only be done for
         JPEG and PNG files, and only if PyAVM is installed.
-    '''
+    """
 
     try:
         from PIL import Image
@@ -175,27 +174,24 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
             image_alpha[np.isnan(im)] = 0
 
     log.info("Red:")
-    image_r = Image.fromarray(_data_stretch(image_r, \
-                                            vmin=vmin_r, vmax=vmax_r, \
-                                            pmin=pmin_r, pmax=pmax_r, \
-                                            stretch=stretch_r, \
-                                            vmid=vmid_r, \
-                                            exponent=exponent_r))
+    image_r = Image.fromarray(_data_stretch(image_r, vmin=vmin_r, vmax=vmax_r,
+                                            pmin=pmin_r, pmax=pmax_r, stretch=stretch_r,
+                                            vmid=vmid_r, exponent=exponent_r))
 
     log.info("Green:")
-    image_g = Image.fromarray(_data_stretch(image_g, \
-                                            vmin=vmin_g, vmax=vmax_g, \
-                                            pmin=pmin_g, pmax=pmax_g, \
-                                            stretch=stretch_g, \
-                                            vmid=vmid_g, \
+    image_g = Image.fromarray(_data_stretch(image_g,
+                                            vmin=vmin_g, vmax=vmax_g,
+                                            pmin=pmin_g, pmax=pmax_g,
+                                            stretch=stretch_g,
+                                            vmid=vmid_g,
                                             exponent=exponent_g))
 
     log.info("Blue:")
-    image_b = Image.fromarray(_data_stretch(image_b, \
-                                            vmin=vmin_b, vmax=vmax_b, \
-                                            pmin=pmin_b, pmax=pmax_b, \
-                                            stretch=stretch_b, \
-                                            vmid=vmid_b, \
+    image_b = Image.fromarray(_data_stretch(image_b,
+                                            vmin=vmin_b, vmax=vmax_b,
+                                            pmin=pmin_b, pmax=pmax_b,
+                                            stretch=stretch_b,
+                                            vmid=vmid_b,
                                             exponent=exponent_b))
 
     img = Image.merge("RGB", (image_r, image_g, image_b))
@@ -232,7 +228,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
 
 
 def make_rgb_cube(files, output, north=False, system=None, equinox=None):
-    '''
+    """
     Make an RGB data cube from a list of three FITS images.
 
     This method can read in three FITS files with different
@@ -271,7 +267,7 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     equinox : str, optional
        If a coordinate system is specified, the equinox can also be given
        in the form YYYY. Default is J2000.
-    '''
+    """
 
     # Check whether the Python montage module is installed. The Python module
     # checks itself whether the Montage command-line tools are available, and
@@ -334,8 +330,8 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     fits.writeto(output, image_cube, header, clobber=True)
 
     # Write out collapsed version of cube
-    fits.writeto(output.replace('.fits', '_2d.fits'), \
-                   np.mean(image_cube, axis=0), header, clobber=True)
+    fits.writeto(output.replace('.fits', '_2d.fits'),
+                 np.mean(image_cube, axis=0), header, clobber=True)
 
     # Remove work directory
     shutil.rmtree(work_dir)
