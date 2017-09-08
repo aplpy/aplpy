@@ -41,7 +41,7 @@ try:
     PYTEST_HEADER_MODULES['Astropy'] = 'astropy'
     PYTEST_HEADER_MODULES['pyregion'] = 'pyregion'
     PYTEST_HEADER_MODULES['PyAVM'] = 'PyAVM'
-    PYTEST_HEADER_MODULES['montage-wrapper'] = 'montage-wrapper'
+    PYTEST_HEADER_MODULES['reproject'] = 'reproject'
     del PYTEST_HEADER_MODULES['h5py']
 except NameError:
     pass

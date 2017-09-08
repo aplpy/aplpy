@@ -15,11 +15,11 @@ following code shows how this can be done using the
     aplpy.make_rgb_cube(['2mass_k.fits', '2mass_h.fits',
                          '2mass_j.fits'], '2mass_cube.fits')
 
-This method makes use of Montage to reproject the images to a common projection.
-For more information on installing Montage, see :ref:`montage`. The above
-example produces a FITS cube named ``2mass_cube.fits`` which contains the three
-channels in the same projection. This can be used to then produce an RGB image
-(see next section)
+This method makes use of the `reproject
+<http://reproject.readthedocs.io/en/stable/>`_ package to reproject the images
+to a common projection. The above example produces a FITS cube named
+``2mass_cube.fits`` which contains the three channels in the same projection.
+This can be used to then produce an RGB image (see next section)
 
 Producing an RGB image from images in a common projection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

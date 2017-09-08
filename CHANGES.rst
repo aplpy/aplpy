@@ -1,6 +1,13 @@
 CHANGES
 --------
 
+2.0 (unreleased)
+----------------
+
+- Refactored APLpy to make use of WCSAxes to draw coordinate frames. [#239]
+
+- Use reproject package instead of montage-wrapper and Montage.
+
 1.2 (unreleased)
 ----------------
 

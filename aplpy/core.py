@@ -24,6 +24,7 @@ from astropy.io import fits
 from astropy.nddata.utils import block_reduce
 from astropy.visualization import AsymmetricPercentileInterval, simple_norm
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
+from astropy.coordinates import ICRS
 
 from . import convolve_util
 from . import header as header_util
@@ -98,10 +99,11 @@ class FITSFigure(Layers, Regions):
         If this option is specified, the image will be downsampled
         by a factor *downsample* when reading in the data.
 
-    north : str, optional
-        Whether to rotate the image so that the North Celestial
-        Pole is up. Note that this option requires Montage to be
-        installed.
+    north : bool, optional
+        Whether to rotate the image so that north is up. By default, this is
+        assumed to be 'north' in the ICRS frame, but you can also pass any
+        astropy :class:`~astropy.coordinates.BaseCoordinateFrame` to indicate
+        to use the north of that frame.
 
     convention : str, optional
         This is used in cases where a FITS header can be interpreted
@@ -362,22 +364,28 @@ class FITSFigure(Layers, Regions):
             raise ValueError('values of dimensions= should be between %i and %i' % (0, hdu.header['NAXIS'] - 1))
 
         # Reproject to face north if requested
-        # TODO: replace by reproject
         if north:
-            try:
-                import montage_wrapper as montage
-            except ImportError:
-                raise Exception("Both the Montage command-line tools and the"
-                                " montage-wrapper Python module are required"
-                                " to use the north= argument")
-            hdu = montage.reproject_hdu(hdu, north_aligned=True)
 
-        # Now copy the data and header to new objects, since in astropy.io.fits
-        # the two attributes are linked, which can lead to confusing behavior.
-        # We just need to copy the header to avoid memory issues - as long as
-        # one item is copied, the two variables are decoupled.
-        data = hdu.data
-        header = hdu.header.copy()
+            # Find rotated WCS
+            frame = ICRS() if north is True else north
+            from reproject.mosaicking import find_optimal_celestial_wcs
+            wcs, shape = find_optimal_celestial_wcs([hdu], frame=frame)
+
+            from reproject import reproject_interp
+            data, _ = reproject_interp(hdu, wcs, shape_out=shape)
+            header = wcs.to_header()
+            header['NAXIS1'] = shape[1]
+            header['NAXIS2'] = shape[0]
+
+        else:
+
+            # Now copy the data and header to new objects, since in astropy.io.fits
+            # the two attributes are linked, which can lead to confusing behavior.
+            # We just need to copy the header to avoid memory issues - as long as
+            # one item is copied, the two variables are decoupled.
+            data = hdu.data
+            header = hdu.header.copy()
+
         del hdu
 
         # If slices wasn't specified, check if we can guess
