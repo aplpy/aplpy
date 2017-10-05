@@ -11,7 +11,7 @@ CHANGES
 1.2 (unreleased)
 ----------------
 
-- No changes yet.
+- Remaining ``image_util`` is replaced by ``astropy.visualization``. [#364]
 
 1.1.1 (2016-10-04)
 ------------------
