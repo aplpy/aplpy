@@ -4,8 +4,6 @@ from distutils import version
 import os
 import warnings
 
-import shutil
-
 import numpy as np
 from astropy.extern import six
 from astropy import log
@@ -295,8 +293,8 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
         image_cube[i, :, :] = reproject_interp(filename, wcs, shape_out=shape)[0]
 
     # Write out final cube
-    fits.writeto(output, image_cube, header, clobber=True)
+    fits.writeto(output, image_cube, header, overwrite=True)
 
     # Write out collapsed version of cube
     fits.writeto(output.replace('.fits', '_2d.fits'),
-                 np.mean(image_cube, axis=0), header, clobber=True)
+                 np.mean(image_cube, axis=0), header, overwrite=True)
