@@ -22,7 +22,7 @@ env:
         - NUMPY_VERSION=1.13
         - MATPLOTLIB_VERSION=2.0
         - SETUP_XVFB=True
-        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image'
+        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image reproject'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
         - PIP_DEPENDENCIES='pytest-mpl https://github.com/astropy/pyregion/archive/master.zip'
         - SETUP_CMD='test --remote-data --coverage'
