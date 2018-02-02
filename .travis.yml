@@ -48,7 +48,7 @@ matrix:
         # Try older numpy version
         - python: 2.7
           env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
+               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image reproject>=0.4'
 
 install:
     - git clone git://github.com/astropy/ci-helpers.git
