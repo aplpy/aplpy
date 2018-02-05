@@ -18,7 +18,7 @@ class TestRGB(BaseImageTests):
 
     @remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
-    def test_rgb(self, generate, tmpdir):
+    def test_rgb(self, tmpdir):
 
         # Regression test to check that RGB recenter works properly
 
