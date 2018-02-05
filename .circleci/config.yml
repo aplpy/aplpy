@@ -8,7 +8,9 @@ jobs:
       - checkout
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: |
+            pip3 install reproject astropy scikit-image
+            pytest aplpy --remote-data=any --mpl
   image-tests-mpl202:
     docker:
       - image: astropy/image-tests-py35-mpl202:1.0
@@ -16,7 +18,9 @@ jobs:
       - checkout
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: |
+            pip3 install reproject astropy scikit-image
+            pytest aplpy --remote-data=any --mpl
   image-tests-mpl212:
     docker:
       - image: astropy/image-tests-py35-mpl212:1.0
@@ -24,7 +28,9 @@ jobs:
       - checkout
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: |
+            pip3 install reproject astropy scikit-image
+            pytest aplpy --remote-data=any --mpl
 
 
 workflows:
