@@ -22,9 +22,8 @@ env:
         - NUMPY_VERSION=1.13
         - MATPLOTLIB_VERSION=2.0
         - SETUP_XVFB=True
-        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image'
+        - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image reproject>=0.4 pytest-mpl pyregion'
         - CONDA_CHANNELS='astropy-ci-extras astropy'
-        - PIP_DEPENDENCIES='pytest-mpl https://github.com/astropy/pyregion/archive/master.zip'
         - SETUP_CMD='test --remote-data --coverage'
 
     matrix:
@@ -49,7 +48,7 @@ matrix:
         # Try older numpy version
         - python: 2.7
           env: NUMPY_VERSION=1.11 MATPLOTLIB_VERSION=1.5
-               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image'
+               CONDA_DEPENDENCIES='nose pyqt=4 matplotlib pillow scikit-image reproject>=0.4'
 
 install:
     - git clone git://github.com/astropy/ci-helpers.git
