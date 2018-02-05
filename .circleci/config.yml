@@ -1,0 +1,42 @@
+version: 2
+
+jobs:
+  image-tests-mpl153:
+    docker:
+      - image: astropy/image-tests-py35-mpl153:1.0
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: |
+            pip3 install reproject astropy scikit-image
+            pytest aplpy --remote-data=any --mpl
+  image-tests-mpl202:
+    docker:
+      - image: astropy/image-tests-py35-mpl202:1.0
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: |
+            pip3 install reproject astropy scikit-image
+            pytest aplpy --remote-data=any --mpl
+  image-tests-mpl212:
+    docker:
+      - image: astropy/image-tests-py35-mpl212:1.0
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: |
+            pip3 install reproject astropy scikit-image
+            pytest aplpy --remote-data=any --mpl
+
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - image-tests-mpl153
+      - image-tests-mpl202
+      - image-tests-mpl212
