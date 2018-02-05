@@ -20,7 +20,7 @@ class TestVectors(BaseImageTests):
 
     @remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
-    def test_default(self, generate):
+    def test_default(self):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, color='orange')
@@ -28,7 +28,7 @@ class TestVectors(BaseImageTests):
 
     @remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
-    def test_step_scale(self, generate):
+    def test_step_scale(self):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, step=2, scale=0.8, color='orange')
