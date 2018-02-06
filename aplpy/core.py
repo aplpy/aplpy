@@ -928,12 +928,13 @@ class FITSFigure(Layers, Regions):
         wcs_contour.ny = header_contour['NAXIS%i' % (dimensions[1] + 1)]
 
         image_contour = convolve_util.convolve(data_contour, smooth=smooth, kernel=kernel)
-
         if type(levels) == int:
-            auto_levels = image_util.percentile_function(image_contour)
-            vmin = auto_levels(0.25)
-            vmax = auto_levels(99.75)
-            levels = np.linspace(vmin, vmax, levels)
+            interval = AsymmetricPercentileInterval(0.25, 99.75, n_samples=10000)
+            try:
+                vmin_auto, vmax_auto = interval.get_limits(image_contour)
+            except IndexError:  # no valid values
+                vmin_auto = vmax_auto = 0
+            levels = np.linspace(vmin_auto, vmax_auto, levels)
 
         if wcs_contour.wcs.ctype[self.x] == 'PIXEL' or wcs_contour.wcs.ctype[self.y] == 'PIXEL':
             frame = 'pixel'
