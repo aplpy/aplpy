@@ -98,6 +98,9 @@ def ds9(region_file, header, zorder=3, **kwargs):
     else:
         raise Exception("Invalid type for region_file: %s - should be string or pyregion.ShapeList" % type(region_file))
 
+    if isinstance(header, wcs.WCS):
+        header = header.to_header()
+
     # convert coordinates to image coordinates
     rrim = rr.as_imagecoord(header)
 
