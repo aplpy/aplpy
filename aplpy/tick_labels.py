@@ -2,6 +2,9 @@
 
 from __future__ import absolute_import, print_function, division, unicode_literals
 
+from astropy.coordinates import BaseRADecFrame
+from astropy.wcs.utils import wcs_to_celestial_frame
+
 from .decorators import auto_refresh, fixdocstring
 
 
@@ -13,6 +16,19 @@ class TickLabels(object):
         self._wcs = parent.ax.wcs
         self.x = parent.x
         self.y = parent.y
+        self._hours = {self.x: False, self.y: False}
+
+        xcoord_type = self._ax.coords[self.x].coord_type
+        ycoord_type = self._ax.coords[self.y].coord_type
+
+        if (xcoord_type == 'longitude' or ycoord_type == 'latitude' or
+                xcoord_type == 'latitude' and ycoord_type == 'longitude'):
+            frame = wcs_to_celestial_frame(self._wcs)
+            if isinstance(frame, BaseRADecFrame):
+                if xcoord_type == 'longitude':
+                    self.set_xformat('hh:mm:ss.s')
+                else:
+                    self.set_yformat('hh:mm:ss.s')
 
         self.set_style('plain')
 
@@ -39,6 +55,7 @@ class TickLabels(object):
         if 'dd.' in xformat:
             xformat = xformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.x].set_major_formatter(xformat)
+        self._hours[self.x] = 'h' in xformat
 
     @auto_refresh
     def set_yformat(self, yformat):
@@ -63,6 +80,7 @@ class TickLabels(object):
         if 'dd.' in yformat:
             yformat = yformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.y].set_major_formatter(yformat)
+        self._hours[self.y] = 'h' in yformat
 
     @auto_refresh
     def set_style(self, style):
@@ -83,12 +101,13 @@ class TickLabels(object):
             coord_type = self._ax.coords[coord].coord_type
             if coord_type in ['longitude', 'latitude']:
                 if style == 'colons':
+                    self._ax.coords[coord].set_separator(sep)
                     sep = (':', ':', '')
                 else:
-                    sep = ('\u00b0', "'", '"')
-                    fmt = self._ax.coords[coord]._formatter_locator.format
-                    if fmt is not None and 'h' in format:
+                    if self._hours[coord]:
                         sep = ('h', 'm', 's')
+                    else:
+                        sep = ('\u00b0', "'", '"')
 
                 self._ax.coords[coord].set_separator(sep)
 
