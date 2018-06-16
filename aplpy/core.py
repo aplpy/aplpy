@@ -271,6 +271,9 @@ class FITSFigure(Layers, Regions):
         # Turn off autoscaling
         self.ax.set_autoscale_on(False)
 
+        # Make sure axes are above everything else
+        self.ax.set_axisbelow(False)
+
         # Set view to whole FITS file
         self._initialize_view()
 

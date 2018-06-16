@@ -16,6 +16,12 @@ class AxisLabels(object):
         self.x = parent.x
         self.y = parent.y
 
+        try:
+            self._ax.coords[self.x].set_axislabel_visibility_rule('always')
+            self._ax.coords[self.y].set_axislabel_visibility_rule('always')
+        except AttributeError:  # Astropy < 3.0
+            pass
+
         xcoord_type = self._ax.coords[self.x].coord_type
         ycoord_type = self._ax.coords[self.y].coord_type
 
