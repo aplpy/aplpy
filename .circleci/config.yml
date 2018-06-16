@@ -3,7 +3,7 @@ version: 2
 jobs:
   image-tests-mpl153:
     docker:
-      - image: astropy/image-tests-py35-mpl153:1.0
+      - image: astropy/image-tests-py35-mpl153:1.2
     steps:
       - checkout
       - run:
@@ -13,7 +13,7 @@ jobs:
             pytest aplpy --remote-data=any --mpl
   image-tests-mpl202:
     docker:
-      - image: astropy/image-tests-py35-mpl202:1.0
+      - image: astropy/image-tests-py35-mpl202:1.2
     steps:
       - checkout
       - run:
@@ -23,7 +23,7 @@ jobs:
             pytest aplpy --remote-data=any --mpl
   image-tests-mpl212:
     docker:
-      - image: astropy/image-tests-py35-mpl212:1.0
+      - image: astropy/image-tests-py35-mpl212:1.2
     steps:
       - checkout
       - run:
