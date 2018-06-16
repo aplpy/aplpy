@@ -12,6 +12,7 @@ environment:
                         # to the matrix section.
       CONDA_DEPENDENCIES: "matplotlib pillow scikit-image reproject>=0.4"
       PIP_DEPENDENCIES: "pytest-mpl"
+      CONDA_CHANNELS: "astropy-ci-extras astropy"
 
   matrix:
 
