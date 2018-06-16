@@ -8,8 +8,6 @@ addons:
     apt:
         packages:
             - graphviz
-            - texlive-latex-extra
-            - dvipng
 
 python:
     - 2.7
