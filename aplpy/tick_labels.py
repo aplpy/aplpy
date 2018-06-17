@@ -19,20 +19,12 @@ class TickLabels(object):
         self._wcs = parent.ax.wcs
         self.x = parent.x
         self.y = parent.y
-        self._hours = {self.x: False, self.y: False}
 
         xcoord_type = self._ax.coords[self.x].coord_type
         ycoord_type = self._ax.coords[self.y].coord_type
 
         if ASTROPY_LT_31:
-            if (xcoord_type == 'longitude' or ycoord_type == 'latitude' or
-                    xcoord_type == 'latitude' and ycoord_type == 'longitude'):
-                frame = wcs_to_celestial_frame(self._wcs)
-                if isinstance(frame, BaseRADecFrame):
-                    if xcoord_type == 'longitude':
-                        self.set_xformat('hh:mm:ss.s')
-                    else:
-                        self.set_yformat('hh:mm:ss.s')
+            self._hours = {self.x: False, self.y: False}
 
         self.set_style('plain')
 
@@ -59,7 +51,8 @@ class TickLabels(object):
         if 'dd.' in xformat:
             xformat = xformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.x].set_major_formatter(xformat)
-        self._hours[self.x] = 'h' in xformat
+        if ASTROPY_LT_31:
+            self._hours[self.x] = 'h' in xformat
 
     @auto_refresh
     def set_yformat(self, yformat):
@@ -84,7 +77,8 @@ class TickLabels(object):
         if 'dd.' in yformat:
             yformat = yformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.y].set_major_formatter(yformat)
-        self._hours[self.y] = 'h' in yformat
+        if ASTROPY_LT_31:
+            self._hours[self.y] = 'h' in yformat
 
     @auto_refresh
     def set_style(self, style):
@@ -107,10 +101,13 @@ class TickLabels(object):
                 if style == 'colons':
                     sep = (':', ':', '')
                 else:
-                    if self._hours[coord]:
-                        sep = ('h', 'm', 's')
+                    if ASTROPY_LT_31:
+                        if self._hours[coord]:
+                            sep = ('h', 'm', 's')
+                        else:
+                            sep = ('\u00b0', "'", '"')
                     else:
-                        sep = ('\u00b0', "'", '"')
+                        sep = None
 
                 self._ax.coords[coord].set_separator(sep)
 
