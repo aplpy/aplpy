@@ -96,7 +96,7 @@ class Scalebar(object):
 
         try:
             self._scalebar.remove()
-        except:
+        except Exception:
             pass
 
         if isinstance(corner, six.string_types):
@@ -121,7 +121,7 @@ class Scalebar(object):
         """
         try:
             self._scalebar.remove()
-        except:
+        except Exception:
             pass
 
     @auto_refresh
@@ -423,7 +423,7 @@ class Beam(object):
 
         try:
             self._beam.remove()
-        except:
+        except Exception:
             pass
 
         if isinstance(corner, six.string_types):
@@ -449,7 +449,7 @@ class Beam(object):
         """
         try:
             self._beam.remove()
-        except:
+        except Exception:
             pass
 
     @auto_refresh

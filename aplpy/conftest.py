@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 # Force the backend to Agg when testing
 
 import matplotlib

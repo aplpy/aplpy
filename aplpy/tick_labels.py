@@ -101,7 +101,6 @@ class TickLabels(object):
             coord_type = self._ax.coords[coord].coord_type
             if coord_type in ['longitude', 'latitude']:
                 if style == 'colons':
-                    self._ax.coords[coord].set_separator(sep)
                     sep = (':', ':', '')
                 else:
                     if self._hours[coord]:

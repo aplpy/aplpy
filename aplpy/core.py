@@ -7,9 +7,6 @@ from functools import reduce
 
 import matplotlib
 
-if version.LooseVersion(matplotlib.__version__) < version.LooseVersion('1.5.0'):
-    raise Exception("matplotlib 1.5.0 or later is required for APLpy")
-
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle, Ellipse, Polygon, FancyArrow
 from matplotlib.collections import PatchCollection, LineCollection
@@ -315,7 +312,7 @@ class FITSFigure(Layers, Regions):
             # Read in FITS file
             try:
                 hdulist = fits.open(filename)
-            except:
+            except Exception:
                 raise IOError("An error occurred while reading the FITS file")
 
             # Check whether the HDU specified contains any data, otherwise
@@ -1059,7 +1056,7 @@ class FITSFigure(Layers, Regions):
 
         # over-ride default color (none) that will otherwise be set by
         # show_lines()
-        if not 'color' in kwargs:
+        if 'color' not in kwargs:
             kwargs.setdefault('color', 'black')
 
         if layer:
@@ -1930,7 +1927,7 @@ class FITSFigure(Layers, Regions):
         try:
             self.grid = Grid(self)
             self.grid.show()
-        except:
+        except Exception:
             del self.grid
             raise
 
@@ -2047,7 +2044,7 @@ class FITSFigure(Layers, Regions):
         try:
             self.scalebar = Scalebar(self)
             self.scalebar.show(length, *args, **kwargs)
-        except:
+        except Exception:
             del self.scalebar
             raise
 
@@ -2081,7 +2078,7 @@ class FITSFigure(Layers, Regions):
         try:
             self.colorbar = Colorbar(self)
             self.colorbar.show(*args, **kwargs)
-        except:
+        except Exception:
             del self.colorbar
             raise
 
