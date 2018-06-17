@@ -130,7 +130,7 @@ To wrap up this tutorial, we will save the plot to a file. Type the following::
 
     gc.save('myfirstplot.png')
 
-This will produce the following file:
+This will produce the following plot:
 
 .. image:: myfirstplot.png
 

@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 import os
 import warnings
 
@@ -11,7 +13,8 @@ from ..rgb import make_rgb_image
 from .test_images import BaseImageTests
 from . import baseline_dir
 
-HEADER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits', '1904-66_TAN.hdr')
+ROOT = os.path.dirname(os.path.abspath(__file__))
+HEADER = os.path.join(ROOT, 'data/2d_fits', '1904-66_TAN.hdr')
 
 
 class TestRGB(BaseImageTests):

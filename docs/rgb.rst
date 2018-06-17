@@ -50,7 +50,7 @@ Plotting the resulting RGB image
 
 If `PyAVM <http://astrofrog.github.io/pyavm/>`_ is installed (which is
 recommended but not required), then if you produce a JPEG or PNG image, you can
-plot it directly using the :class:`aplpy.FITSFigure` class with::
+plot it directly using the :class:`~aplpy.FITSFigure` class with::
 
     f = aplpy.FITSFigure('2mass_rgb.png')
     f.show_rgb()
@@ -65,8 +65,8 @@ function will in fact produce a file with the same name as the main output, but
 including a ``_2d`` suffix, and this can be used to instantiate
 :class:`~aplpy.aplpy.FITSFigure`::
 
-    # Reproject the images to a common projection - this will also produce
-    # ``2mass_cube_2d.fits``
+    # Reproject the images to a common projection - this will also
+    # produce 2mass_cube_2d.fits
     aplpy.make_rgb_cube(['2mass_k.fits', '2mass_h.fits',
                          '2mass_j.fits'], '2mass_cube.fits')
 

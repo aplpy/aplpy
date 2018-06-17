@@ -87,7 +87,7 @@ def ds9(region_file, header, zorder=3, **kwargs):
 
     try:
         import pyregion
-    except:
+    except Exception:
         raise ImportError("The pyregion package is required to load region files")
 
     # read region file

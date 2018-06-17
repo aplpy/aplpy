@@ -1,13 +1,11 @@
-import os
+from __future__ import absolute_import, print_function, division
 
-import matplotlib
-matplotlib.use('Agg')
+import os
 
 import numpy as np
 from astropy.tests.helper import pytest
 from astropy.io import fits
 from astropy.wcs import WCS as AstropyWCS
-import astropy.utils.exceptions as aue
 
 from .helpers import generate_file, generate_hdu, generate_wcs
 from .. import FITSFigure

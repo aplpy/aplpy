@@ -33,7 +33,8 @@ matrix:
         # Check for sphinx doc build warnings - we do this first because it
         # may run for a long time
         - python: 2.7
-          env: SETUP_CMD='build_sphinx -w'
+          env: SETUP_CMD='build_docs -w'
+               PIP_DEPENDENCIES='sphinx-astropy'
 
         # Try Astropy development and LTS version
         - python: 3.6

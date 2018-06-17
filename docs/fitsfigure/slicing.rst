@@ -52,44 +52,52 @@ demonstrated below.
 Example
 -------
 
-The following script demonstrates this functionality in use::
+The following examples demonstrates this functionality in use
 
-    import matplotlib
-    matplotlib.use('Agg')
+.. plot::
+   :context: reset
+   :include-source:
+
+    from astropy.utils.data import get_pkg_data_filename
+    co_cube = get_pkg_data_filename('l1448/l1448_13co.fits')
 
     import aplpy
 
-    f = aplpy.FITSFigure('L1448_13CO.fits.gz', slices=[222],
-                         figsize=(5,5))
+    f = aplpy.FITSFigure(co_cube, slices=[30], figsize=(8, 6))
     f.show_colorscale()
     f.add_grid()
-    f.tick_labels.set_font(size='xx-small')
-    f.axis_labels.set_font(size='x-small')
-    f.save('slicing_1.png')
+    f.tick_labels.set_font(size='x-small')
+    f.axis_labels.set_font(size='small')
 
-.. image:: slicing_1.png
+.. plot::
+   :context: reset
+   :include-source:
 
-::
+    from astropy.utils.data import get_pkg_data_filename
+    co_cube = get_pkg_data_filename('l1448/l1448_13co.fits')
 
-    f = aplpy.FITSFigure('L1448_13CO.fits.gz', slices=[222],
-                         dimensions=[1, 0], figsize=(5,5))
+    import aplpy
+
+    f = aplpy.FITSFigure(co_cube, slices=[30],
+                         dimensions=[1, 0], figsize=(8, 6))
     f.show_colorscale()
     f.add_grid()
-    f.tick_labels.set_font(size='xx-small')
-    f.axis_labels.set_font(size='x-small')
-    f.save('slicing_2.png')
+    f.tick_labels.set_font(size='x-small')
+    f.axis_labels.set_font(size='small')
 
-.. image:: slicing_2.png
+.. plot::
+   :context: reset
+   :include-source:
 
-::
+    from astropy.utils.data import get_pkg_data_filename
+    co_cube = get_pkg_data_filename('l1448/l1448_13co.fits')
 
-    f = aplpy.FITSFigure('L1448_13CO.fits.gz', dimensions=[2, 1],
-                         slices=[50], figsize=(5,5))
+    import aplpy
+
+    f = aplpy.FITSFigure(co_cube, dimensions=[2, 1],
+                         slices=[50], figsize=(8, 6))
     f.show_colorscale(aspect='auto')
     f.add_grid()
-    f.tick_labels.set_font(size='xx-small')
-    f.axis_labels.set_font(size='x-small')
+    f.tick_labels.set_font(size='x-small')
+    f.axis_labels.set_font(size='small')
     f.tick_labels.set_xformat('%.1f')
-    f.save('slicing_3.png')
-
-.. image:: slicing_3.png

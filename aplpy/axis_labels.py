@@ -2,9 +2,13 @@ from __future__ import absolute_import, print_function, division
 
 from astropy.wcs.utils import wcs_to_celestial_frame
 from astropy.coordinates import (ICRS, FK5, FK4, Galactic,
-                                 HeliocentricTrueEcliptic, BarycentricTrueEcliptic)
+                                 HeliocentricTrueEcliptic,
+                                 BarycentricTrueEcliptic)
 
 from .decorators import auto_refresh, fixdocstring
+from .helpers import ASTROPY_GE_30
+
+__all__ = ['AxisLabels']
 
 
 class AxisLabels(object):
@@ -16,11 +20,9 @@ class AxisLabels(object):
         self.x = parent.x
         self.y = parent.y
 
-        try:
+        if ASTROPY_GE_30:
             self._ax.coords[self.x].set_axislabel_visibility_rule('always')
             self._ax.coords[self.y].set_axislabel_visibility_rule('always')
-        except AttributeError:  # Astropy < 3.0
-            pass
 
         xcoord_type = self._ax.coords[self.x].coord_type
         ycoord_type = self._ax.coords[self.y].coord_type
