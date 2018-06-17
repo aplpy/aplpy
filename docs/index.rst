@@ -69,7 +69,7 @@ package - you can use this using::
 
 Note that no new features will be added to this class. Critical bugs may be
 fixed in that legacy class if reported, but otherwise for any non-critical
-issues, we recommend migrating to the new :class:`aplpy.FITSFigure` class or
+issues, we recommend migrating to the new :class:`~aplpy.FITSFigure` class or
 `WCSAxes`_ directly.
 
 Known issues

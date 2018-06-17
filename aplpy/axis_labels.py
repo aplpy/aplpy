@@ -2,7 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 from astropy.wcs.utils import wcs_to_celestial_frame
 from astropy.coordinates import (ICRS, FK5, FK4, Galactic,
-                                 HeliocentricTrueEcliptic, BarycentricTrueEcliptic)
+                                 HeliocentricTrueEcliptic,
+                                 BarycentricTrueEcliptic)
 
 from .decorators import auto_refresh, fixdocstring
 from .helpers import ASTROPY_GE_30
