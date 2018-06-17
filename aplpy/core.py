@@ -808,10 +808,6 @@ class FITSFigure(Layers, Regions):
         if horizontal_flip:
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
-        # Elsewhere in APLpy we assume that we are using origin='lower' so here
-        # we flip the image by default (since RGB images usually would require
-        # origin='upper') then we use origin='lower'
-        image = image.transpose(Image.FLIP_TOP_BOTTOM)
         self.image = self.ax.imshow(image,
                                     interpolation=interpolation,
                                     origin='lower')
