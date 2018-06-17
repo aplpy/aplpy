@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install reproject astropy scikit-image==0.12.3
+          command: pip3 install reproject astropy==2.0.7 scikit-image==0.12.3
       - run:
           name: Run tests
           command: pytest aplpy --remote-data=any --mpl
@@ -19,7 +19,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install reproject astropy scikit-image==0.14.0
+          command: pip3 install reproject astropy==3.0.3 scikit-image==0.14.0
       - run:
           name: Run tests
           command: pytest aplpy --remote-data=any --mpl
@@ -30,7 +30,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install reproject astropy scikit-image==0.14.0
+          command: pip3 install reproject astropy==3.0.3 scikit-image==0.14.0
       - run:
           name: Run tests
           command: pytest aplpy --remote-data=any --mpl
@@ -41,7 +41,18 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install reproject astropy scikit-image==0.14.0
+          command: pip3 install reproject astropy==3.0.3 scikit-image==0.14.0
+      - run:
+          name: Run tests
+          command: pytest aplpy --remote-data=any --mpl
+  image-tests-astropy-dev:
+    docker:
+      - image: astropy/image-tests-py35-mpl222:1.3
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip3 install reproject scikit-image==0.14.0 https://github.com/astropy/astropy/archive/master.zip
       - run:
           name: Run tests
           command: pytest aplpy --remote-data=any --mpl
@@ -55,3 +66,4 @@ workflows:
       - image-tests-mpl202
       - image-tests-mpl212
       - image-tests-mpl222
+      - image-tests-astropy-dev
