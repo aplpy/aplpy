@@ -6,6 +6,9 @@ from astropy.coordinates import BaseRADecFrame
 from astropy.wcs.utils import wcs_to_celestial_frame
 
 from .decorators import auto_refresh, fixdocstring
+from .helpers import ASTROPY_LT_31
+
+__all__ = ['TickLabels']
 
 
 class TickLabels(object):
@@ -21,14 +24,15 @@ class TickLabels(object):
         xcoord_type = self._ax.coords[self.x].coord_type
         ycoord_type = self._ax.coords[self.y].coord_type
 
-        if (xcoord_type == 'longitude' or ycoord_type == 'latitude' or
-                xcoord_type == 'latitude' and ycoord_type == 'longitude'):
-            frame = wcs_to_celestial_frame(self._wcs)
-            if isinstance(frame, BaseRADecFrame):
-                if xcoord_type == 'longitude':
-                    self.set_xformat('hh:mm:ss.s')
-                else:
-                    self.set_yformat('hh:mm:ss.s')
+        if ASTROPY_LT_31:
+            if (xcoord_type == 'longitude' or ycoord_type == 'latitude' or
+                    xcoord_type == 'latitude' and ycoord_type == 'longitude'):
+                frame = wcs_to_celestial_frame(self._wcs)
+                if isinstance(frame, BaseRADecFrame):
+                    if xcoord_type == 'longitude':
+                        self.set_xformat('hh:mm:ss.s')
+                    else:
+                        self.set_yformat('hh:mm:ss.s')
 
         self.set_style('plain')
 
