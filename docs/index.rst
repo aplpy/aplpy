@@ -72,6 +72,15 @@ fixed in that legacy class if reported, but otherwise for any non-critical
 issues, we recommend migrating to the new :class:`aplpy.FITSFigure` class or
 `WCSAxes`_ directly.
 
+Known issues
+============
+
+At the moment, Right Ascension values are formatted in degrees by default rather
+than in hours - this is due to an issue with WCSAxes that will be fixed in
+Astropy 3.1. For now, the solution is to set the format manually, e.g.::
+
+    fig.tick_labels.set_xformat('hh:mm:ss.s')
+
 .. _api:
 
 Reference/API
