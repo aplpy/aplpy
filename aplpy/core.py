@@ -955,7 +955,8 @@ class FITSFigure(Layers, Regions):
                                 colors=colors, **kwargs)
 
         if rasterize:
-            insert_rasterized_contour_plot(c, self._ax1)
+            for cc in c.collections:
+                cc.set_rasterized(True)
 
         if layer:
             contour_set_name = layer
