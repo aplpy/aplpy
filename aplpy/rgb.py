@@ -4,60 +4,60 @@ from distutils import version
 import os
 import warnings
 
-import tempfile
-import shutil
-
 import numpy as np
 from astropy.extern import six
 from astropy import log
 from astropy.io import fits
+from astropy.coordinates import ICRS
+from astropy.visualization import AsymmetricPercentileInterval, simple_norm
 
-from . import image_util
-from . import math_util
+from reproject import reproject_interp
+from reproject.mosaicking import find_optimal_celestial_wcs
 
 
 def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
                   stretch='linear', vmid=None, exponent=2):
 
-    min_auto = not math_util.isnumeric(vmin)
-    max_auto = not math_util.isnumeric(vmax)
+    if vmin is None or vmax is None:
+        interval = AsymmetricPercentileInterval(pmin, pmax, n_samples=10000)
+        try:
+            vmin_auto, vmax_auto = interval.get_limits(image)
+        except IndexError:  # no valid values
+            vmin_auto = vmax_auto = 0
 
-    if min_auto or max_auto:
-        auto_v = image_util.percentile_function(image)
-        vmin_auto, vmax_auto = auto_v(pmin), auto_v(pmax)
-
-    if min_auto:
+    if vmin is None:
         log.info("vmin = %10.3e (auto)" % vmin_auto)
         vmin = vmin_auto
     else:
         log.info("vmin = %10.3e" % vmin)
 
-    if max_auto:
+    if vmax is None:
         log.info("vmax = %10.3e (auto)" % vmax_auto)
         vmax = vmax_auto
     else:
         log.info("vmax = %10.3e" % vmax)
 
-    image = (image - vmin) / (vmax - vmin)
+    if stretch == 'arcsinh':
+        stretch = 'asinh'
 
-    data = image_util.stretch(image, stretch, exponent=exponent, midpoint=vmid)
+    normalizer = simple_norm(image, stretch=stretch, power=exponent,
+                             asinh_a=vmid, min_cut=vmin, max_cut=vmax)
 
+    data = normalizer(image, clip=True).filled(0)
     data = np.nan_to_num(data)
     data = np.clip(data * 255., 0., 255.)
 
     return data.astype(np.uint8)
 
 
-def make_rgb_image(data, output, indices=(0, 1, 2), \
-                   vmin_r=None, vmax_r=None, pmin_r=0.25, pmax_r=99.75, \
-                   stretch_r='linear', vmid_r=None, exponent_r=2, \
-                   vmin_g=None, vmax_g=None, pmin_g=0.25, pmax_g=99.75, \
-                   stretch_g='linear', vmid_g=None, exponent_g=2, \
-                   vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75, \
-                   stretch_b='linear', vmid_b=None, exponent_b=2, \
-                   make_nans_transparent=False, \
-                   embed_avm_tags=True):
-    '''
+def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
+                   pmin_r=0.25, pmax_r=99.75, stretch_r='linear', vmid_r=None,
+                   exponent_r=2, vmin_g=None, vmax_g=None, pmin_g=0.25,
+                   pmax_g=99.75, stretch_g='linear', vmid_g=None, exponent_g=2,
+                   vmin_b=None, vmax_b=None, pmin_b=0.25, pmax_b=99.75,
+                   stretch_b='linear', vmid_b=None, exponent_b=2,
+                   make_nans_transparent=False, embed_avm_tags=True):
+    """
     Make an RGB image from a FITS RGB cube or from three FITS files.
 
     Parameters
@@ -119,7 +119,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
     embed_avm_tags : bool, optional
         Whether to embed AVM tags inside the image - this can only be done for
         JPEG and PNG files, and only if PyAVM is installed.
-    '''
+    """
 
     try:
         from PIL import Image
@@ -175,27 +175,24 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
             image_alpha[np.isnan(im)] = 0
 
     log.info("Red:")
-    image_r = Image.fromarray(_data_stretch(image_r, \
-                                            vmin=vmin_r, vmax=vmax_r, \
-                                            pmin=pmin_r, pmax=pmax_r, \
-                                            stretch=stretch_r, \
-                                            vmid=vmid_r, \
-                                            exponent=exponent_r))
+    image_r = Image.fromarray(_data_stretch(image_r, vmin=vmin_r, vmax=vmax_r,
+                                            pmin=pmin_r, pmax=pmax_r, stretch=stretch_r,
+                                            vmid=vmid_r, exponent=exponent_r))
 
     log.info("Green:")
-    image_g = Image.fromarray(_data_stretch(image_g, \
-                                            vmin=vmin_g, vmax=vmax_g, \
-                                            pmin=pmin_g, pmax=pmax_g, \
-                                            stretch=stretch_g, \
-                                            vmid=vmid_g, \
+    image_g = Image.fromarray(_data_stretch(image_g,
+                                            vmin=vmin_g, vmax=vmax_g,
+                                            pmin=pmin_g, pmax=pmax_g,
+                                            stretch=stretch_g,
+                                            vmid=vmid_g,
                                             exponent=exponent_g))
 
     log.info("Blue:")
-    image_b = Image.fromarray(_data_stretch(image_b, \
-                                            vmin=vmin_b, vmax=vmax_b, \
-                                            pmin=pmin_b, pmax=pmax_b, \
-                                            stretch=stretch_b, \
-                                            vmid=vmid_b, \
+    image_b = Image.fromarray(_data_stretch(image_b,
+                                            vmin=vmin_b, vmax=vmax_b,
+                                            pmin=pmin_b, pmax=pmax_b,
+                                            stretch=stretch_b,
+                                            vmid=vmid_b,
                                             exponent=exponent_b))
 
     img = Image.merge("RGB", (image_r, image_g, image_b))
@@ -232,12 +229,13 @@ def make_rgb_image(data, output, indices=(0, 1, 2), \
 
 
 def make_rgb_cube(files, output, north=False, system=None, equinox=None):
-    '''
+    """
     Make an RGB data cube from a list of three FITS images.
 
     This method can read in three FITS files with different
-    projections/sizes/resolutions and uses Montage to reproject
-    them all to the same projection.
+    projections/sizes/resolutions and uses the `reproject
+    <http://reproject.readthedocs.io/en/stable/>`_ package to reproject them all
+    to the same projection.
 
     Two files are produced by this function. The first is a three-dimensional
     FITS cube with a filename give by `output`, where the third dimension
@@ -259,10 +257,10 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
        The filename of the output RGB FITS cube.
 
     north : bool, optional
-       By default, the FITS header generated by Montage represents the
-       best fit to the images, often resulting in a slight rotation. If
-       you want north to be straight up in your final mosaic, you should
-       use this option.
+        Whether to rotate the image so that north is up. By default, this is
+        assumed to be 'north' in the ICRS frame, but you can also pass any
+        astropy :class:`~astropy.coordinates.BaseCoordinateFrame` to indicate
+        to use the north of that frame.
 
     system : str, optional
        Specifies the system for the header (default is EQUJ).
@@ -271,71 +269,32 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
     equinox : str, optional
        If a coordinate system is specified, the equinox can also be given
        in the form YYYY. Default is J2000.
-    '''
-
-    # Check whether the Python montage module is installed. The Python module
-    # checks itself whether the Montage command-line tools are available, and
-    # if they are not then importing the Python module will fail.
-    try:
-        import montage_wrapper as montage
-    except ImportError:
-        raise Exception("Both the Montage command-line tools and the"
-                        " montage-wrapper Python module are required"
-                        " for this function")
+    """
 
     # Check that input files exist
     for f in files:
         if not os.path.exists(f):
             raise Exception("File does not exist : " + f)
 
-    # Create work directory
-    work_dir = tempfile.mkdtemp()
+    if north:
+        frame = ICRS() if north is True else north
+    else:
+        frame = None
 
-    raw_dir = '%s/raw' % work_dir
-    final_dir = '%s/final' % work_dir
-
-    images_raw_tbl = '%s/images_raw.tbl' % work_dir
-    header_hdr = '%s/header.hdr' % work_dir
-
-    # Create raw and final directory in work directory
-    os.mkdir(raw_dir)
-    os.mkdir(final_dir)
-
-    # Create symbolic links to input files
-    for i, f in enumerate(files):
-        os.symlink(os.path.abspath(f), '%s/image_%i.fits' % (raw_dir, i))
-
-    # List files and create optimal header
-    montage.mImgtbl(raw_dir, images_raw_tbl, corners=True)
-    montage.mMakeHdr(images_raw_tbl, header_hdr, north_aligned=north, system=system, equinox=equinox)
-
-    # Read header in with astropy.io.fits
-    header = fits.Header.fromtextfile(header_hdr)
-
-    # Find image dimensions
-    nx = int(header['NAXIS1'])
-    ny = int(header['NAXIS2'])
+    # Find optimal WCS and shape based on input images
+    wcs, shape = find_optimal_celestial_wcs(files, frame=frame)
+    header = wcs.to_header()
 
     # Generate empty datacube
-    image_cube = np.zeros((len(files), ny, nx), dtype=np.float32)
+    image_cube = np.zeros((len(files),) + shape, dtype=np.float32)
 
-    # Loop through files
-    for i in range(len(files)):
-
-        # Reproject channel to optimal header
-        montage.reproject('%s/image_%i.fits' % (raw_dir, i),
-                          '%s/image_%i.fits' % (final_dir, i),
-                          header=header_hdr, exact_size=True, bitpix=-32)
-
-        # Read in and add to datacube
-        image_cube[i, :, :] = fits.getdata('%s/image_%i.fits' % (final_dir, i))
+    # Loop through files and reproject
+    for i, filename in enumerate(files):
+        image_cube[i, :, :] = reproject_interp(filename, wcs, shape_out=shape)[0]
 
     # Write out final cube
-    fits.writeto(output, image_cube, header, clobber=True)
+    fits.writeto(output, image_cube, header, overwrite=True)
 
     # Write out collapsed version of cube
-    fits.writeto(output.replace('.fits', '_2d.fits'), \
-                   np.mean(image_cube, axis=0), header, clobber=True)
-
-    # Remove work directory
-    shutil.rmtree(work_dir)
+    fits.writeto(output.replace('.fits', '_2d.fits'),
+                 np.mean(image_cube, axis=0), header, overwrite=True)

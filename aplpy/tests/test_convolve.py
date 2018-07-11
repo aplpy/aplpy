@@ -1,14 +1,8 @@
-import os
-
-import matplotlib
-matplotlib.use('Agg')
+from __future__ import absolute_import, print_function, division
 
 import numpy as np
-from astropy.tests.helper import pytest
 from astropy.io import fits
-from astropy.wcs import WCS as AstropyWCS
 
-from .helpers import generate_file, generate_hdu, generate_wcs
 from .. import FITSFigure
 
 
@@ -40,11 +34,11 @@ def test_convolve_custom():
     data = np.random.random((16, 16))
     hdu = fits.PrimaryHDU(data)
     f = FITSFigure(hdu)
-    f.show_grayscale(kernel=np.ones((3,3)))
+    f.show_grayscale(kernel=np.ones((3, 3)))
     f.close()
 
 
-def test_convolve_default():
+def test_convolve_int():
     # Regression test for aplpy/aplpy#165
     data = np.ones((16, 16), dtype=int)
     hdu = fits.PrimaryHDU(data)

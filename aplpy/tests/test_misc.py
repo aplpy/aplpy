@@ -1,5 +1,6 @@
+from __future__ import absolute_import, print_function, division
+
 import numpy as np
-from astropy.io import fits
 
 from ..core import FITSFigure
 
@@ -20,5 +21,5 @@ def test_nan_color_copy():
     f2.show_grayscale()
     f2.set_nan_color('red')
 
-    assert f1.image.get_cmap()._rgba_bad == (0.0, 0.0, 1.0, 1.0) 
-    assert f2.image.get_cmap()._rgba_bad == (1.0, 0.0, 0.0, 1.0) 
+    assert f1.image.get_cmap()._rgba_bad == (0.0, 0.0, 1.0, 1.0)
+    assert f2.image.get_cmap()._rgba_bad == (1.0, 0.0, 0.0, 1.0)

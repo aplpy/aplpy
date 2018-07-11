@@ -1,12 +1,8 @@
-import matplotlib
-matplotlib.use('Agg')
+from __future__ import absolute_import, print_function, division
 
 import numpy as np
-from astropy.tests.helper import pytest
 
 from .. import FITSFigure
-
-# Test simple contour generation with Numpy example
 
 
 def test_numpy_downsample():

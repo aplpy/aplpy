@@ -1,13 +1,11 @@
-import os
+from __future__ import absolute_import, print_function, division
 
-import matplotlib
-matplotlib.use('Agg')
+import os
 
 import numpy as np
 from astropy.tests.helper import pytest
 from astropy.io import fits
 from astropy.wcs import WCS as AstropyWCS
-import astropy.utils.exceptions as aue
 
 from .helpers import generate_file, generate_hdu, generate_wcs
 from .. import FITSFigure
@@ -74,13 +72,9 @@ def test_hdu_init():
 # Test initialization through a WCS object
 def test_wcs_init():
     wcs = generate_wcs(REFERENCE)
-    if hasattr(wcs,'naxis1'):
-        f = FITSFigure(wcs)
-        f.show_grayscale()
-        f.close()
-    else:
-        with pytest.raises(aue.AstropyDeprecationWarning):
-            f = FITSFigure(wcs)
+    f = FITSFigure(wcs)
+    f.show_grayscale()
+    f.close()
 
 
 # Test initialization through a WCS object with wcs.to_header() as a go-between
@@ -91,8 +85,8 @@ def test_wcs_toheader_init():
     header_ = fits.Header.fromtextfile(REFERENCE)
     header = wcs.to_header()
     wcs2 = AstropyWCS(header)
-    wcs2.naxis1 = wcs.naxis1 = header_['NAXIS1']
-    wcs2.naxis2 = wcs.naxis2 = header_['NAXIS2']
+    wcs2._naxis1 = wcs._naxis1 = header_['NAXIS1']
+    wcs2._naxis2 = wcs._naxis2 = header_['NAXIS2']
     f = FITSFigure(wcs2)
     f.show_grayscale()
     f.add_grid()
@@ -139,6 +133,7 @@ def test_init_dimensions_invalid(dimensions):
 # Now check initialization of different WCS projections, and we check only
 # valid dimensions
 
+
 valid_parameters = []
 for h in HEADERS:
     for d in VALID_DIMENSIONS:
@@ -166,17 +161,19 @@ def test_init_car_invalid(dimensions):
         FITSFigure(hdu, dimensions=dimensions)
 
 # Check that images containing only NaN or Inf values don't crash FITSFigure
+
+
 def test_init_only_naninf():
-    data = np.ones((10,10)) * np.nan
-    data[::2,::2] = np.inf
+    data = np.ones((10, 10)) * np.nan
+    data[::2, ::2] = np.inf
     f = FITSFigure(data)
     f.show_grayscale()
     f.show_colorscale()
 
 
 def test_init_single_pixel():
-    data = np.zeros((4,4))
+    data = np.zeros((4, 4))
     data[...] = np.nan
-    data[2,2] = 1
+    data[2, 2] = 1
     f = FITSFigure(data)
     f.show_grayscale()

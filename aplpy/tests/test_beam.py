@@ -1,7 +1,6 @@
-import os
+from __future__ import absolute_import, print_function, division
 
-import matplotlib
-matplotlib.use('Agg')
+import os
 
 import numpy as np
 from astropy.tests.helper import pytest
@@ -45,7 +44,7 @@ def test_beam_major():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+@pytest.mark.parametrize('quantity', [u.arcsec, 5 * u.arcsec, 1 * u.degree, 1 * u.radian])
 def test_beam_major_quantity(quantity):
     f = FITSFigure(HDU)
     f.show_grayscale()
@@ -63,7 +62,7 @@ def test_beam_minor():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+@pytest.mark.parametrize('quantity', [u.arcsec, 5 * u.arcsec, 1 * u.degree, 1 * u.radian])
 def test_beam_minor_quantity(quantity):
     f = FITSFigure(HDU)
     f.show_grayscale()
@@ -82,7 +81,7 @@ def test_beam_angle():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [u.arcsec, 5*u.arcsec, 1*u.degree, 1*u.radian])
+@pytest.mark.parametrize('quantity', [u.arcsec, 5 * u.arcsec, 1 * u.degree, 1 * u.radian])
 def test_beam_angle_quantity(quantity):
     f = FITSFigure(HDU)
     f.show_grayscale()

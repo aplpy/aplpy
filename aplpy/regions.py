@@ -2,11 +2,12 @@ from __future__ import absolute_import, print_function, division
 
 from astropy.extern import six
 from astropy import log
+from astropy import wcs
 
 from .decorators import auto_refresh
 
 
-class Regions:
+class Regions(object):
     """
     Regions sub-class of APLpy.
 
@@ -61,11 +62,10 @@ class Regions:
             ds9 call and onto the patchcollections.
         """
 
-        PC, TC = ds9(region_file, self._header, **kwargs)
+        PC, TC = ds9(region_file, flatten_header(self._header), **kwargs)
 
-        # ffpc = self._ax1.add_collection(PC)
-        PC.add_to_axes(self._ax1)
-        TC.add_to_axes(self._ax1)
+        PC.add_to_axes(self.ax)
+        TC.add_to_axes(self.ax)
 
         if layer:
             region_set_name = layer
@@ -87,7 +87,7 @@ def ds9(region_file, header, zorder=3, **kwargs):
 
     try:
         import pyregion
-    except:
+    except Exception:
         raise ImportError("The pyregion package is required to load region files")
 
     # read region file
@@ -97,6 +97,9 @@ def ds9(region_file, header, zorder=3, **kwargs):
         rr = region_file
     else:
         raise Exception("Invalid type for region_file: %s - should be string or pyregion.ShapeList" % type(region_file))
+
+    if isinstance(header, wcs.WCS):
+        header = header.to_header()
 
     # convert coordinates to image coordinates
     rrim = rr.as_imagecoord(header)
@@ -171,3 +174,18 @@ class ArtistCollection():
     def set_zorder(self, zorder):
         for T in self.artistlist:
             T.set_zorder(zorder)
+
+
+def flatten_header(header):
+    """
+    Attempt to turn an N-dimensional fits header into a 2-dimensional header
+    Turns all CRPIX[>2] etc. into new keywords with suffix 'A'
+    """
+
+    orig_wcs = wcs.WCS(header)
+    newheader = orig_wcs.celestial.to_header()
+    newheader['NAXIS'] = 2
+    newheader['NAXIS1'] = header['NAXIS{0}'.format(orig_wcs.wcs.lng + 1)]
+    newheader['NAXIS2'] = header['NAXIS{0}'.format(orig_wcs.wcs.lat + 1)]
+
+    return newheader

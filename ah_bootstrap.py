@@ -19,9 +19,14 @@ that section, and options therein, determine the next step taken:  If it
 contains an option called ``auto_use`` with a value of ``True``, it will
 automatically call the main function of this module called
 `use_astropy_helpers` (see that function's docstring for full details).
-Otherwise no further action is taken (however,
-``ah_bootstrap.use_astropy_helpers`` may be called manually from within the
-setup.py script).
+Otherwise no further action is taken and by default the system-installed version
+of astropy-helpers will be used (however, ``ah_bootstrap.use_astropy_helpers``
+may be called manually from within the setup.py script).
+
+This behavior can also be controlled using the ``--auto-use`` and
+``--no-auto-use`` command-line flags. For clarity, an alias for
+``--no-auto-use`` is ``--use-system-astropy-helpers``, and we recommend using
+the latter if needed.
 
 Additional options in the ``[ah_boostrap]`` section of setup.cfg have the same
 names as the arguments to `use_astropy_helpers`, and can be used to configure
@@ -33,13 +38,19 @@ latest version of this module.
 
 import contextlib
 import errno
-import imp
 import io
 import locale
 import os
 import re
 import subprocess as sp
 import sys
+
+__minimum_python_version__ = (2, 7)
+
+if sys.version_info < __minimum_python_version__:
+    print("ERROR: Python {} or later is required by astropy-helpers".format(
+        __minimum_python_version__))
+    sys.exit(1)
 
 try:
     from ConfigParser import ConfigParser, RawConfigParser
@@ -61,34 +72,25 @@ else:
 # issues with either missing or misbehaving pacakges (including making sure
 # setuptools itself is installed):
 
+# Check that setuptools 1.0 or later is present
+from distutils.version import LooseVersion
 
-# Some pre-setuptools checks to ensure that either distribute or setuptools >=
-# 0.7 is used (over pre-distribute setuptools) if it is available on the path;
-# otherwise the latest setuptools will be downloaded and bootstrapped with
-# ``ez_setup.py``.  This used to be included in a separate file called
-# setuptools_bootstrap.py; but it was combined into ah_bootstrap.py
 try:
-    import pkg_resources
-    _setuptools_req = pkg_resources.Requirement.parse('setuptools>=0.7')
-    # This may raise a DistributionNotFound in which case no version of
-    # setuptools or distribute is properly installed
-    _setuptools = pkg_resources.get_distribution('setuptools')
-    if _setuptools not in _setuptools_req:
-        # Older version of setuptools; check if we have distribute; again if
-        # this results in DistributionNotFound we want to give up
-        _distribute = pkg_resources.get_distribution('distribute')
-        if _setuptools != _distribute:
-            # It's possible on some pathological systems to have an old version
-            # of setuptools and distribute on sys.path simultaneously; make
-            # sure distribute is the one that's used
-            sys.path.insert(1, _distribute.location)
-            _distribute.activate()
-            imp.reload(pkg_resources)
-except:
-    # There are several types of exceptions that can occur here; if all else
-    # fails bootstrap and use the bootstrapped version
-    from ez_setup import use_setuptools
-    use_setuptools()
+    import setuptools
+    assert LooseVersion(setuptools.__version__) >= LooseVersion('1.0')
+except (ImportError, AssertionError):
+    print("ERROR: setuptools 1.0 or later is required by astropy-helpers")
+    sys.exit(1)
+
+# typing as a dependency for 1.6.1+ Sphinx causes issues when imported after
+# initializing submodule with ah_boostrap.py
+# See discussion and references in
+# https://github.com/astropy/astropy-helpers/issues/302
+
+try:
+    import typing   # noqa
+except ImportError:
+    pass
 
 
 # Note: The following import is required as a workaround to
@@ -97,7 +99,7 @@ except:
 # later cause the TemporaryDirectory class defined in it to stop working when
 # used later on by setuptools
 try:
-    import setuptools.py31compat
+    import setuptools.py31compat   # noqa
 except ImportError:
     pass
 
@@ -126,7 +128,6 @@ import pkg_resources
 
 from setuptools import Distribution
 from setuptools.package_index import PackageIndex
-from setuptools.sandbox import run_setup
 
 from distutils import log
 from distutils.debug import DEBUG
@@ -135,6 +136,11 @@ from distutils.debug import DEBUG
 # TODO: Maybe enable checking for a specific version of astropy_helpers?
 DIST_NAME = 'astropy-helpers'
 PACKAGE_NAME = 'astropy_helpers'
+
+if PY3:
+    UPPER_VERSION_EXCLUSIVE = None
+else:
+    UPPER_VERSION_EXCLUSIVE = '3'
 
 # Defaults for other options
 DOWNLOAD_IF_NEEDED = True
@@ -276,11 +282,36 @@ class _Bootstrapper(object):
             config['offline'] = True
             argv.remove('--offline')
 
+        if '--auto-use' in argv:
+            config['auto_use'] = True
+            argv.remove('--auto-use')
+
+        if '--no-auto-use' in argv:
+            config['auto_use'] = False
+            argv.remove('--no-auto-use')
+
+        if '--use-system-astropy-helpers' in argv:
+            config['auto_use'] = False
+            argv.remove('--use-system-astropy-helpers')
+
         return config
 
     def run(self):
         strategies = ['local_directory', 'local_file', 'index']
         dist = None
+
+        # First, remove any previously imported versions of astropy_helpers;
+        # this is necessary for nested installs where one package's installer
+        # is installing another package via setuptools.sandbox.run_setup, as in
+        # the case of setup_requires
+        for key in list(sys.modules):
+            try:
+                if key == PACKAGE_NAME or key.startswith(PACKAGE_NAME + '.'):
+                    del sys.modules[key]
+            except AttributeError:
+                # Sometimes mysterious non-string things can turn up in
+                # sys.modules
+                continue
 
         # Check to see if the path is a submodule
         self.is_submodule = self._check_submodule()
@@ -310,19 +341,6 @@ class _Bootstrapper(object):
         # do it again
         # Note: Adding the dist to the global working set also activates it
         # (makes it importable on sys.path) by default.
-
-        # But first, remove any previously imported versions of
-        # astropy_helpers; this is necessary for nested installs where one
-        # package's installer is installing another package via
-        # setuptools.sandbox.run_set, as in the case of setup_requires
-        for key in list(sys.modules):
-            try:
-                if key == PACKAGE_NAME or key.startswith(PACKAGE_NAME + '.'):
-                    del sys.modules[key]
-            except AttributeError:
-                # Sometimes mysterious non-string things can turn up in
-                # sys.modules
-                continue
 
         try:
             pkg_resources.working_set.add(dist, replace=True)
@@ -409,7 +427,7 @@ class _Bootstrapper(object):
     def get_index_dist(self):
         if not self.download:
             log.warn('Downloading {0!r} disabled.'.format(DIST_NAME))
-            return False
+            return None
 
         log.warn(
             "Downloading {0!r}; run setup.py with the --offline option to "
@@ -453,9 +471,10 @@ class _Bootstrapper(object):
             # setup.py exists we can generate it
             setup_py = os.path.join(path, 'setup.py')
             if os.path.isfile(setup_py):
-                with _silence():
-                    run_setup(os.path.join(path, 'setup.py'),
-                              ['egg_info'])
+                # We use subprocess instead of run_setup from setuptools to
+                # avoid segmentation faults - see the following for more details:
+                # https://github.com/cython/cython/issues/2104
+                sp.check_output([sys.executable, 'setup.py', 'egg_info'], cwd=path)
 
                 for dist in pkg_resources.find_distributions(path, True):
                     # There should be only one...
@@ -490,16 +509,32 @@ class _Bootstrapper(object):
         if version:
             req = '{0}=={1}'.format(DIST_NAME, version)
         else:
-            req = DIST_NAME
+            if UPPER_VERSION_EXCLUSIVE is None:
+                req = DIST_NAME
+            else:
+                req = '{0}<{1}'.format(DIST_NAME, UPPER_VERSION_EXCLUSIVE)
 
         attrs = {'setup_requires': [req]}
 
+        # NOTE: we need to parse the config file (e.g. setup.cfg) to make sure
+        # it honours the options set in the [easy_install] section, and we need
+        # to explicitly fetch the requirement eggs as setup_requires does not
+        # get honored in recent versions of setuptools:
+        # https://github.com/pypa/setuptools/issues/1273
+
         try:
-            if DEBUG:
-                _Distribution(attrs=attrs)
-            else:
-                with _silence():
-                    _Distribution(attrs=attrs)
+
+            context = _verbose if DEBUG else _silence
+            with context():
+                dist = _Distribution(attrs=attrs)
+                try:
+                    dist.parse_config_files(ignore_option_errors=True)
+                    dist.fetch_build_eggs(req)
+                except TypeError:
+                    # On older versions of setuptools, ignore_option_errors
+                    # doesn't exist, and the above two lines are not needed
+                    # so we can just continue
+                    pass
 
             # If the setup_requires succeeded it will have added the new dist to
             # the main working_set
@@ -702,7 +737,7 @@ class _Bootstrapper(object):
             if self.offline:
                 cmd.append('--no-fetch')
         elif status == 'U':
-            raise _AHBoostrapSystemExit(
+            raise _AHBootstrapSystemExit(
                 'Error: Submodule {0} contains unresolved merge conflicts.  '
                 'Please complete or abandon any changes in the submodule so that '
                 'it is in a usable state, then try again.'.format(submodule))
@@ -763,7 +798,7 @@ def run_cmd(cmd):
             msg = 'Command not found: `{0}`'.format(' '.join(cmd))
             raise _CommandNotFound(msg, cmd)
         else:
-            raise _AHBoostrapSystemExit(
+            raise _AHBootstrapSystemExit(
                 'An unexpected error occurred when running the '
                 '`{0}` command:\n{1}'.format(' '.join(cmd), str(e)))
 
@@ -836,6 +871,10 @@ class _DummyFile(object):
 
 
 @contextlib.contextmanager
+def _verbose():
+    yield
+
+@contextlib.contextmanager
 def _silence():
     """A context manager that silences sys.stdout and sys.stderr."""
 
@@ -876,46 +915,6 @@ class _AHBootstrapSystemExit(SystemExit):
         msg += '\n' + _err_help_msg
 
         super(_AHBootstrapSystemExit, self).__init__(msg, *args[1:])
-
-
-if sys.version_info[:2] < (2, 7):
-    # In Python 2.6 the distutils log does not log warnings, errors, etc. to
-    # stderr so we have to wrap it to ensure consistency at least in this
-    # module
-    import distutils
-
-    class log(object):
-        def __getattr__(self, attr):
-            return getattr(distutils.log, attr)
-
-        def warn(self, msg, *args):
-            self._log_to_stderr(distutils.log.WARN, msg, *args)
-
-        def error(self, msg):
-            self._log_to_stderr(distutils.log.ERROR, msg, *args)
-
-        def fatal(self, msg):
-            self._log_to_stderr(distutils.log.FATAL, msg, *args)
-
-        def log(self, level, msg, *args):
-            if level in (distutils.log.WARN, distutils.log.ERROR,
-                         distutils.log.FATAL):
-                self._log_to_stderr(level, msg, *args)
-            else:
-                distutils.log.log(level, msg, *args)
-
-        def _log_to_stderr(self, level, msg, *args):
-            # This is the only truly 'public' way to get the current threshold
-            # of the log
-            current_threshold = distutils.log.set_threshold(distutils.log.WARN)
-            distutils.log.set_threshold(current_threshold)
-            if level >= current_threshold:
-                if args:
-                    msg = msg % args
-                sys.stderr.write('%s\n' % msg)
-                sys.stderr.flush()
-
-    log = log()
 
 
 BOOTSTRAPPER = _Bootstrapper.main()

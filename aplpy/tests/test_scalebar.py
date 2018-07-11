@@ -1,7 +1,6 @@
-import os
+from __future__ import absolute_import, print_function, division
 
-import matplotlib
-matplotlib.use('Agg')
+import os
 
 import numpy as np
 from astropy.tests.helper import pytest
@@ -11,9 +10,9 @@ from astropy.io import fits
 from .. import FITSFigure
 
 
-header_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits')
-
-HEADER = fits.Header.fromtextfile(os.path.join(header_dir, '1904-66_TAN.hdr'))
+ROOT = os.path.dirname(os.path.abspath(__file__))
+HEADER_DIR = os.path.join(ROOT, 'data/2d_fits')
+HEADER = fits.Header.fromtextfile(os.path.join(HEADER_DIR, '1904-66_TAN.hdr'))
 HDU = fits.PrimaryHDU(np.zeros((16, 16)), HEADER)
 
 
@@ -47,7 +46,7 @@ def test_scalebar_length():
     f.close()
 
 
-@pytest.mark.parametrize('quantity', [1*u.arcsec, u.arcsec, 2*u.degree, 5*u.radian])
+@pytest.mark.parametrize('quantity', [1 * u.arcsec, u.arcsec, 2 * u.degree, 5 * u.radian])
 def test_scalebar_length_quantity(quantity):
     f = FITSFigure(HDU)
     f.add_scalebar(quantity)
@@ -104,4 +103,12 @@ def test_scalebar_font():
     f.add_scalebar(0.1)
     f.scalebar.set_font(size='small', weight='bold', stretch='normal',
                         family='serif', style='normal', variant='normal')
+    f.close()
+
+
+def test_regression_exception_type():
+    # In Matplotlib 1.5, the exception type changed for when a property doesn't
+    # exist, so we need to catch both AttributeError and TypeError.
+    f = FITSFigure(HDU)
+    f.add_scalebar(0.1, family='serif')
     f.close()

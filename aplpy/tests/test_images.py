@@ -1,18 +1,25 @@
+from __future__ import absolute_import, print_function, division
+
 import os
-import shutil
 import tempfile
-from distutils.version import LooseVersion
 
 import numpy as np
 
-import matplotlib
-from matplotlib.testing.compare import compare_images
-from astropy.tests.helper import pytest
+try:
+    import pyregion  # noqa
+except ImportError:
+    PYREGION_INSTALLED = False
+else:
+    PYREGION_INSTALLED = True
+
+from astropy.tests.helper import pytest, remote_data
 
 from .. import FITSFigure
 from .helpers import generate_file
+from . import baseline_dir
 
-MATPLOTLIB_GE_12 = LooseVersion(matplotlib.__version__) >= LooseVersion("1.2")
+MODULEDIR = os.path.dirname(__file__)
+DATADIR = os.path.abspath(os.path.join(MODULEDIR, 'data'))
 
 
 class BaseImageTests(object):
@@ -20,62 +27,37 @@ class BaseImageTests(object):
     @classmethod
     def setup_class(cls):
 
-        cls._moduledir = os.path.dirname(__file__)
-        cls._data_dir = os.path.abspath(os.path.join(cls._moduledir, 'data'))
-        cls._baseline_images_dir = os.path.abspath(os.path.join(cls._moduledir, 'baseline_images'))
+        cls._baseline_images_dir = os.path.abspath(os.path.join(MODULEDIR, 'baseline_images'))
 
-        header_1 = os.path.join(cls._data_dir, '2d_fits/1904-66_AIR.hdr')
+        header_1 = os.path.join(DATADIR, '2d_fits/1904-66_AIR.hdr')
         cls.filename_1 = generate_file(header_1, str(tempfile.mkdtemp()))
 
-        header_2 = os.path.join(cls._data_dir, '2d_fits/2MASS_k.hdr')
+        header_2 = os.path.join(DATADIR, '2d_fits/2MASS_k.hdr')
         cls.filename_2 = generate_file(header_2, str(tempfile.mkdtemp()))
 
-        header_3 = os.path.join(cls._data_dir, '3d_fits/cube.hdr')
+        header_3 = os.path.join(DATADIR, '3d_fits/cube.hdr')
         cls.filename_3 = generate_file(header_3, str(tempfile.mkdtemp()))
-
-    # method to create baseline or test images
-    def generate_or_test(self, generate, figure, image, adjust_bbox=True, tolerance=1):
-        if generate is None:
-            result_dir = tempfile.mkdtemp()
-            test_image = os.path.abspath(os.path.join(result_dir, image))
-
-            # distutils will put the baseline images in non-accessible places,
-            # copy to our tmpdir to be sure to keep them in case of failure
-            orig_baseline_image = os.path.abspath(os.path.join(self._baseline_images_dir, image))
-            baseline_image = os.path.abspath(os.path.join(result_dir, 'baseline-'+image))
-            shutil.copyfile(orig_baseline_image, baseline_image)
-
-            figure.save(test_image)
-
-            if not os.path.exists(baseline_image):
-                raise Exception("""Image file not found for comparision test
-                                Generated Image:
-                                \t{test}
-                                This is expected for new tests.""".format(
-                                    test=test_image))
-
-            msg = compare_images(baseline_image, test_image, tol=tolerance)
-
-            if msg is None:
-                shutil.rmtree(result_dir)
-            else:
-                raise Exception(msg)
-        else:
-            figure.save(os.path.abspath(os.path.join(generate, image)), adjust_bbox=adjust_bbox)
-            pytest.skip("Skipping test, since generating data")
 
 
 class TestBasic(BaseImageTests):
 
     # Test for showing grayscale
-    def test_basic_image(self, generate):
-        f = FITSFigure(self.filename_2)
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    def test_basic_image(self):
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale()
-        self.generate_or_test(generate, f, 'basic_image.png')
-        f.close()
+        return f._figure
 
-    def test_ticks_labels_options(self, generate):
-        f = FITSFigure(self.filename_2)
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    def test_ticks_labels_options(self):
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
+
+        # Force aspect ratio
+        f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.axis_labels.set_xposition('top')
         f.axis_labels.set_yposition('right')
@@ -87,25 +69,31 @@ class TestBasic(BaseImageTests):
         f.ticks.set_xspacing(0.2)
         f.ticks.set_yspacing(0.2)
         f.ticks.set_minor_frequency(10)
-        self.generate_or_test(generate, f, 'tick_labels_options.png')
-        f.close()
+        return f._figure
 
     # Test for showing colorscale
-    @pytest.mark.skipif("not MATPLOTLIB_GE_12")
-    def test_show_colorbar_scalebar_beam(self, generate):
-        f = FITSFigure(self.filename_1)
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_show_colorbar_scalebar_beam(self):
+        f = FITSFigure(self.filename_1, figsize=(7, 5))
         f.ticks.set_color('black')
         f.show_colorscale(vmin=-0.1, vmax=0.1)
         f.add_colorbar()
         f.add_scalebar(7.5)
         f.add_beam(major=0.5, minor=0.2, angle=10.)
         f.tick_labels.hide()
-        self.generate_or_test(generate, f, 'colorbar_scalebar_beam.png')
-        f.close()
+        return f._figure
 
     # Test for overlaying shapes
-    def test_overlay_shapes(self, generate):
-        f = FITSFigure(self.filename_1)
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    def test_overlay_shapes(self):
+        f = FITSFigure(self.filename_1, figsize=(7, 5))
+
+        # Force aspect ratio
+        f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.show_markers([360., 350., 340.], [-61., -62., -63])
         f.show_ellipses(330., -66., 0.15, 2., 10.)
@@ -116,12 +104,18 @@ class TestBasic(BaseImageTests):
         f.frame.set_linewidth(1)  # points
         f.frame.set_color('black')
         f.axis_labels.hide()
-        self.generate_or_test(generate, f, 'overlay_shapes.png')
-        f.close()
+        return f._figure
 
     # Test for grid
-    def test_grid(self, generate):
-        f = FITSFigure(self.filename_1)
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    def test_grid(self):
+        f = FITSFigure(self.filename_1, figsize=(7, 5))
+
+        # Force aspect ratio
+        f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.add_grid()
         f.grid.set_color('red')
@@ -129,31 +123,44 @@ class TestBasic(BaseImageTests):
         f.grid.set_linestyle('solid')
         f.grid.set_xspacing('tick')
         f.grid.set_yspacing(3)
-        self.generate_or_test(generate, f, 'grid.png')
-        f.close()
+        return f._figure
 
     # Test recenter
-    def test_recenter(self, generate):
-        f = FITSFigure(self.filename_2)
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    def test_recenter(self):
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
+
+        # Force aspect ratio
+        f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.recenter(266.5, -29.0, width=0.1, height=0.1)
         f.axis_labels.set_xpad(20)
         f.axis_labels.set_ypad(20)
-        self.generate_or_test(generate, f, 'recenter.png')
-        f.close()
+        return f._figure
 
     # Test overlaying contours
-    def test_contours(self, generate):
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_contours(self):
         data = np.arange(256).reshape((16, 16))
-        f = FITSFigure(data)
+        f = FITSFigure(data, figsize=(7, 5))
+
+        # Force aspect ratio
+        f.show_grayscale()
+        f.hide_grayscale()
+
         f.ticks.set_color('black')
         f.show_contour(data, levels=np.linspace(1., 254., 10), filled=False)
-        self.generate_or_test(generate, f, 'contours.png')
-        f.close()
+        return f._figure
 
     # Test cube slice
-    def test_cube_slice(self, generate):
-        f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10])
+    @remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_cube_slice(self):
+        f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10], figsize=(7, 5), subplot=[0.25, 0.1, 0.7, 0.8])
         f.ticks.set_color('black')
         f.add_grid()
         f.grid.set_color('black')
@@ -162,5 +169,21 @@ class TestBasic(BaseImageTests):
         f.grid.set_yspacing(0.01)
         f.tick_labels.set_xformat('%g')
         f.tick_labels.set_yformat('dd:mm:ss.ss')
-        self.generate_or_test(generate, f, 'cube_slice.png')
-        f.close()
+        return f._figure
+
+    # Test for ds9 regions
+    @remote_data
+    @pytest.mark.skipif("not PYREGION_INSTALLED")
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_regions(self):
+        f = FITSFigure(self.filename_2, figsize=(7, 5))
+
+        # Force aspect ratio
+        f.show_grayscale()
+        f.hide_grayscale()
+
+        f.show_regions(os.path.join(DATADIR, 'shapes.reg'))
+        f.axis_labels.hide()
+        f.tick_labels.hide()
+        f.ticks.hide()
+        return f._figure

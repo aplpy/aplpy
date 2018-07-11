@@ -1,0 +1,11 @@
+name: astropy
+
+channels:
+  - astropy
+
+dependencies:
+  - numpy
+  - matplotlib
+  - pillow
+  - astropy
+  - sphinx-astropy

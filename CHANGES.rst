@@ -4,7 +4,31 @@ CHANGES
 2.0 (unreleased)
 ----------------
 
-    - No changes yet
+- Refactored APLpy to make use of WCSAxes to draw coordinate frames. [#239, #364]
+
+- Use reproject package instead of montage-wrapper and Montage.
+
+1.2 (unreleased)
+----------------
+
+- No changes yet.
+
+1.1.1 (2016-10-04)
+------------------
+
+- Added missing LICENSE and README to tarball.
+
+- Fix undefined ``HDUList``. [#317]
+
+1.1 (2016-09-23)
+----------------
+
+- Fixed compatibility of Scalebar.set with Matplotlib 1.5.x. [#272, #286]
+
+- Fixed compatibility with Python 3.5.
+
+- Astropy is now a required dependency, and PyFITS and PyWCS are no longer
+  supported.
 
 1.0 (2015-02-18)
 ----------------
