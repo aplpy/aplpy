@@ -816,7 +816,7 @@ class FITSFigure(Layers, Regions):
     def show_contour(self, data=None, hdu=0, layer=None, levels=5,
                      filled=False, cmap=None, colors=None, returnlevels=False,
                      convention=None, dimensions=[0, 1], slices=[],
-                     smooth=None, kernel='gauss', overlap=False, **kwargs):
+                     smooth=None, kernel='gauss', overlap=False, rasterize=False, **kwargs):
         """
         Overlay contours on the current plot.
 
@@ -889,11 +889,16 @@ class FITSFigure(Layers, Regions):
             specify if they would prefer 'gauss', 'box', or a custom
             kernel. All kernels are normalized to ensure flux retention.
 
-        overlap str, optional
+        overlap : str, optional
             Whether to include only contours that overlap with the image
             area. This significantly speeds up the drawing of contours and
             reduces file size when using a file for the contours covering
             a much larger area than the image.
+
+        rasterize : bool, optional
+            Rasterizes the contour set. This drastically decreases the
+            file size when saving as a vector graphic at the expense of
+            saving the contour as a vector itself.
 
         kwargs
             Additional keyword arguments (such as alpha, linewidths, or
@@ -948,6 +953,10 @@ class FITSFigure(Layers, Regions):
                                 transform=self.ax.get_transform(frame),
                                 cmap=cmap,
                                 colors=colors, **kwargs)
+
+        if rasterize:
+            for cc in c.collections:
+                cc.set_rasterized(True)
 
         if layer:
             contour_set_name = layer
