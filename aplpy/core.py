@@ -139,7 +139,7 @@ class FITSFigure(Layers, Regions):
     def __init__(self, data, hdu=0, figure=None, subplot=(1, 1, 1),
                  downsample=False, north=False, convention=None,
                  dimensions=[0, 1], slices=[], auto_refresh=None,
-                 **kwargs):
+                 xmp_packet_index=0, **kwargs):
 
         self._wcsaxes_slices = ('x', 'y')
 
@@ -183,7 +183,7 @@ class FITSFigure(Layers, Regions):
             nx, ny = Image.open(data).size
 
             # Now convert AVM information to WCS
-            data = AVM.from_image(data).to_wcs()
+            data = AVM.from_image(data,xmp_packet_index=xmp_packet_index).to_wcs()
 
             # Need to scale CDELT values sometimes the AVM meta-data is only
             # really valid for the full-resolution image
@@ -191,8 +191,8 @@ class FITSFigure(Layers, Regions):
             data.wcs.crpix = [data.wcs.crpix[0] / nx * float(nx), data.wcs.crpix[1] / ny * float(ny)]
 
             # Update the NAXIS values with the true dimensions of the RGB image
-            data.wcs.naxis1 = data.nx = nx
-            data.wcs.naxis2 = data.ny = ny
+            data._naxis1 = data.nx = nx
+            data._naxis2 = data.ny = ny
 
         if isinstance(data, WCS):
 
@@ -762,7 +762,7 @@ class FITSFigure(Layers, Regions):
         self.image.set_cmap(cm)
 
     @auto_refresh
-    def show_rgb(self, filename=None, interpolation='nearest',
+    def show_rgb(self, filename=None, wcs=None, interpolation='nearest',
                  vertical_flip=False, horizontal_flip=False, flip=False):
         """
         Show a 3-color image instead of the FITS file data.
@@ -775,6 +775,10 @@ class FITSFigure(Layers, Regions):
             as the FITS file, and will be shown with exactly the same
             projection. If FITSFigure was initialized with an
             AVM-tagged RGB image, the filename is not needed here.
+
+        wcs: optional
+            A world coordinate system for the RGB image.  If None, assumes the
+            same WCS as the input file
 
         vertical_flip : str, optional
             Whether to vertically flip the RGB image
@@ -808,9 +812,31 @@ class FITSFigure(Layers, Regions):
         if horizontal_flip:
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
-        self.image = self.ax.imshow(image,
-                                    interpolation=interpolation,
-                                    origin='lower')
+        if wcs:
+            #x,y = np.meshgrid(np.arange(image.size[0]),np.arange(image.size[1]))
+            #l,b = wcs.wcs_pix2world(zip(x.flat,y.flat),0).T
+            #x,y = self._wcs.wcs_world2pix(zip(l,b),0).T
+            corners = (0.5, 0.5),(image.size[0]+0.5,  image.size[1]+0.5)
+            lbcorners = wcs.wcs_pix2world(corners,1)
+            xycorners = self._wcs.wcs_world2pix(lbcorners[:,0], lbcorners[:,1], 0)
+            (l,r),(b,t) = xycorners
+            if r < l:
+                l,r = r,l
+            if t < b:
+                t,b = b,t
+            extent = [l,r,b,t]
+            # pcolormesh doesn't support rgb (yet?) https://github.com/matplotlib/matplotlib/issues/1317
+            # self._ax1.pcolormesh(x.reshape(image.size),y.reshape(image.size),np.array(image))
+            self.image = self.ax.imshow(image, extent=extent,
+                                        interpolation=interpolation,
+                                        origin='upper')
+        else:
+            # Elsewhere in APLpy we assume that we are using origin='lower' so here
+            # we flip the image by default (since RGB images usually would require
+            # origin='upper') then we use origin='lower'
+            self.image = self.ax.imshow(image,
+                                        interpolation=interpolation,
+                                        origin='lower')
 
     @auto_refresh
     def show_contour(self, data=None, hdu=0, layer=None, levels=5,
