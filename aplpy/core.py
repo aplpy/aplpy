@@ -685,7 +685,7 @@ class FITSFigure(Layers, Regions):
             interval = AsymmetricPercentileInterval(pmin, pmax, n_samples=10000)
             try:
                 vmin_auto, vmax_auto = interval.get_limits(self._data)
-            except IndexError:  # no valid values
+            except (IndexError, TypeError):  # no valid values
                 vmin_auto = vmax_auto = 0
 
             if min_auto:
