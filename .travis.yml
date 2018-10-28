@@ -1,12 +1,7 @@
-language: python
+language: c
 
 # Setting sudo to false opts in to Travis-CI container-based builds.
 sudo: false
-
-python:
-    - 3.5
-    - 3.6
-    - 3.7
 
 env:
     global:
@@ -21,20 +16,24 @@ env:
         - PIP_DEPENDENCIES='codecov'
 
     matrix:
-        - SETUP_CMD='egg_info'
-        - SETUP_CMD='test --remote-data --coverage'
+        - PYTHON_VERSION=3.5 SETUP_CMD='egg_info'
+        - PYTHON_VERSION=3.5 SETUP_CMD='test --remote-data --coverage'
+        - PYTHON_VERSION=3.6 SETUP_CMD='egg_info'
+        - PYTHON_VERSION=3.6 SETUP_CMD='test --remote-data --coverage'
+        - PYTHON_VERSION=3.7 SETUP_CMD='egg_info'
+        - PYTHON_VERSION=3.8 SETUP_CMD='test --remote-data --coverage'
 
 matrix:
     include:
 
         # Check for sphinx doc build warnings
-        - python: 3.7
-          env: SETUP_CMD='build_docs -w'
+        - env: PYTHON_VERSION=3.7
+               SETUP_CMD='build_docs -w'
                PIP_DEPENDENCIES='sphinx-astropy'
 
         # Older Numpy version
-        - python: 3.5
-          env: SETUP_CMD='test --remote-data --coverage'
+        - env: PYTHON_VERSION=3.5
+               SETUP_CMD='test --remote-data --coverage'
                NUMPY_VERSION=1.13
 
 install:
