@@ -85,8 +85,7 @@ def test_wcs_toheader_init():
     header_ = fits.Header.fromtextfile(REFERENCE)
     header = wcs.to_header()
     wcs2 = AstropyWCS(header)
-    wcs2._naxis1 = wcs._naxis1 = header_['NAXIS1']
-    wcs2._naxis2 = wcs._naxis2 = header_['NAXIS2']
+    wcs2.pixel_shape = wcs.pixel_shape = (header_['NAXIS1'], header_['NAXIS2'])
     f = FITSFigure(wcs2)
     f.show_grayscale()
     f.add_grid()

@@ -203,13 +203,12 @@ class FITSFigure(Layers, Regions):
                                  "can only be done with 2-dimensional WCS "
                                  "objects")
 
-            if wcs._naxis1 == 0 or wcs._naxis2 == 0:
+            if wcs.pixel_shape is None:
                 raise ValueError("The WCS object does not contain any size "
                                  "information")
 
             header = wcs.to_header()
-            header['NAXIS1'] = wcs._naxis1
-            header['NAXIS2'] = wcs._naxis2
+            header['NAXIS1'], header['NAXIS2'] = wcs.pixel_shape
             nx = header['NAXIS%i' % (dimensions[0] + 1)]
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
             self._data = np.zeros((ny, nx), dtype=float)
