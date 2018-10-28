@@ -45,7 +45,7 @@ class TestBasic(BaseImageTests):
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_basic_image(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
-        f.show_grayscale()
+        f.show_grayscale(vmin=0, vmax=1)
         return f._figure
 
     @pytest.mark.remote_data

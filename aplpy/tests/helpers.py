@@ -32,7 +32,7 @@ def generate_data(header_file):
         shape.append(header['NAXIS%i' % (i + 1)])
 
     # Generate data array
-    data = np.arange(np.product(shape)).reshape(shape[::-1])
+    data = np.zeros(shape[::-1])
 
     return data
 
