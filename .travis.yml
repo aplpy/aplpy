@@ -27,7 +27,7 @@ matrix:
     include:
 
         # Check for sphinx doc build warnings
-        - env: PYTHON_VERSION=3.7
+        - env: PYTHON_VERSION=3.6
                SETUP_CMD='build_docs -w'
                PIP_DEPENDENCIES='sphinx-astropy'
 
