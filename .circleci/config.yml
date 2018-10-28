@@ -45,6 +45,21 @@ jobs:
       - run:
           name: Run tests
           command: pytest aplpy --remote-data=any --mpl
+  image-tests-mpldev:
+    docker:
+      - image: astropy/image-tests-py35-base:1.0
+    steps:
+      - checkout
+      - run:
+          name: Install apt dependencies
+          command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
+      - run:
+          name: Install dependencies
+          command: pip3 install reproject scikit-image==0.14.0 git+https://github.com/astropy/astropy.git git+https://github.com/matplotlib/matplotlib.git
+      - run:
+          name: Run tests
+          command: pytest aplpy --remote-data=any --mpl
+
 
 workflows:
   version: 2
@@ -54,3 +69,4 @@ workflows:
       - image-tests-mpl212
       - image-tests-mpl222
       - image-tests-mpl300
+      - image-tests-mpldev
