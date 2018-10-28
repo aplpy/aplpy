@@ -130,34 +130,34 @@ class Colorbar(object):
 
             if location == 'right':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
-                    tick.tick1On = True
-                    tick.tick2On = True
-                    tick.label1On = False
-                    tick.label2On = labels
+                    tick.tick1line.set_visible(True)
+                    tick.tick2line.set_visible(True)
+                    tick.label1.set_visible(False)
+                    tick.label2.set_visible(labels)
                 self._colorbar_axes.yaxis.set_label_position('right')
                 self._colorbar_axes.yaxis.labelpad = axis_label_pad
             elif location == 'top':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
-                    tick.tick1On = True
-                    tick.tick2On = True
-                    tick.label1On = False
-                    tick.label2On = labels
+                    tick.tick1line.set_visible(True)
+                    tick.tick2line.set_visible(True)
+                    tick.label1.set_visible(False)
+                    tick.label2.set_visible(labels)
                 self._colorbar_axes.xaxis.set_label_position('top')
                 self._colorbar_axes.xaxis.labelpad = axis_label_pad
             elif location == 'left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
-                    tick.tick1On = True
-                    tick.tick2On = True
-                    tick.label1On = labels
-                    tick.label2On = False
+                    tick.tick1line.set_visible(True)
+                    tick.tick2line.set_visible(True)
+                    tick.label1.set_visible(labels)
+                    tick.label2.set_visible(False)
                 self._colorbar_axes.yaxis.set_label_position('left')
                 self._colorbar_axes.yaxis.labelpad = axis_label_pad
             elif location == 'bottom':
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
-                    tick.tick1On = True
-                    tick.tick2On = True
-                    tick.label1On = labels
-                    tick.label2On = False
+                    tick.tick1line.set_visible(True)
+                    tick.tick2line.set_visible(True)
+                    tick.label1.set_visible(labels)
+                    tick.label2.set_visible(False)
                 self._colorbar_axes.xaxis.set_label_position('bottom')
                 self._colorbar_axes.xaxis.labelpad = axis_label_pad
 
