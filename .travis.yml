@@ -9,7 +9,7 @@ env:
         # compatible version.
         - ASTROPY_VERSION=dev
         - NUMPY_VERSION=1.15
-        - MATPLOTLIB_VERSION=3.0
+        - MATPLOTLIB_VERSION=2.0
         - SETUP_XVFB=True
         - CONDA_CHANNELS='astropy'
         - CONDA_DEPENDENCIES='nose pyqt matplotlib pillow scikit-image reproject>=0.4 pytest-mpl pyregion'
