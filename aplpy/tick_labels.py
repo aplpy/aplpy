@@ -2,11 +2,7 @@
 
 from __future__ import absolute_import, print_function, division, unicode_literals
 
-from astropy.coordinates import BaseRADecFrame
-from astropy.wcs.utils import wcs_to_celestial_frame
-
 from .decorators import auto_refresh, fixdocstring
-from .helpers import ASTROPY_LT_31
 
 __all__ = ['TickLabels']
 
@@ -19,13 +15,6 @@ class TickLabels(object):
         self._wcs = parent.ax.wcs
         self.x = parent.x
         self.y = parent.y
-
-        xcoord_type = self._ax.coords[self.x].coord_type
-        ycoord_type = self._ax.coords[self.y].coord_type
-
-        if ASTROPY_LT_31:
-            self._hours = {self.x: False, self.y: False}
-
         self.set_style('plain')
 
     @auto_refresh
@@ -51,8 +40,6 @@ class TickLabels(object):
         if 'dd.' in xformat:
             xformat = xformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.x].set_major_formatter(xformat)
-        if ASTROPY_LT_31:
-            self._hours[self.x] = 'h' in xformat
 
     @auto_refresh
     def set_yformat(self, yformat):
@@ -77,8 +64,6 @@ class TickLabels(object):
         if 'dd.' in yformat:
             yformat = yformat.replace('ddd.', 'd.').replace('dd.', 'd.')
         self._ax.coords[self.y].set_major_formatter(yformat)
-        if ASTROPY_LT_31:
-            self._hours[self.y] = 'h' in yformat
 
     @auto_refresh
     def set_style(self, style):
@@ -101,13 +86,7 @@ class TickLabels(object):
                 if style == 'colons':
                     sep = (':', ':', '')
                 else:
-                    if ASTROPY_LT_31:
-                        if self._hours[coord]:
-                            sep = ('h', 'm', 's')
-                        else:
-                            sep = ('\u00b0', "'", '"')
-                    else:
-                        sep = None
+                    sep = None
 
                 self._ax.coords[coord].set_separator(sep)
 

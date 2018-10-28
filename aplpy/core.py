@@ -20,14 +20,13 @@ from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 from astropy.nddata.utils import block_reduce
 from astropy.visualization import AsymmetricPercentileInterval, simple_norm
-from astropy.visualization.wcsaxes import WCSAxesSubplot
+from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 from astropy.coordinates import ICRS
 
 from . import convolve_util
 from . import header as header_util
 from . import slicer
 
-from .compat import WCSAxes
 from .layers import Layers
 from .grid import Grid
 from .ticks import Ticks
