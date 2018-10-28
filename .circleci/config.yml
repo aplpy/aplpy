@@ -55,7 +55,7 @@ jobs:
           command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
       - run:
           name: Install dependencies
-          command: pip3 install reproject scikit-image==0.14.0 git+https://github.com/astropy/astropy.git git+https://github.com/matplotlib/matplotlib.git
+          command: pip3 install pytest reproject scikit-image==0.14.0 git+https://github.com/astropy/astropy.git git+https://github.com/matplotlib/matplotlib.git
       - run:
           name: Run tests
           command: pytest aplpy --remote-data=any --mpl
