@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 import os
 import tempfile
 
+import pytest
 import numpy as np
 
 try:
@@ -11,8 +12,6 @@ except ImportError:
     PYREGION_INSTALLED = False
 else:
     PYREGION_INSTALLED = True
-
-from astropy.tests.helper import pytest, remote_data
 
 from .. import FITSFigure
 from .helpers import generate_file
@@ -42,14 +41,14 @@ class BaseImageTests(object):
 class TestBasic(BaseImageTests):
 
     # Test for showing grayscale
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_basic_image(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale()
         return f._figure
 
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_ticks_labels_options(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
@@ -72,7 +71,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test for showing colorscale
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_show_colorbar_scalebar_beam(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
@@ -85,7 +84,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test for overlaying shapes
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_overlay_shapes(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
@@ -107,7 +106,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test for grid
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_grid(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
@@ -126,7 +125,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test recenter
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_recenter(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
@@ -142,7 +141,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test overlaying contours
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_contours(self):
         data = np.arange(256).reshape((16, 16))
@@ -157,7 +156,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test cube slice
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_cube_slice(self):
         f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10], figsize=(7, 5), subplot=[0.25, 0.1, 0.7, 0.8])
@@ -172,7 +171,7 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     # Test for ds9 regions
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.skipif("not PYREGION_INSTALLED")
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_regions(self):

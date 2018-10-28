@@ -3,9 +3,9 @@ from __future__ import absolute_import, print_function, division
 import os
 import warnings
 
+import pytest
 import numpy as np
 from astropy.io import fits
-from astropy.tests.helper import pytest, remote_data
 
 from .. import FITSFigure
 from ..rgb import make_rgb_image
@@ -19,7 +19,7 @@ HEADER = os.path.join(ROOT, 'data/2d_fits', '1904-66_TAN.hdr')
 
 class TestRGB(BaseImageTests):
 
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
     def test_rgb(self, tmpdir):
 

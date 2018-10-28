@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 import os
 
+import pytest
 import numpy as np
-from astropy.tests.helper import pytest
 from astropy.io import fits
 from astropy.wcs import WCS as AstropyWCS
 

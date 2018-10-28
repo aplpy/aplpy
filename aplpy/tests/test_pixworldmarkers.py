@@ -2,10 +2,10 @@ from __future__ import absolute_import, print_function, division
 
 import os
 
+import pytest
 import numpy as np
 
 from astropy.table import Table
-from astropy.tests.helper import pytest
 from astropy.io import fits
 from .helpers import generate_wcs
 from .. import FITSFigure
