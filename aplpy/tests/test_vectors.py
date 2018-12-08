@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
+import pytest
 import numpy as np
-from astropy.tests.helper import pytest, remote_data
 
 from ..core import FITSFigure
 
@@ -20,7 +20,7 @@ ADATA = np.degrees(np.arctan2(Y, X))
 
 class TestVectors(BaseImageTests):
 
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_default(self):
         f = FITSFigure(IMAGE, figsize=(4, 4))
@@ -28,7 +28,7 @@ class TestVectors(BaseImageTests):
         f.show_vectors(PDATA, ADATA, color='orange')
         return f._figure
 
-    @remote_data
+    @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
     def test_step_scale(self):
         f = FITSFigure(IMAGE, figsize=(4, 4))

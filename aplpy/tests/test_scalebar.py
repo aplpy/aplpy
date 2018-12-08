@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 import os
 
+import pytest
 import numpy as np
-from astropy.tests.helper import pytest
 from astropy import units as u
 from astropy.io import fits
 
@@ -110,5 +110,6 @@ def test_regression_exception_type():
     # In Matplotlib 1.5, the exception type changed for when a property doesn't
     # exist, so we need to catch both AttributeError and TypeError.
     f = FITSFigure(HDU)
-    f.add_scalebar(0.1, family='serif')
+    with pytest.warns(UserWarning, match='Scalebar does not have attribute family'):
+        f.add_scalebar(0.1, family='serif')
     f.close()

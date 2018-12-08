@@ -136,5 +136,6 @@ setup(name=PACKAGENAME,
       zip_safe=False,
       use_2to3=False,
       entry_points=entry_points,
+      python_requires='>=3.5',
       **package_info
 )

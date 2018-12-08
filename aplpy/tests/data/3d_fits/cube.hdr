@@ -16,4 +16,5 @@ CTYPE2  = 'DEC--SFL'           /
 CRVAL3  =       -9959.44378305 /
 CRPIX3  =              1.00000 /
 CDELT3  =        66.4236100000 /
-CTYPE3  = 'VELO-LSR'           /
+CTYPE3  = 'VOPT'               /
+SPECSYS = 'LSRK'               /

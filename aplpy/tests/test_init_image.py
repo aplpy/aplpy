@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 import os
 
+import pytest
 import numpy as np
-from astropy.tests.helper import pytest
 from astropy.io import fits
 from astropy.wcs import WCS as AstropyWCS
 
@@ -85,8 +85,7 @@ def test_wcs_toheader_init():
     header_ = fits.Header.fromtextfile(REFERENCE)
     header = wcs.to_header()
     wcs2 = AstropyWCS(header)
-    wcs2._naxis1 = wcs._naxis1 = header_['NAXIS1']
-    wcs2._naxis2 = wcs._naxis2 = header_['NAXIS2']
+    wcs2.pixel_shape = wcs.pixel_shape = (header_['NAXIS1'], header_['NAXIS2'])
     f = FITSFigure(wcs2)
     f.show_grayscale()
     f.add_grid()

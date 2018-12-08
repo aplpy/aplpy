@@ -8,7 +8,7 @@ from astropy.convolution import (convolve as astropy_convolve,
 
 def convolve(image, smooth=3, kernel='gauss'):
 
-    if smooth is None and kernel in ['box', 'gauss']:
+    if smooth is None and isinstance(kernel, str) and kernel in ['box', 'gauss']:
         return image
 
     if smooth is not None and not np.isscalar(smooth):
@@ -22,10 +22,13 @@ def convolve(image, smooth=3, kernel='gauss'):
     image_fixed = np.array(image, dtype=float, copy=True)
     image_fixed[np.isinf(image)] = np.nan
 
-    if kernel == 'gauss':
-        kernel = Gaussian2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
-    elif kernel == 'box':
-        kernel = Box2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
+    if isinstance(kernel, str):
+        if kernel == 'gauss':
+            kernel = Gaussian2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
+        elif kernel == 'box':
+            kernel = Box2DKernel(smooth, x_size=smooth * 5, y_size=smooth * 5)
+        else:
+            raise ValueError("Unknown kernel: {0}".format(kernel))
     else:
         kernel = kernel
 

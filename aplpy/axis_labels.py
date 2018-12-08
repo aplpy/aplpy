@@ -6,7 +6,6 @@ from astropy.coordinates import (ICRS, FK5, FK4, Galactic,
                                  BarycentricTrueEcliptic)
 
 from .decorators import auto_refresh, fixdocstring
-from .helpers import ASTROPY_GE_30
 
 __all__ = ['AxisLabels']
 
@@ -20,9 +19,8 @@ class AxisLabels(object):
         self.x = parent.x
         self.y = parent.y
 
-        if ASTROPY_GE_30:
-            self._ax.coords[self.x].set_axislabel_visibility_rule('always')
-            self._ax.coords[self.y].set_axislabel_visibility_rule('always')
+        self._ax.coords[self.x].set_axislabel_visibility_rule('always')
+        self._ax.coords[self.y].set_axislabel_visibility_rule('always')
 
         xcoord_type = self._ax.coords[self.x].coord_type
         ycoord_type = self._ax.coords[self.y].coord_type

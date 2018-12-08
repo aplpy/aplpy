@@ -20,14 +20,13 @@ from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 from astropy.nddata.utils import block_reduce
 from astropy.visualization import AsymmetricPercentileInterval, simple_norm
-from astropy.visualization.wcsaxes import WCSAxesSubplot
+from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 from astropy.coordinates import ICRS
 
 from . import convolve_util
 from . import header as header_util
 from . import slicer
 
-from .compat import WCSAxes
 from .layers import Layers
 from .grid import Grid
 from .ticks import Ticks
@@ -203,13 +202,12 @@ class FITSFigure(Layers, Regions):
                                  "can only be done with 2-dimensional WCS "
                                  "objects")
 
-            if wcs._naxis1 == 0 or wcs._naxis2 == 0:
+            if wcs.pixel_shape is None:
                 raise ValueError("The WCS object does not contain any size "
                                  "information")
 
             header = wcs.to_header()
-            header['NAXIS1'] = wcs._naxis1
-            header['NAXIS2'] = wcs._naxis2
+            header['NAXIS1'], header['NAXIS2'] = wcs.pixel_shape
             nx = header['NAXIS%i' % (dimensions[0] + 1)]
             ny = header['NAXIS%i' % (dimensions[1] + 1)]
             self._data = np.zeros((ny, nx), dtype=float)
@@ -685,7 +683,7 @@ class FITSFigure(Layers, Regions):
             interval = AsymmetricPercentileInterval(pmin, pmax, n_samples=10000)
             try:
                 vmin_auto, vmax_auto = interval.get_limits(self._data)
-            except IndexError:  # no valid values
+            except (IndexError, TypeError):  # no valid values
                 vmin_auto = vmax_auto = 0
 
             if min_auto:

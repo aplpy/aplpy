@@ -5,17 +5,17 @@ from astropy.tests.helper import pytest
 
 from .. import FITSFigure
 
+ARRAY = np.arange(256).reshape((16, 16))
+
 
 def test_colorbar_invalid():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     with pytest.raises(Exception):
         f.add_colorbar()  # no grayscale/colorscale was shown
 
 
 def test_colorbar_addremove():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.remove_colorbar()
@@ -24,8 +24,7 @@ def test_colorbar_addremove():
 
 
 def test_colorbar_showhide():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.hide()
@@ -34,20 +33,20 @@ def test_colorbar_showhide():
 
 
 def test_colorbar_location():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_location('top')
-    f.colorbar.set_location('bottom')
-    f.colorbar.set_location('left')
+    with pytest.warns(UserWarning, match='Bottom colorbar not fully implemented'):
+        f.colorbar.set_location('bottom')
+    with pytest.warns(UserWarning, match='Left colorbar not fully implemented'):
+        f.colorbar.set_location('left')
     f.colorbar.set_location('right')
     f.close()
 
 
 def test_colorbar_width():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_width(0.1)
@@ -57,8 +56,7 @@ def test_colorbar_width():
 
 
 def test_colorbar_pad():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_pad(0.1)
@@ -68,8 +66,7 @@ def test_colorbar_pad():
 
 
 def test_colorbar_font():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_font(size='small', weight='bold', stretch='normal',
@@ -78,8 +75,7 @@ def test_colorbar_font():
 
 
 def test_colorbar_axis_label():
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     f.add_colorbar()
     f.colorbar.set_axis_label_text('Surface Brightness (MJy/sr)')

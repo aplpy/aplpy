@@ -4,17 +4,15 @@ import os
 import sys
 from astropy.extern import six
 
-if six.PY3:
-    from io import BytesIO as StringIO
-else:
-    from StringIO import StringIO
+from io import BytesIO as StringIO
 
+import pytest
 import numpy as np
-from astropy.tests.helper import pytest
 
 from .. import FITSFigure
 
 FORMATS = [None, 'png', 'pdf', 'eps', 'ps', 'svg']
+ARRAY = np.arange(256).reshape((16, 16))
 
 
 def is_format(filename, format):
@@ -40,8 +38,7 @@ def is_format(filename, format):
 @pytest.mark.parametrize(('format'), FORMATS)
 def test_write_png(tmpdir, format):
     filename = os.path.join(str(tmpdir), 'test_output.png')
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     try:
         f.save(filename, format=format)
@@ -58,8 +55,7 @@ def test_write_png(tmpdir, format):
 @pytest.mark.parametrize(('format'), FORMATS)
 def test_write_pdf(tmpdir, format):
     filename = os.path.join(str(tmpdir), 'test_output.pdf')
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     try:
         f.save(filename, format=format)
@@ -76,8 +72,7 @@ def test_write_pdf(tmpdir, format):
 @pytest.mark.parametrize(('format'), FORMATS)
 def test_write_eps(tmpdir, format):
     filename = os.path.join(str(tmpdir), 'test_output.eps')
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     try:
         f.save(filename, format=format)
@@ -94,8 +89,7 @@ def test_write_eps(tmpdir, format):
 @pytest.mark.parametrize(('format'), FORMATS)
 def test_write_stringio(tmpdir, format):
     s = StringIO()
-    data = np.zeros((16, 16))
-    f = FITSFigure(data)
+    f = FITSFigure(ARRAY)
     f.show_grayscale()
     try:
         f.save(s, format=format)

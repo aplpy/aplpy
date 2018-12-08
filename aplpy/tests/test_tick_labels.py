@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 import os
 
+import pytest
 import numpy as np
-from astropy.tests.helper import pytest
 from .helpers import generate_hdu
 
 from .. import FITSFigure
@@ -68,6 +68,6 @@ def test_tick_labels_font():
 def test_single_d_format():
     hdu = generate_hdu(REFERENCE)
     f = FITSFigure(hdu)
-    f.show_grayscale()
+    f.show_grayscale(vmin=0, vmax=1)
     f.tick_labels.set_yformat('d.d')
     f.save('test_label_format.png')
