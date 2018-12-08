@@ -12,19 +12,14 @@ environment:
                         # to the matrix section.
       CONDA_DEPENDENCIES: "matplotlib pillow scikit-image"
       PIP_DEPENDENCIES: "pytest-mpl reproject"
+      ASTROPY_VERSION: "3.1"
 
   matrix:
 
-      - PYTHON_VERSION: "3.5"
-        ASTROPY_VERSION: "dev"
-        NUMPY_VERSION: "stable"
-
       - PYTHON_VERSION: "3.6"
-        ASTROPY_VERSION: "dev"
         NUMPY_VERSION: "stable"
 
       - PYTHON_VERSION: "3.7"
-        ASTROPY_VERSION: "dev"
         NUMPY_VERSION: "stable"
 
 platform:

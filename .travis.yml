@@ -5,9 +5,7 @@ sudo: false
 
 env:
     global:
-        # For now rely on the developer version of Astropy since it's the only
-        # compatible version.
-        - ASTROPY_VERSION=dev
+        - ASTROPY_VERSION=3.1
         - NUMPY_VERSION=1.15
         - MATPLOTLIB_VERSION=2.0
         - SETUP_XVFB=True
@@ -16,8 +14,6 @@ env:
         - PIP_DEPENDENCIES='codecov'
 
     matrix:
-        - PYTHON_VERSION=3.5 SETUP_CMD='egg_info'
-        - PYTHON_VERSION=3.5 SETUP_CMD='test --remote-data --coverage'
         - PYTHON_VERSION=3.6 SETUP_CMD='egg_info'
         - PYTHON_VERSION=3.6 SETUP_CMD='test --remote-data --coverage'
         - PYTHON_VERSION=3.7 SETUP_CMD='egg_info'
@@ -32,7 +28,7 @@ matrix:
                PIP_DEPENDENCIES='sphinx-astropy'
 
         # Older Numpy version
-        - env: PYTHON_VERSION=3.5
+        - env: PYTHON_VERSION=3.6
                SETUP_CMD='test --remote-data --coverage'
                NUMPY_VERSION=1.13
 
