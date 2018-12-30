@@ -176,3 +176,21 @@ def test_init_single_pixel():
     data[2, 2] = 1
     f = FITSFigure(data)
     f.show_grayscale()
+
+
+def test_not_first_hdu(tmpdir):
+
+    # Test that data is fetched from the first compatible HDU with data
+
+    filename = tmpdir.join('test.fits').strpath
+
+    hdu0 = fits.PrimaryHDU()
+    hdu1 = fits.BinTableHDU()
+    hdu2 = fits.ImageHDU(np.zeros((12, 12)))
+
+    hdulist = fits.HDUList([hdu0, hdu1, hdu2])
+
+    hdulist.writeto(filename)
+
+    f = FITSFigure(filename)
+    assert f._data.shape == (12, 12)
