@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
           command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
           command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
@@ -36,7 +36,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
           command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
@@ -50,7 +50,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
           command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
@@ -67,7 +67,7 @@ jobs:
           command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
       - run:
           name: Install dependencies
-          command: pip3 install pytest pytest-astropy pytest-mpl reproject pyregion scikit-image==0.14.0 astropy git+https://github.com/matplotlib/matplotlib.git codecov
+          command: pip3 install .[test,all] git+https://github.com/matplotlib/matplotlib.git
       - run:
           name: Run tests
           command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
