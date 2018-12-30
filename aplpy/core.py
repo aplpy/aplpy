@@ -1107,7 +1107,7 @@ class FITSFigure(Layers, Regions):
     # coordinates in degree format.
 
     @auto_refresh
-    def show_markers(self, xw, yw, layer=False, **kwargs):
+    def show_markers(self, xw, yw, layer=False, coords_frame='world', **kwargs):
         """
         Overlay markers on the current plot.
 
@@ -1124,6 +1124,10 @@ class FITSFigure(Layers, Regions):
             The name of the scatter layer. This is useful for giving
             custom names to layers (instead of marker_set_n) and for
             replacing existing layers.
+
+        coords_frame : 'pixel' or 'world'
+            The reference frame in which the coordinates are defined. This is
+            used to interpret the values of ``xw`` and ``yw``.
 
         kwargs
             Additional keyword arguments (such as marker, facecolor,
@@ -1142,7 +1146,7 @@ class FITSFigure(Layers, Regions):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
-        s = self.ax.scatter(xw, yw, transform=self.ax.get_transform('world'), **kwargs)
+        s = self.ax.scatter(xw, yw, transform=self.ax.get_transform(coords_frame), **kwargs)
 
         if layer:
             marker_set_name = layer
@@ -1155,7 +1159,7 @@ class FITSFigure(Layers, Regions):
     # Show circles. Different from markers as this method allows more
     # definitions for the circles.
     @auto_refresh
-    def show_circles(self, xw, yw, radius, layer=False, zorder=None, **kwargs):
+    def show_circles(self, xw, yw, radius, layer=False, coords_frame='world', zorder=None, **kwargs):
         """
         Overlay circles on the current plot.
 
@@ -1176,6 +1180,10 @@ class FITSFigure(Layers, Regions):
             custom names to layers (instead of circle_set_n) and for
             replacing existing layers.
 
+        coords_frame : 'pixel' or 'world'
+            The reference frame in which the coordinates are defined. This is
+            used to interpret the values of ``xw`` and ``yw``.
+
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
@@ -1191,13 +1199,29 @@ class FITSFigure(Layers, Regions):
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
+        if coords_frame not in ['pixel', 'world']:
+            raise ValueError("coords_frame should be set to 'pixel' or 'world'")
+
+        # While we could plot the shape using the get_transform('world') mode
+        # from WCSAxes, the issue is that the rotation angle is also measured in
+        # world coordinates so will not be what the user is expecting. So we allow the user to specify the reference frame for the coordinates and for the rotation.
+
+        if coords_frame == 'pixel':
+            x, y = xw, yw
+            r = radius
+        else:
+            x, y = self.world2pixel(xw, yw)
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            sx, sy = pix_scale[self.x], pix_scale[self.y]
+            r = radius / np.sqrt(sx * sy)
+
         patches = []
         for i in range(len(xw)):
-            patches.append(Circle((xw[i], yw[i]), radius=radius[i]))
+            patches.append(Circle((x[i], y[i]), radius=r[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
-        p = PatchCollection(patches, transform=self.ax.get_transform('world'), **kwargs)
+        p = PatchCollection(patches, **kwargs)
 
         if zorder is not None:
             p.zorder = zorder
@@ -1213,7 +1237,7 @@ class FITSFigure(Layers, Regions):
 
     @auto_refresh
     def show_ellipses(self, xw, yw, width, height, angle=0, layer=False,
-                      zorder=None, coords_frame='world', angle_frame='pixel', **kwargs):
+                      zorder=None, coords_frame='world', **kwargs):
         """
         Overlay ellipses on the current plot.
 
@@ -1246,12 +1270,6 @@ class FITSFigure(Layers, Regions):
             used to interpret the values of ``xw``, ``yw``, ``width``, and
             ``height``.
 
-        angle_frame : 'pixel' or 'world'
-            The reference frame in which ``angle`` is defined. If set to
-            'pixel', the angle will be measured from the positive y-axis. If
-            set to 'world', it will be measured from the north in the
-            coordinate frame of the image WCS.
-
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
@@ -1264,17 +1282,14 @@ class FITSFigure(Layers, Regions):
         if 'facecolor' not in kwargs:
             kwargs.setdefault('facecolor', 'none')
 
+        if 'edgecolor' not in kwargs:
+            kwargs.setdefault('edgecolor', 'black')
+
         if layer:
             self.remove_layer(layer, raise_exception=False)
 
         if coords_frame not in ['pixel', 'world']:
             raise ValueError("coords_frame should be set to 'pixel' or 'world'")
-
-        if angle_frame not in ['pixel', 'world']:
-            raise ValueError("angle_frame should be set to 'pixel' or 'world'")
-
-        if coords_frame == 'pixel' and angle_frame != 'pixel':
-            raise ValueError("if coords_frame is 'pixel', angle_frame has to be 'pixel' too")
 
         # While we could plot the shape using the get_transform('world') mode
         # from WCSAxes, the issue is that the rotation angle is also measured in
@@ -1287,20 +1302,13 @@ class FITSFigure(Layers, Regions):
             a = angle
             transform = self.ax.transData
         else:
-            if angle_frame == 'pixel':
-                x, y = self.world2pixel(xw, yw)
-                pix_scale = proj_plane_pixel_scales(self._wcs)
-                sx, sy = pix_scale[self.x], pix_scale[self.y]
-                w = width / sx
-                h = height / sy
-                a = angle
-                transform = self.ax.transData
-            else:
-                x, y = xw, yw
-                w = width
-                h = height
-                a = angle
-                transform = self.ax.get_transform('world')
+            x, y = self.world2pixel(xw, yw)
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            sx, sy = pix_scale[self.x], pix_scale[self.y]
+            w = width / sx
+            h = height / sy
+            a = angle
+            transform = self.ax.transData
 
         patches = []
         for i in range(len(x)):
@@ -1324,7 +1332,7 @@ class FITSFigure(Layers, Regions):
 
     @auto_refresh
     def show_rectangles(self, xw, yw, width, height, angle=0, layer=False,
-                        zorder=None, coords_frame='world', angle_frame='pixel', **kwargs):
+                        zorder=None, coords_frame='world', **kwargs):
         """
         Overlay rectangles on the current plot.
 
@@ -1357,12 +1365,6 @@ class FITSFigure(Layers, Regions):
             used to interpret the values of ``xw``, ``yw``, ``width``, and
             ``height``.
 
-        angle_frame : 'pixel' or 'world'
-            The reference frame in which ``angle`` is defined. If set to
-            'pixel', the angle will be measured from the positive y-axis. If
-            set to 'world', it will be measured from the north in the
-            coordinate frame of the image WCS.
-
         kwargs
             Additional keyword arguments (such as facecolor, edgecolor, alpha,
             or linewidth) are passed to Matplotlib
@@ -1381,12 +1383,6 @@ class FITSFigure(Layers, Regions):
         if coords_frame not in ['pixel', 'world']:
             raise ValueError("coords_frame should be set to 'pixel' or 'world'")
 
-        if angle_frame not in ['pixel', 'world']:
-            raise ValueError("angle_frame should be set to 'pixel' or 'world'")
-
-        if coords_frame == 'pixel' and angle_frame != 'pixel':
-            raise ValueError("if coords_frame is 'pixel', angle_frame has to be 'pixel' too")
-
         # While we could plot the shape using the get_transform('world') mode
         # from WCSAxes, the issue is that the rotation angle is also measured in
         # world coordinates so will not be what the user is expecting. So we
@@ -1400,20 +1396,13 @@ class FITSFigure(Layers, Regions):
             a = angle
             transform = self.ax.transData
         else:
-            if angle_frame == 'pixel':
-                x, y = self.world2pixel(xw, yw)
-                pix_scale = proj_plane_pixel_scales(self._wcs)
-                sx, sy = pix_scale[self.x], pix_scale[self.y]
-                w = width / sx
-                h = height / sy
-                a = angle
-                transform = self.ax.transData
-            else:
-                x, y = xw, yw
-                w = width
-                h = height
-                a = angle
-                transform = self.ax.get_transform('world')
+            x, y = self.world2pixel(xw, yw)
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            sx, sy = pix_scale[self.x], pix_scale[self.y]
+            w = width / sx
+            h = height / sy
+            a = angle
+            transform = self.ax.transData
 
         x = x - w / 2.
         y = y - h / 2.
