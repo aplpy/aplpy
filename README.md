@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/aplpy/aplpy.svg?branch=master)](https://travis-ci.org/aplpy/aplpy)
 [![CircleCI](https://circleci.com/gh/aplpy/aplpy/tree/master.svg?style=svg)](https://circleci.com/gh/aplpy/aplpy/tree/master)
-[![Coverage Status](https://coveralls.io/repos/aplpy/aplpy/badge.svg?branch=master)](https://coveralls.io/r/aplpy/aplpy?branch=master)
+[![codecov](https://codecov.io/gh/aplpy/aplpy/branch/master/graph/badge.svg)](https://codecov.io/gh/aplpy/aplpy)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://aplpy.readthedocs.io/en/latest/)
 
 
