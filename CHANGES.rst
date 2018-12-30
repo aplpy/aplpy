@@ -1,17 +1,13 @@
 CHANGES
 --------
 
-2.0 (unreleased)
+2.0 (2018-12-30)
 ----------------
 
-- Refactored APLpy to make use of WCSAxes to draw coordinate frames. [#239, #364]
+- Refactored APLpy to make use of WCSAxes to draw coordinate frames and
+  astropy.visualization to deal with image stretching. [#239, #364, #365]
 
-- Use reproject package instead of montage-wrapper and Montage.
-
-1.2 (unreleased)
-----------------
-
-- No changes yet.
+- Use reproject package instead of montage-wrapper and Montage. [#360]
 
 1.1.1 (2016-10-04)
 ------------------
