@@ -24,9 +24,9 @@ Installing
 
 The following dependencies are required:
 
-* [Numpy](http://numpy.scipy.org) 1.11 or later
-* [Matplotlib](http://www.matplotlib.org) 1.5 or later
-* [Astropy](http://www.astropy.org) 2.0 or later
+* [Numpy](http://www.numpy.org) 1.11 or later
+* [Matplotlib](http://www.matplotlib.org) 2.0 or later
+* [Astropy](http://www.astropy.org) 3.1 or later
 * [reproject](http://reproject.readthedocs.org) 0.4 or later
 
 and the following are optional:
