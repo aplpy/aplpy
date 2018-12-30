@@ -5,6 +5,7 @@ include LICENSE.md
 include ez_setup.py
 include ah_bootstrap.py
 include setup.cfg
+include conftest.py
 
 recursive-include aplpy *.pyx *.c
 
