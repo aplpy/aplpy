@@ -8,10 +8,10 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy pytest-cov codecov
+          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl --coverage
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
       - run:
           name: Report coverage
           command: codecov
@@ -22,10 +22,10 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy pytest-cov codecov
+          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl --coverage
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
       - run:
           name: Report coverage
           command: codecov
@@ -36,10 +36,10 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy pytest-cov codecov
+          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl --coverage
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
       - run:
           name: Report coverage
           command: codecov
@@ -50,10 +50,10 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy pytest-cov codecov
+          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy codecov
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl --coverage
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
       - run:
           name: Report coverage
           command: codecov
@@ -67,10 +67,10 @@ jobs:
           command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
       - run:
           name: Install dependencies
-          command: pip3 install pytest pytest-astropy pytest-mpl reproject pyregion scikit-image==0.14.0 astropy git+https://github.com/matplotlib/matplotlib.git pytest-cov codecov
+          command: pip3 install pytest pytest-astropy pytest-mpl reproject pyregion scikit-image==0.14.0 astropy git+https://github.com/matplotlib/matplotlib.git codecov
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl --coverage
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
       - run:
           name: Report coverage
           command: codecov
