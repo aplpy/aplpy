@@ -40,4 +40,4 @@ script:
    - python setup.py $SETUP_CMD
 
 after_success:
-   - codecov
+   - if [[ $SETUP_CMD == *coverage* ]]; then codecov; fi

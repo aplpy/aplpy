@@ -33,6 +33,9 @@ class TestRGB(BaseImageTests):
     @pytest.mark.parametrize('embed_avm_tags', (False, True))
     def test_rgb(self, tmpdir, embed_avm_tags):
 
+        if embed_avm_tags:
+            pytest.importorskip('pyavm')
+
         # Regression test to check that RGB recenter works properly
 
         r_file = tmpdir.join('r.fits').strpath
