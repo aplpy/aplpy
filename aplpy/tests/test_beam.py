@@ -8,6 +8,7 @@ from astropy import units as u
 from astropy.io import fits
 
 from .. import FITSFigure
+from ..overlays import Beam
 
 
 header_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/2d_fits')
@@ -16,7 +17,7 @@ HEADER = fits.Header.fromtextfile(os.path.join(header_dir, '1904-66_TAN.hdr'))
 HDU = fits.PrimaryHDU(np.zeros((16, 16)), HEADER)
 
 
-def test_beam_addremove():
+def test_beam_add_remove():
     f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
@@ -26,7 +27,7 @@ def test_beam_addremove():
     f.close()
 
 
-def test_beam_showhide():
+def test_beam_show_hide():
     f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=0.04, angle=10.)
@@ -182,4 +183,34 @@ def test_beam_hatch():
     f.add_beam(major=0.1, minor=0.04, angle=10.)
     for hatch in ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']:
         f.beam.set_hatch(hatch)
+    f.close()
+
+
+def test_beam_multiple():
+
+    f = FITSFigure(HDU)
+    f.show_grayscale()
+
+    f.add_beam(major=0.1, minor=0.04, angle=10.)
+    f.add_beam(major=0.2, minor=0.08, angle=10.)
+    f.add_beam(major=0.15, minor=0.08, angle=10.)
+
+    assert len(f.beam) == 3
+
+    with pytest.raises(Exception) as exc:
+        f.remove_beam()
+    assert exc.value.args[0] == ('More than one beam present - use beam_index= '
+                                 'to specify which one to remove')
+    f.remove_beam(beam_index=2)
+
+    assert len(f.beam) == 2
+
+    f.remove_beam(beam_index=1)
+
+    assert isinstance(f.beam, Beam)
+
+    f.remove_beam()
+
+    assert not hasattr(f, 'beam')
+
     f.close()
