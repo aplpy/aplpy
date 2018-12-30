@@ -13,6 +13,13 @@ except ImportError:
 else:
     PYREGION_INSTALLED = True
 
+try:
+    import reproject  # noqa
+except ImportError:
+    REPROJECT_INSTALLED = False
+else:
+    REPROJECT_INSTALLED = True
+
 from .. import FITSFigure
 from .helpers import generate_file
 from . import baseline_dir
@@ -36,6 +43,9 @@ class BaseImageTests(object):
 
         header_3 = os.path.join(DATADIR, '3d_fits/cube.hdr')
         cls.filename_3 = generate_file(header_3, str(tempfile.mkdtemp()))
+
+        header_4 = os.path.join(DATADIR, '2d_fits/2MASS_k_rot.hdr')
+        cls.filename_4 = generate_file(header_4, str(tempfile.mkdtemp()))
 
 
 class TestBasic(BaseImageTests):
@@ -94,15 +104,41 @@ class TestBasic(BaseImageTests):
         f.hide_grayscale()
 
         f.ticks.set_color('black')
-        f.show_markers([360., 350., 340.], [-61., -62., -63])
-        f.show_ellipses(330., -66., 0.15, 2., 10.)
-        f.show_rectangles([355., 350.], [-71, -72], [0.5, 1], [2, 1])
+
+        # Markers
+        f.show_markers([360., 350., 340.], [-61., -62., -63], color='cyan')
+        f.show_markers([30, 40], [50, 70], coords_frame='pixel', edgecolor='blue')
+
+        # Circles
+        f.show_circles([360., 350., 340.], [-61., -62., -63], [0.5, 0.4, 0.3], edgecolor='purple')
+        f.show_circles([30, 40], [50, 70], [10, 20], coords_frame='pixel', edgecolor='orange')
+
+        # Ellipses
+        f.show_ellipses(340., -66., 1.5, 2., 10., edgecolor='red')
+        f.show_ellipses(120, 60, 20, 40, 20., coords_frame='pixel', edgecolor='green')
+
+        # Rectangles
+        f.show_rectangles([355., 350.], [-71, -72], [0.5, 1], [2, 1], angle=[20, 30], edgecolor='magenta')
+        f.show_rectangles([66, 80], [20, 30], [10, 14], [20, 22], angle=[20, 30], coords_frame='pixel', edgecolor='yellow')
+
+        # Arrows
         f.show_arrows([340., 360], [-72, -68], [2, -2], [2, 2])
+
+        # Polygons
+        poly = np.array([[330, 340, 360], [-65, -61, -63]])
+        f.show_polygons([poly], edgecolor='0.3', zorder=10)
+
+        # Lines
+        f.show_lines([poly], zorder=9, lw=5, color='red', alpha=0.5)
+
+        # Labels
         f.add_label(350., -66., 'text')
         f.add_label(0.4, 0.25, 'text', relative=True)
+
         f.frame.set_linewidth(1)  # points
         f.frame.set_color('black')
         f.axis_labels.hide()
+
         return f._figure
 
     # Test for grid
@@ -182,6 +218,17 @@ class TestBasic(BaseImageTests):
         f.hide_grayscale()
 
         f.show_regions(os.path.join(DATADIR, 'shapes.reg'))
+        f.axis_labels.hide()
+        f.tick_labels.hide()
+        f.ticks.hide()
+        return f._figure
+
+    @pytest.mark.remote_data
+    @pytest.mark.skipif("not REPROJECT_INSTALLED")
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_north(self):
+        f = FITSFigure(self.filename_4, figsize=(3, 3), north=True)
+        f.show_grayscale(vmin=-1, vmax=1)
         f.axis_labels.hide()
         f.tick_labels.hide()
         f.ticks.hide()

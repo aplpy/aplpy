@@ -8,10 +8,13 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+      - run:
+          name: Report coverage
+          command: codecov
   image-tests-mpl212:
     docker:
       - image: astropy/image-tests-py35-mpl212:1.4
@@ -19,10 +22,13 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+      - run:
+          name: Report coverage
+          command: codecov
   image-tests-mpl222:
     docker:
       - image: astropy/image-tests-py35-mpl222:1.4
@@ -30,10 +36,13 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+      - run:
+          name: Report coverage
+          command: codecov
   image-tests-mpl300:
     docker:
       - image: astropy/image-tests-py35-mpl300:1.4
@@ -41,10 +50,13 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install pytest reproject pyregion scikit-image==0.14.0 astropy
+          command: pip3 install .[test,all]
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+      - run:
+          name: Report coverage
+          command: codecov
   image-tests-mpldev:
     docker:
       - image: astropy/image-tests-py36-base:1.1
@@ -55,10 +67,13 @@ jobs:
           command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
       - run:
           name: Install dependencies
-          command: pip3 install pytest pytest-astropy pytest-mpl reproject pyregion scikit-image==0.14.0 astropy git+https://github.com/matplotlib/matplotlib.git
+          command: pip3 install .[test,all] git+https://github.com/matplotlib/matplotlib.git
       - run:
           name: Run tests
-          command: pytest aplpy --remote-data=any --mpl
+          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+      - run:
+          name: Report coverage
+          command: codecov
 
 
 workflows:

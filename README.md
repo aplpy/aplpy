@@ -34,6 +34,7 @@ and the following are optional:
 * [PyAVM](http://astrofrog.github.io/pyavm/) 0.9.4 or later
 * [pyregion](http://pyregion.readthedocs.org/) 2.0 or later
 * [pillow](https://pypi.org/project/Pillow/) 4.0 or later
+* [scikit-image](https://pypi.org/project/scikit-image/) 0.14 or later
 
 You can install APLpy with:
 

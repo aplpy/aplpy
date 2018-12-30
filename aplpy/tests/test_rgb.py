@@ -7,6 +7,13 @@ import pytest
 import numpy as np
 from astropy.io import fits
 
+try:
+    import pyavm  # noqa
+except ImportError:
+    PYAVM_INSTALLED = False
+else:
+    PYAVM_INSTALLED = True
+
 from .. import FITSFigure
 from ..rgb import make_rgb_image
 
@@ -20,8 +27,14 @@ HEADER = os.path.join(ROOT, 'data/2d_fits', '1904-66_TAN.hdr')
 class TestRGB(BaseImageTests):
 
     @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
-    def test_rgb(self, tmpdir):
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False},
+                                   baseline_dir=baseline_dir, tolerance=7.5,
+                                   filename='test_rgb.png')
+    @pytest.mark.parametrize('embed_avm_tags', (False, True))
+    def test_rgb(self, tmpdir, embed_avm_tags):
+
+        if embed_avm_tags:
+            pytest.importorskip('pyavm')
 
         # Regression test to check that RGB recenter works properly
 
@@ -43,9 +56,12 @@ class TestRGB(BaseImageTests):
         b = fits.PrimaryHDU(np.random.random((12, 12)), header)
         b.writeto(b_file)
 
-        make_rgb_image([r_file, g_file, b_file], rgb_file, embed_avm_tags=False)
+        make_rgb_image([r_file, g_file, b_file], rgb_file, embed_avm_tags=embed_avm_tags)
 
-        f = FITSFigure(r_file, figsize=(7, 5))
+        if embed_avm_tags:
+            f = FITSFigure(rgb_file, figsize=(7, 5))
+        else:
+            f = FITSFigure(r_file, figsize=(7, 5))
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
