@@ -13,7 +13,9 @@ to draw the coordinate axes and grids, which in turn uses `Matplotlib
 <http://matplotlib.org>`_ to do the rendering. This is a big change compared to
 previous versions of APLpy, which handled the drawing of the coordinate axes and
 grids directly. For information about backward-compatibility, see the
-`Backward-compatibility notes`_
+`Backward-compatibility notes`_.
+
+Note that APLpy 2.x is only compatible with Python 3.5 and later.
 
 Should you use APLpy?
 =====================
@@ -57,20 +59,26 @@ simpler interface and deals with the reading of FITS files and constructing WCS
 objects. This class uses `WCSAxes`_ behind the scenes, but provides easy methods
 for overlaying shapes, beams, adding colorbars, and overplotting regions. The
 interface of this class is intended to be backward-compatible with existing
-scripts that used APLpy 1.0 and earlier.
+scripts that used APLpy 1.0 and earlier. If you run into issues with old
+scripts, please report the issues in the `issue tracker
+<https://github.com/aplpy/aplpy/issues>`_.
 
-However, in some cases, the new :class:`~aplpy.FITSFigure` may not be
-backward-compatible, in particular if you have made adjustments to figures in
-the past using private attributes (e.g. ``fig._ax1``). For these cases, we have
-provided a frozen copy of the APLpy 1.x FITSFigure class in the ``aplpy.legacy``
-package - you can use this using::
+Note however that if you have made adjustments to figures in the past using private
+attributes (e.g. ``fig._ax1``), these will no longer work and this cannot be
+fixed in APLpy 2.x.
 
-    from aplpy.legacy import FITSFigure
+In any case, if you have issues with APLpy 2.x and want to continue using APLpy
+1.x, you can always restrict the version of APLpy when installing it using
+e.g.::
 
-Note that no new features will be added to this class. Critical bugs may be
-fixed in that legacy class if reported, but otherwise for any non-critical
-issues, we recommend migrating to the new :class:`~aplpy.FITSFigure` class or
-`WCSAxes`_ directly.
+    pip install "aplpy<2"
+
+or::
+
+    conda install "aplpy<2"
+
+If critical bugs are found in the 1.x releases and can easily be fixed, we may
+release new 1.x versions.
 
 .. _api:
 
