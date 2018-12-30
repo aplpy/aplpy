@@ -31,10 +31,14 @@ The following dependencies are required:
 
 and the following are optional:
 
-* [PyAVM](http://astrofrog.github.io/pyavm/)
-* [pyregion](http://pyregion.readthedocs.org/)
-* [Python Imaging Library](http://www.pythonware.com/products/pil/) (PIL)
+* [PyAVM](http://astrofrog.github.io/pyavm/) 0.9.4 or later
+* [pyregion](http://pyregion.readthedocs.org/) 2.0 or later
+* [pillow](https://pypi.org/project/Pillow/) 4.0 or later
 
 You can install APLpy with:
 
     pip install aplpy
+
+If you want to install all optional dependencies, you can do:
+
+    pip install aplpy[all]

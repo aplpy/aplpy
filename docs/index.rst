@@ -30,6 +30,17 @@ is consistent with Matplotlib, then we recommend you use `WCSAxes`_ directly. If
 you have a FITS file and just want to make it into a plot in a couple of lines,
 then APLpy is the package for you.
 
+Installing APLpy
+================
+
+You can install APLpy with pip using::
+
+    pip install aplpy
+
+To include all optional dependencies, you can do::
+
+    pip install aplpy[all]
+
 Using APLpy
 ===========
 
