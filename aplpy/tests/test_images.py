@@ -13,6 +13,13 @@ except ImportError:
 else:
     PYREGION_INSTALLED = True
 
+try:
+    import reproject  # noqa
+except ImportError:
+    REPROJECT_INSTALLED = False
+else:
+    REPROJECT_INSTALLED = True
+
 from .. import FITSFigure
 from .helpers import generate_file
 from . import baseline_dir
@@ -36,6 +43,9 @@ class BaseImageTests(object):
 
         header_3 = os.path.join(DATADIR, '3d_fits/cube.hdr')
         cls.filename_3 = generate_file(header_3, str(tempfile.mkdtemp()))
+
+        header_4 = os.path.join(DATADIR, '2d_fits/2MASS_k_rot.hdr')
+        cls.filename_4 = generate_file(header_4, str(tempfile.mkdtemp()))
 
 
 class TestBasic(BaseImageTests):
@@ -182,6 +192,17 @@ class TestBasic(BaseImageTests):
         f.hide_grayscale()
 
         f.show_regions(os.path.join(DATADIR, 'shapes.reg'))
+        f.axis_labels.hide()
+        f.tick_labels.hide()
+        f.ticks.hide()
+        return f._figure
+
+    @pytest.mark.remote_data
+    @pytest.mark.skipif("not REPROJECT_INSTALLED")
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_north(self):
+        f = FITSFigure(self.filename_4, figsize=(3, 3), north=True)
+        f.show_grayscale(vmin=-1, vmax=1)
         f.axis_labels.hide()
         f.tick_labels.hide()
         f.ticks.hide()
