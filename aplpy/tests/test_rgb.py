@@ -82,6 +82,8 @@ class TestRGB(BaseImageTests):
 
         # Regression test to check that RGB recenter works properly
 
+        pytest.importorskip('pyavm')
+
         header = generate_header(os.path.join(ROOT, 'data', '2d_fits', '2MASS_k_rot.hdr'))
 
         header['CRPIX1'] = 6.5
