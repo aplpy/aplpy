@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
+from collections import OrderedDict
+
 from matplotlib.contour import ContourSet
 from matplotlib.collections import RegularPolyCollection, \
     PatchCollection, CircleCollection, LineCollection
@@ -34,7 +36,7 @@ class Layers(object):
 
     def _initialize_layers(self):
 
-        self._layers = {}
+        self._layers = OrderedDict()
         self._contour_counter = 0
         self._vector_counter = 0
         self._scatter_counter = 0
