@@ -233,3 +233,11 @@ class TestBasic(BaseImageTests):
         f.tick_labels.hide()
         f.ticks.hide()
         return f._figure
+
+    @pytest.mark.remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_downsample(self):
+        data = np.arange(256).reshape((16, 16))
+        f = FITSFigure(data, downsample=2)
+        f.show_grayscale()
+        return f._figure
