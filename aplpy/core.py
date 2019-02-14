@@ -724,11 +724,12 @@ class FITSFigure(Layers, Regions):
                                                        smooth=smooth,
                                                        kernel=kernel))
         else:
+            extent = -0.5, self._wcs.nx - 0.5, -0.5, self._wcs.ny - 0.5
             convolved_data = convolve_util.convolve(self._data, smooth=smooth, kernel=kernel)
             self.image = self.ax.imshow(convolved_data, cmap=cmap,
                                         interpolation=interpolation,
                                         origin='lower', norm=normalizer,
-                                        aspect=aspect)
+                                        aspect=aspect, extent=extent)
 
         xmin, xmax = self.ax.get_xbound()
         if xmin == 0.0:
