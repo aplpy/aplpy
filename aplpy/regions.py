@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, division
 
-from astropy.extern import six
 from astropy import log
 from astropy import wcs
 
@@ -91,7 +90,7 @@ def ds9(region_file, header, zorder=3, **kwargs):
         raise ImportError("The pyregion package is required to load region files")
 
     # read region file
-    if isinstance(region_file, six.string_types):
+    if isinstance(region_file, str):
         rr = pyregion.open(region_file)
     elif isinstance(region_file, pyregion.ShapeList):
         rr = region_file

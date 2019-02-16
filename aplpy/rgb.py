@@ -5,7 +5,6 @@ import os
 import warnings
 
 import numpy as np
-from astropy.extern import six
 from astropy import log
 from astropy.io import fits
 from astropy.coordinates import ICRS
@@ -129,7 +128,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
         except ImportError:
             raise ImportError("The Python Imaging Library (PIL) is required to make an RGB image")
 
-    if isinstance(data, six.string_types):
+    if isinstance(data, str):
 
         image = fits.getdata(data)
         image_r = image[indices[0], :, :]
