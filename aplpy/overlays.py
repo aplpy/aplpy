@@ -10,7 +10,6 @@ from matplotlib.font_manager import FontProperties
 
 from astropy import units as u
 from astropy.wcs.utils import proj_plane_pixel_scales
-from astropy.extern import six
 
 from .decorators import auto_refresh
 
@@ -99,7 +98,7 @@ class Scalebar(object):
         except Exception:
             pass
 
-        if isinstance(corner, six.string_types):
+        if isinstance(corner, str):
             corner = corners[corner]
 
         self._scalebar = AnchoredSizeBar(self._ax.transData, length, label,
@@ -378,13 +377,13 @@ class Beam(object):
             See the matplotlib documentation for more details.
         """
 
-        if isinstance(major, six.string_types):
+        if isinstance(major, str):
             major = self._header[major]
 
-        if isinstance(minor, six.string_types):
+        if isinstance(minor, str):
             minor = self._header[minor]
 
-        if isinstance(angle, six.string_types):
+        if isinstance(angle, str):
             angle = self._header[angle]
 
         if isinstance(major, u.Quantity):
@@ -426,7 +425,7 @@ class Beam(object):
         except Exception:
             pass
 
-        if isinstance(corner, six.string_types):
+        if isinstance(corner, str):
             corner = corners[corner]
 
         self._beam = AnchoredEllipse(self._ax.transData, width=minor,

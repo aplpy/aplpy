@@ -14,7 +14,6 @@ from matplotlib.collections import PatchCollection, LineCollection
 import numpy as np
 
 from astropy import log
-from astropy.extern import six
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
@@ -151,7 +150,7 @@ class FITSFigure(Layers, Regions):
         else:
             self.grid_type = 'lines'
 
-        if (isinstance(data, six.string_types) and
+        if (isinstance(data, str) and
                 data.split('.')[-1].lower() in ['png', 'jpg', 'tif']):
 
             try:
@@ -301,7 +300,7 @@ class FITSFigure(Layers, Regions):
     def _get_hdu(self, data, hdu, north, convention=None,
                  dimensions=[0, 1], slices=[]):
 
-        if isinstance(data, six.string_types):
+        if isinstance(data, str):
 
             filename = data
 
@@ -1782,7 +1781,7 @@ class FITSFigure(Layers, Regions):
             explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
         """
 
-        if isinstance(filename, six.string_types) and format is None:
+        if isinstance(filename, str) and format is None:
             format = os.path.splitext(filename)[1].lower()[1:]
 
         if dpi is None and format in ['eps', 'ps', 'pdf']:
@@ -1795,7 +1794,6 @@ class FITSFigure(Layers, Regions):
                 dpi = nx / width
             log.info("Auto-setting resolution to %g dpi" % dpi)
 
-        artists = []
         if adjust_bbox:
             self._figure.savefig(filename, dpi=dpi, transparent=transparent,
                                  bbox_inches='tight', format=format)

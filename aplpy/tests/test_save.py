@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function, division
 
 import os
 import sys
-from astropy.extern import six
 
 from io import BytesIO as StringIO
 
@@ -16,7 +15,7 @@ ARRAY = np.arange(256).reshape((16, 16))
 
 
 def is_format(filename, format):
-    if isinstance(filename, six.string_types):
+    if isinstance(filename, str):
         f = open(filename, 'rb')
     else:
         f = filename
