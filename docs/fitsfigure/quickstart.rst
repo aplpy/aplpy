@@ -148,8 +148,7 @@ To summarize, the above plot was made using the following commands::
 
     gc.show_contour('fits/mips_24micron.fits', colors='white')
 
-    data = numpy.loadtxt('data/yso_wcs_only.txt')
-    ra, dec = data[:, 0], data[:, 1]
+    ra, dec = numpy.loadtxt('data/yso_wcs_only.txt', unpack=True)
 
     gc.show_markers(ra, dec, layer='marker_set_1', edgecolor='red',
                     facecolor='none', marker='o', s=10, alpha=0.5)
