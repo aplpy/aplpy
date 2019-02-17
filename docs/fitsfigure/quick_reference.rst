@@ -9,9 +9,9 @@ Quick reference Guide
           this page, these are given in the form of example values. In
           addition, not all of the optional keywords are mentioned here.
           For more information on a specific command and all the options
-          available, type ``help`` followed by the method name, e.g. ``help
-          fig.show_grayscale``. When multiple optional arguments are given,
-          this does not mean that all of them have to be specified, but
+          available, use the ``help()`` function, e.g.
+          ``help(fig.show_grayscale)``. When multiple optional arguments are
+          given, this does not mean that all of them have to be specified, but
           just shows all the options available.
 
 Introduction
