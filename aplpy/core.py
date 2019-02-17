@@ -1715,7 +1715,6 @@ class FITSFigure(Layers, Regions):
             called. This defaults to `True` if and only if APLpy is being used
             from IPython and the Matplotlib backend is interactive.
         """
-        self._figure._auto_refresh = refresh
         if refresh is None:
             if matplotlib.is_interactive():
                 try:
@@ -1728,6 +1727,7 @@ class FITSFigure(Layers, Regions):
                 refresh = False
         elif not isinstance(refresh, bool):
             raise TypeError("refresh argument should be boolean or `None`")
+        self._figure._auto_refresh = refresh
 
     def refresh(self, force=True):
         """
