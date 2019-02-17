@@ -1,7 +1,12 @@
 CHANGES
 --------
 
-2.0 (2018-12-30)
+2.1 (unreleased)
+----------------
+
+- No changes yet.
+
+2.0 (2019-02-17)
 ----------------
 
 - Refactored APLpy to make use of WCSAxes to draw coordinate frames and
