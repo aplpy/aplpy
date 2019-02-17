@@ -18,7 +18,7 @@ the :meth:`~aplpy.FITSFigure.set_xaxis_coord_type` and :meth:`~aplpy.FITSFigure.
     f = FITSFigure('2MASS_k.fits')
     f.set_xaxis_coord_type('scalar')
     f.set_xaxis_coord_type('latitude')
-    
+
 Valid coordinate types are ``longitude``, ``latitude``, and ``scalar``.
 Longitudes are forced to be in the 0 to 360 degree range, latitudes are forced
 to be in the -90 to 90 degree range, and scalars are not constrained.
@@ -46,7 +46,7 @@ If the coordinate type is scalar, then the format should be specified as a
 valid Python format. For example, ``%g`` is the default Python format,
 ``%10.3f`` means decimal notation with three decimal places, etc. For more
 information, see `String Formatting Operations
-<http://docs.python.org/library/stdtypes.html#string-formatting>`_.
+<https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting>`_.
 
 In both cases, the default label format can be overridden::
 

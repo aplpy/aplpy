@@ -1,7 +1,7 @@
 APLpy documentation
 ===================
 
-This is the documentation for APLpy. The APLpy homepage is located at http://aplpy.github.com
+This is the documentation for APLpy. The APLpy homepage is located at http://aplpy.github.io
  
 .. toctree::
   :maxdepth: 1

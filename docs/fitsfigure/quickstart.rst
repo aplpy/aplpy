@@ -5,7 +5,7 @@ Beginner Tutorial
   :maxdepth: 1
 
 The following tutorial will take you, step by step, through the main features
-of APLpy. You will need to download the following `file <http://aplpy.github.com/downloads/tutorial.tar.gz>`_.
+of APLpy. You will need to download the following `file <http://aplpy.github.io/downloads/tutorial.tar.gz>`_.
 
 First, unpack the example files and go to the ``tutorial`` directory::
 
