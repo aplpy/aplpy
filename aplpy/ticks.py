@@ -14,6 +14,10 @@ class Ticks(object):
         self._wcs = self._ax.wcs
 
     def set_tick_direction(self, direction):
+        """
+        Set the direction of the ticks to be facing out of the axes (``out``)
+        or into the axes (``in``).
+        """
         if direction in ('in', 'out'):
             self.ax.coords[self.x].ticks.set_tick_out(direction == 'out')
             self.ax.coords[self.y].ticks.set_tick_out(direction == 'out')
