@@ -91,8 +91,7 @@ in the coordinates from a file, but in general you can pass any pair of lists
 or numpy arrays that are already defined::
 
     import numpy
-    data = numpy.loadtxt('data/yso_wcs_only.txt')
-    ra, dec = data[:, 0], data[:, 1]
+    ra, dec = numpy.loadtxt('data/yso_wcs_only.txt', unpack=True)
     gc.show_markers(ra, dec, edgecolor='green', facecolor='none',
                     marker='o', s=10, alpha=0.5)
 
