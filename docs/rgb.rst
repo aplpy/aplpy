@@ -16,7 +16,7 @@ following code shows how this can be done using the
                          '2mass_j.fits'], '2mass_cube.fits')
 
 This method makes use of the `reproject
-<http://reproject.readthedocs.io/en/stable/>`_ package to reproject the images
+<https://reproject.readthedocs.io/en/stable/>`_ package to reproject the images
 to a common projection. The above example produces a FITS cube named
 ``2mass_cube.fits`` which contains the three channels in the same projection.
 This can be used to then produce an RGB image (see next section)

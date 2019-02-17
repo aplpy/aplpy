@@ -233,7 +233,7 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
 
     This method can read in three FITS files with different
     projections/sizes/resolutions and uses the `reproject
-    <http://reproject.readthedocs.io/en/stable/>`_ package to reproject them all
+    <https://reproject.readthedocs.io/en/stable/>`_ package to reproject them all
     to the same projection.
 
     Two files are produced by this function. The first is a three-dimensional

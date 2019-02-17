@@ -10,7 +10,7 @@ since 2009.
 Since APLpy 2.0, APLpy relies on Astropy's `WCSAxes
 <http://docs.astropy.org/en/stable/visualization/wcsaxes/index.html>`_ package
 to draw the coordinate axes and grids, which in turn uses `Matplotlib
-<http://matplotlib.org>`_ to do the rendering. This is a big change compared to
+<https://matplotlib.org>`_ to do the rendering. This is a big change compared to
 previous versions of APLpy, which handled the drawing of the coordinate axes and
 grids directly. For information about backward-compatibility, see the
 `Backward-compatibility notes`_.

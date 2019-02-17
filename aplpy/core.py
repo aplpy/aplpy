@@ -129,8 +129,7 @@ class FITSFigure(Layers, Regions):
         figsize=(xsize, ysize) argument (where xsize and ysize are in
         inches). For more information on these additional arguments, see
         the *Optional keyword arguments* section in the documentation for
-        `Figure
-        <http://matplotlib.org/api/figure_api.html?#matplotlib.figure.Figure>`_
+        :class:`~matplotlib.figure.Figure`.
     """
 
     @auto_refresh

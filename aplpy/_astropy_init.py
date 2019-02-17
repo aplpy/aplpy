@@ -34,11 +34,7 @@ def test(package=None, test_path=None, args=None, plugins=None,
          verbose=False, pastebin=None, remote_data=False, pep8=False,
          pdb=False, coverage=False, open_files=False, **kwargs):
     """
-    Run the tests using `py.test <http://pytest.org/latest>`__. A proper set
-    of arguments is constructed and passed to `pytest.main`_.
-
-    .. _py.test: http://pytest.org/latest/
-    .. _pytest.main: http://pytest.org/latest/builtin.html#pytest.main
+    Run the tests using `py.test <https://docs.pytest.org/en/latest/>`__.
 
     Parameters
     ----------
@@ -52,19 +48,19 @@ def test(package=None, test_path=None, args=None, plugins=None,
         calling directory.
 
     args : str, optional
-        Additional arguments to be passed to pytest.main_ in the ``args``
+        Additional arguments to be passed to pytest.main in the ``args``
         keyword argument.
 
     plugins : list, optional
-        Plugins to be passed to pytest.main_ in the ``plugins`` keyword
+        Plugins to be passed to pytest.main in the ``plugins`` keyword
         argument.
 
     verbose : bool, optional
-        Convenience option to turn on verbose output from py.test_. Passing
+        Convenience option to turn on verbose output from py.test. Passing
         True is the same as specifying ``'-v'`` in ``args``.
 
     pastebin : {'failed','all',None}, optional
-        Convenience option for turning on py.test_ pastebin output. Set to
+        Convenience option for turning on py.test pastebin output. Set to
         ``'failed'`` to upload info for failed tests, or ``'all'`` to upload
         info for all tests.
 
@@ -75,7 +71,7 @@ def test(package=None, test_path=None, args=None, plugins=None,
 
     pep8 : bool, optional
         Turn on PEP8 checking via the `pytest-pep8 plugin
-        <http://pypi.python.org/pypi/pytest-pep8>`_ and disable normal
+        <https://pypi.org/project/pytest-pep8/>`_ and disable normal
         tests. Same as specifying ``'--pep8 -k pep8'`` in ``args``.
 
     pdb : bool, optional
@@ -89,13 +85,13 @@ def test(package=None, test_path=None, args=None, plugins=None,
     open_files : bool, optional
         Fail when any tests leave files open.  Off by default, because
         this adds extra run time to the test suite.  Requires the
-        `psutil <https://pypi.python.org/pypi/psutil>`_ package.
+        `psutil <https://pypi.org/project/psutil/>`_ package.
 
     parallel : int, optional
         When provided, run the tests in parallel on the specified
         number of CPUs.  If parallel is negative, it will use the all
         the cores on the machine.  Requires the
-        `pytest-xdist <https://pypi.python.org/pypi/pytest-xdist>`_ plugin
+        `pytest-xdist <https://pypi.org/project/pytest-xdist/>`_ plugin
         installed. Only available when using Astropy 0.3 or later.
 
     kwargs
