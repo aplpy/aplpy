@@ -1,0 +1,36 @@
+If you use APLpy for a publication, you can use the following acknowledgment:
+
+    This research made use of APLpy, an open-source plotting package for Python
+    (Robitaille and Bressert, 2012; Robitaille, 2019)
+
+where (Robitaille and Bressert, 2012) is a citation to this ADS/ASCL entry:
+
+    http://adsabs.harvard.edu/abs/2012ascl.soft08017R
+
+and (Robitaille, 2019) is a citation to the following Zenodo entry:
+
+    https://zenodo.org/record/2567476#.XGmAA5P7RZo
+
+The BibTex entries are:
+
+    @misc{aplpy2012,
+      author        = {{Robitaille}, T. and {Bressert}, E.},
+      title         = "{APLpy: Astronomical Plotting Library in Python}",
+      keywords      = {Software },
+      howpublished  = {Astrophysics Source Code Library},
+      year          = 2012,
+      month         = aug,
+      archivePrefix = "ascl",
+      eprint        = {1208.017},
+      adsurl        = {http://adsabs.harvard.edu/abs/2012ascl.soft08017R},
+      adsnote       = {Provided by the SAO/NASA Astrophysics Data System}
+    }
+
+    @misc{aplpy2019,
+      author       = {Robitaille, Thomas},
+      title        = {{APLpy v2.0: The Astronomical Plotting Library in Python}},
+      month        = feb,
+      year         = 2019,
+      doi          = {10.5281/zenodo.2567476},
+      url          = {https://doi.org/10.5281/zenodo.2567476}
+    }

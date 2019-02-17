@@ -17,6 +17,9 @@ grids directly. For information about backward-compatibility, see the
 
 Note that APLpy 2.x is only compatible with Python 3.5 and later.
 
+If you use APLpy for a publication, please consider citing it as described in
+the `CITATION <https://github.com/aplpy/aplpy/blob/master/CITATION>`__ file.
+
 Should you use APLpy?
 =====================
 
