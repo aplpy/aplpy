@@ -37,6 +37,7 @@ install:
     - source ci-helpers/travis/setup_conda.sh
 
 script:
+   - python setup.py check --restructuredtext
    - python setup.py $SETUP_CMD
 
 after_success:
