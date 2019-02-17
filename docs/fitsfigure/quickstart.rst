@@ -20,7 +20,7 @@ and import the ``aplpy`` module as follows::
 
     import aplpy
 
-To start off, use the :class:`~aplpy.aplpy.FITSfigure` class to create a
+To start off, use the :class:`~aplpy.FITSFigure` class to create a
 canvas to where your data will be plotted::
 
     gc = aplpy.FITSFigure('fits/2MASS_k.fits')
@@ -49,8 +49,8 @@ The colormap used for the colorscale image can be changed. Try the following::
     gc.show_colorscale(cmap='gist_heat')
 
 to show the image showing a 'heat' map. You can find more information in the
-:meth:`~aplpy.aplpy.FITSFigure.show_grayscale` and
-:meth:`~aplpy.aplpy.FITSFigure.show_colorscale` documentation. For
+:meth:`~aplpy.FITSFigure.show_grayscale` and
+:meth:`~aplpy.FITSFigure.show_colorscale` documentation. For
 example, you can control the minimum and maximum pixel values to show and the
 stretch function to use.
 
@@ -74,9 +74,9 @@ image. Try typing the following command::
 
     gc.show_contour('fits/mips_24micron.fits', colors='white')
 
-There are a number of arguments that can be passed to :meth:`~aplpy.aplpy.FITSFigure.show_contour` to
+There are a number of arguments that can be passed to :meth:`~aplpy.FITSFigure.show_contour` to
 control the appearance of the contours as well as the number of levels to
-show. For more information, see the see the :meth:`~aplpy.aplpy.FITSFigure.show_contour` documentation.
+show. For more information, see the see the :meth:`~aplpy.FITSFigure.show_contour` documentation.
 
 Display a coordinate grid using::
 
@@ -95,11 +95,11 @@ or numpy arrays that are already defined::
     gc.show_markers(ra, dec, edgecolor='green', facecolor='none',
                     marker='o', s=10, alpha=0.5)
 
-For more information, see the :meth:`~aplpy.aplpy.FITSFigure.show_markers`
+For more information, see the :meth:`~aplpy.FITSFigure.show_markers`
 documentation.
 
 It's often the case that you might want to change the look of a contour or
-markers, but if you run :meth:`~aplpy.aplpy.FITSFigure.show_contour` or :meth:`~aplpy.aplpy.FITSFigure.show_markers` a second time, it
+markers, but if you run :meth:`~aplpy.FITSFigure.show_contour` or :meth:`~aplpy.FITSFigure.show_markers` a second time, it
 will overplot rather than replacing. To solve this problem APLpy has 'layers'
 which can be manipulated in a basic way. Type::
 
@@ -112,9 +112,9 @@ which will print out something like this::
     -> contour_set_1
     -> marker_set_1
 
-You can use :meth:`~aplpy.aplpy.FITSFigure.remove_layer`, :meth:`~aplpy.aplpy.FITSFigure.hide_layer`, and :meth:`~aplpy.aplpy.FITSFigure.show_layer` to manipulate
+You can use :meth:`~aplpy.FITSFigure.remove_layer`, :meth:`~aplpy.FITSFigure.hide_layer`, and :meth:`~aplpy.FITSFigure.show_layer` to manipulate
 the layers, and you can also specify the ``layer=name`` argument to
-:meth:`~aplpy.aplpy.FITSFigure.show_contour` or :meth:`~aplpy.aplpy.FITSFigure.show_markers`. Using the latter forces APLpy to name
+:meth:`~aplpy.FITSFigure.show_contour` or :meth:`~aplpy.FITSFigure.show_markers`. Using the latter forces APLpy to name
 the layer you are creating with the name provided, and can also be used to
 replace an existing layer. For example, let's change the color of the markers
 from green to red::
@@ -123,7 +123,7 @@ from green to red::
                     facecolor='none', marker='o', s=10, alpha=0.5)
 
 Note the presence of the ``layer='marker_set_1'`` which means that the
-current markers plot will be replaced. To view active layers, you can use the :meth:`~aplpy.aplpy.FITSFigure.list_layers` documentation.
+current markers plot will be replaced. To view active layers, you can use the :meth:`~aplpy.FITSFigure.list_layers` documentation.
 
 To wrap up this tutorial, we will save the plot to a file. Type the following::
 

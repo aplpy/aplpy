@@ -100,3 +100,4 @@ Reference/API
    :no-main-docstr:
    :no-heading:
    :no-inheritance-diagram:
+   :inherited-members:

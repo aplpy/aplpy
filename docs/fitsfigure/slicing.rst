@@ -6,8 +6,8 @@ How to slice data cubes
 
 APLpy supports extracting a slice from n-dimensional FITS cubes, and
 re-ordering dimensions. The two key arguments to
-:class:`~aplpy.aplpy.FITSFigure` to control this are ``dimensions`` and
-``slices``. These arguments can also be passed to :meth:`~aplpy.aplpy.FITSFigure.show_contour`.
+:class:`~aplpy.FITSFigure` to control this are ``dimensions`` and
+``slices``. These arguments can also be passed to :meth:`~aplpy.FITSFigure.show_contour`.
 
 The ``dimensions`` argument is used to specify which dimensions should be used
 for the x- and y-axis respectively (zero based). The default values are ``[0,
@@ -44,8 +44,8 @@ Aspect ratio
 
 When plotting images in sky coordinates, APLpy makes pixel square by default,
 but it is possible to change this. When calling
-:meth:`~aplpy.aplpy.FITSFigure.show_grayscale` or
-:meth:`~aplpy.aplpy.FITSFigure.show_colorscale`, simply add ``aspect='auto'``
+:meth:`~aplpy.FITSFigure.show_grayscale` or
+:meth:`~aplpy.FITSFigure.show_colorscale`, simply add ``aspect='auto'``
 which will override the ``aspect='equal'`` default. The ``aspect='auto'`` is
 demonstrated below.
 

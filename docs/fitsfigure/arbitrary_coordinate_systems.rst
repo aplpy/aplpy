@@ -12,8 +12,8 @@ the WCS header information is valid. To differentiate between longitudes,
 latitudes, and arbitrary scalar values, APLpy keeps track of the axis
 coordinate 'type' for each axis, and will try and guess these based on the
 header. However, it is possible to explicitly specify the coordinate type with
-the :meth:`~aplpy.aplpy.FITSFigure.set_xaxis_coord_type` and :meth:`~aplpy.aplpy.FITSFigure.set_yaxis_coord_type` methods in the
-:class:`~aplpy.aplpy.FITSFigure` object::
+the :meth:`~aplpy.FITSFigure.set_xaxis_coord_type` and :meth:`~aplpy.FITSFigure.set_yaxis_coord_type` methods in the
+:class:`~aplpy.FITSFigure` object::
 
     f = FITSFigure('2MASS_k.fits')
     f.set_xaxis_coord_type('scalar')
@@ -58,6 +58,6 @@ Aspect ratio
 
 When plotting images in sky coordinates, APLpy makes pixel square by default,
 but it is possible to change this, which can be useful for non-sky
-coordinates. When calling :meth:`~aplpy.aplpy.FITSFigure.show_grayscale` or
-:meth:`~aplpy.aplpy.FITSFigure.show_colorscale`, simply add ``aspect='auto'``
+coordinates. When calling :meth:`~aplpy.FITSFigure.show_grayscale` or
+:meth:`~aplpy.FITSFigure.show_colorscale`, simply add ``aspect='auto'``
 which will override the ``aspect='equal'`` default.

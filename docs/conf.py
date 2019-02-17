@@ -149,3 +149,8 @@ if eval(setup_cfg.get('edit_on_github')):
 
     edit_on_github_source_root = ""
     edit_on_github_doc_root = "docs"
+
+# Use nitpicky mode to avoid broken links in docs
+nitpicky = True
+nitpick_ignore = [('py:class', 'aplpy.layers.Layers'),
+                  ('py:class', 'aplpy.regions.Regions')]

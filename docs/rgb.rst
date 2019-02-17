@@ -10,7 +10,7 @@ Reprojecting three images to the same projection
 If you are starting from three images with different projections/resolutions,
 the first step is to reproject these to a common projection/resolution. The
 following code shows how this can be done using the
-:func:`~aplpy.rgb.make_rgb_cube` function::
+:func:`~aplpy.make_rgb_cube` function::
 
     aplpy.make_rgb_cube(['2mass_k.fits', '2mass_h.fits',
                          '2mass_j.fits'], '2mass_cube.fits')
@@ -24,10 +24,10 @@ This can be used to then produce an RGB image (see next section)
 Producing an RGB image from images in a common projection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :func:`~aplpy.rgb.make_rgb_image` function can be used to produce an RGB
+The :func:`~aplpy.make_rgb_image` function can be used to produce an RGB
 image from either three FITS files in the exact same projection, or a FITS cube
 containing the three channels (such as that output by
-:func:`~aplpy.rgb.make_rgb_cube`). The following example illustrates how to do
+:func:`~aplpy.make_rgb_cube`). The following example illustrates how to do
 this::
 
     aplpy.make_rgb_image('2mass_cube.fits','2mass_rgb.png')
@@ -59,11 +59,11 @@ For more information, see :ref:`howto-avm`.
 
 On the other hand, if you are not able to use PyAVM, or need to use a format
 other than JPEG or PNG, then you need to instantiate the
-:class:`~aplpy.aplpy.FITSFigure` class with a FITS file with exactly the same
-dimensions and WCS as the RGB image. The :func:`~aplpy.rgb.make_rgb_cube`
+:class:`~aplpy.FITSFigure` class with a FITS file with exactly the same
+dimensions and WCS as the RGB image. The :func:`~aplpy.make_rgb_cube`
 function will in fact produce a file with the same name as the main output, but
 including a ``_2d`` suffix, and this can be used to instantiate
-:class:`~aplpy.aplpy.FITSFigure`::
+:class:`~aplpy.FITSFigure`::
 
     # Reproject the images to a common projection - this will also
     # produce 2mass_cube_2d.fits
