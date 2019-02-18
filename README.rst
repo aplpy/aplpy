@@ -33,17 +33,9 @@ and the following are optional:
 -  `scikit-image <https://pypi.org/project/scikit-image/>`__ 0.14 or
    later
 
-You can install APLpy with:
-
-::
+You can install APLpy with::
 
    pip install aplpy
-
-If you want to install all optional dependencies, you can do:
-
-::
-
-   pip install aplpy[all]
 
 .. |Build Status| image:: https://travis-ci.org/aplpy/aplpy.svg?branch=master
    :target: https://travis-ci.org/aplpy/aplpy

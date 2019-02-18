@@ -40,10 +40,6 @@ You can install APLpy with pip using::
 
     pip install aplpy
 
-To include all optional dependencies, you can do::
-
-    pip install aplpy[all]
-
 If you prefer to use conda, you can install APLpy with::
 
     conda install -c astropy aplpy
