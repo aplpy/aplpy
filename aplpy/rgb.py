@@ -227,7 +227,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
             warnings.warn("AVM tags will not be embedded in RGB image, as only JPEG and PNG files are supported")
 
 
-def make_rgb_cube(files, output, north=False, system=None, equinox=None):
+def make_rgb_cube(files, output, north=True):
     """
     Make an RGB data cube from a list of three FITS images.
 
@@ -260,14 +260,6 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
         assumed to be 'north' in the ICRS frame, but you can also pass any
         astropy :class:`~astropy.coordinates.BaseCoordinateFrame` to indicate
         to use the north of that frame.
-
-    system : str, optional
-       Specifies the system for the header (default is EQUJ).
-       Possible values are: EQUJ EQUB ECLJ ECLB GAL SGAL
-
-    equinox : str, optional
-       If a coordinate system is specified, the equinox can also be given
-       in the form YYYY. Default is J2000.
     """
 
     # Check that input files exist
@@ -275,13 +267,15 @@ def make_rgb_cube(files, output, north=False, system=None, equinox=None):
         if not os.path.exists(f):
             raise Exception("File does not exist : " + f)
 
-    if north:
+    if north is not False:
         frame = ICRS() if north is True else north
+        auto_rotate = False
     else:
         frame = None
+        auto_rotate = True
 
     # Find optimal WCS and shape based on input images
-    wcs, shape = find_optimal_celestial_wcs(files, frame=frame)
+    wcs, shape = find_optimal_celestial_wcs(files, frame=frame, auto_rotate=auto_rotate)
     header = wcs.to_header()
 
     # Generate empty datacube

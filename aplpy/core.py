@@ -190,7 +190,7 @@ class FITSFigure(Layers, Regions):
             # Update the NAXIS values with the true dimensions of the RGB image
             data.nx = nx
             data.ny = ny
-            data.pixel_shape = (ny, nx)
+            data.pixel_shape = (nx, ny)
 
         if isinstance(data, WCS):
 

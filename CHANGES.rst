@@ -6,6 +6,14 @@ CHANGES
 
 - No changes yet.
 
+2.0.1 (2019-02-18)
+------------------
+
+- Remove unused arguments in ``make_rgb_cube`` and fix behavior of
+  ``north=False``. [#417]
+
+- Fixed bug in image extent for non-square RGB images. [#417]
+
 2.0 (2019-02-17)
 ----------------
 
