@@ -6,20 +6,6 @@ import tempfile
 import pytest
 import numpy as np
 
-try:
-    import pyregion  # noqa
-except ImportError:
-    PYREGION_INSTALLED = False
-else:
-    PYREGION_INSTALLED = True
-
-try:
-    import reproject  # noqa
-except ImportError:
-    REPROJECT_INSTALLED = False
-else:
-    REPROJECT_INSTALLED = True
-
 from .. import FITSFigure
 from .helpers import generate_file
 from . import baseline_dir
@@ -208,7 +194,6 @@ class TestBasic(BaseImageTests):
 
     # Test for ds9 regions
     @pytest.mark.remote_data
-    @pytest.mark.skipif("not PYREGION_INSTALLED")
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_regions(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
@@ -224,7 +209,6 @@ class TestBasic(BaseImageTests):
         return f._figure
 
     @pytest.mark.remote_data
-    @pytest.mark.skipif("not REPROJECT_INSTALLED")
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
     def test_north(self):
         f = FITSFigure(self.filename_4, figsize=(3, 3), north=True)

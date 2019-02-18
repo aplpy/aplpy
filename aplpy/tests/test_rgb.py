@@ -8,13 +8,6 @@ import numpy as np
 from astropy.io import fits
 from astropy.coordinates import Galactic
 
-try:
-    import pyavm  # noqa
-except ImportError:
-    PYAVM_INSTALLED = False
-else:
-    PYAVM_INSTALLED = True
-
 from .. import FITSFigure
 from ..rgb import make_rgb_image, make_rgb_cube
 
@@ -34,9 +27,6 @@ class TestRGB(BaseImageTests):
                                    filename='test_rgb.png')
     @pytest.mark.parametrize('embed_avm_tags', (False, True))
     def test_rgb(self, tmpdir, embed_avm_tags):
-
-        if embed_avm_tags:
-            pytest.importorskip('pyavm')
 
         # Regression test to check that RGB recenter works properly
 
@@ -83,8 +73,6 @@ class TestRGB(BaseImageTests):
     def test_make_rgb_cube(self, tmpdir, north):
 
         # Regression test to check that RGB recenter works properly
-
-        pytest.importorskip('pyavm')
 
         header = generate_header(os.path.join(ROOT, 'data', '2d_fits', '2MASS_k_rot.hdr'))
 
