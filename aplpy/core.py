@@ -695,7 +695,7 @@ class FITSFigure(Layers, Regions):
         if stretch == 'arcsinh':
             stretch = 'asinh'
         normalizer = simple_norm(self._data, stretch=stretch, power=exponent,
-                                 asinh_a=vmid, min_cut=vmin, max_cut=vmax)
+                                 asinh_a=vmid, min_cut=vmin, max_cut=vmax, clip=False)
 
         # Adjust vmin/vmax if auto
         if min_auto:
