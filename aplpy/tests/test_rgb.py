@@ -6,6 +6,7 @@ import warnings
 import pytest
 import numpy as np
 from astropy.io import fits
+from astropy.coordinates import Galactic
 
 try:
     import pyavm  # noqa
@@ -76,9 +77,10 @@ class TestRGB(BaseImageTests):
         return f._figure
 
     @pytest.mark.remote_data
+    @pytest.mark.parametrize('north', ['default', 'galactic', 'false'])
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False},
                                    baseline_dir=baseline_dir, tolerance=7.5)
-    def test_make_rgb_cube(self, tmpdir):
+    def test_make_rgb_cube(self, tmpdir, north):
 
         # Regression test to check that RGB recenter works properly
 
@@ -104,16 +106,23 @@ class TestRGB(BaseImageTests):
 
         header = fits.Header.fromtextfile(HEADER)
 
-        r = fits.PrimaryHDU(np.ones((12, 12)), header_r)
+        r = fits.PrimaryHDU(np.ones((128, 128)), header_r)
         r.writeto(r_file)
 
-        g = fits.PrimaryHDU(np.ones((12, 12)), header_g)
+        g = fits.PrimaryHDU(np.ones((128, 128)), header_g)
         g.writeto(g_file)
 
-        b = fits.PrimaryHDU(np.ones((12, 12)), header_b)
+        b = fits.PrimaryHDU(np.ones((128, 128)), header_b)
         b.writeto(b_file)
 
-        make_rgb_cube([r_file, g_file, b_file], rgb_cube)
+        if north == 'default':
+            kwargs = {}
+        elif north == 'galactic':
+            kwargs = {'north': Galactic()}
+        elif north == 'false':
+            kwargs = {'north': False}
+
+        make_rgb_cube([r_file, g_file, b_file], rgb_cube, **kwargs)
 
         make_rgb_image(rgb_cube, rgb_file, embed_avm_tags=True,
                        vmin_r=0, vmax_r=1, vmin_g=0, vmax_g=1, vmin_b=0, vmax_b=1)
@@ -126,5 +135,6 @@ class TestRGB(BaseImageTests):
 
         f.tick_labels.hide()
         f.axis_labels.hide()
+        f.add_grid()
 
         return f._figure
