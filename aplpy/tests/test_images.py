@@ -225,3 +225,16 @@ class TestBasic(BaseImageTests):
         f = FITSFigure(data, downsample=2)
         f.show_grayscale()
         return f._figure
+
+    @pytest.mark.remote_data
+    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    def test_set_nan_color(self):
+        data = np.arange(56, dtype=float).reshape((8, 7))
+        data[3, :] = np.nan
+        f = FITSFigure(data, figsize=(3, 3))
+        f.show_colorscale()
+        f.axis_labels.hide()
+        f.tick_labels.hide()
+        f.ticks.hide()
+        f.set_nan_color('black')
+        return f._figure
