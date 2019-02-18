@@ -24,14 +24,11 @@ The following dependencies are required:
 -  `Matplotlib <http://www.matplotlib.org>`__ 2.0 or later
 -  `Astropy <http://www.astropy.org>`__ 3.1 or later
 -  `reproject <https://reproject.readthedocs.org>`__ 0.4 or later
-
-and the following are optional:
-
 -  `PyAVM <http://astrofrog.github.io/pyavm/>`__ 0.9.4 or later
 -  `pyregion <http://pyregion.readthedocs.org/>`__ 2.0 or later
 -  `pillow <https://pypi.org/project/Pillow/>`__ 4.0 or later
--  `scikit-image <https://pypi.org/project/scikit-image/>`__ 0.14 or
-   later
+-  `scikit-image <https://pypi.org/project/scikit-image/>`__ 0.14 or later
+-  `shapely <https://shapely.readthedocs.io/en/stable/project.html>`__ 1.6 or later
 
 You can install APLpy with::
 
