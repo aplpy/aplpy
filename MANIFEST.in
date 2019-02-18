@@ -1,6 +1,7 @@
 include README.md
 include CHANGES.rst
 include LICENSE.md
+include CITATION
 
 include ez_setup.py
 include ah_bootstrap.py
