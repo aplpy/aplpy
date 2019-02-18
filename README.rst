@@ -30,9 +30,13 @@ The following dependencies are required:
 -  `scikit-image <https://pypi.org/project/scikit-image/>`__ 0.14 or later
 -  `shapely <https://shapely.readthedocs.io/en/stable/project.html>`__ 1.6 or later
 
-You can install APLpy with::
+You can install APLpy and all its dependencies with::
 
-   pip install aplpy
+    pip install aplpy
+
+or if you use conda::
+
+    conda install -c astropy aplpy
 
 .. |Build Status| image:: https://travis-ci.org/aplpy/aplpy.svg?branch=master
    :target: https://travis-ci.org/aplpy/aplpy
