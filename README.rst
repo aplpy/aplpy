@@ -1,4 +1,4 @@
-|Build Status| |CircleCI| |codecov| |Documentation Status|
+|Build Status| |CircleCI| |AppVeyor| |codecov| |Documentation Status|
 
 About
 -----
@@ -42,6 +42,8 @@ or if you use conda::
    :target: https://travis-ci.org/aplpy/aplpy
 .. |CircleCI| image:: https://circleci.com/gh/aplpy/aplpy/tree/master.svg?style=svg
    :target: https://circleci.com/gh/aplpy/aplpy/tree/master
+.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/7whcuutukcbowyfn/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/Astropy/aplpy
 .. |codecov| image:: https://codecov.io/gh/aplpy/aplpy/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/aplpy/aplpy
 .. |Documentation Status| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
