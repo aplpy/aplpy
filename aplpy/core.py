@@ -696,18 +696,19 @@ class FITSFigure(Layers, Regions):
         if stretch == 'arcsinh':
             stretch = 'asinh'
 
-        if vmid is None:
-            if stretch == 'log':
-                vmid = 0.
-            elif stretch == 'asinh':
-                vmid = vmin - (vmax - vmin) / 30.
-
         if stretch == 'log':
+            if vmid is None:
+                if vmin < 0:
+                    raise ValueError("When using a log stretch, if vmin < 0, then vmid has to be specified")
+                else:
+                    vmid = 0.
             if vmin < vmid:
                 raise ValueError("When using a log stretch, vmin should be larger than vmid")
             log_a = (vmax - vmid) / (vmin - vmid)
             norm_kwargs = {'log_a': log_a}
         elif stretch == 'asinh':
+            if vmid is None:
+                vmid = vmin - (vmax - vmin) / 30.
             asinh_a = (vmid - vmin) / (vmax - vmin)
             norm_kwargs = {'asinh_a': asinh_a}
         else:
