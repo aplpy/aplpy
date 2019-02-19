@@ -18,7 +18,7 @@ from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 from astropy.nddata.utils import block_reduce
-from astropy.visualization import AsymmetricPercentileInterval, simple_norm
+from astropy.visualization import AsymmetricPercentileInterval
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 from astropy.coordinates import ICRS
 
@@ -26,6 +26,7 @@ from . import convolve_util
 from . import header as header_util
 from . import slicer
 
+from .compat import simple_norm
 from .layers import Layers
 from .grid import Grid
 from .ticks import Ticks
@@ -633,9 +634,8 @@ class FITSFigure(Layers, Regions):
             The stretch function to use
 
         vmid : None or float, optional
-            Baseline value used for the log and arcsinh stretches. If
-            set to None, this is set to zero for log stretches and to
-            vmin - (vmax - vmin) / 30. for arcsinh stretches
+            Baseline value used for the log and arcsinh stretches. For arcsinh
+            stretches this defaults to 0.1, and for log stretches to 1000.
 
         exponent : float, optional
             If stretch is set to 'power', this is the exponent to use
@@ -694,8 +694,19 @@ class FITSFigure(Layers, Regions):
         # Prepare normalizer object
         if stretch == 'arcsinh':
             stretch = 'asinh'
+
+        if vmid is not None:
+            if stretch == 'log':
+                norm_kwargs = {'log_a': vmid}
+            elif stretch == 'arcsinh':
+                norm_kwargs = {'asinh_a': vmid}
+            else:
+                norm_kwargs = {}
+        else:
+            norm_kwargs = {}
+
         normalizer = simple_norm(self._data, stretch=stretch, power=exponent,
-                                 asinh_a=vmid, min_cut=vmin, max_cut=vmax, clip=False)
+                                 min_cut=vmin, max_cut=vmax, clip=False, **norm_kwargs)
 
         # Adjust vmin/vmax if auto
         if min_auto:
