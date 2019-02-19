@@ -29,12 +29,15 @@ def test_stretches():
 
     # Regression test to make sure none of the stretches crash
 
-    data = np.zeros((16, 16))
+    data = np.arange(256).reshape((16, 16))
     f = FITSFigure(data)
     f.show_grayscale()
     f.show_grayscale(stretch='linear')
-    f.show_grayscale(stretch='log')
     f.show_grayscale(stretch='sqrt')
+    f.show_grayscale(stretch='log')
     f.show_grayscale(stretch='arcsinh')
     f.show_grayscale(stretch='power')
+    f.show_grayscale(stretch='log', vmid=10)
+    f.show_grayscale(stretch='arcsinh', vmid=10)
+    f.show_grayscale(stretch='power', exponent=3.0)
     f.close()
