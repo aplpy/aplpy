@@ -634,7 +634,9 @@ class FITSFigure(Layers, Regions):
             The stretch function to use
 
         vmid : None or float, optional
-            Baseline value used for the log and arcsinh stretches.
+            Baseline value used for the log and arcsinh stretches. If
+            not set, this defaults to zero for log stretches and to
+            vmin - (vmax - vmin) / 30. for arcsinh stretches
 
         exponent : float, optional
             If stretch is set to 'power', this is the exponent to use
@@ -694,17 +696,20 @@ class FITSFigure(Layers, Regions):
         if stretch == 'arcsinh':
             stretch = 'asinh'
 
-        if vmid is not None:
+        if vmid is None:
             if stretch == 'log':
-                if vmin < vmid:
-                    raise ValueError("When using a log stretch, vmin should be larger than vmid")
-                log_a = (vmax - vmid) / (vmin - vmid)
-                norm_kwargs = {'log_a': log_a}
+                vmid = 0.
             elif stretch == 'asinh':
-                asinh_a = (vmid - vmin) / (vmax - vmin)
-                norm_kwargs = {'asinh_a': asinh_a}
-            else:
-                norm_kwargs = {}
+                vmid = vmin - (vmax - vmin) / 30.
+
+        if stretch == 'log':
+            if vmin < vmid:
+                raise ValueError("When using a log stretch, vmin should be larger than vmid")
+            log_a = (vmax - vmid) / (vmin - vmid)
+            norm_kwargs = {'log_a': log_a}
+        elif stretch == 'asinh':
+            asinh_a = (vmid - vmin) / (vmax - vmin)
+            norm_kwargs = {'asinh_a': asinh_a}
         else:
             norm_kwargs = {}
 
