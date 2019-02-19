@@ -18,7 +18,7 @@ from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
 from astropy.nddata.utils import block_reduce
-from astropy.visualization import AsymmetricPercentileInterval, simple_norm
+from astropy.visualization import AsymmetricPercentileInterval
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 from astropy.coordinates import ICRS
 
@@ -26,6 +26,7 @@ from . import convolve_util
 from . import header as header_util
 from . import slicer
 
+from .compat import simple_norm
 from .layers import Layers
 from .grid import Grid
 from .ticks import Ticks
@@ -634,7 +635,7 @@ class FITSFigure(Layers, Regions):
 
         vmid : None or float, optional
             Baseline value used for the log and arcsinh stretches. If
-            set to None, this is set to zero for log stretches and to
+            not set, this defaults to zero for log stretches and to
             vmin - (vmax - vmin) / 30. for arcsinh stretches
 
         exponent : float, optional
@@ -694,8 +695,28 @@ class FITSFigure(Layers, Regions):
         # Prepare normalizer object
         if stretch == 'arcsinh':
             stretch = 'asinh'
+
+        if stretch == 'log':
+            if vmid is None:
+                if vmin < 0:
+                    raise ValueError("When using a log stretch, if vmin < 0, then vmid has to be specified")
+                else:
+                    vmid = 0.
+            if vmin < vmid:
+                raise ValueError("When using a log stretch, vmin should be larger than vmid")
+            log_a = (vmax - vmid) / (vmin - vmid)
+            norm_kwargs = {'log_a': log_a}
+        elif stretch == 'asinh':
+            if vmid is None:
+                vmid = vmin - (vmax - vmin) / 30.
+            asinh_a = (vmid - vmin) / (vmax - vmin)
+            norm_kwargs = {'asinh_a': asinh_a}
+        else:
+            norm_kwargs = {}
+
         normalizer = simple_norm(self._data, stretch=stretch, power=exponent,
-                                 asinh_a=vmid, min_cut=vmin, max_cut=vmax, clip=False)
+                                 min_cut=vmin, max_cut=vmax, clip=False,
+                                 **norm_kwargs)
 
         # Adjust vmin/vmax if auto
         if min_auto:
