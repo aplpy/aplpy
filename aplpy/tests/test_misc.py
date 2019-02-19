@@ -37,7 +37,7 @@ def test_stretches():
     f.show_grayscale(stretch='log')
     f.show_grayscale(stretch='arcsinh')
     f.show_grayscale(stretch='power')
-    f.show_grayscale(stretch='log', vmid=10)
+    f.show_grayscale(stretch='log', vmid=-10)
     f.show_grayscale(stretch='arcsinh', vmid=10)
     f.show_grayscale(stretch='power', exponent=3.0)
     f.close()
