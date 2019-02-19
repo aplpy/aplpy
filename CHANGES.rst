@@ -6,6 +6,11 @@ CHANGES
 
 - No changes yet.
 
+2.0.3 (2019-02-19)
+------------------
+
+- Fix 'arcsinh' stretch and fix definition of vmid to match that in 1.x. [#421]
+
 2.0.2 (2019-02-18)
 ------------------
 
