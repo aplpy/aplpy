@@ -700,7 +700,7 @@ class FITSFigure(Layers, Regions):
                     raise ValueError("When using a log stretch, vmin should be larger than vmid")
                 log_a = (vmax - vmid) / (vmin - vmid)
                 norm_kwargs = {'log_a': log_a}
-            elif stretch == 'arcsinh':
+            elif stretch == 'asinh':
                 asinh_a = (vmid - vmin) / (vmax - vmin)
                 norm_kwargs = {'asinh_a': asinh_a}
             else:
