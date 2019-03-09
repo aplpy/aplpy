@@ -221,6 +221,64 @@ Once :meth:`~aplpy.FITSFigure.add_grid` has been called, the ``fig.grid`` object
     fig.grid.set_linestyle('solid')
     fig.grid.set_linewidth(1)  # points
 
+Compass
+^^^^^^^
+
+A compass can be added and removed using the following commands::
+
+    fig.add_compass()
+    fig.remove_compass()
+
+Once :meth:`~aplpy.FITSFigure.add_compass` has been called, the ``fig.compass`` object is created and the following methods are then available:
+
+* Show and hide the compass::
+
+    fig.compass.show(length=0.2)  # length in degrees
+    fig.compass.hide()
+
+* Change the length of the compass::
+
+    fig.compass.set_length(0.02)  # degrees
+
+* Specify the length of the compass in different units::
+
+    from astropy import units as u
+    fig.compass.set_length(72 * u.arcsecond)
+
+* Change the corner that the compass is shown in::
+
+    fig.compass.set_corner('top right')
+
+  This can be one of ``top right``, ``top left``, ``bottom right``,
+  ``bottom left``, ``left``, ``right``, ``bottom`` or ``top``.
+
+* Set whether or not to show a frame around the compass::
+
+    fig.compass.set_frame(False)
+
+* Set the transparency level of the compass and labels::
+
+    fig.compass.set_alpha(0.7)
+
+* Set the color of the compass and labels::
+
+    fig.compass.set_color('white')
+
+* Set the font properties of the labels::
+
+    fig.compass.set_font(size='medium', weight='medium', \
+                         stretch='normal', family='sans-serif', \
+                         style='normal', variant='normal')
+
+* Set the line style and width for the compass arrows::
+
+    fig.compass.set_linestyle('solid')
+    fig.compass.set_linewidth(3)  # points
+
+* Set multiple properties at once::
+
+    fig.compass.set(linestyle='solid', color='red', ...)
+
 Scalebar
 ^^^^^^^^
 
