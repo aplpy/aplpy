@@ -32,7 +32,7 @@ from .grid import Grid
 from .ticks import Ticks
 from .tick_labels import TickLabels
 from .axis_labels import AxisLabels
-from .overlays import Beam, Scalebar
+from .overlays import Beam, Scalebar, Compass
 from .regions import Regions
 from .colorbar import Colorbar
 from .frame import Frame
@@ -2005,6 +2005,64 @@ class FITSFigure(Layers, Regions):
 
             self.beam._remove()
             del self.beam
+
+    @auto_refresh
+    def add_compass(self, **kwargs):
+        """
+        Add a compass to the current figure.
+
+        Once this method has been run, a compass attribute becomes
+        available, and can be used to control the aspect of the compass::
+
+            >>> f = aplpy.FITSFigure(...)
+            >>> ...
+            >>> f.add_compass()
+            >>> f.compass.set_color('firebrick')
+            >>> ...
+
+        Parameters
+        ----------
+
+        length : float or quantity, optional
+            The length of the compass arrows in degrees, an angular quantity,
+            or angular unit
+
+        corner : str, optional
+            Where to place the compass. Acceptable values are: 'left',
+            'right', 'top', 'bottom', 'top left', 'top right',
+            'bottom left' (default), 'bottom right'
+
+        frame : bool, optional
+            Whether to display a frame behind the compass (default is False)
+
+        sep_x, sep_y : float or quantity, optional
+            Separation between the arrows and labels in degrees, an angular
+            quantity, or angular unit (defaults are 0.01 and 0.03)
+
+        fontproperties : matplotlib FontProperties, optional
+            Font properties for the label text
+
+        kwargs
+            Additional arguments are passed to the matplotlib TextPath and
+            FancyArrowPatch classes. See the matplotlib documentation for more
+            details.
+        """
+        if hasattr(self, 'compass'):
+            raise Exception("Compass already exists")
+        try:
+            self.compass = Compass(self)
+            self.compass.show(**kwargs)
+        except Exception:
+            del self.compass
+            raise
+
+    @auto_refresh
+    def remove_compass(self):
+        """
+        Removes the compass from the current figure.
+        """
+        self.compass._remove()
+        del self.compass
 
     @auto_refresh
     def add_scalebar(self, length, *args, **kwargs):

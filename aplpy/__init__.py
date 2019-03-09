@@ -15,7 +15,7 @@ if not _ASTROPY_SETUP_:  # noqa
     from .rgb import make_rgb_image, make_rgb_cube  # noqa
 
     from .frame import Frame  # noqa
-    from .overlays import Scalebar, Beam  # noqa
+    from .overlays import Compass, Scalebar, Beam  # noqa
     from .colorbar import Colorbar  # noqa
     from .grid import Grid  # noqa
     from .ticks import Ticks  # noqa

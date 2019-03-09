@@ -3,7 +3,8 @@ from __future__ import absolute_import, print_function, division
 import warnings
 
 from mpl_toolkits.axes_grid1.anchored_artists import (AnchoredEllipse,
-                                                      AnchoredSizeBar)
+                                                      AnchoredSizeBar,
+                                                      AnchoredDirectionArrows)
 
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -22,6 +23,339 @@ corners['right'] = 5
 corners['left'] = 6
 corners['bottom'] = 8
 corners['top'] = 9
+
+
+class Compass(object):
+
+    def __init__(self, parent):
+
+        # Retrieve info from parent figure
+        self._figure = parent._figure
+        self._header = parent._header
+        self._ax = parent.ax
+        self._wcs = parent._wcs
+        self._dimensions = [parent.x, parent.y]
+
+        # Initialize settings
+        self._base_settings = {}
+        self._arrow_settings = {}
+        self._label_settings = {}
+        self._label_settings['fontproperties'] = FontProperties()
+
+    # LAYOUT
+
+    @auto_refresh
+    def show(self, length=-0.15, corner='top right', frame=False, borderpad=0.4,
+             pad=0.5, sep_x=0.01, sep_y=0.03, fontproperties=None, **kwargs):
+        """
+        Overlay a compass on the image.
+
+        Parameters
+        ----------
+
+        length : float or quantity, optional
+            The length of the compass arrows in degrees, an angular quantity,
+            or angular unit
+
+        corner : str, optional
+            Where to place the compass. Acceptable values are: 'left',
+            'right', 'top', 'bottom', 'top left', 'top right',
+            'bottom left' (default), 'bottom right'
+
+        frame : bool, optional
+            Whether to display a frame behind the compass (default is False)
+
+        sep_x, sep_y : float or quantity, optional
+            Separation between the arrows and labels in degrees, an angular
+            quantity, or angular unit (defaults are 0.01 and 0.03)
+
+        fontproperties : matplotlib FontProperties, optional
+            Font properties for the label text
+
+        kwargs
+            Additional arguments are passed to the matplotlib TextPath and
+            FancyArrowPatch classes. See the matplotlib documentation for more
+            details.
+        """
+
+        self._base_settings['length'] = length
+        self._base_settings['corner'] = corner
+        self._base_settings['frame'] = frame
+        self._base_settings['borderpad'] = borderpad
+        self._base_settings['pad'] = pad
+        self._base_settings['sep_x'] = sep_x
+        self._base_settings['sep_y'] = sep_y
+        if not fontproperties:
+            self._label_settings['fontproperties'] = FontProperties()
+
+        if isinstance(length, u.Quantity):
+            length = length.to(u.degree).value
+        elif isinstance(length, u.Unit):
+            length = length.to(u.degree)
+
+        if isinstance(sep_x, u.Quantity):
+            sep_x = sep_x.to(u.degree).value
+        elif isinstance(sep_x, u.Unit):
+            sep_x = sep_x.to(u.degree)
+
+        if isinstance(sep_y, u.Quantity):
+            sep_y = sep_y.to(u.degree).value
+        elif isinstance(sep_y, u.Unit):
+            sep_y = sep_y.to(u.degree)
+
+        if self._wcs.is_celestial:
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            pix_units = self._wcs.wcs.cunit
+            sy = pix_scale[1]*u.Unit(pix_units[1])
+            sy = sy.to('deg').value
+        else:
+            raise ValueError("Cannot show compass when WCS is not celestial")
+
+        try:
+            self._compass.remove()
+        except Exception:
+            pass
+
+        if isinstance(corner, str):
+            corner = corners[corner]
+
+        compass = AnchoredDirectionArrows(self._ax.transAxes, length=length,
+                                          label_x='E', label_y='N', loc=corner,
+                                          aspect_ratio=-1, frameon=True,
+                                          fontproperties=self._label_settings['fontproperties'])
+        self._ax.add_artist(compass)
+        self._figure.canvas.draw()
+        frame_bl = compass.patch.get_bbox().min
+        frame_tr = compass.patch.get_bbox().max
+        frame_bl = self._ax.transData.inverted().transform(frame_bl)
+        frame_tr = self._ax.transData.inverted().transform(frame_tr)
+        frame_center = np.array([frame_bl[0] + (frame_tr[0] - frame_bl[0]) / 2,
+                                 frame_bl[1] + (frame_tr[1] - frame_bl[1]) / 2])
+        compass.remove()
+
+        p1 = np.array(self._wcs.all_pix2world(frame_center[0], frame_center[1], 1))
+        p2 = np.array([p1[0], p1[1] + sy])
+        p2 = np.array(self._wcs.all_world2pix(p2[0], p2[1], 1))
+        p1 = frame_center
+        angle = np.arctan2(p2[1] - p1[1], p2[0] - p1[0])
+        angle = np.rad2deg(angle) - 90
+
+        self._compass = AnchoredDirectionArrows(self._ax.transAxes,
+                                                length=length, label_x='E',
+                                                label_y='N', loc=corner,
+                                                angle=angle, aspect_ratio=-1,
+                                                frameon=frame, sep_x=sep_x,
+                                                sep_y=sep_y,
+                                                fontproperties=self._label_settings['fontproperties'])
+
+        self._ax.add_artist(self._compass)
+
+        self.set(**kwargs)
+
+    @auto_refresh
+    def _remove(self):
+        self._compass.remove()
+
+    @auto_refresh
+    def hide(self):
+        """
+        Hide the compass.
+        """
+        try:
+            self._compass.remove()
+        except Exception:
+            pass
+
+    @auto_refresh
+    def set_length(self, length):
+        """
+        Set the length of the compass arrows.
+        """
+        self._base_settings['length'] = -length
+        self.show(**self._base_settings)
+        self._set_arrow_properties(**self._arrow_settings)
+        self._set_label_properties(**self._label_settings)
+
+    @auto_refresh
+    def set_corner(self, corner):
+        """
+        Set where to place the compass.
+
+        Acceptable values are 'left', 'right', 'top', 'bottom', 'top left',
+        'top right', 'bottom left', and 'bottom right'.
+        """
+        self._base_settings['corner'] = corner
+        self.show(**self._base_settings)
+        self._set_arrow_properties(**self._arrow_settings)
+        self._set_label_properties(**self._label_settings)
+
+    @auto_refresh
+    def set_frame(self, frame):
+        """
+        Set whether to display a frame around the compass.
+        """
+        self._base_settings['frame'] = frame
+        self.show(**self._base_settings)
+        self._set_arrow_properties(**self._arrow_settings)
+        self._set_label_properties(**self._label_settings)
+
+    @auto_refresh
+    def set_sep_x(self, sep):
+        """
+        Set x-direction separation between arrows and labels.
+        """
+        self._base_settings['sep_x'] = sep
+        self.show(**self._base_settings)
+        self._set_arrow_properties(**self._arrow_settings)
+        self._set_label_properties(**self._label_settings)
+
+    @auto_refresh
+    def set_sep_y(self, sep):
+        """
+        Set y-direction separation between arrows and labels.
+        """
+        self._base_settings['sep_y'] = sep
+        self.show(**self._base_settings)
+        self._set_arrow_properties(**self._arrow_settings)
+        self._set_label_properties(**self._label_settings)
+
+    # APPEARANCE
+
+    @auto_refresh
+    def set_linewidth(self, linewidth):
+        """
+        Set the linewidth of the compass arrows, in points.
+        """
+        self._set_arrow_properties(linewidth=linewidth)
+
+    @auto_refresh
+    def set_linestyle(self, linestyle):
+        """
+        Set the linestyle of the compass arrows.
+
+        Should be one of 'solid', 'dashed', 'dashdot', or 'dotted'.
+        """
+        self._set_arrow_properties(linestyle=linestyle)
+
+    @auto_refresh
+    def set_alpha(self, alpha):
+        """
+        Set the alpha value (transparency).
+
+        This should be a floating point value between 0 and 1.
+        """
+        self._set_arrow_properties(alpha=alpha)
+        self._set_label_properties(alpha=alpha)
+
+    @auto_refresh
+    def set_color(self, color):
+        """
+        Set the compass color.
+        """
+        self._set_arrow_properties(color=color)
+        self._set_label_properties(color=color)
+
+    @auto_refresh
+    def set_font(self, family=None, style=None, variant=None, stretch=None,
+                 weight=None, size=None, fontproperties=None):
+        """
+        Set the font of the label text.
+
+        Parameters
+        ----------
+
+        common: family, style, variant, stretch, weight, size, fontproperties
+
+        Notes
+        -----
+
+        Default values are set by matplotlib or previously set values if
+        set_font has already been called. Global default values can be set by
+        editing the matplotlibrc file.
+        """
+
+        if family:
+            self._label_settings['fontproperties'].set_family(family)
+
+        if style:
+            self._label_settings['fontproperties'].set_style(style)
+
+        if variant:
+            self._label_settings['fontproperties'].set_variant(variant)
+
+        if stretch:
+            self._label_settings['fontproperties'].set_stretch(stretch)
+
+        if weight:
+            self._label_settings['fontproperties'].set_weight(weight)
+
+        if size:
+            self._label_settings['fontproperties'].set_size(size)
+
+        if fontproperties:
+            self._label_settings['fontproperties'] = fontproperties
+
+        self.show(fontproperties=self._label_settings['fontproperties'],
+                  **self._base_settings)
+        self._set_arrow_properties(**self._arrow_settings)
+        self._set_label_properties(**self._label_settings)
+
+    @auto_refresh
+    def _set_label_properties(self, **kwargs):
+        """
+        Modify the compass label properties.
+
+        All arguments are passed to the matplotlib TextPath class. See the
+        matplotlib documentation for more details.
+        """
+        for kwarg, val in kwargs.items():
+            try:
+                # TextPath does not take fontproperties, always handled by show
+                if kwarg == 'fontproperties':
+                    continue
+                kvpair = {kwarg: val}
+                self._compass.box.get_children()[2].set(**kvpair)
+                self._compass.box.get_children()[3].set(**kvpair)
+                self._label_settings[kwarg] = val
+            except AttributeError:
+                warnings.warn("TextPath labels do not have attribute {0}. Skipping.".format(kwarg))
+
+    @auto_refresh
+    def _set_arrow_properties(self, **kwargs):
+        """
+        Modify the arrow properties.
+
+        All arguments are pass to the matplotlib FancyArrowPatch class. See the
+        matplotlib documentation for more details.
+        """
+        for kwarg, val in kwargs.items():
+            try:
+                kvpair = {kwarg: val}
+                self._compass.arrow_x.set(**kvpair)
+                self._compass.arrow_y.set(**kvpair)
+                self._arrow_settings[kwarg] = val
+            except AttributeError:
+                warnings.warn("FancyArrowPatch does not have attribute {0}. Skipping.".format(kwarg))
+
+    @auto_refresh
+    def set(self, **kwargs):
+        """
+        Modify the compass and compass properties.
+
+        All arguments are passed to the matplotlib TextPath and
+        FancyArrowPatch classes. See the matplotlib documentation for more
+        details.
+        """
+        for kwarg in kwargs:
+            kwargs_single = {kwarg: kwargs[kwarg]}
+            try:
+                self._set_label_properties(**kwargs_single)
+            except (AttributeError, TypeError):
+                pass
+            try:
+                self._set_arrow_properties(**kwargs_single)
+            except (AttributeError, TypeError):
+                pass
 
 
 class Scalebar(object):
