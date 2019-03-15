@@ -16,12 +16,6 @@ HEADER = fits.Header.fromtextfile(os.path.join(HEADER_DIR, '1904-66_TAN.hdr'))
 HDU = fits.PrimaryHDU(np.zeros((16, 16)), HEADER)
 
 
-def test_compass_add_invalid():
-    f = FITSFigure(HDU)
-    with pytest.raises(TypeError):
-        f.add_compass()
-
-
 def test_compass_addremove():
     f = FITSFigure(HDU)
     f.add_compass()
