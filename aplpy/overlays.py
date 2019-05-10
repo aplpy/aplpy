@@ -3,8 +3,18 @@ from __future__ import absolute_import, print_function, division
 import warnings
 
 from mpl_toolkits.axes_grid1.anchored_artists import (AnchoredEllipse,
-                                                      AnchoredSizeBar,
-                                                      AnchoredDirectionArrows)
+                                                      AnchoredSizeBar)
+
+import matplotlib
+MPL_VERSION = int(matplotlib.__version__[0])
+if MPL_VERSION >= 3:
+    from mpl_toolkits.axes_grid1.anchored_artists import AnchoredDirectionArrows
+else:
+    from astropy.coordinates import SkyCoord
+    from astropy.wcs.utils import wcs_to_celestial_frame
+    from matplotlib.patches import FancyArrowPatch
+    from matplotlib.patches import Rectangle
+    from matplotlib.text import Text
 
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -59,8 +69,8 @@ class Compass(object):
 
         corner : str, optional
             Where to place the compass. Acceptable values are: 'left',
-            'right', 'top', 'bottom', 'top left', 'top right',
-            'bottom left' (default), 'bottom right'
+            'right', 'top', 'bottom', 'top left', 'top right' (default),
+            'bottom left', 'bottom right'
 
         frame : bool, optional
             Whether to display a frame behind the compass (default is False)
@@ -73,9 +83,9 @@ class Compass(object):
             Font properties for the label text
 
         kwargs
-            Additional arguments are passed to the matplotlib TextPath and
-            FancyArrowPatch classes. See the matplotlib documentation for more
-            details.
+            Additional arguments are passed to the matplotlib Text (mpl 2),
+            TextPath (mpl 3), and FancyArrowPatch classes. See the matplotlib
+            documentation for more details.
         """
 
         self._base_settings['length'] = length
@@ -119,59 +129,166 @@ class Compass(object):
         if isinstance(corner, str):
             corner = corners[corner]
 
-        compass = AnchoredDirectionArrows(self._ax.transAxes, length=length,
-                                          label_x='E', label_y='N', loc=corner,
-                                          aspect_ratio=-1, frameon=True,
-                                          fontproperties=self._label_settings['fontproperties'])
-        self._ax.add_artist(compass)
-        self._figure.canvas.draw()
-        frame_bl = compass.patch.get_bbox().min
-        frame_tr = compass.patch.get_bbox().max
-        frame_bl = self._ax.transData.inverted().transform(frame_bl)
-        frame_tr = self._ax.transData.inverted().transform(frame_tr)
-        frame_center = np.array([frame_bl[0] + (frame_tr[0] - frame_bl[0]) / 2,
-                                 frame_bl[1] + (frame_tr[1] - frame_bl[1]) / 2])
-        compass.remove()
+        if MPL_VERSION >= 3:
+            compass = AnchoredDirectionArrows(self._ax.transAxes, length=length,
+                                              label_x='E', label_y='N',
+                                              loc=corner, aspect_ratio=-1,
+                                              frameon=True, fontproperties=self._label_settings['fontproperties'])
+            self._ax.add_artist(compass)
+            self._figure.canvas.draw()
+            frame_bl = compass.patch.get_bbox().min
+            frame_tr = compass.patch.get_bbox().max
+            frame_bl = self._ax.transData.inverted().transform(frame_bl)
+            frame_tr = self._ax.transData.inverted().transform(frame_tr)
+            frame_center = np.array([frame_bl[0] + (frame_tr[0] - frame_bl[0]) / 2,
+                                     frame_bl[1] + (frame_tr[1] - frame_bl[1]) / 2])
+            compass.remove()
 
-        p1 = np.array(self._wcs.all_pix2world(frame_center[0], frame_center[1], 1))
-        p2 = np.array([p1[0], p1[1] + sy])
-        p2 = np.array(self._wcs.all_world2pix(p2[0], p2[1], 1))
-        p1 = frame_center
-        angle = np.arctan2(p2[1] - p1[1], p2[0] - p1[0])
-        angle = np.rad2deg(angle) - 90
+            p1 = np.array(self._wcs.all_pix2world(frame_center[0], frame_center[1], 1))
+            p2 = np.array([p1[0], p1[1] + sy])
+            p2 = np.array(self._wcs.all_world2pix(p2[0], p2[1], 1))
+            p1 = frame_center
+            angle = np.arctan2(p2[1] - p1[1], p2[0] - p1[0])
+            angle = np.rad2deg(angle) - 90
 
-        self._compass = AnchoredDirectionArrows(self._ax.transAxes,
-                                                length=length, label_x='E',
-                                                label_y='N', loc=corner,
-                                                angle=angle, aspect_ratio=-1,
-                                                frameon=frame, sep_x=sep_x,
-                                                sep_y=sep_y,
-                                                fontproperties=self._label_settings['fontproperties'])
+            self._compass = AnchoredDirectionArrows(self._ax.transAxes,
+                                                    length=length, label_x='E',
+                                                    label_y='N', loc=corner,
+                                                    angle=angle,
+                                                    aspect_ratio=-1,
+                                                    frameon=frame, sep_x=sep_x,
+                                                    sep_y=sep_y,
+                                                    fontproperties=self._label_settings['fontproperties'])
 
-        self._ax.add_artist(self._compass)
+            self._ax.add_artist(self._compass)
+
+        else:
+            xmin, xmax = self._ax.get_xlim()
+            ymin, ymax = self._ax.get_ylim()
+            pos_min = self._wcs.all_pix2world(xmin, ymin, 1)
+            pos_max = self._wcs.all_pix2world(xmax, ymax, 1)
+
+            extent_x = [pos_max[0], pos_min[1]]
+            extent_y = [pos_min[0], pos_max[1]]
+
+            # trying to be insensitive to frame, RA/dec vs. galactic, etc.
+            pos_min = self._wcs.all_world2pix(*pos_min, 1)
+            extent_x = self._wcs.all_world2pix(*extent_x, 1)
+            extent_y = self._wcs.all_world2pix(*extent_y, 1)
+            pos_min = SkyCoord.from_pixel(*pos_min, self._wcs, origin=1)
+            extent_x = SkyCoord.from_pixel(*extent_x, self._wcs, origin=1)
+            extent_y = SkyCoord.from_pixel(*extent_y, self._wcs, origin=1)
+            extent_x = pos_min.separation(extent_x)
+            extent_y = pos_min.separation(extent_y)
+            if hasattr(pos_min, 'dec'):
+                extent_x /= np.cos(pos_min.dec.to('radian'))
+
+            w = 2 * length / np.max([extent_x.degree, extent_y.degree])
+
+            pos = {1: (1 - w, 1 - w),
+                   2: (w, 1 - w),
+                   3: (w, w),
+                   4: (1 - w, w),
+                   5: (1 - w, 0.5),
+                   6: (w, 0.5),
+                   7: (1 - w, 0.5),
+                   8: (0.5, w),
+                   9: (0.5, 1 - w)}
+
+            rx, ry = pos[corner]
+
+            x0 = rx * (xmax - xmin) + xmin
+            y0 = ry * (ymax - ymin) + ymin
+            pos0 = self._wcs.all_pix2world(x0, y0, 1)
+
+            pos1 = [pos0[0] + length / np.cos(np.radians(pos0[1])), pos0[1]]
+            pos2 = [pos0[0], pos0[1] + length]
+
+            pos0 = self._wcs.all_world2pix(*pos0, 1)
+            pos1 = self._wcs.all_world2pix(*pos1, 1)
+            pos2 = self._wcs.all_world2pix(*pos2, 1)
+
+            arrow1 = FancyArrowPatch(posA=pos0, posB=pos1, arrowstyle='-|>',
+                                     mutation_scale=20.,
+                                     shrinkA=0., shrinkB=0.,
+                                     zorder=self._ax.zorder + 4)
+            arrow2 = FancyArrowPatch(posA=pos0, posB=pos2, arrowstyle='-|>',
+                                     mutation_scale=20.,
+                                     shrinkA=0., shrinkB=0.,
+                                     zorder=self._ax.zorder + 4)
+
+            self._ax.add_patch(arrow1)
+            self._ax.add_patch(arrow2)
+
+            label1 = Text(pos2[0] + (sep_x / sy), pos2[1] + (sep_y / sy), 'N',
+                          fontproperties=self._label_settings['fontproperties'],
+                          zorder=self._ax.zorder + 4)
+            label2 = Text(pos1[0] + (sep_x / sy), pos1[1] + (sep_y / sy) * 2,
+                          'E', fontproperties=self._label_settings['fontproperties'],
+                          zorder=self._ax.zorder + 4)
+
+            self._ax.add_artist(label1)
+            self._ax.add_artist(label2)
+
+            self._compass = [arrow1, arrow2, label1, label2]
+
+            if frame:
+                arrow_corners = np.vstack([pos0, pos1, pos2, [pos1[0], pos2[1]]])
+
+                frame_origin = np.min(arrow_corners, axis=0)
+                frame_origin -= [sep_x / sy, 2 * sep_y / sy]
+
+                frame_limit = np.max(arrow_corners, axis=0)
+                frame_limit += [5 * sep_x / sy, 6 * sep_y / sy]
+
+                frame_w = frame_limit[0] - frame_origin[0]
+                frame_h = frame_limit[1] - frame_origin[1]
+
+                rect = Rectangle(frame_origin, frame_w, frame_h,
+                                 zorder=self._ax.zorder + 3, facecolor='white',
+                                 edgecolor='black')
+                self._ax.add_patch(rect)
+
+                self._compass.append(rect)
 
         self.set(**kwargs)
 
     @auto_refresh
     def _remove(self):
-        self._compass.remove()
+        if MPL_VERSION == 3:
+            self._compass.remove()
+        else:
+            print(self._compass, len(self._compass))
+            for i in range(len(self._compass)):
+                self._compass[i].remove()
 
     @auto_refresh
     def hide(self):
         """
         Hide the compass.
         """
-        try:
-            self._compass.remove()
-        except Exception:
-            pass
+        if MPL_VERSION == 3:
+            try:
+                self._compass.remove()
+            except Exception:
+                pass
+        else:
+            for i in range(len(self._compass)):
+                try:
+                    self._compass[i].remove()
+                except Exception:
+                    pass
 
     @auto_refresh
     def set_length(self, length):
         """
         Set the length of the compass arrows.
         """
-        self._base_settings['length'] = -length
+        if MPL_VERSION == 3:
+            self._base_settings['length'] = -length
+        else:
+            self._base_settings['length'] = length
+        print(self._base_settings)
         self.show(**self._base_settings)
         self._set_arrow_properties(**self._arrow_settings)
         self._set_label_properties(**self._label_settings)
@@ -305,34 +422,46 @@ class Compass(object):
         """
         Modify the compass label properties.
 
-        All arguments are passed to the matplotlib TextPath class. See the
-        matplotlib documentation for more details.
+        All arguments are passed to the matplotlib Text (mpl 2) or TextPath
+        mpl 3) class. See the matplotlib documentation for more details.
         """
         for kwarg, val in kwargs.items():
-            try:
-                # TextPath does not take fontproperties, always handled by show
-                if kwarg == 'fontproperties':
-                    continue
-                kvpair = {kwarg: val}
-                self._compass.box.get_children()[2].set(**kvpair)
-                self._compass.box.get_children()[3].set(**kvpair)
-                self._label_settings[kwarg] = val
-            except AttributeError:
-                warnings.warn("TextPath labels do not have attribute {0}. Skipping.".format(kwarg))
+            kvpair = {kwarg: val}
+            if MPL_VERSION == 3:
+                try:
+                    # TextPath does not take fontproperties, always handled by show
+                    if kwarg == 'fontproperties':
+                        continue
+                    self._compass.box.get_children()[2].set(**kvpair)
+                    self._compass.box.get_children()[3].set(**kvpair)
+                    self._label_settings[kwarg] = val
+                except AttributeError:
+                    warnings.warn("TextPath labels do not have attribute {0}. Skipping.".format(kwarg))
+            else:
+                try:
+                    self._compass[2].set(**kvpair)
+                    self._compass[3].set(**kvpair)
+                    self._label_settings[kwarg] = val
+                except AttributeError:
+                    warnings.warn("Text labels do not have attribute {0}. Skipping.".format(kwarg))
 
     @auto_refresh
     def _set_arrow_properties(self, **kwargs):
         """
         Modify the arrow properties.
 
-        All arguments are pass to the matplotlib FancyArrowPatch class. See the
-        matplotlib documentation for more details.
+        All arguments are passed to the matplotlib FancyArrowPatch class. See
+        the matplotlib documentation for more details.
         """
         for kwarg, val in kwargs.items():
+            kvpair = {kwarg: val}
             try:
-                kvpair = {kwarg: val}
-                self._compass.arrow_x.set(**kvpair)
-                self._compass.arrow_y.set(**kvpair)
+                if MPL_VERSION == 3:
+                    self._compass.arrow_x.set(**kvpair)
+                    self._compass.arrow_y.set(**kvpair)
+                else:
+                    self._compass[0].set(**kvpair)
+                    self._compass[1].set(**kvpair)
                 self._arrow_settings[kwarg] = val
             except AttributeError:
                 warnings.warn("FancyArrowPatch does not have attribute {0}. Skipping.".format(kwarg))
