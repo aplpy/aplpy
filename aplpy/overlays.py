@@ -55,7 +55,7 @@ class Compass(object):
     # LAYOUT
 
     @auto_refresh
-    def show(self, length=-0.15, corner='top right', frame=False, borderpad=0.4,
+    def show(self, length=0.15, corner='top right', frame=False, borderpad=0.4,
              pad=0.5, sep_x=0.01, sep_y=0.03, fontproperties=None, **kwargs):
         """
         Overlay a compass on the image.
@@ -88,6 +88,8 @@ class Compass(object):
             documentation for more details.
         """
 
+        if MPL_VERSION == 3:
+            length *= -1
         self._base_settings['length'] = length
         self._base_settings['corner'] = corner
         self._base_settings['frame'] = frame
