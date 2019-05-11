@@ -10,7 +10,6 @@ MPL_VERSION = int(matplotlib.__version__[0])
 if MPL_VERSION >= 3:
     from mpl_toolkits.axes_grid1.anchored_artists import AnchoredDirectionArrows
 else:
-    from astropy.coordinates import SkyCoord
     from astropy.wcs.utils import wcs_to_celestial_frame
     from matplotlib.patches import FancyArrowPatch
     from matplotlib.patches import Rectangle
@@ -19,6 +18,7 @@ else:
 import numpy as np
 from matplotlib.font_manager import FontProperties
 
+from astropy.coordinates import SkyCoord
 from astropy import units as u
 from astropy.wcs.utils import proj_plane_pixel_scales
 
@@ -88,8 +88,6 @@ class Compass(object):
             documentation for more details.
         """
 
-        if MPL_VERSION == 3:
-            length *= -1
         self._base_settings['length'] = length
         self._base_settings['corner'] = corner
         self._base_settings['frame'] = frame
@@ -100,10 +98,41 @@ class Compass(object):
         if not fontproperties:
             self._label_settings['fontproperties'] = FontProperties()
 
+        if MPL_VERSION == 3:
+            length *= -1
+
         if isinstance(length, u.Quantity):
             length = length.to(u.degree).value
         elif isinstance(length, u.Unit):
             length = length.to(u.degree)
+
+        if self._wcs.is_celestial:
+            pix_scale = proj_plane_pixel_scales(self._wcs)
+            sx = pix_scale[self._dimensions[0]]
+            sy = pix_scale[self._dimensions[1]]
+            degrees_per_pixel = np.sqrt(sx * sy)
+        else:
+            raise ValueError("Cannot show scalebar when WCS is not celestial")
+
+        xmin, xmax = self._ax.get_xlim()
+        ymin, ymax = self._ax.get_ylim()
+        pos_min = self._wcs.all_pix2world(xmin, ymin, 1)
+        pos_max = self._wcs.all_pix2world(xmax, ymax, 1)
+
+        extent_x = [pos_max[0], pos_min[1]]
+        extent_y = [pos_min[0], pos_max[1]]
+
+        # trying to be insensitive to frame, RA/dec vs. galactic, etc.
+        pos_min = self._wcs.all_world2pix(*pos_min, 1)
+        extent_x = self._wcs.all_world2pix(*extent_x, 1)
+        extent_y = self._wcs.all_world2pix(*extent_y, 1)
+        pos_min = SkyCoord.from_pixel(*pos_min, self._wcs, origin=1)
+        extent_x = SkyCoord.from_pixel(*extent_x, self._wcs, origin=1)
+        extent_y = SkyCoord.from_pixel(*extent_y, self._wcs, origin=1)
+        extent_x = pos_min.separation(extent_x)
+        extent_y = pos_min.separation(extent_y)
+        if hasattr(pos_min, 'dec'):
+            extent_x /= np.cos(pos_min.dec.to('radian'))
 
         if isinstance(sep_x, u.Quantity):
             sep_x = sep_x.to(u.degree).value
@@ -115,14 +144,6 @@ class Compass(object):
         elif isinstance(sep_y, u.Unit):
             sep_y = sep_y.to(u.degree)
 
-        if self._wcs.is_celestial:
-            pix_scale = proj_plane_pixel_scales(self._wcs)
-            pix_units = self._wcs.wcs.cunit
-            sy = pix_scale[1]*u.Unit(pix_units[1])
-            sy = sy.to('deg').value
-        else:
-            raise ValueError("Cannot show compass when WCS is not celestial")
-
         try:
             self._compass.remove()
         except Exception:
@@ -132,6 +153,10 @@ class Compass(object):
             corner = corners[corner]
 
         if MPL_VERSION >= 3:
+            length /= np.max([extent_x.degree, extent_y.degree])
+            sep_y /= np.max([extent_x.degree, extent_y.degree])
+            sep_x /= np.max([extent_x.degree, extent_y.degree])
+
             compass = AnchoredDirectionArrows(self._ax.transAxes, length=length,
                                               label_x='E', label_y='N',
                                               loc=corner, aspect_ratio=-1,
@@ -165,26 +190,6 @@ class Compass(object):
             self._ax.add_artist(self._compass)
 
         else:
-            xmin, xmax = self._ax.get_xlim()
-            ymin, ymax = self._ax.get_ylim()
-            pos_min = self._wcs.all_pix2world(xmin, ymin, 1)
-            pos_max = self._wcs.all_pix2world(xmax, ymax, 1)
-
-            extent_x = [pos_max[0], pos_min[1]]
-            extent_y = [pos_min[0], pos_max[1]]
-
-            # trying to be insensitive to frame, RA/dec vs. galactic, etc.
-            pos_min = self._wcs.all_world2pix(*pos_min, 1)
-            extent_x = self._wcs.all_world2pix(*extent_x, 1)
-            extent_y = self._wcs.all_world2pix(*extent_y, 1)
-            pos_min = SkyCoord.from_pixel(*pos_min, self._wcs, origin=1)
-            extent_x = SkyCoord.from_pixel(*extent_x, self._wcs, origin=1)
-            extent_y = SkyCoord.from_pixel(*extent_y, self._wcs, origin=1)
-            extent_x = pos_min.separation(extent_x)
-            extent_y = pos_min.separation(extent_y)
-            if hasattr(pos_min, 'dec'):
-                extent_x /= np.cos(pos_min.dec.to('radian'))
-
             w = 2 * length / np.max([extent_x.degree, extent_y.degree])
 
             pos = {1: (1 - w, 1 - w),
@@ -222,11 +227,15 @@ class Compass(object):
             self._ax.add_patch(arrow1)
             self._ax.add_patch(arrow2)
 
-            label1 = Text(pos2[0] + (sep_x / sy), pos2[1] + (sep_y / sy), 'N',
+            label1 = Text(pos2[0] + (sep_x / degrees_per_pixel),
+                          pos2[1] + (sep_y / degrees_per_pixel),
+                          'N',
                           fontproperties=self._label_settings['fontproperties'],
                           zorder=self._ax.zorder + 4)
-            label2 = Text(pos1[0] + (sep_x / sy), pos1[1] + (sep_y / sy) * 2,
-                          'E', fontproperties=self._label_settings['fontproperties'],
+            label2 = Text(pos1[0] + (sep_x / degrees_per_pixel),
+                          pos1[1] + (sep_y / degrees_per_pixel) * 2,
+                          'E',
+                          fontproperties=self._label_settings['fontproperties'],
                           zorder=self._ax.zorder + 4)
 
             self._ax.add_artist(label1)
@@ -235,13 +244,16 @@ class Compass(object):
             self._compass = [arrow1, arrow2, label1, label2]
 
             if frame:
-                arrow_corners = np.vstack([pos0, pos1, pos2, [pos1[0], pos2[1]]])
+                arrow_corners = np.vstack([pos0, pos1,
+                                           pos2, [pos1[0], pos2[1]]])
 
                 frame_origin = np.min(arrow_corners, axis=0)
-                frame_origin -= [sep_x / sy, 2 * sep_y / sy]
+                frame_origin -= [sep_x / degrees_per_pixel,
+                                 2 * sep_y / degrees_per_pixel]
 
                 frame_limit = np.max(arrow_corners, axis=0)
-                frame_limit += [5 * sep_x / sy, 6 * sep_y / sy]
+                frame_limit += [5 * sep_x / degrees_per_pixel,
+                                6 * sep_y / degrees_per_pixel]
 
                 frame_w = frame_limit[0] - frame_origin[0]
                 frame_h = frame_limit[1] - frame_origin[1]
