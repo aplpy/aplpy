@@ -1423,13 +1423,16 @@ class FITSFigure(Layers, Regions):
             h = height / sy
             a = angle
             transform = self.ax.transData
-
-        x = x - w / 2.
-        y = y - h / 2.
+        
+        xp = x - w / 2.
+        yp = y - h / 2.
+        radeg = np.pi / 180
+        xr = (xp - x)*np.cos((angle)*radeg) - (yp - y)*np.sin((angle)*radeg) + x
+        yr = (xp - x)*np.sin((angle)*radeg) + (yp - y)*np.cos((angle)*radeg) + y
 
         patches = []
-        for i in range(len(x)):
-            patches.append(Rectangle((x[i], y[i]), width=w[i], height=h[i], angle=a[i]))
+        for i in range(len(xr)):
+            patches.append(Rectangle((xr[i], yr[i]), width=w[i], height=h[i], angle=a[i]))
 
         # Due to bugs in matplotlib, we need to pass the patch properties
         # directly to the PatchCollection rather than use match_original.
