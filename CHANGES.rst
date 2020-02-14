@@ -9,6 +9,11 @@ CHANGES
 
 - Fix compatibility with astropy 4.x and 5.0. [#448,#471]
 
+2.0.4 (unreleased)
+------------------
+
+- Fixed default color for ``show_lines`` (was previously transparent, now black). [#441]
+
 2.0.3 (2019-02-19)
 ------------------
 
