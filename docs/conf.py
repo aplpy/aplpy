@@ -37,7 +37,7 @@ except ImportError:
     sys.exit(1)
 
 # Get configuration information from setup.cfg
-    from configparser import ConfigParser
+from configparser import ConfigParser
 conf = ConfigParser()
 
 conf.read([os.path.join(os.path.dirname(__file__), '..', 'setup.cfg')])
@@ -153,7 +153,7 @@ if setup_cfg.get('edit_on_github').lower() == 'true':
     extensions += ['sphinx_astropy.ext.edit_on_github']
 
     edit_on_github_project = setup_cfg['github_project']
-        edit_on_github_branch = "master"
+    edit_on_github_branch = "master"
 
     edit_on_github_source_root = ""
     edit_on_github_doc_root = "docs"
