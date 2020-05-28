@@ -42,6 +42,10 @@ from .decorators import auto_refresh, fixdocstring
 HDU_TYPES = tuple([fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU])
 
 
+__doctest_skip__ = ['FITSFigure.add_beam', 'FITSFigure.add_colorbar',
+                    'FITSFigure.add_grid', 'FITSFigure.add_scalebar']
+
+
 def uniformize_1d(*args):
     if len(args) > 1:
         return np.broadcast_arrays(np.atleast_1d(args[0]), *args[1:])
