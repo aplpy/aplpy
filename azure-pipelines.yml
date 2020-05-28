@@ -2,7 +2,7 @@ resources:
   repositories:
   - repository: OpenAstronomy
     type: github
-    endpoint: astropy
+    endpoint: aplpy
     name: OpenAstronomy/azure-pipelines-templates
     ref: master
 
