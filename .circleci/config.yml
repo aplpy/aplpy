@@ -11,7 +11,7 @@ jobs:
           command: pip3 install .[test]
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: tox -e py35-test -- --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
@@ -25,7 +25,7 @@ jobs:
           command: pip3 install .[test]
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
@@ -39,7 +39,7 @@ jobs:
           command: pip3 install .[test]
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
@@ -53,7 +53,7 @@ jobs:
           command: pip3 install .[test]
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
@@ -70,7 +70,7 @@ jobs:
           command: pip3 install .[test] git+https://github.com/matplotlib/matplotlib.git
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
