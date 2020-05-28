@@ -19,7 +19,7 @@ jobs:
 
     - macos: py36-test-cov
     - macos: py37-test-cov
-    - macos: py38-test-devdeps-cov
+    - macos: py38-test-cov
 
     - linux: py36-test-cov
     - linux: py37-test-cov
@@ -27,7 +27,7 @@ jobs:
 
     - windows: py36-test-cov
     - windows: py37-test-cov
-    - windows: py38-test-devdeps-cov
+    - windows: py38-test-cov
 
     - macos: build_docs
     - linux: build_docs
