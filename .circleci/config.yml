@@ -63,8 +63,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Matplotlib
+          command: pip3 install git+https://github.com/matplotlib/matplotlib.git
+      - run:
           name: Install dependencies
-          command: pip3 install .[test] git+https://github.com/matplotlib/matplotlib.git codecov
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
           command: MPLBACKEND=Agg pytest --remote-data=any --mpl
