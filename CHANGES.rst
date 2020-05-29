@@ -4,7 +4,10 @@ CHANGES
 2.1 (unreleased)
 ----------------
 
-- No changes yet.
+- Updated package infrastructure to follow guidelines described in APE 17, namely
+  removing astropy-helpers and using tox for setting up testing environments. [#448]
+
+- Fix compatibility with astropy 4.1. [#448]
 
 2.0.3 (2019-02-19)
 ------------------
