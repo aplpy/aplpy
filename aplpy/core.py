@@ -712,7 +712,7 @@ class FITSFigure(Layers, Regions):
             if vmid is None:
                 vmid = vmin - (vmax - vmin) / 30.
             asinh_a = (vmid - vmin) / (vmax - vmin)
-            norm_kwargs = {'asinh_a': asinh_a}
+            norm_kwargs = {'asinh_a': abs(asinh_a)}
         else:
             norm_kwargs = {}
 
