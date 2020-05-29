@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function, division
-
 from distutils import version
 import os
 import operator
@@ -40,6 +38,10 @@ from .frame import Frame
 from .decorators import auto_refresh, fixdocstring
 
 HDU_TYPES = tuple([fits.PrimaryHDU, fits.ImageHDU, fits.CompImageHDU])
+
+
+__doctest_skip__ = ['FITSFigure.add_beam', 'FITSFigure.add_colorbar',
+                    'FITSFigure.add_grid', 'FITSFigure.add_scalebar']
 
 
 def uniformize_1d(*args):
@@ -710,7 +712,7 @@ class FITSFigure(Layers, Regions):
             if vmid is None:
                 vmid = vmin - (vmax - vmin) / 30.
             asinh_a = (vmid - vmin) / (vmax - vmin)
-            norm_kwargs = {'asinh_a': asinh_a}
+            norm_kwargs = {'asinh_a': abs(asinh_a)}
         else:
             norm_kwargs = {}
 
@@ -1483,10 +1485,10 @@ class FITSFigure(Layers, Regions):
             xw, yw = line[0, :], line[1, :]
             lines.append(np.column_stack((xw, yw)))
 
-        l = LineCollection(lines, transform=self.ax.get_transform('world'), **kwargs)
+        lc = LineCollection(lines, transform=self.ax.get_transform('world'), **kwargs)
         if zorder is not None:
-            l.zorder = zorder
-        c = self.ax.add_collection(l)
+            lc.zorder = zorder
+        c = self.ax.add_collection(lc)
 
         if layer:
             line_set_name = layer
@@ -1701,20 +1703,20 @@ class FITSFigure(Layers, Regions):
             raise Exception("text should be a single value")
 
         if relative:
-            l = self.ax.text(x, y, text, color=color,
-                             family=family, style=style, variant=variant,
-                             stretch=stretch, weight=weight, size=size,
-                             horizontalalignment=horizontalalignment,
-                             verticalalignment=verticalalignment,
-                             transform=self.ax.transAxes, **kwargs)
+            lc = self.ax.text(x, y, text, color=color,
+                              family=family, style=style, variant=variant,
+                              stretch=stretch, weight=weight, size=size,
+                              horizontalalignment=horizontalalignment,
+                              verticalalignment=verticalalignment,
+                              transform=self.ax.transAxes, **kwargs)
         else:
-            l = self.ax.text(x, y, text, color=color,
-                             family=family, style=style, variant=variant,
-                             stretch=stretch, weight=weight, size=size,
-                             horizontalalignment=horizontalalignment,
-                             verticalalignment=verticalalignment,
-                             transform=self.ax.get_transform('world'),
-                             **kwargs)
+            lc = self.ax.text(x, y, text, color=color,
+                              family=family, style=style, variant=variant,
+                              stretch=stretch, weight=weight, size=size,
+                              horizontalalignment=horizontalalignment,
+                              verticalalignment=verticalalignment,
+                              transform=self.ax.get_transform('world'),
+                              **kwargs)
 
         if layer:
             label_name = layer
@@ -1722,7 +1724,7 @@ class FITSFigure(Layers, Regions):
             self._label_counter += 1
             label_name = 'label_' + str(self._label_counter)
 
-        self._layers[label_name] = l
+        self._layers[label_name] = lc
 
     def set_auto_refresh(self, refresh):
         """

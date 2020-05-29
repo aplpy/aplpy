@@ -1,0 +1,34 @@
+resources:
+  repositories:
+  - repository: OpenAstronomy
+    type: github
+    endpoint: aplpy
+    name: OpenAstronomy/azure-pipelines-templates
+    ref: master
+
+jobs:
+
+- template: run-tox-env.yml@OpenAstronomy
+  parameters:
+
+    coverage: codecov
+
+    envs:
+
+    - linux: codestyle
+
+    - macos: py36-test-cov
+    - macos: py37-test-cov
+    - macos: py38-test-cov
+
+    - linux: py36-test-cov
+    - linux: py37-test-cov
+    - linux: py38-test-devdeps-cov
+
+    - windows: py36-test-cov
+    - windows: py37-test-cov
+    - windows: py38-test-cov
+
+    - macos: build_docs
+    - linux: build_docs
+    - macos: build_docs

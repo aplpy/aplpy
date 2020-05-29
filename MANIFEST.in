@@ -1,27 +1,16 @@
-include README.md
+include README.rst
 include CHANGES.rst
-include LICENSE.md
-include CITATION
-
-include ez_setup.py
-include ah_bootstrap.py
 include setup.cfg
-include conftest.py
+include LICENSE.rst
+include pyproject.toml
 
-recursive-include aplpy *.pyx *.c
-
+recursive-include aplpy *.pyx *.c *.pxd
 recursive-include docs *
 recursive-include licenses *
-recursive-include cextern *
 recursive-include scripts *
 
-prune docs/_build
 prune build
-
-recursive-include astropy_helpers *
-exclude astropy_helpers/.git
-exclude astropy_helpers/.gitignore
+prune docs/_build
+prune docs/api
 
 global-exclude *.pyc *.o
-
-prune docs/api

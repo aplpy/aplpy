@@ -1,76 +1,76 @@
 version: 2
 
 jobs:
-  image-tests-mpl202:
-    docker:
-      - image: astropy/image-tests-py35-mpl202:1.4
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: pip3 install .[test]
-      - run:
-          name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
-      - run:
-          name: Report coverage
-          command: codecov
   image-tests-mpl212:
     docker:
-      - image: astropy/image-tests-py35-mpl212:1.4
+      - image: astropy/image-tests-py36-mpl212:1.10
     steps:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
   image-tests-mpl222:
     docker:
-      - image: astropy/image-tests-py35-mpl222:1.4
+      - image: astropy/image-tests-py36-mpl222:1.10
     steps:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
-  image-tests-mpl300:
+  image-tests-mpl302:
     docker:
-      - image: astropy/image-tests-py35-mpl300:1.4
+      - image: astropy/image-tests-py37-mpl302:1.10
     steps:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
+      - run:
+          name: Report coverage
+          command: codecov
+  image-tests-mpl311:
+    docker:
+      - image: astropy/image-tests-py37-mpl311:1.10
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip3 install .[test] codecov
+      - run:
+          name: Run tests
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
   image-tests-mpldev:
     docker:
-      - image: astropy/image-tests-py36-base:1.1
+      - image: astropy/image-tests-py37-base:1.4
     steps:
       - checkout
       - run:
-          name: Install apt dependencies
-          command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
+          name: Install Matplotlib
+          command: pip3 install git+https://github.com/matplotlib/matplotlib.git
       - run:
           name: Install dependencies
-          command: pip3 install .[test] git+https://github.com/matplotlib/matplotlib.git
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
-          command: MPLBACKEND=Agg python3 setup.py test --remote-data=any --coverage -a "--mpl"
+          command: MPLBACKEND=Agg pytest --remote-data=any --mpl
       - run:
           name: Report coverage
           command: codecov
@@ -80,8 +80,8 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - image-tests-mpl202
       - image-tests-mpl212
       - image-tests-mpl222
-      - image-tests-mpl300
+      - image-tests-mpl302
+      - image-tests-mpl311
       - image-tests-mpldev
