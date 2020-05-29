@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
           command: MPLBACKEND=Agg pytest --remote-data=any --mpl
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
           command: MPLBACKEND=Agg pytest --remote-data=any --mpl
@@ -36,7 +36,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
           command: MPLBACKEND=Agg pytest --remote-data=any --mpl
@@ -50,7 +50,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install .[test]
+          command: pip3 install .[test] codecov
       - run:
           name: Run tests
           command: MPLBACKEND=Agg pytest --remote-data=any --mpl
@@ -59,15 +59,12 @@ jobs:
           command: codecov
   image-tests-mpldev:
     docker:
-      - image: astropy/image-tests-py36-base:1.1
+      - image: astropy/image-tests-py37-base:1.4
     steps:
       - checkout
       - run:
-          name: Install apt dependencies
-          command: apt-get install -y libfreetype6-dev libpng12-dev pkg-config
-      - run:
           name: Install dependencies
-          command: pip3 install .[test] git+https://github.com/matplotlib/matplotlib.git
+          command: pip3 install .[test] git+https://github.com/matplotlib/matplotlib.git codecov
       - run:
           name: Run tests
           command: MPLBACKEND=Agg pytest --remote-data=any --mpl
