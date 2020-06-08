@@ -21,7 +21,7 @@ Installing
 The following dependencies are required:
 
 -  `Numpy <http://www.numpy.org>`__ 1.11 or later
--  `Matplotlib <http://www.matplotlib.org>`__ 2.0 or later
+-  `Matplotlib <http://www.matplotlib.org>`__ 3.0 or later
 -  `Astropy <http://www.astropy.org>`__ 3.1 or later
 -  `reproject <https://reproject.readthedocs.org>`__ 0.4 or later
 -  `PyAVM <http://astrofrog.github.io/pyavm/>`__ 0.9.4 or later

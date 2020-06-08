@@ -67,11 +67,12 @@ class TestBasic(BaseImageTests):
     # Test for showing colorscale
     @pytest.mark.remote_data
     @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
-    def test_show_colorbar_scalebar_beam(self):
+    def test_show_colorbar_compass_scalebar_beam(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
         f.ticks.set_color('black')
         f.show_colorscale(vmin=-0.1, vmax=0.1)
         f.add_colorbar()
+        f.add_compass()
         f.add_scalebar(7.5)
         f.add_beam(major=0.5, minor=0.2, angle=10.)
         f.tick_labels.hide()
