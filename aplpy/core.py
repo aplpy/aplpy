@@ -962,7 +962,7 @@ class FITSFigure(Layers, Regions):
         # new var to convert slices tuple to style astropy uses
         # [0, 3] vs. ['x', 0, , 0, 'y']
         if slices:
-            new_slices = [0]*frame.pixel_n_dim
+            new_slices = [0] * frame.pixel_n_dim
             new_slices[slices[0]] = 'x'
             new_slices[slices[1]] = 'y'
         else:
