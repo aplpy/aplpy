@@ -15,7 +15,7 @@ from astropy import log
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
-from astropy.nddata.utils import block_reduce
+from astropy.nddata.blocks import block_reduce
 from astropy.visualization import AsymmetricPercentileInterval
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
 from astropy.coordinates import ICRS
