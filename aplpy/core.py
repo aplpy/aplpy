@@ -941,6 +941,34 @@ class FITSFigure(Layers, Regions):
         else:
             frame = wcs_contour
 
+            # If slices were specified, or if dimensions is not the default, we need to
+            # make sure the WCS is pre-sliced we need to slice the WCS here
+
+            if slices is not None or dimensions != [0, 1]:
+
+                # We start off by swapping the dimensions if needed. At this point we can assume we
+                # are using a FITS WCS so that we can use sub()
+                if dimensions[0] > dimensions[1]:
+                    axes = [x + 1 for x in range(frame.pixel_n_dim)]
+                    axes[dimensions[0]] = dimensions[1] + 1
+                    axes[dimensions[1]] = dimensions[0] + 1
+                    frame = frame.sub(list(axes))
+
+                # Next, we convert the slices to something we can use to slice the contour WCS
+                wcs_slices = slices[:]
+                if dimensions[0] < dimensions[1]:
+                    wcs_slices.insert(dimensions[0], slice(None))
+                    wcs_slices.insert(dimensions[1], slice(None))
+                else:
+                    wcs_slices.insert(dimensions[1], slice(None))
+                    wcs_slices.insert(dimensions[0], slice(None))
+
+                # Invert this so that we are in Numpy axis order
+                wcs_slices = wcs_slices[::-1]
+
+                # Apply the slices to the WCS to get a 2-d WCS out
+                frame = frame[wcs_slices]
+
         if filled:
             c = self.ax.contourf(image_contour, levels,
                                  transform=self.ax.get_transform(frame),
