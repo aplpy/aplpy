@@ -17,8 +17,8 @@ class Ticks(object):
         or into the axes (``in``).
         """
         if direction in ('in', 'out'):
-            self.ax.coords[self.x].ticks.set_tick_out(direction == 'out')
-            self.ax.coords[self.y].ticks.set_tick_out(direction == 'out')
+            self._ax.coords[self.x].ticks.set_tick_out(direction == 'out')
+            self._ax.coords[self.y].ticks.set_tick_out(direction == 'out')
         else:
             raise ValueError("direction should be 'in' or 'out'")
 
