@@ -1,6 +1,6 @@
 import threading
 
-from astropy.utils.decorators import wraps
+from functools import wraps
 
 mydata = threading.local()
 
