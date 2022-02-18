@@ -27,7 +27,7 @@ def is_format(filename, format):
         return f.read(14) == b'%!PS-Adobe-3.0'
     elif format == 'svg':
         from xml.dom import minidom
-        return minidom.parse(f).childNodes[2].attributes['xmlns'].value == 'http://www.w3.org/2000/svg'
+        return minidom.parse(f).childNodes[-1].attributes['xmlns'].value == 'http://www.w3.org/2000/svg'
     else:
         raise Exception("Unknown format: %s" % format)
 
