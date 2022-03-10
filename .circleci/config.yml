@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install wheel
+          command: pip3 install wheel
+      - run:
           name: Install dependencies
           command: pip3 install .[test] codecov
       - run:
@@ -20,6 +23,9 @@ jobs:
       - image: astropy/image-tests-py36-mpl222:1.10
     steps:
       - checkout
+      - run:
+          name: Install wheel
+          command: pip3 install wheel
       - run:
           name: Install dependencies
           command: pip3 install .[test] codecov
@@ -35,6 +41,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install wheel
+          command: pip3 install wheel
+      - run:
           name: Install dependencies
           command: pip3 install .[test] codecov
       - run:
@@ -49,6 +58,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install wheel
+          command: pip3 install wheel
+      - run:
           name: Install dependencies
           command: pip3 install .[test] codecov
       - run:
@@ -62,6 +74,9 @@ jobs:
       - image: astropy/image-tests-py37-base:1.4
     steps:
       - checkout
+      - run:
+          name: Install wheel
+          command: pip3 install wheel
       - run:
           name: Install Matplotlib
           command: pip3 install git+https://github.com/matplotlib/matplotlib.git
