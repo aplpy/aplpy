@@ -1,4 +1,4 @@
-|Build Status| |CircleCI| |AppVeyor| |codecov| |Documentation Status|
+|Azure| |CircleCI| |codecov| |Documentation Status|
 
 About
 -----
@@ -38,13 +38,11 @@ or if you use conda::
 
     conda install -c astropy aplpy
 
-.. |Build Status| image:: https://travis-ci.org/aplpy/aplpy.svg?branch=master
-   :target: https://travis-ci.org/aplpy/aplpy
-.. |CircleCI| image:: https://circleci.com/gh/aplpy/aplpy/tree/master.svg?style=svg
-   :target: https://circleci.com/gh/aplpy/aplpy/tree/master
-.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/7whcuutukcbowyfn/branch/master?svg=true
-   :target: https://ci.appveyor.com/project/Astropy/aplpy
-.. |codecov| image:: https://codecov.io/gh/aplpy/aplpy/branch/master/graph/badge.svg
+.. |Azure| image:: https://dev.azure.com/thomasrobitaille/aplpy/_apis/build/status/aplpy.aplpy?repoName=aplpy%2Faplpy&branchName=refs%2Fpull%2F441%2Fmerge
+   :target: https://dev.azure.com/thomasrobitaille/aplpy/_build/latest?definitionId=16&repoName=aplpy%2Faplpy&branchName=refs%2Fpull%2F441%2Fmerge
+.. |CircleCI| image:: https://circleci.com/gh/aplpy/aplpy/tree/main.svg?style=svg
+   :target: https://circleci.com/gh/aplpy/aplpy/tree/main
+.. |codecov| image:: https://codecov.io/gh/aplpy/aplpy/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/aplpy/aplpy
 .. |Documentation Status| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
    :target: https://aplpy.readthedocs.io/en/latest/
