@@ -1,13 +1,19 @@
 CHANGES
 --------
 
-2.1 (unreleased)
-----------------
+2.1.0 (2022-03-10)
+------------------
 
 - Updated package infrastructure to follow guidelines described in APE 17, namely
   removing astropy-helpers and using tox for setting up testing environments. [#448]
 
 - Fix compatibility with astropy 4.x and 5.0. [#448,#471]
+
+- Fixed default color for ``show_lines`` (was previously transparent, now black). [#441]
+
+- Fixed ``set_tick_direction`` to not error due to incorrect reference to ``ax``. [#450]
+
+- Fixed compatibility with Matplotlib 3.4. [#466]
 
 2.0.3 (2019-02-19)
 ------------------
