@@ -17,15 +17,15 @@ jobs:
 
     - linux: codestyle
 
-    - macos: py36-test-cov
+    - macos: py36-test-oldestdeps-cov
     - macos: py37-test-cov
     - macos: py38-test-cov
 
-    - linux: py36-test-cov
+    - linux: py36-test-oldestdeps-cov
     - linux: py37-test-cov
     - linux: py38-test-devdeps-cov
 
-    - windows: py36-test-cov
+    - windows: py36-test-oldestdeps-cov
     - windows: py37-test-cov
     - windows: py38-test-cov
 
