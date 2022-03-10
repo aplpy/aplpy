@@ -7,7 +7,7 @@ CHANGES
 - Updated package infrastructure to follow guidelines described in APE 17, namely
   removing astropy-helpers and using tox for setting up testing environments. [#448]
 
-- Fix compatibility with astropy 4.1. [#448]
+- Fix compatibility with astropy 4.x and 5.0. [#448,#471]
 
 2.0.3 (2019-02-19)
 ------------------
