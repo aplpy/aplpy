@@ -1479,7 +1479,7 @@ class FITSFigure(Layers, Regions):
         """
 
         if 'color' not in kwargs:
-            kwargs.setdefault('color', 'none')
+            kwargs.setdefault('color', 'black')
 
         if layer:
             self.remove_layer(layer, raise_exception=False)
