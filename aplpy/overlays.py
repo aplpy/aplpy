@@ -399,7 +399,7 @@ class Beam(object):
         elif isinstance(angle, u.Unit):
             angle = angle.to(u.degree)
 
-        if self._wcs.is_celestial:
+        if self._wcs.has_celestial:   # fix for #444 "beam not shown for cubes"
             pix_scale = proj_plane_pixel_scales(self._wcs)
             sx = pix_scale[self._dimensions[0]]
             sy = pix_scale[self._dimensions[1]]
