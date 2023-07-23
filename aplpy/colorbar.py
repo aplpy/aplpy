@@ -138,9 +138,10 @@ class Colorbar(object):
                 for tick in self._colorbar_axes.xaxis.get_major_ticks():
                     tick.tick1line.set_visible(True)
                     tick.tick2line.set_visible(True)
-                    tick.label1.set_visible(False)
+                    # tick.label1.set_visible(False)
                     tick.label2.set_visible(labels)
                 self._colorbar_axes.xaxis.set_label_position('top')
+                self._colorbar_axes.xaxis.tick_top()
                 self._colorbar_axes.xaxis.labelpad = axis_label_pad
             elif location == 'left':
                 for tick in self._colorbar_axes.yaxis.get_major_ticks():
