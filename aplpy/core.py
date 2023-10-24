@@ -34,6 +34,7 @@ from .overlays import Beam, Scalebar
 from .regions import Regions
 from .colorbar import Colorbar
 from .frame import Frame
+from .wcs_utils import _slice_wcs
 
 from .decorators import auto_refresh, fixdocstring
 
@@ -281,6 +282,10 @@ class FITSFigure(Layers, Regions):
         # Set default theme
         self.set_theme(theme='pretty')
 
+        # Determine the image-plane WCS, as this is what we need for e.g.
+        # recenter, beam, scalebar and so on.
+        self._image_plane_wcs = _slice_wcs(self._wcs, self._wcsaxes_slices)
+
     def _get_hdu(self, data, hdu, north, convention=None,
                  dimensions=[0, 1], slices=[]):
 
@@ -474,7 +479,7 @@ class FITSFigure(Layers, Regions):
 
         xpix, ypix = self.world2pixel(x, y)
 
-        pix_scale = proj_plane_pixel_scales(self._wcs)
+        pix_scale = proj_plane_pixel_scales(self._image_plane_wcs)
         sx, sy = pix_scale[self.x], pix_scale[self.y]
 
         if radius:
@@ -939,35 +944,7 @@ class FITSFigure(Layers, Regions):
         if wcs_contour.wcs.ctype[self.x] == 'PIXEL' or wcs_contour.wcs.ctype[self.y] == 'PIXEL':
             frame = 'pixel'
         else:
-            frame = wcs_contour
-
-            # If slices were specified, or if dimensions is not the default, we need to
-            # make sure the WCS is pre-sliced we need to slice the WCS here
-
-            if slices is not None or dimensions != [0, 1]:
-
-                # We start off by swapping the dimensions if needed. At this point we can assume we
-                # are using a FITS WCS so that we can use sub()
-                if dimensions[0] > dimensions[1]:
-                    axes = [x + 1 for x in range(frame.pixel_n_dim)]
-                    axes[dimensions[0]] = dimensions[1] + 1
-                    axes[dimensions[1]] = dimensions[0] + 1
-                    frame = frame.sub(list(axes))
-
-                # Next, we convert the slices to something we can use to slice the contour WCS
-                wcs_slices = slices[:]
-                if dimensions[0] < dimensions[1]:
-                    wcs_slices.insert(dimensions[0], slice(None))
-                    wcs_slices.insert(dimensions[1], slice(None))
-                else:
-                    wcs_slices.insert(dimensions[1], slice(None))
-                    wcs_slices.insert(dimensions[0], slice(None))
-
-                # Invert this so that we are in Numpy axis order
-                wcs_slices = wcs_slices[::-1]
-
-                # Apply the slices to the WCS to get a 2-d WCS out
-                frame = frame[wcs_slices]
+            frame = _slice_wcs(wcs_contour, wcsaxes_slices)
 
         if filled:
             c = self.ax.contourf(image_contour, levels,
@@ -1901,8 +1878,8 @@ class FITSFigure(Layers, Regions):
             y pixel coordinate
         """
         if wcs is None:
-            wcs = self._wcs
-        return wcs.wcs_world2pix(xw, yw, 0)
+            wcs = self._image_plane_wcs
+        return wcs.world_to_pixel_values(xw, yw)
 
     def pixel2world(self, xp, yp, wcs=None):
         """
@@ -1923,8 +1900,8 @@ class FITSFigure(Layers, Regions):
             y world coordinate
         """
         if wcs is None:
-            wcs = self._wcs
-        return wcs.wcs_pix2world(xp, yp, 0)
+            wcs = self._image_plane_wcs
+        return wcs.pixel_to_world_values(xp, yp)
 
     @auto_refresh
     def add_grid(self):
