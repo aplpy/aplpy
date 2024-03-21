@@ -1,7 +1,93 @@
 [build-system]
+requires = [
+    "setuptools>=61.2",
+    "setuptools_scm",
+]
+build-backend = "setuptools.build_meta"
 
-requires = ["setuptools",
-            "setuptools_scm",
-            "wheel"]
+[tool.setuptools_scm]
+write_to = "aplpy/version.py"
 
-build-backend = 'setuptools.build_meta'
+[project]
+name = "APLpy"
+authors = [{name = "Thomas Robitaille and Eli Bressert", email = "thomas.robitaille@gmail.com"}]
+license = {text = "MIT"}
+description = "The Astronomical Plotting Library in Python"
+urls = {Homepage = "http://aplpy.github.io"}
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.22",
+    "astropy>=5.0",
+    "matplotlib>=3.5",
+    "reproject>=0.9",
+    "pyregion>=2.2",
+    "pillow>=9.0",
+    "pyavm>=0.9.6",
+    "scikit-image>=0.20",
+    "shapely>=2.0",
+]
+dynamic = ["version"]
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[project.optional-dependencies]
+test = [
+    "pytest-astropy",
+    "pytest-mpl",
+]
+docs = ["sphinx-astropy"]
+
+[tool.setuptools]
+zip-safe = false
+license-files = ["LICENSE.md"]
+include-package-data = false
+
+[tool.setuptools.packages]
+find = {namespaces = false}
+
+[tool.setuptools.package-data]
+aplpy = ["*.reg", "*.hdr"]
+
+[tool.pytest.ini_options]
+testpaths = ['"aplpy"', '"docs"']
+astropy_header = true
+doctest_plus = "enabled"
+text_file_format = "rst"
+addopts = "--doctest-rst"
+
+[tool.coverage.run]
+omit = [
+    "aplpy/_astropy_init*",
+    "aplpy/conftest.py",
+    "aplpy/*setup_package*",
+    "aplpy/tests/*",
+    "aplpy/*/tests/*",
+    "aplpy/extern/*",
+    "aplpy/version*",
+    "*/aplpy/_astropy_init*",
+    "*/aplpy/conftest.py",
+    "*/aplpy/*setup_package*",
+    "*/aplpy/tests/*",
+    "*/aplpy/*/tests/*",
+    "*/aplpy/extern/*",
+    "*/aplpy/version*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about packages we have installed
+    "except ImportError",
+    # Don't complain if tests don't hit assertions
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain about script hooks
+    'def main\(.*\):',
+    # Ignore branches that don't pertain to this version of Python
+    "pragma: py{ignore_python_version}",
+    # Don't complain about IPython completion helper
+    "def _ipython_key_completions_",
+]
