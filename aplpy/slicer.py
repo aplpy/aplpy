@@ -5,7 +5,7 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
     new data (without changing the header).
     """
 
-    if type(slices) == int:
+    if type(slices) is int:
         slices = (slices, )
     else:
         slices = slices[:]
@@ -41,7 +41,7 @@ def slice_hypercube(data, header, dimensions=[0, 1], slices=[]):
                 wcsaxes_slices.insert(dimensions[1], 'y')
                 wcsaxes_slices.insert(dimensions[0], 'x')
 
-            if type(slices) == list:
+            if type(slices) is list:
                 slices = tuple(slices)
                 wcsaxes_slices = tuple(wcsaxes_slices)
 

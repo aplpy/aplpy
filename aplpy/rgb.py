@@ -144,7 +144,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
                 if name in header:
                     header.__delitem__(name)
 
-    elif (type(data) == list or type(data) == tuple) and len(data) == 3:
+    elif (type(data) is list or type(data) is tuple) and len(data) == 3:
 
         filename_r, filename_g, filename_b = data
         image_r = fits.getdata(filename_r)
