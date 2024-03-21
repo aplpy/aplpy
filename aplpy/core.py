@@ -1,4 +1,3 @@
-from distutils import version
 import os
 import operator
 from functools import reduce
@@ -160,25 +159,7 @@ class FITSFigure(Layers, Regions):
         if (isinstance(data, str) and
                 data.split('.')[-1].lower() in ['png', 'jpg', 'tif']):
 
-            try:
-                from PIL import Image
-            except ImportError:
-                try:
-                    import Image
-                except ImportError:
-                    raise ImportError("The Python Imaging Library (PIL) is "
-                                      "required to read in RGB images")
-
-            try:
-                import pyavm
-            except ImportError:
-                raise ImportError("PyAVM is required to read in AVM "
-                                  "meta-data from RGB images")
-
-            if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
-                raise ImportError("PyAVM installation is not recent enough "
-                                  "(version 0.9.1 or later is required).")
-
+            from PIL import Image
             from pyavm import AVM
 
             # Remember image filename
