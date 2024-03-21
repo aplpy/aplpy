@@ -6,9 +6,8 @@ APLpy : Astronomical Plotting Library in Python
 # Affiliated packages may add whatever they like to this file, but
 # should keep this content at the top.
 # ----------------------------------------------------------------------------
-from ._astropy_init import *  # noqa
-# ----------------------------------------------------------------------------
-
+__version__ = ''
+_ASTROPY_SETUP_ = False
 if not _ASTROPY_SETUP_:  # noqa
 
     from .core import FITSFigure  # noqa
