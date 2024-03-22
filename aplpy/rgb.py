@@ -1,4 +1,4 @@
-from distutils import version
+from setuptools._distutils import version
 import os
 import warnings
 
