@@ -66,7 +66,7 @@ def test_beam_minor_quantity(quantity):
     f = FITSFigure(HDU)
     f.show_grayscale()
     f.add_beam(major=0.1, minor=quantity, angle=10.)
-    assert type(f.beam) != list
+    assert type(f.beam) is not list
     f.beam.set_minor(quantity)
     f.close()
 

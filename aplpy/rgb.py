@@ -1,4 +1,3 @@
-from distutils import version
 import os
 import warnings
 
@@ -144,7 +143,7 @@ def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
                 if name in header:
                     header.__delitem__(name)
 
-    elif (type(data) == list or type(data) == tuple) and len(data) == 3:
+    elif (type(data) is list or type(data) is tuple) and len(data) == 3:
 
         filename_r, filename_g, filename_b = data
         image_r = fits.getdata(filename_r)
@@ -205,16 +204,6 @@ def make_rgb_image(data, output, indices=(0, 1, 2), vmin_r=None, vmax_r=None,
     img.save(output)
 
     if embed_avm_tags:
-
-        try:
-            import pyavm
-        except ImportError:
-            warnings.warn("PyAVM 0.9.1 or later is not installed, so AVM tags will not be embedded in RGB image")
-            return
-
-        if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
-            warnings.warn("PyAVM 0.9.1 or later is not installed, so AVM tags will not be embedded in RGB image")
-            return
 
         from pyavm import AVM
 

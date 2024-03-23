@@ -1,4 +1,3 @@
-from distutils import version
 import os
 import operator
 from functools import reduce
@@ -160,25 +159,7 @@ class FITSFigure(Layers, Regions):
         if (isinstance(data, str) and
                 data.split('.')[-1].lower() in ['png', 'jpg', 'tif']):
 
-            try:
-                from PIL import Image
-            except ImportError:
-                try:
-                    import Image
-                except ImportError:
-                    raise ImportError("The Python Imaging Library (PIL) is "
-                                      "required to read in RGB images")
-
-            try:
-                import pyavm
-            except ImportError:
-                raise ImportError("PyAVM is required to read in AVM "
-                                  "meta-data from RGB images")
-
-            if version.LooseVersion(pyavm.__version__) < version.LooseVersion('0.9.1'):
-                raise ImportError("PyAVM installation is not recent enough "
-                                  "(version 0.9.1 or later is required).")
-
+            from PIL import Image
             from pyavm import AVM
 
             # Remember image filename
@@ -259,11 +240,11 @@ class FITSFigure(Layers, Regions):
         self.set_auto_refresh(auto_refresh)
 
         # Initialize axis instance
-        if type(subplot) == list and len(subplot) == 4:
+        if type(subplot) is list and len(subplot) == 4:
             self.ax = WCSAxes(self._figure, subplot, wcs=self._wcs,
                               slices=self._wcsaxes_slices, adjustable='datalim')
             self._figure.add_axes(self.ax)
-        elif type(subplot) == tuple and len(subplot) == 3:
+        elif type(subplot) is tuple and len(subplot) == 3:
             self.ax = WCSAxesSubplot(self._figure, *subplot, wcs=self._wcs,
                                      slices=self._wcsaxes_slices)
             self._figure.add_subplot(self.ax)
@@ -339,7 +320,7 @@ class FITSFigure(Layers, Regions):
             else:
                 hdu = hdulist[hdu]
 
-        elif type(data) == np.ndarray:
+        elif type(data) is np.ndarray:
 
             hdu = fits.ImageHDU(data)
 
@@ -951,7 +932,7 @@ class FITSFigure(Layers, Regions):
         wcs_contour.ny = header_contour['NAXIS%i' % (dimensions[1] + 1)]
 
         image_contour = convolve_util.convolve(data_contour, smooth=smooth, kernel=kernel)
-        if type(levels) == int:
+        if type(levels) is int:
             interval = AsymmetricPercentileInterval(0.25, 99.75, n_samples=10000)
             try:
                 vmin_auto, vmax_auto = interval.get_limits(image_contour)

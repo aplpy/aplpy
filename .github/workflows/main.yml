@@ -1,0 +1,50 @@
+name: CI Tests
+
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - '*'
+  pull_request:
+
+jobs:
+  initial_checks:
+    # Mandatory checks before CI tests
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    with:
+      coverage: false
+      envs: |
+        # Code style
+        - linux: codestyle
+
+  tests:
+    needs: initial_checks
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    with:
+      coverage: codecov
+      envs: |
+        - macos: py310-test
+        - macos: py311-test
+        - macos: py312-test
+
+        - linux: py310-test-oldestdeps
+        - linux: py311-test
+        - linux: py312-test-devdeps
+
+        - windows: py310-test-oldestdeps
+        - windows: py311-test
+        - windows: py312-test
+
+        - macos: build_docs
+        - linux: build_docs
+        - macos: build_docs
+
+  publish:
+    needs: tests
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@v1
+    with:
+      test_extras: 'test'
+      test_command: pytest --pyargs aplpy
+    secrets:
+      pypi_token: ${{ secrets.pypi_token }}
