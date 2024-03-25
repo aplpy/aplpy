@@ -945,14 +945,33 @@ class FITSFigure(Layers, Regions):
         else:
             frame = wcs_contour
 
+        # new var to convert slices tuple to style astropy uses
+        # [0, 3] vs. ['x', 0, , 0, 'y']
+        if slices:
+            new_slices = [0] * frame.pixel_n_dim
+            new_slices[slices[0]] = 'x'
+            new_slices[slices[1]] = 'y'
+        else:
+            new_slices = None
+
         if filled:
             c = self.ax.contourf(image_contour, levels,
-                                 transform=self.ax.get_transform(frame),
+                                 transform=self.ax.get_transform(frame, new_slices),
                                  cmap=cmap,
                                  colors=colors, **kwargs)
         else:
             c = self.ax.contour(image_contour, levels,
-                                transform=self.ax.get_transform(frame),
+                                transform=self.ax.get_transform(frame, new_slices),
+                                cmap=cmap,
+                                colors=colors, **kwargs)
+        if filled:
+            c = self.ax.contourf(image_contour, levels,
+                                 transform=self.ax.get_transform(frame, new_slices),
+                                 cmap=cmap,
+                                 colors=colors, **kwargs)
+        else:
+            c = self.ax.contour(image_contour, levels,
+                                transform=self.ax.get_transform(frame, new_slices),
                                 cmap=cmap,
                                 colors=colors, **kwargs)
 
