@@ -664,7 +664,7 @@ class FITSFigure(Layers, Regions):
         max_auto = vmax is None
 
         # The set of available functions
-        cmap = plt.cm.get_cmap(cmap)
+        cmap = plt.get_cmap(cmap)
 
         if min_auto or max_auto:
 
@@ -915,9 +915,9 @@ class FITSFigure(Layers, Regions):
             self.remove_layer(layer, raise_exception=False)
 
         if cmap:
-            cmap = plt.cm.get_cmap(cmap)
+            cmap = plt.get_cmap(cmap)
         elif not colors:
-            cmap = plt.cm.get_cmap('viridis')
+            cmap = plt.get_cmap('viridis')
 
         if data is not None:
             data_contour, header_contour, wcs_contour, wcsaxes_slices = \
@@ -1844,7 +1844,7 @@ class FITSFigure(Layers, Regions):
             self._figure.apl_grayscale_invert_default = False
             self._figure.apl_colorscale_cmap_default = 'viridis'
             if self.image:
-                self.image.set_cmap(cmap=plt.cm.get_cmap('viridis'))
+                self.image.set_cmap(cmap=plt.get_cmap('viridis'))
         elif theme == 'publication':
             self.frame.set_color('black')
             self.frame.set_linewidth(1.0)
@@ -1853,7 +1853,7 @@ class FITSFigure(Layers, Regions):
             self._figure.apl_grayscale_invert_default = True
             self._figure.apl_colorscale_cmap_default = 'gist_heat'
             if self.image:
-                self.image.set_cmap(cmap=plt.cm.get_cmap('gist_yarg'))
+                self.image.set_cmap(cmap=plt.get_cmap('gist_yarg'))
 
     def world2pixel(self, xw, yw, wcs=None):
         """
