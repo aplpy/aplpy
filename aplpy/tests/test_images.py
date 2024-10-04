@@ -1,12 +1,11 @@
 import os
 import tempfile
 
-import pytest
 import numpy as np
 
 from .. import FITSFigure
 from .helpers import generate_file
-from . import baseline_dir
+from .figures import figure_test
 
 MODULEDIR = os.path.dirname(__file__)
 DATADIR = os.path.abspath(os.path.join(MODULEDIR, 'data'))
@@ -35,15 +34,13 @@ class BaseImageTests(object):
 class TestBasic(BaseImageTests):
 
     # Test for showing grayscale
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    @figure_test
     def test_basic_image(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
         f.show_grayscale(vmin=0, vmax=1)
-        return f._figure
+        return f
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    @figure_test
     def test_ticks_labels_options(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
 
@@ -62,11 +59,10 @@ class TestBasic(BaseImageTests):
         f.ticks.set_xspacing(0.2)
         f.ticks.set_yspacing(0.2)
         f.ticks.set_minor_frequency(10)
-        return f._figure
+        return f
 
     # Test for showing colorscale
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_show_colorbar_scalebar_beam(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
         f.ticks.set_color('black')
@@ -75,11 +71,10 @@ class TestBasic(BaseImageTests):
         f.add_scalebar(7.5)
         f.add_beam(major=0.5, minor=0.2, angle=10.)
         f.tick_labels.hide()
-        return f._figure
+        return f
 
     # Test for overlaying shapes
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    @figure_test
     def test_overlay_shapes(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
 
@@ -123,11 +118,10 @@ class TestBasic(BaseImageTests):
         f.frame.set_color('black')
         f.axis_labels.hide()
 
-        return f._figure
+        return f
 
     # Test for grid
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=7.5)
+    @figure_test
     def test_grid(self):
         f = FITSFigure(self.filename_1, figsize=(7, 5))
 
@@ -142,11 +136,10 @@ class TestBasic(BaseImageTests):
         f.grid.set_linestyle('solid')
         f.grid.set_xspacing('tick')
         f.grid.set_yspacing(3)
-        return f._figure
+        return f
 
     # Test recenter
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    @figure_test
     def test_recenter(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
 
@@ -158,11 +151,10 @@ class TestBasic(BaseImageTests):
         f.recenter(266.5, -29.0, width=0.1, height=0.1)
         f.axis_labels.set_xpad(20)
         f.axis_labels.set_ypad(20)
-        return f._figure
+        return f
 
     # Test overlaying contours
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_contours(self):
         data = np.arange(256).reshape((16, 16))
         f = FITSFigure(data, figsize=(7, 5))
@@ -173,11 +165,10 @@ class TestBasic(BaseImageTests):
 
         f.ticks.set_color('black')
         f.show_contour(data, levels=np.linspace(1., 254., 10), filled=False)
-        return f._figure
+        return f
 
     # Test cube slice
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_cube_slice(self):
         f = FITSFigure(self.filename_3, dimensions=[2, 0], slices=[10], figsize=(7, 5), subplot=[0.25, 0.1, 0.7, 0.8])
         f.ticks.set_color('black')
@@ -188,11 +179,10 @@ class TestBasic(BaseImageTests):
         f.grid.set_yspacing(0.01)
         f.tick_labels.set_xformat('%g')
         f.tick_labels.set_yformat('dd:mm:ss.ss')
-        return f._figure
+        return f
 
     # Test for ds9 regions
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_regions(self):
         f = FITSFigure(self.filename_2, figsize=(7, 5))
 
@@ -204,28 +194,25 @@ class TestBasic(BaseImageTests):
         f.axis_labels.hide()
         f.tick_labels.hide()
         f.ticks.hide()
-        return f._figure
+        return f
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_north(self):
         f = FITSFigure(self.filename_4, figsize=(3, 3), north=True)
         f.show_grayscale(vmin=-1, vmax=1)
         f.axis_labels.hide()
         f.tick_labels.hide()
         f.ticks.hide()
-        return f._figure
+        return f
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_downsample(self):
         data = np.arange(256).reshape((16, 16))
         f = FITSFigure(data, downsample=2)
         f.show_grayscale()
-        return f._figure
+        return f
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=5)
+    @figure_test
     def test_set_nan_color(self):
         data = np.arange(56, dtype=float).reshape((8, 7))
         data[3, :] = np.nan
@@ -235,4 +222,4 @@ class TestBasic(BaseImageTests):
         f.tick_labels.hide()
         f.ticks.hide()
         f.set_nan_color('black')
-        return f._figure
+        return f
