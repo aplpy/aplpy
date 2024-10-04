@@ -1,12 +1,10 @@
 import os
 import tempfile
 
-import pytest
 import numpy as np
 
 from .. import FITSFigure
 from .helpers import generate_file
-from . import baseline_dir
 from .figures import figure_test
 
 MODULEDIR = os.path.dirname(__file__)

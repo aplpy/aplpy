@@ -1,10 +1,8 @@
-import pytest
 import numpy as np
 
 from ..core import FITSFigure
 
 from .test_images import BaseImageTests
-from . import baseline_dir
 from .figures import figure_test
 
 x = np.linspace(-1., 1., 10)

@@ -10,7 +10,6 @@ from .. import FITSFigure
 from ..rgb import make_rgb_image, make_rgb_cube
 
 from .test_images import BaseImageTests
-from . import baseline_dir
 from .helpers import generate_header
 from .figures import figure_test
 
@@ -21,7 +20,6 @@ HEADER = os.path.join(ROOT, 'data/2d_fits', '1904-66_TAN.hdr')
 class TestRGB(BaseImageTests):
 
     @pytest.mark.parametrize('embed_avm_tags', (False, True))
-    @figure_test
     def test_rgb(self, tmpdir, embed_avm_tags):
 
         # Regression test to check that RGB recenter works properly
