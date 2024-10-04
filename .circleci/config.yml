@@ -39,8 +39,8 @@ jobs:
           command: echo "${CIRCLE_BUILD_URL}/artifacts/${CIRCLE_NODE_INDEX}/results/fig_comparison.html"
 
   # The following job runs only on main - and its main purpose is to update the reference
-  # images in the astropy-figure-tests repository. This job needs a deploy key. To produce
-  # this, go to the astropy-figure-tests repository settings and go to SSH keys, then add
+  # images in the aplpy-figure-tests repository. This job needs a deploy key. To produce
+  # this, go to the aplpy-figure-tests repository settings and go to SSH keys, then add
   # your public SSH key.
   deploy-reference-images:
     parameters:
@@ -61,15 +61,15 @@ jobs:
               pip install pip tox --upgrade
       - run: ssh-add -D
       - add_ssh_keys:
-          fingerprints: "bf:aa:ef:e3:8d:95:11:0b:75:c7:92:52:ba:fb:e0:fc"
+          fingerprints: "SHA256:jkfGMbfZBQgs44TMLpAZglDlz7XZsmLF9yY0AMy3HPM"
       - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: git config --global user.email "astropy@circleci" && git config --global user.name "Astropy Circle CI"
-      - run: git clone git@github.com:astropy/astropy-figure-tests.git --depth 1 -b astropy-${CIRCLE_BRANCH} ~/astropy-figure-tests/
+      - run: git config --global user.email "thomas.robitaille@gmail.com" && git config --global user.name "APLpy Circle CI"
+      - run: git clone git@github.com:aplpy/aplpy-figure-tests.git --depth 1 -b aplpy-${CIRCLE_BRANCH} ~/aplpy-figure-tests/
       - run:
           name: Generate reference images
-          command: tox -v -- --mpl-generate-path=/home/circleci/astropy-figure-tests/figures/$TOXENV
+          command: tox -v -- --mpl-generate-path=/home/circleci/aplpy-figure-tests/figures/$TOXENV
       - run: |
-          cd ~/astropy-figure-tests/
+          cd ~/aplpy-figure-tests/
           git pull
           git status
           git add .
