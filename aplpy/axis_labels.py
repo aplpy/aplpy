@@ -44,13 +44,13 @@ class AxisLabels(object):
 
         elif isinstance(frame, FK5):
 
-            equinox = "{:g}".format(FK5.equinox.jyear)
+            equinox = "{:g}".format(frame.equinox.jyear)
             xtext = 'RA (J{0})'.format(equinox)
             ytext = 'Dec (J{0})'.format(equinox)
 
         elif isinstance(frame, FK4):
 
-            equinox = "{:g}".format(FK4.equinox.byear)
+            equinox = "{:g}".format(frame.equinox.byear)
             xtext = 'RA (B{0})'.format(equinox)
             ytext = 'Dec (B{0})'.format(equinox)
 
