@@ -118,9 +118,6 @@ def test_init_extensive_wcs(tmpdir, header, dimensions):
 
 
 # Test that recenter works for cube slices
-# TODO: remove xfail once pix2world transformations work for multidimensional
-# datasets
-@pytest.mark.xfail
 def test_recenter_cube_slices():
     data = np.zeros((16, 16, 16))
     hdu = fits.PrimaryHDU(data)
