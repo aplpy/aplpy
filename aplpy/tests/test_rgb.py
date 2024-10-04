@@ -12,6 +12,7 @@ from ..rgb import make_rgb_image, make_rgb_cube
 from .test_images import BaseImageTests
 from . import baseline_dir
 from .helpers import generate_header
+from .figures import figure_test
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 HEADER = os.path.join(ROOT, 'data/2d_fits', '1904-66_TAN.hdr')
@@ -19,11 +20,8 @@ HEADER = os.path.join(ROOT, 'data/2d_fits', '1904-66_TAN.hdr')
 
 class TestRGB(BaseImageTests):
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False},
-                                   baseline_dir=baseline_dir, tolerance=7.5,
-                                   filename='test_rgb.png')
     @pytest.mark.parametrize('embed_avm_tags', (False, True))
+    @figure_test
     def test_rgb(self, tmpdir, embed_avm_tags):
 
         # Regression test to check that RGB recenter works properly
@@ -62,12 +60,10 @@ class TestRGB(BaseImageTests):
 
         f.recenter(359.3, -72.1, radius=0.05)
 
-        return f._figure
+        return f
 
-    @pytest.mark.remote_data
     @pytest.mark.parametrize('north', ['default', 'galactic', 'false'])
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False},
-                                   baseline_dir=baseline_dir, tolerance=7.5)
+    @figure_test
     def test_make_rgb_cube(self, tmpdir, north):
 
         # Regression test to check that RGB recenter works properly
@@ -123,4 +119,4 @@ class TestRGB(BaseImageTests):
         f.axis_labels.hide()
         f.add_grid()
 
-        return f._figure
+        return f

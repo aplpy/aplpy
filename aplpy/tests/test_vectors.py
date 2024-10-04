@@ -5,6 +5,7 @@ from ..core import FITSFigure
 
 from .test_images import BaseImageTests
 from . import baseline_dir
+from .figures import figure_test
 
 x = np.linspace(-1., 1., 10)
 y = np.linspace(-1., 1., 10)
@@ -18,18 +19,16 @@ ADATA = np.degrees(np.arctan2(Y, X))
 
 class TestVectors(BaseImageTests):
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    @figure_test
     def test_default(self):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, color='orange')
-        return f._figure
+        return f
 
-    @pytest.mark.remote_data
-    @pytest.mark.mpl_image_compare(style={}, savefig_kwargs={'adjust_bbox': False}, baseline_dir=baseline_dir, tolerance=1.5)
+    @figure_test
     def test_step_scale(self):
         f = FITSFigure(IMAGE, figsize=(4, 4))
         f.show_grayscale()
         f.show_vectors(PDATA, ADATA, step=2, scale=0.8, color='orange')
-        return f._figure
+        return f

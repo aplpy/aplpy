@@ -1,0 +1,20 @@
+{
+    "aplpy.tests.test_images.TestBasic.test_basic_image": "",
+    "aplpy.tests.test_images.TestBasic.test_ticks_labels_options": "",
+    "aplpy.tests.test_images.TestBasic.test_show_colorbar_scalebar_beam": "",
+    "aplpy.tests.test_images.TestBasic.test_overlay_shapes": "",
+    "aplpy.tests.test_images.TestBasic.test_grid": "",
+    "aplpy.tests.test_images.TestBasic.test_recenter": "",
+    "aplpy.tests.test_images.TestBasic.test_contours": "",
+    "aplpy.tests.test_images.TestBasic.test_cube_slice": "",
+    "aplpy.tests.test_images.TestBasic.test_north": "",
+    "aplpy.tests.test_images.TestBasic.test_downsample": "",
+    "aplpy.tests.test_images.TestBasic.test_set_nan_color": "",
+    "aplpy.tests.test_rgb.TestRGB.test_rgb[False]": "",
+    "aplpy.tests.test_rgb.TestRGB.test_rgb[True]": "",
+    "aplpy.tests.test_rgb.TestRGB.test_make_rgb_cube[default]": "",
+    "aplpy.tests.test_rgb.TestRGB.test_make_rgb_cube[galactic]": "",
+    "aplpy.tests.test_rgb.TestRGB.test_make_rgb_cube[false]": "",
+    "aplpy.tests.test_vectors.TestVectors.test_default": "",
+    "aplpy.tests.test_vectors.TestVectors.test_step_scale": ""
+  }

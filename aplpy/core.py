@@ -1753,7 +1753,7 @@ class FITSFigure(Layers, Regions):
             self._figure.canvas.draw()
 
     def save(self, filename, dpi=None, transparent=False, adjust_bbox=True,
-             max_dpi=300, format=None):
+             max_dpi=300, format=None, **savefig_kwargs):
         """
         Save the current figure to a file.
 
@@ -1787,6 +1787,9 @@ class FITSFigure(Layers, Regions):
             By default, APLpy tries to guess the file format based on the
             file extension, but the format can also be specified
             explicitly. Should be one of 'eps', 'ps', 'pdf', 'svg', 'png'.
+
+        **savefig_kwargs
+            Additional keywords are passed to Matplotlib's ``savefig()``
         """
 
         if isinstance(filename, str) and format is None:
@@ -1804,10 +1807,10 @@ class FITSFigure(Layers, Regions):
 
         if adjust_bbox:
             self._figure.savefig(filename, dpi=dpi, transparent=transparent,
-                                 bbox_inches='tight', format=format)
+                                 bbox_inches='tight', format=format, **savefig_kwargs)
         else:
             self._figure.savefig(filename, dpi=dpi, transparent=transparent,
-                                 format=format)
+                                 format=format, **savefig_kwargs)
 
     def _initialize_view(self):
         self.ax.set_xlim(-0.5, self._wcs.nx - 0.5)
@@ -2088,4 +2091,5 @@ class FITSFigure(Layers, Regions):
         """
         plt.close(self._figure)
 
-    savefig = save
+    def savefig(self, *args, **kwargs):
+        return self.save(*args, **kwargs)
