@@ -86,16 +86,16 @@ workflows:
           matrix:
             parameters:
               jobname:
-                - "py312-test-image-mpl360-cov"
-                - "py312-test-image-mpldev-cov"
+                - "py312-test-image-mpl360"
+                - "py312-test-image-mpldev"
 
       - deploy-reference-images:
           name: baseline-<< matrix.jobname >>
           matrix:
             parameters:
               jobname:
-                - "py312-test-image-mpl360-cov"
-                - "py312-test-image-mpldev-cov"
+                - "py312-test-image-mpl360"
+                - "py312-test-image-mpldev"
           requires:
             - << matrix.jobname >>
           filters:
