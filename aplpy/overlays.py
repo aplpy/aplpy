@@ -1,7 +1,8 @@
 import warnings
 
-from mpl_toolkits.axes_grid1.anchored_artists import (AnchoredEllipse,
-                                                      AnchoredSizeBar)
+from matplotlib.offsetbox import AnchoredOffsetbox, AuxTransformBox
+from matplotlib.patches import Ellipse
+from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
 
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -362,7 +363,7 @@ class Beam(object):
             Position angle of the beam on the sky in degrees or an angular
             quantity (overrides BPA if present) in the anticlockwise direction.
 
-        corner : int, optional
+        corner : str, optional
             The beam location. Acceptable values are 'left', 'right',
             'top', 'bottom', 'top left', 'top right', 'bottom left'
             (default), and 'bottom right'.
@@ -426,10 +427,16 @@ class Beam(object):
         if isinstance(corner, str):
             corner = corners[corner]
 
-        self._beam = AnchoredEllipse(self._ax.transData, width=minor,
-                                     height=major, angle=angle, loc=corner,
-                                     pad=pad, borderpad=borderpad,
-                                     frameon=frame)
+        aux_tr_box = AuxTransformBox(self._ax.transData)
+        self._ellipse = Ellipse((0, 0), width=minor, height=major, angle=angle, **kwargs)
+        aux_tr_box.add_artist(self._ellipse)
+
+        self._beam = AnchoredOffsetbox(
+            child=aux_tr_box,
+            loc=corner,
+            pad=pad,
+            borderpad=borderpad,
+            frameon=frame)
 
         self._ax.add_artist(self._beam)
 
@@ -583,4 +590,4 @@ class Beam(object):
         """
         for kwarg in kwargs:
             self._beam_settings[kwarg] = kwargs[kwarg]
-        self._beam.ellipse.set(**kwargs)
+        self._ellipse.set(**kwargs)
