@@ -48,7 +48,7 @@ include-package-data = false
 find = {namespaces = false}
 
 [tool.setuptools.package-data]
-aplpy = ["*.reg", "*.hdr", "*.json"]
+"*" = ["*.reg", "*.hdr", "*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ['"aplpy"', '"docs"']
