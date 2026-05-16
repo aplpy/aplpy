@@ -14,14 +14,14 @@ authors = [{name = "Thomas Robitaille and Eli Bressert", email = "thomas.robitai
 license = {text = "MIT"}
 description = "The Astronomical Plotting Library in Python"
 urls = {Homepage = "http://aplpy.github.io"}
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-    "numpy>=1.22",
+    "numpy>=1.23",
     "astropy>=7.0",
-    "matplotlib>=3.5",
+    "matplotlib>=3.6",
     "reproject>=0.9",
     "pyregion>=2.2",
-    "pillow>=9.0",
+    "pillow>=9.2",
     "pyavm>=0.9.6",
     "scikit-image>=0.20",
     "shapely>=2.0",

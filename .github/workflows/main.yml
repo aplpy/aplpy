@@ -24,15 +24,14 @@ jobs:
     with:
       coverage: codecov
       envs: |
-        - macos: py310-test
         - macos: py311-test
         - macos: py312-test
 
-        - linux: py310-test-oldestdeps
+        - linux: py311-test-oldestdeps
         - linux: py311-test
         - linux: py312-test-devdeps
 
-        - windows: py310-test-oldestdeps
+        - windows: py311-test-oldestdeps
         - windows: py311-test
         - windows: py312-test
 
