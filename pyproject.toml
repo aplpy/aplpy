@@ -14,14 +14,14 @@ authors = [{name = "Thomas Robitaille and Eli Bressert", email = "thomas.robitai
 license = {text = "MIT"}
 description = "The Astronomical Plotting Library in Python"
 urls = {Homepage = "http://aplpy.github.io"}
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-    "numpy>=1.22",
-    "astropy>=5.0",
-    "matplotlib>=3.5",
+    "numpy>=1.23",
+    "astropy>=7.0",
+    "matplotlib>=3.8",
     "reproject>=0.9",
     "pyregion>=2.2",
-    "pillow>=9.0",
+    "pillow>=9.2",
     "pyavm>=0.9.6",
     "scikit-image>=0.20",
     "shapely>=2.0",
@@ -95,9 +95,9 @@ exclude_lines = [
 [tool.gilesbot]
     [tool.gilesbot.circleci_artifacts]
         enabled = true
-    [tool.gilesbot.circleci_artifacts.py312-test-image-mpl360]
-        url = ".tmp/py312-test-image-mpl360/results/fig_comparison.html"
-        message = "Click details to see the figure test comparisons, for py312-test-image-mpl360."
+    [tool.gilesbot.circleci_artifacts.py312-test-image-mpl380]
+        url = ".tmp/py312-test-image-mpl380/results/fig_comparison.html"
+        message = "Click details to see the figure test comparisons, for py312-test-image-mpl380."
         report_on_fail = true
 
     [tool.gilesbot.circleci_artifacts.py312-test-image-mpldev]

@@ -1,3 +1,5 @@
+from matplotlib import rcParams
+
 from .decorators import auto_refresh
 
 
@@ -10,6 +12,7 @@ class Ticks(object):
         self.x = parent.x
         self.y = parent.y
         self._wcs = self._ax.wcs
+        self._direction = 'out' if rcParams['xtick.direction'] == 'out' else 'in'
 
     def set_tick_direction(self, direction):
         """
@@ -17,10 +20,17 @@ class Ticks(object):
         or into the axes (``in``).
         """
         if direction in ('in', 'out'):
-            self._ax.coords[self.x].ticks.set_tick_out(direction == 'out')
-            self._ax.coords[self.y].ticks.set_tick_out(direction == 'out')
+            self._ax.coords[self.x].set_ticks(direction=direction)
+            self._ax.coords[self.y].set_ticks(direction=direction)
+            self._direction = direction
         else:
             raise ValueError("direction should be 'in' or 'out'")
+
+    def get_tick_direction(self):
+        """
+        Return the current tick direction (``in`` or ``out``).
+        """
+        return self._direction
 
     @auto_refresh
     def set_xspacing(self, spacing):
