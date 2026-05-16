@@ -17,6 +17,13 @@ class AxisLabels(object):
         self.x = parent.x
         self.y = parent.y
 
+        self._x_text = ''
+        self._y_text = ''
+        self._x_minpad = 1
+        self._y_minpad = 1
+        self._x_font = {}
+        self._y_font = {}
+
         self._ax.coords[self.x].set_axislabel_visibility_rule('always')
         self._ax.coords[self.y].set_axislabel_visibility_rule('always')
 
@@ -105,13 +112,21 @@ class AxisLabels(object):
         self.set_xposition('bottom')
         self.set_yposition('left')
 
+    def _apply_x(self):
+        self._ax.coords[self.x].set_axislabel(
+            self._x_text, minpad=self._x_minpad, **self._x_font)
+
+    def _apply_y(self):
+        self._ax.coords[self.y].set_axislabel(
+            self._y_text, minpad=self._y_minpad, **self._y_font)
+
     @auto_refresh
     def set_xtext(self, label):
         """
         Set the x-axis label text.
         """
         self._x_text = label
-        self._ax.coords[self.x].set_axislabel(label)
+        self._apply_x()
 
     @auto_refresh
     def set_ytext(self, label):
@@ -119,21 +134,23 @@ class AxisLabels(object):
         Set the y-axis label text.
         """
         self._y_text = label
-        self._ax.coords[self.y].set_axislabel(label)
+        self._apply_y()
 
     @auto_refresh
     def set_xpad(self, pad):
         """
         Set the x-axis label displacement in terms of the axis label font size.
         """
-        self._ax.coords[self.x].axislabels.set_minpad(pad)
+        self._x_minpad = pad
+        self._apply_x()
 
     @auto_refresh
     def set_ypad(self, pad):
         """
         Set the y-axis label displacement in terms of the axis label font size.
         """
-        self._ax.coords[self.y].axislabels.set_minpad(pad)
+        self._y_minpad = pad
+        self._apply_y()
 
     @auto_refresh
     @fixdocstring
@@ -153,8 +170,10 @@ class AxisLabels(object):
         set_font has already been called. Global default values can be set by
         editing the matplotlibrc file.
         """
-        self._ax.coords[self.x].axislabels.set(**kwargs)
-        self._ax.coords[self.y].axislabels.set(**kwargs)
+        self._x_font.update(kwargs)
+        self._y_font.update(kwargs)
+        self._apply_x()
+        self._apply_y()
 
     @auto_refresh
     def show(self):

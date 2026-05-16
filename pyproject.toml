@@ -17,7 +17,7 @@ urls = {Homepage = "http://aplpy.github.io"}
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.22",
-    "astropy>=5.0",
+    "astropy>=7.0",
     "matplotlib>=3.5",
     "reproject>=0.9",
     "pyregion>=2.2",

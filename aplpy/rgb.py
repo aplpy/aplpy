@@ -37,7 +37,7 @@ def _data_stretch(image, vmin=None, vmax=None, pmin=0.25, pmax=99.75,
         stretch = 'asinh'
 
     normalizer = simple_norm(image, stretch=stretch, power=exponent,
-                             asinh_a=vmid, min_cut=vmin, max_cut=vmax, clip=False)
+                             asinh_a=vmid, vmin=vmin, vmax=vmax, clip=False)
 
     data = normalizer(image, clip=True).filled(0)
     data = np.nan_to_num(data)

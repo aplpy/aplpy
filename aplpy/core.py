@@ -28,7 +28,7 @@ from . import convolve_util
 from . import header as header_util
 from . import slicer
 
-from .compat import simple_norm
+from astropy.visualization import simple_norm
 from .layers import Layers
 from .grid import Grid
 from .ticks import Ticks
@@ -703,7 +703,7 @@ class FITSFigure(Layers, Regions):
             norm_kwargs = {}
 
         normalizer = simple_norm(self._data, stretch=stretch, power=exponent,
-                                 min_cut=vmin, max_cut=vmax, clip=False,
+                                 vmin=vmin, vmax=vmax, clip=False,
                                  **norm_kwargs)
 
         # Adjust vmin/vmax if auto
@@ -1840,7 +1840,7 @@ class FITSFigure(Layers, Regions):
         if theme == 'pretty':
             self.frame.set_color('black')
             self.frame.set_linewidth(1.0)
-            if self.ax.coords[self.x].ticks.get_tick_out():
+            if self.ticks.get_tick_direction() == 'out':
                 self.ticks.set_color('black')
             else:
                 self.ticks.set_color('white')
