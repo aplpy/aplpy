@@ -11,7 +11,7 @@ on:
 jobs:
   initial_checks:
     # Mandatory checks before CI tests
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v2
     with:
       coverage: false
       envs: |
@@ -20,7 +20,7 @@ jobs:
 
   tests:
     needs: initial_checks
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v2
     with:
       coverage: codecov
       envs: |
@@ -41,7 +41,7 @@ jobs:
 
   publish:
     needs: tests
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@v1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@v2
     with:
       test_extras: 'test'
       test_command: pytest --pyargs aplpy
