@@ -1,3 +1,5 @@
+from matplotlib import rcParams
+
 from .decorators import auto_refresh
 
 
@@ -10,7 +12,7 @@ class Ticks(object):
         self.x = parent.x
         self.y = parent.y
         self._wcs = self._ax.wcs
-        self._direction = 'in'
+        self._direction = 'out' if rcParams['xtick.direction'] == 'out' else 'in'
 
     def set_tick_direction(self, direction):
         """
