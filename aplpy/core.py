@@ -14,11 +14,7 @@ from astropy import log
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from astropy.io import fits
-
-try:
-    from astropy.nddata.blocks import block_reduce
-except ImportError:  # astropy<5
-    from astropy.nddata.utils import block_reduce
+from astropy.nddata.blocks import block_reduce
 
 from astropy.visualization import AsymmetricPercentileInterval
 from astropy.visualization.wcsaxes import WCSAxes, WCSAxesSubplot
@@ -38,6 +34,7 @@ from .overlays import Beam, Scalebar
 from .regions import Regions
 from .colorbar import Colorbar
 from .frame import Frame
+from .wcs_utils import _slice_wcs
 
 from .decorators import auto_refresh, fixdocstring
 
@@ -285,6 +282,10 @@ class FITSFigure(Layers, Regions):
         # Set default theme
         self.set_theme(theme='pretty')
 
+        # Determine the image-plane WCS, as this is what we need for e.g.
+        # recenter, beam, scalebar and so on.
+        self._image_plane_wcs = _slice_wcs(self._wcs, self._wcsaxes_slices)
+
     def _get_hdu(self, data, hdu, north, convention=None,
                  dimensions=[0, 1], slices=[]):
 
@@ -478,7 +479,7 @@ class FITSFigure(Layers, Regions):
 
         xpix, ypix = self.world2pixel(x, y)
 
-        pix_scale = proj_plane_pixel_scales(self._wcs)
+        pix_scale = proj_plane_pixel_scales(self._image_plane_wcs)
         sx, sy = pix_scale[self.x], pix_scale[self.y]
 
         if radius:
@@ -943,7 +944,7 @@ class FITSFigure(Layers, Regions):
         if wcs_contour.wcs.ctype[self.x] == 'PIXEL' or wcs_contour.wcs.ctype[self.y] == 'PIXEL':
             frame = 'pixel'
         else:
-            frame = wcs_contour
+            frame = _slice_wcs(wcs_contour, wcsaxes_slices)
 
         if filled:
             c = self.ax.contourf(image_contour, levels,
@@ -1877,8 +1878,8 @@ class FITSFigure(Layers, Regions):
             y pixel coordinate
         """
         if wcs is None:
-            wcs = self._wcs
-        return wcs.wcs_world2pix(xw, yw, 0)
+            wcs = self._image_plane_wcs
+        return wcs.world_to_pixel_values(xw, yw)
 
     def pixel2world(self, xp, yp, wcs=None):
         """
@@ -1899,8 +1900,8 @@ class FITSFigure(Layers, Regions):
             y world coordinate
         """
         if wcs is None:
-            wcs = self._wcs
-        return wcs.wcs_pix2world(xp, yp, 0)
+            wcs = self._image_plane_wcs
+        return wcs.pixel_to_world_values(xp, yp)
 
     @auto_refresh
     def add_grid(self):
