@@ -1,7 +1,7 @@
 include README.rst
 include CHANGES.rst
 include setup.cfg
-include LICENSE.rst
+include LICENSE.md
 include pyproject.toml
 
 recursive-include aplpy *.pyx *.c *.pxd
